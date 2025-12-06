@@ -9,6 +9,7 @@ export default function Home() {
      <Button  onClick={() => router.push('/events')}>Events</Button>
      <Button  onClick={() => router.push('/event-details')}>Event details</Button>
      <Button  onClick={() => router.push('/completed')}>Completed events</Button>
+     <Button  onClick={() => router.push('/profile')}>Profile</Button>
     </div>
   );
 }
