@@ -1,18 +1,19 @@
+"use client"
 import React, { useState, useEffect } from 'react';
-import { 
-    Layers, 
-    Mail, 
-    Layout, 
-    Monitor, 
-    ChevronRight, 
-    CheckCircle, 
-    Database, 
-    FileText, 
-    Settings, 
-    Menu, 
-    X, 
-    Download, 
-    User, 
+import {
+    Layers,
+    Mail,
+    Layout,
+    Monitor,
+    ChevronRight,
+    CheckCircle,
+    Database,
+    FileText,
+    Settings,
+    Menu,
+    X,
+    Download,
+    User,
     BarChart,
     Github,
     Twitter
@@ -73,7 +74,7 @@ const AppMockup = () => {
                             <Mail size={16} /> <span className="hidden lg:inline">Email</span>
                         </div>
                     </div>
-                     <div className="space-y-1">
+                    <div className="space-y-1">
                         <div className="hidden lg:block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Mailing</div>
                         <div className="flex items-center gap-3 px-2 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm transition-colors justify-center lg:justify-start">
                             <Layers size={16} /> <span className="hidden lg:inline">Bulk Mailing</span>
@@ -105,7 +106,7 @@ const AppMockup = () => {
                                     <h3 className="text-lg font-medium text-gray-900">Configuration</h3>
                                     <Settings size={18} className="text-gray-400" />
                                 </div>
-                                
+
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Select Template</label>
@@ -182,15 +183,15 @@ const App = () => {
 
             {/* Ambient Background */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-                 <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-blue-100/30 rounded-full blur-[100px] opacity-60"></div>
-                 <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-100/30 rounded-full blur-[100px] opacity-60"></div>
+                <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-blue-100/30 rounded-full blur-[100px] opacity-60"></div>
+                <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-100/30 rounded-full blur-[100px] opacity-60"></div>
             </div>
 
             <Navbar />
 
             <main className="flex-1 w-full max-w-7xl mx-auto px-6 pb-6 pt-20 flex items-center justify-center">
                 <div className="w-full grid lg:grid-cols-12 gap-12 items-center h-full max-h-[800px]">
-                    
+
                     {/* Left Column: Content */}
                     <div className="lg:col-span-5 flex flex-col justify-center space-y-8 text-center lg:text-left">
                         <div>
@@ -199,22 +200,22 @@ const App = () => {
                                 Stable Release v1.0
                             </div>
                             <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold text-gray-900 mb-6 tracking-tight leading-tight">
-                                Simply impactful <br/>
+                                Simply impactful <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Certificates.</span>
                             </h1>
                             <p className="text-lg text-gray-500 leading-relaxed mb-4">
                                 <b>enso</b> (円相) is a desktop tool designed to streamline certificate generation. Create hundreds of personalized certificates and mail them directly.
                             </p>
-                            
+
                             <div className="flex flex-wrap gap-4 text-sm text-gray-500 justify-center lg:justify-start">
                                 <div className="flex items-center gap-2">
-                                    <CheckCircle size={16} className="text-blue-600"/> Bulk Generation
+                                    <CheckCircle size={16} className="text-blue-600" /> Bulk Generation
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <CheckCircle size={16} className="text-blue-600"/> Direct Mailing
+                                    <CheckCircle size={16} className="text-blue-600" /> Direct Mailing
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <CheckCircle size={16} className="text-blue-600"/> Cross-platform
+                                    <CheckCircle size={16} className="text-blue-600" /> Cross-platform
                                 </div>
                             </div>
                         </div>
@@ -227,18 +228,18 @@ const App = () => {
                         </div>
 
                         <div className="pt-8 border-t border-gray-200/60 flex items-center justify-between text-xs text-gray-400">
-                             <p>© 2024 Enso Project.</p>
-                             <div className="flex gap-4">
-                                <a href="#" className="hover:text-gray-600 transition-colors"><Github size={16}/></a>
-                                <a href="#" className="hover:text-gray-600 transition-colors"><Twitter size={16}/></a>
-                             </div>
+                            <p>© 2024 Enso Project.</p>
+                            <div className="flex gap-4">
+                                <a href="#" className="hover:text-gray-600 transition-colors"><Github size={16} /></a>
+                                <a href="#" className="hover:text-gray-600 transition-colors"><Twitter size={16} /></a>
+                            </div>
                         </div>
                     </div>
 
                     {/* Right Column: App Mockup */}
                     <div className="lg:col-span-7 w-full h-full max-h-[600px] hidden md:flex items-center justify-center perspective-1000">
                         <div className="w-full h-full transform rotate-y-[-5deg] rotate-x-[2deg] hover:rotate-0 transition-all duration-700 ease-out">
-                             <AppMockup />
+                            <AppMockup />
                         </div>
                     </div>
                 </div>

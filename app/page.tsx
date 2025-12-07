@@ -1,15 +1,15 @@
 "use client"
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+
 export default function Home() {
-  const router = useRouter();
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-     <Button  onClick={() => router.push('/register')}>Register</Button>
-     <Button  onClick={() => router.push('/events')}>Events</Button>
-     <Button  onClick={() => router.push('/event-details')}>Event details</Button>
-     <Button  onClick={() => router.push('/completed')}>Completed events</Button>
-     <Button  onClick={() => router.push('/profile')}>Profile</Button>
+    <div className="flex items-center gap-5 justify-center min-h-screen">
+      <Link href="/register">Register</Link>
+      <Link href="/events">Events</Link>
+      <Link href="/event-details">Event details</Link>
+      <Link href="/completed">Completed events</Link>
+      <Link href="/profile">Profile</Link>
+      <Link href="/supabase-demo">Supabase Demo</Link>
     </div>
   );
 }
