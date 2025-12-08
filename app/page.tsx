@@ -9,7 +9,7 @@ export default function Home() {
       <Link href="/event-details">Event details</Link>
       <Link href="/completed">Completed events</Link>
       <Link href="/profile">Profile</Link>
-      <Link href="/api">Cloudinary Upload</Link>
+      <Link href="/complete-profile">Cloudinary Profile</Link>
       <Link href="/supabase-demo">Supabase Demo</Link>
     </div>
   );
