@@ -81,6 +81,147 @@ CREATE POLICY "Users can cancel own registrations" ON registrations
   USING (auth.uid() = user_id);
 
 
+-- 3. USERS TABLE
+-- =====================================================
+-- Note: This table should already exist, but including it here for reference
+-- The users table stores user profile information
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  role user_role NOT NULL DEFAULT 'user',
+  image_url TEXT DEFAULT 'user.png',
+  provider TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for users
+-- Anyone can read users (public profiles)
+CREATE POLICY "users_public_select" ON users
+  FOR SELECT USING (true);
+
+-- Users can update their own profile
+CREATE POLICY "users_update_own" ON users
+  FOR UPDATE TO authenticated
+  USING (auth.uid() = id)
+  WITH CHECK (auth.uid() = id);
+
+-- Users can insert themselves (backup policy, trigger handles this)
+CREATE POLICY "users_insert_own" ON users
+  FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = id);
+
+-- Admins can delete users
+CREATE POLICY "users_delete_admin" ON users
+  FOR DELETE
+  USING (
+    EXISTS (
+      SELECT 1 FROM users u
+      WHERE u.id = auth.uid() AND u.role = 'admin'
+    )
+  );
+
+-- Admins can update any user
+CREATE POLICY "users_update_admin" ON users
+  FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM users u
+      WHERE u.id = auth.uid() AND u.role = 'admin'
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM users u
+      WHERE u.id = auth.uid() AND u.role = 'admin'
+    )
+  );
+
+
+-- 4. AUTO-CREATE USER TRIGGER
+-- =====================================================
+-- This trigger automatically creates a record in public.users
+-- when a new user signs up and verifies their email in auth.users
+
+-- Create a function to handle new user creation
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+DECLARE
+  user_name TEXT;
+  user_email TEXT;
+  user_provider TEXT;
+BEGIN
+  -- Extract user information
+  user_email := COALESCE(NEW.email, '');
+  user_name := COALESCE(
+    NEW.raw_user_meta_data->>'full_name',
+    NEW.raw_user_meta_data->>'name',
+    user_email,
+    'User'
+  );
+  user_provider := COALESCE(
+    NEW.app_metadata->>'provider',
+    'email'
+  );
+
+  -- Insert into public.users
+  -- This will create the user on signup, and update on email confirmation
+  INSERT INTO public.users (
+    id,
+    name,
+    email,
+    role,
+    image_url,
+    provider,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    NEW.id,
+    user_name,
+    user_email,
+    'user'::user_role,
+    'user.png',
+    user_provider,
+    NOW(),
+    NOW()
+  )
+  ON CONFLICT (id) DO UPDATE
+  SET
+    email = EXCLUDED.email,
+    name = COALESCE(EXCLUDED.name, users.name),
+    updated_at = NOW();
+  
+  RETURN NEW;
+EXCEPTION
+  WHEN OTHERS THEN
+    -- Log the error but don't fail the auth operation
+    RAISE WARNING 'Error creating user in public.users: %', SQLERRM;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create triggers that fire when a user is created or updated
+-- Trigger on INSERT: Fires when user signs up
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_new_user();
+
+-- Trigger on UPDATE: Fires when user verifies email (email_confirmed_at is set)
+DROP TRIGGER IF EXISTS on_auth_user_updated ON auth.users;
+CREATE TRIGGER on_auth_user_updated
+  AFTER UPDATE ON auth.users
+  FOR EACH ROW
+  WHEN (OLD.email_confirmed_at IS DISTINCT FROM NEW.email_confirmed_at)
+  EXECUTE FUNCTION public.handle_new_user();
+
+
 -- =====================================================
 -- OPTIONAL: Add some sample events for testing
 -- =====================================================

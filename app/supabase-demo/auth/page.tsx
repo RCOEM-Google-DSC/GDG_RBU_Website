@@ -64,6 +64,62 @@ export default function AuthDemoPage() {
         } = supabase.auth.onAuthStateChange(async (event, newSession) => {
             setSession(newSession);
             setUser(newSession?.user ?? null);
+
+            // Ensure user exists in public.users table (fallback if trigger fails)
+            if (newSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+                try {
+                    const userId = newSession.user.id;
+                    const userEmail = newSession.user.email || '';
+                    const userName = newSession.user.user_metadata?.full_name || 
+                                   newSession.user.user_metadata?.name || 
+                                   userEmail || 
+                                   'User';
+                    const provider = newSession.user.app_metadata?.provider || 'email';
+
+                    // Check if user exists in public.users
+                    const { data: existingUser, error: checkError } = await supabase
+                        .from('users')
+                        .select('id')
+                        .eq('id', userId)
+                        .single();
+
+                    // If user doesn't exist, create them directly (RLS policy allows it)
+                    if (!existingUser && checkError?.code === 'PGRST116') {
+                        // Direct insert works now that RLS policy is fixed
+                        const { error: insertError } = await supabase
+                            .from('users')
+                            .insert({
+                                id: userId,
+                                name: userName,
+                                email: userEmail,
+                                role: 'user',
+                                image_url: 'user.png',
+                                provider: provider,
+                                badges: [],
+                                profile_links: null,
+                                section: '',
+                                branch: '',
+                                phone_number: '',
+                            });
+
+                        if (insertError) {
+                            console.error('Failed to create user in public.users:', {
+                                insertError: insertError,
+                                message: insertError.message,
+                                code: insertError.code,
+                                details: insertError.details,
+                                hint: insertError.hint,
+                                userId: userId,
+                                userEmail: userEmail,
+                            });
+                        } else {
+                            console.log('User created successfully');
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error ensuring user exists:', err);
+                }
+            }
         });
 
         return () => subscription.unsubscribe();
