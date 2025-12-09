@@ -1,69 +1,41 @@
 "use client";
 
-import React from 'react'
-import Form from '@/app/Components/Reusables/Form'
+import React, { useState } from 'react';
+import * as z from "zod";
+import { User, Mail, ArrowLeft, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { RegisterForm } from '@/app/Components/Auth/RegisterForm';
 
-import * as z from "zod"
-import { User } from 'lucide-react';
 const schema = z.object({
     name: z.string().min(2, { message: "Name must be at least 2 characters long" }),
     email: z.string().email({ message: "Please enter a valid email address" }),
-    password: z.string().min(8, { message: "Password must be at least 8 characters long" }).regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).+$/,
-        { message: "Password must include uppercase, lowercase, number, and special character" }
-    )
+    password: z.string().min(8, { message: "Password must be at least 8 characters long" })
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d|(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?])).+$/, { message: "Password requirements not met" }),
+    confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
 });
-const page = () => {
-    const handleSubmit = async () => {
-        console.log("submitted")
+
+const RegisterPage = () => {
+    const handleSubmit = async (data: any) => {
+        console.log("submitted", data)
     }
+
     return (
-        <div className='grid grid-cols-2 min-h-screen'>
-            {/* left form */}
+        <div className="grid grid-cols-2  min-h-screen w-full p-10">
+            {/* Left Panel - Form */}
             <div className=''>
-                <Form
-                    title='Sign Up'
-                    description='Create a new account'
-                    schema={schema}
-                    defaultValues={{
-                        name: '',
-                        email: '',
-                        password: '',
-                    }}
-                    onSubmit={handleSubmit}
-                >
-                    <Form.Group>
-                        <Form.InputField
-                            name='name'
-                            label='Name'
-                            placeholder='Enter your name'
-                            icon={<User />}
-                        />
-
-                        <Form.InputField
-                            name='email'
-                            label='Email'
-                            placeholder='Enter your email'
-                            icon={<User />}
-                        />
-                        <Form.PasswordField
-                            name='password'
-                            label='Password'
-                            placeholder='Enter your password'
-                        />
-
-
-                        <Form.Submit>
-                            Create Account
-                        </Form.Submit>
-                    </Form.Group>
-                </Form>
+                <RegisterForm />
             </div>
 
-            {/* right image */}
-            <div></div>
+            {/* Right Panel - Branding */}
+            <div>
+                
+            </div>
         </div>
     )
 }
 
-export default page
+export default RegisterPage

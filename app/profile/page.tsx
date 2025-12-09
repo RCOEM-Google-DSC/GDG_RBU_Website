@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Download, Mail, Phone, MapPin, Award, Calendar, Share2, ExternalLink, ChevronRight, Github, Linkedin, Twitter } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('events');
@@ -92,7 +93,7 @@ const App = () => {
               {/* Right Side: Info */}
               <div className="flex-1 text-center md:text-left space-y-4">
                 <div>
-                  <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500 mb-2">
+                  <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white via-gray-200 to-gray-500 mb-2">
                     {user.name}
                   </h1>
                   <p className="text-xl text-blue-400 font-medium">{user.role}</p>
@@ -119,15 +120,15 @@ const App = () => {
 
                 {/* Social Links */}
                 <div className="flex justify-center md:justify-start gap-4 pt-4">
-                  <button className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all hover:-translate-y-1">
+                  <Button className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all hover:-translate-y-1">
                     <Github size={20} />
-                  </button>
-                  <button className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-gray-400 hover:text-blue-400 transition-all hover:-translate-y-1">
+                  </Button>
+                  <Button className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-gray-400 hover:text-blue-400 transition-all hover:-translate-y-1">
                     <Linkedin size={20} />
-                  </button>
-                  <button className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-gray-400 hover:text-blue-400 transition-all hover:-translate-y-1">
+                  </Button>
+                  <Button className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-gray-400 hover:text-blue-400 transition-all hover:-translate-y-1">
                     <Twitter size={20} />
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -154,8 +155,8 @@ const App = () => {
                 <div key={event.id} className="group relative bg-[#0a0a0a] border border-white/10 rounded-2xl p-4 overflow-hidden hover:border-white/20 transition-all duration-300 hover:shadow-lg hover:shadow-blue-900/10">
                   <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-stretch">
                     {/* Event Image */}
-                    <div className="w-full sm:w-48 h-32 rounded-xl overflow-hidden relative flex-shrink-0">
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+                    <div className="w-full sm:w-48 h-32 rounded-xl overflow-hidden relative shrink-0">
+                      <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent z-10"></div>
                       <img src={event.image} alt={event.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" />
                       <div className={`absolute bottom-2 left-2 z-20 px-2 py-1 rounded text-xs font-medium bg-${event.theme}-500/20 text-${event.theme}-400 border border-${event.theme}-500/30 backdrop-blur-sm`}>
                         {event.status}
@@ -173,13 +174,13 @@ const App = () => {
                       </div>
                       
                       <div className="flex items-center gap-3 mt-4 sm:mt-0">
-                        <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-lg shadow-blue-900/20 active:scale-95">
+                        <Button className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-lg shadow-blue-900/20 active:scale-95">
                           <Download size={16} />
                           Download Certificate
-                        </button>
-                        <button className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
+                        </Button>
+                        <Button className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
                           <Share2 size={18} />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -218,7 +219,7 @@ const App = () => {
             </div>
             
             {/* Quick Stats or Additional Info */}
-            <div className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 border border-white/10 rounded-3xl p-6 mt-6">
+            <div className="bg-linear-to-br from-blue-900/20 to-purple-900/20 border border-white/10 rounded-3xl p-6 mt-6">
                 <h3 className="text-lg font-bold mb-4">Community Impact</h3>
                 <div className="flex justify-between items-center text-center">
                     <div>
