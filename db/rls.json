@@ -1,274 +1,272 @@
-{
-  "events": [
-    {
-      "schemaname": "public",
-      "tablename": "events",
-      "policyname": "events_delete_admin",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "DELETE",
-      "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
-      "with_check": null
-    },
-    {
-      "schemaname": "public",
-      "tablename": "events",
-      "policyname": "events_insert_roles",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "INSERT",
-      "qual": null,
-      "with_check": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = ANY (ARRAY['admin'::user_role, 'member'::user_role])))))"
-    },
-    {
-      "schemaname": "public",
-      "tablename": "events",
-      "policyname": "events_public_select",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "SELECT",
-      "qual": "true",
-      "with_check": null
-    },
-    {
-      "schemaname": "public",
-      "tablename": "events",
-      "policyname": "events_update_owner_or_admin",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "UPDATE",
-      "qual": "((organizer_id = auth.uid()) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))",
-      "with_check": "((organizer_id = auth.uid()) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))"
-    }
-  ],
-  "gallery": [
-    {
-      "schemaname": "public",
-      "tablename": "gallery",
-      "policyname": "gallery_delete_uploader_or_admin",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "DELETE",
-      "qual": "(((uploaded_by IS NOT NULL) AND (EXISTS ( SELECT 1\n   FROM team_members tm\n  WHERE ((tm.id = gallery.uploaded_by) AND (tm.user_id = auth.uid()))))) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))",
-      "with_check": null
-    },
-    {
-      "schemaname": "public",
-      "tablename": "gallery",
-      "policyname": "gallery_insert_team_or_admin",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "INSERT",
-      "qual": null,
-      "with_check": "((EXISTS ( SELECT 1\n   FROM team_members tm\n  WHERE (tm.user_id = auth.uid()))) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))"
-    },
-    {
-      "schemaname": "public",
-      "tablename": "gallery",
-      "policyname": "gallery_public_select",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "SELECT",
-      "qual": "true",
-      "with_check": null
-    },
-    {
-      "schemaname": "public",
-      "tablename": "gallery",
-      "policyname": "gallery_update_uploader_or_admin",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "UPDATE",
-      "qual": "(((uploaded_by IS NOT NULL) AND (EXISTS ( SELECT 1\n   FROM team_members tm\n  WHERE ((tm.id = gallery.uploaded_by) AND (tm.user_id = auth.uid()))))) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))",
-      "with_check": "(((uploaded_by IS NOT NULL) AND (EXISTS ( SELECT 1\n   FROM team_members tm\n  WHERE ((tm.id = gallery.uploaded_by) AND (tm.user_id = auth.uid()))))) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))"
-    }
-  ],
-  "partners": [
-    {
-      "schemaname": "public",
-      "tablename": "partners",
-      "policyname": "partners_admin_write",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "ALL",
-      "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
-      "with_check": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))"
-    },
-    {
-      "schemaname": "public",
-      "tablename": "partners",
-      "policyname": "partners_public_select",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "SELECT",
-      "qual": "true",
-      "with_check": null
-    }
-  ],
-  "registrations": [
-    {
-      "schemaname": "public",
-      "tablename": "registrations",
-      "policyname": "Users can cancel own registrations",
-      "permissive": "PERMISSIVE",
-      "roles": "{authenticated}",
-      "cmd": "DELETE",
-      "qual": "(auth.uid() = user_id)",
-      "with_check": null
-    },
-    {
-      "schemaname": "public",
-      "tablename": "registrations",
-      "policyname": "Users can register for events",
-      "permissive": "PERMISSIVE",
-      "roles": "{authenticated}",
-      "cmd": "INSERT",
-      "qual": null,
-      "with_check": "(auth.uid() = user_id)"
-    },
-    {
-      "schemaname": "public",
-      "tablename": "registrations",
-      "policyname": "Users can view own registrations",
-      "permissive": "PERMISSIVE",
-      "roles": "{authenticated}",
-      "cmd": "SELECT",
-      "qual": "(auth.uid() = user_id)",
-      "with_check": null
-    },
-    {
-      "schemaname": "public",
-      "tablename": "registrations",
-      "policyname": "registrations_delete_admin",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "DELETE",
-      "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
-      "with_check": null
-    },
-    {
-      "schemaname": "public",
-      "tablename": "registrations",
-      "policyname": "registrations_insert_own",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "INSERT",
-      "qual": null,
-      "with_check": "(user_id = auth.uid())"
-    },
-    {
-      "schemaname": "public",
-      "tablename": "registrations",
-      "policyname": "registrations_select_user_or_admin",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "SELECT",
-      "qual": "((user_id = auth.uid()) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))",
-      "with_check": null
-    },
-    {
-      "schemaname": "public",
-      "tablename": "registrations",
-      "policyname": "registrations_update_admin_or_organizer",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "UPDATE",
-      "qual": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))) OR (EXISTS ( SELECT 1\n   FROM events e\n  WHERE ((e.id = registrations.event_id) AND (e.organizer_id = auth.uid())))))",
-      "with_check": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))) OR (EXISTS ( SELECT 1\n   FROM events e\n  WHERE ((e.id = registrations.event_id) AND (e.organizer_id = auth.uid())))))"
-    }
-  ],
-  "team_members": [
-    {
-      "schemaname": "public",
-      "tablename": "team_members",
-      "policyname": "team_members_admin_delete",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "DELETE",
-      "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
-      "with_check": null
-    },
-    {
-      "schemaname": "public",
-      "tablename": "team_members",
-      "policyname": "team_members_admin_insert",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "INSERT",
-      "qual": null,
-      "with_check": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))"
-    },
-    {
-      "schemaname": "public",
-      "tablename": "team_members",
-      "policyname": "team_members_admin_update",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "UPDATE",
-      "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
-      "with_check": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))"
-    },
-    {
-      "schemaname": "public",
-      "tablename": "team_members",
-      "policyname": "team_members_public_select",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "SELECT",
-      "qual": "true",
-      "with_check": null
-    },
-    {
-      "schemaname": "public",
-      "tablename": "team_members",
-      "policyname": "team_members_update_own",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "UPDATE",
-      "qual": "(user_id = auth.uid())",
-      "with_check": "(user_id = auth.uid())"
-    }
-  ],
-  "users": [
-    {
-      "schemaname": "public",
-      "tablename": "users",
-      "policyname": "users_delete_admin",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "DELETE",
-      "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
-      "with_check": null
-    },
-    {
-      "schemaname": "public",
-      "tablename": "users",
-      "policyname": "users_public_select",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "SELECT",
-      "qual": "true",
-      "with_check": null
-    },
-    {
-      "schemaname": "public",
-      "tablename": "users",
-      "policyname": "users_update_admin",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "UPDATE",
-      "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
-      "with_check": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))"
-    },
-    {
-      "schemaname": "public",
-      "tablename": "users",
-      "policyname": "users_update_own",
-      "permissive": "PERMISSIVE",
-      "roles": "{public}",
-      "cmd": "UPDATE",
-      "qual": "(auth.uid() = id)",
-      "with_check": "(auth.uid() = id)"
-    }
-  ]
-}
+[
+  {
+    "schemaname": "public",
+    "tablename": "events",
+    "policyname": "events_delete_admin",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "events",
+    "policyname": "events_insert_roles",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = ANY (ARRAY['admin'::user_role, 'member'::user_role])))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "events",
+    "policyname": "events_public_select",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "events",
+    "policyname": "events_update_owner_or_admin",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "((organizer_id = auth.uid()) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))",
+    "with_check": "((organizer_id = auth.uid()) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "gallery",
+    "policyname": "gallery_delete_uploader_or_admin",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(((uploaded_by IS NOT NULL) AND (EXISTS ( SELECT 1\n   FROM team_members tm\n  WHERE ((tm.id = gallery.uploaded_by) AND (tm.user_id = auth.uid()))))) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "gallery",
+    "policyname": "gallery_insert_team_or_admin",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "((EXISTS ( SELECT 1\n   FROM team_members tm\n  WHERE (tm.user_id = auth.uid()))) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "gallery",
+    "policyname": "gallery_public_select",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "gallery",
+    "policyname": "gallery_update_uploader_or_admin",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(((uploaded_by IS NOT NULL) AND (EXISTS ( SELECT 1\n   FROM team_members tm\n  WHERE ((tm.id = gallery.uploaded_by) AND (tm.user_id = auth.uid()))))) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))",
+    "with_check": "(((uploaded_by IS NOT NULL) AND (EXISTS ( SELECT 1\n   FROM team_members tm\n  WHERE ((tm.id = gallery.uploaded_by) AND (tm.user_id = auth.uid()))))) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "partners",
+    "policyname": "partners_admin_write",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
+    "with_check": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "partners",
+    "policyname": "partners_public_select",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "registrations",
+    "policyname": "Users can cancel own registrations",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "DELETE",
+    "qual": "(auth.uid() = user_id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "registrations",
+    "policyname": "Users can register for events",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(auth.uid() = user_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "registrations",
+    "policyname": "Users can view own registrations",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(auth.uid() = user_id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "registrations",
+    "policyname": "registrations_delete_admin",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "registrations",
+    "policyname": "registrations_insert_own",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(user_id = auth.uid())"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "registrations",
+    "policyname": "registrations_select_user_or_admin",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "((user_id = auth.uid()) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "registrations",
+    "policyname": "registrations_update_admin_or_organizer",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))) OR (EXISTS ( SELECT 1\n   FROM events e\n  WHERE ((e.id = registrations.event_id) AND (e.organizer_id = auth.uid())))))",
+    "with_check": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role)))) OR (EXISTS ( SELECT 1\n   FROM events e\n  WHERE ((e.id = registrations.event_id) AND (e.organizer_id = auth.uid())))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "team_members",
+    "policyname": "team_members_admin_delete",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "team_members",
+    "policyname": "team_members_admin_insert",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "team_members",
+    "policyname": "team_members_admin_update",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
+    "with_check": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "team_members",
+    "policyname": "team_members_public_select",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "team_members",
+    "policyname": "team_members_update_own",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(user_id = auth.uid())",
+    "with_check": "(user_id = auth.uid())"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "users",
+    "policyname": "users_delete_admin",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "DELETE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "users",
+    "policyname": "users_insert_own",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(auth.uid() = id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "users",
+    "policyname": "users_public_select",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "users",
+    "policyname": "users_update_admin",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))",
+    "with_check": "(EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::user_role))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "users",
+    "policyname": "users_update_own",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(auth.uid() = id)",
+    "with_check": "(auth.uid() = id)"
+  }
+]
