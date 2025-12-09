@@ -1,7 +1,23 @@
 import React from "react";
 import { Github, Linkedin } from "lucide-react";
 
-const createPath = (w, h, r, nw, nh) => {
+interface PathDimensions {
+  w: number;
+  h: number;
+  r: number;
+  nw: number;
+  nh: number;
+}
+
+interface TeamMemberCardProps {
+  name: string;
+  role: string;
+  imageUrl: string;
+  githubUrl: string;
+  linkedinUrl: string;
+}
+
+const createPath = (w: number, h: number, r: number, nw: number, nh: number): string => {
   return `
     M ${r},0 
     L ${w - r},0 
@@ -26,8 +42,8 @@ export default function TeamMemberCard({
   imageUrl,
   githubUrl,
   linkedinUrl,
-  onClick, // 👈 NEW
-}) {
+  
+}: TeamMemberCardProps) {
   const width = 300;
   const height = 400;
   const cornerRadius = 24; 
@@ -45,7 +61,7 @@ export default function TeamMemberCard({
 
   return (
     <div
-      onClick={onClick}
+     
       className="relative inline-block group cursor-pointer"
       style={{ width, height }}
     >

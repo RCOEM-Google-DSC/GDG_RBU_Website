@@ -83,7 +83,7 @@ export async function registerForEvent(
     .from("registrations")
     .insert({
       event_id: eventId,
-      user_id: userId, // Set user_id = auth.uid() as required by RLS
+      user_id: userId, 
       ...registrationData,
       created_at: new Date().toISOString(),
     })
