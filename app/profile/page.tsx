@@ -1,252 +1,545 @@
-"use client"
+"use client";
+import { useRouter } from "next/navigation";
 
-import React, { useState } from 'react';
-import { Download, Mail, Phone, MapPin, Award, Calendar, Share2, ExternalLink, ChevronRight, Github, Linkedin, Twitter } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Github,
+  Linkedin,
+  Twitter,
+  Download,
+  Share2,
+  Trophy,
+  Award,
+  Code,
+  Cloud,
+  UserCheck,
+  Calendar,
+} from "lucide-react";
+import { BackgroundRippleEffect } from "../Components/Reusables/BackgroundRipple";
+import { supabase, getCurrentUserId } from "../../supabase/supabase";
 
-const App = () => {
-  const [activeTab, setActiveTab] = useState('events');
+// ---------- TYPES ----------
 
-  // Mock User Data
-  const user = {
-    name: "Alex Developer",
-    role: "GDG Lead & Full Stack Developer",
-    email: "alex.dev@example.com",
-    phone: "+91 98765 43210",
-    location: "RBU Campus, Nagpur",
+type ProfileLinks = {
+  github?: string | null;
+  linkedin?: string | null;
+  twitter?: string | null;
+};
+
+type SupabaseUserRow = {
+  id: string;
+  name: string | null;
+  email: string | null;
+  phone_number: string | null;
+  section: string | null;
+  branch: string | null;
+  image_url: string | null;
+  profile_links: ProfileLinks | null;
+  badges: string[] | null;
+  my_events: string[] | null; // uuid[]
+  role: string;
+  created_at: string;
+  updated_at: string;
+};
+
+type UIUser = {
+  name: string;
+  title: string;
+  bio: string;
+  email: string;
+  phone: string;
+  location: string;
+  avatarUrl: string;
+  stats: {
+    events: number;
+    badges: number;
+  };
+  profileLinks: ProfileLinks;
+  my_events: string[] | null;
+};
+
+type EventRow = {
+  id: string;
+  title: string;
+  event_time: string | null;
+  image_url: string | null;
+};
+
+type UIEvent = {
+  id: string;
+  title: string;
+  date: string;
+  image: string;
+  tag: string;
+  tagColor: string;
+};
+
+type UIBadge = {
+  id: number | string;
+  name: string;
+  icon: JSX.Element;
+  color: string;
+};
+
+// ---------- HELPERS ----------
+
+const DEFAULT_EVENT_IMAGE =
+  "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=1000";
+
+const BADGE_CONFIG: Record<string, { icon: JSX.Element; color: string }> = {
+  "AI Explorer": {
+    icon: <Cloud className="w-6 h-6 text-blue-500" />,
+    color: "bg-blue-100 dark:bg-blue-900/30",
+  },
+  "Hackathon Hero": {
+    icon: <Trophy className="w-6 h-6 text-red-500" />,
+    color: "bg-red-100 dark:bg-red-900/30",
+  },
+  "Community Lead": {
+    icon: <UserCheck className="w-6 h-6 text-yellow-600" />,
+    color: "bg-yellow-100 dark:bg-yellow-900/30",
+  },
+  "Cloud Certified": {
+    icon: <Award className="w-6 h-6 text-green-500" />,
+    color: "bg-green-100 dark:bg-green-900/30",
+  },
+  "Code Ninja": {
+    icon: <Code className="w-6 h-6 text-purple-500" />,
+    color: "bg-purple-100 dark:bg-purple-900/30",
+  },
+  Mentor: {
+    icon: <Share2 className="w-6 h-6 text-orange-500" />,
+    color: "bg-orange-100 dark:bg-orange-900/30",
+  },
+};
+
+function buildUIUser(
+  row: SupabaseUserRow,
+  eventsCount: number,
+  badgesCount: number
+): UIUser {
+  const name = row.name || "User";
+  const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
+    name
+  )}&backgroundColor=b6e3f4`;
+
+  return {
+    name,
+    title: row.role.toUpperCase(),
     bio: "Passionate about building scalable web applications and fostering developer communities. Always learning, always coding.",
-    image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+    email: row.email ?? "no-email@example.com",
+    phone: row.phone_number ?? "N/A",
+    location:
+      row.section && row.branch
+        ? `${row.section} • ${row.branch}`
+        : "RBU Campus, Nagpur",
+    avatarUrl: row.image_url || defaultAvatar,
+    stats: {
+      events: eventsCount,
+      badges: badgesCount,
+    },
+    my_events: row.my_events ?? [],
+    profileLinks: row.profile_links ?? {},
+  };
+}
+
+// Build UI events directly from events table rows
+function buildUIEvents(rows: EventRow[]): UIEvent[] {
+  const now = new Date();
+
+  return rows.map((ev) => {
+    const evDate = ev.event_time ? new Date(ev.event_time) : null;
+    const isPast = evDate ? evDate < now : false;
+
+    return {
+      id: ev.id,
+      title: ev.title,
+      date: evDate ? evDate.toLocaleString() : "Date TBA",
+      image: ev.image_url || DEFAULT_EVENT_IMAGE,
+      tag: isPast ? "Completed" : "Registered",
+      tagColor: isPast ? "bg-green-600" : "bg-blue-600",
+    };
+  });
+}
+
+function buildUIBadges(names: string[] | null | undefined): UIBadge[] {
+  if (!names || names.length === 0) return [];
+  return names.map((name, idx) => {
+    const config = BADGE_CONFIG[name] ?? {
+      icon: <Award className="w-6 h-6 text-neutral-600" />,
+      color: "bg-neutral-100 dark:bg-neutral-900/30",
+    };
+    return {
+      id: idx,
+      name,
+      icon: config.icon,
+      color: config.color,
+    };
+  });
+}
+
+// ---------- SUB-COMPONENTS ----------
+
+const ProfileHeader = ({ user }: { user: UIUser }) => {
+  const router = useRouter();
+
+  const onCompleteProfile = () => {
+    router.push("/Other/complete-profile");
   };
 
-  // Mock Events Data
-  const myEvents = [
-    {
-      id: 1,
-      title: "GenAI Study Jams",
-      date: "Sep 20, 2024",
-      status: "Completed",
-      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800",
-      theme: "blue"
-    },
-    {
-      id: 2,
-      title: "SpiderCraft Hackathon",
-      date: "Jan 15, 2025",
-      status: "Winner",
-      image: "https://images.unsplash.com/photo-1626544827763-d516dce335ca?auto=format&fit=crop&q=80&w=800",
-      theme: "red"
-    },
-    {
-      id: 3,
-      title: "WebWiz Workshop",
-      date: "Aug 10, 2024",
-      status: "Speaker",
-      image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800",
-      theme: "green"
-    }
-  ];
-
-  // Mock Badges Data
-  const myBadges = [
-    { id: 1, name: "AI Explorer", color: "text-blue-400", bg: "bg-blue-500/10", icon: <Award size={24} /> },
-    { id: 2, name: "Hackathon Hero", color: "text-red-400", bg: "bg-red-500/10", icon: <Award size={24} /> },
-    { id: 3, name: "Community Lead", color: "text-yellow-400", bg: "bg-yellow-500/10", icon: <Award size={24} /> },
-    { id: 4, name: "Cloud Certified", color: "text-green-400", bg: "bg-green-500/10", icon: <Award size={24} /> },
-    { id: 5, name: "Code Ninja", color: "text-purple-400", bg: "bg-purple-500/10", icon: <Award size={24} /> },
-    { id: 6, name: "Mentor", color: "text-orange-400", bg: "bg-orange-500/10", icon: <Award size={24} /> },
-  ];
-
   return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-blue-500/30">
-      
-  
+    <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm rounded-3xl p-6 md:p-10 shadow-xl border border-neutral-200 dark:border-neutral-800 relative z-10">
+      <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
+        {/* Avatar Section */}
+        <div className="relative group">
+          <div className="w-32 h-32 md:w-40 md:h-40 rounded-full p-1 bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500 shadow-lg">
+            <div className="w-full h-full rounded-full bg-white dark:bg-neutral-900 p-1 overflow-hidden relative">
+              <img
+                src={user.avatarUrl}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
 
-      {/* Main Content */}
-      <main className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        
-        {/* Profile Card Section */}
-        <div className="relative mb-16">
-          {/* Background Decorative Glows */}
-          <div className="absolute top-0 left-1/4 w-72 h-72 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-          <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-red-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-
-          <div className="relative bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden">
-            <div className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12">
-              
-              {/* Left Side: Circular Image */}
-              <div className="relative group">
-                <div className="w-40 h-40 md:w-48 md:h-48 rounded-full p-1 bg-gradient-to-tr from-blue-500 via-red-500 to-yellow-500">
-                  <div className="w-full h-full rounded-full border-4 border-black overflow-hidden relative">
-                    <img 
-                      src={user.image} 
-                      alt="Profile" 
-                      className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-                    />
-                  </div>
-                </div>
-                <div className="absolute -bottom-2 right-4 bg-[#202124] text-white text-xs px-3 py-1 rounded-full border border-white/10 flex items-center gap-1 shadow-xl">
-                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                  Online
-                </div>
-              </div>
-
-              {/* Right Side: Info */}
-              <div className="flex-1 text-center md:text-left space-y-4">
-                <div>
-                  <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white via-gray-200 to-gray-500 mb-2">
-                    {user.name}
-                  </h1>
-                  <p className="text-xl text-blue-400 font-medium">{user.role}</p>
-                </div>
-
-                <p className="text-gray-400 max-w-2xl mx-auto md:mx-0 leading-relaxed">
-                  {user.bio}
+        {/* Info Section */}
+        <div className="flex-1 text-center md:text-left space-y-4">
+          <div>
+            <div className="flex flex-col md:flex-row md:items-center gap-3 justify-center md:justify-between">
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">
+                  {user.name}
+                </h1>
+                <p className="text-blue-600 dark:text-blue-400 font-medium text-lg mt-1">
+                  {user.title}
                 </p>
-
-                <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-6">
-                  <div className="flex items-center gap-2 text-gray-300 bg-white/5 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors">
-                    <Mail size={18} className="text-red-400" />
-                    <span>{user.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-300 bg-white/5 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors">
-                    <Phone size={18} className="text-green-400" />
-                    <span>{user.phone}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-300 bg-white/5 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors">
-                    <MapPin size={18} className="text-yellow-400" />
-                    <span>{user.location}</span>
-                  </div>
-                </div>
-
-                {/* Social Links */}
-                <div className="flex justify-center md:justify-start gap-4 pt-4">
-                  <Button className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all hover:-translate-y-1">
-                    <Github size={20} />
-                  </Button>
-                  <Button className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-gray-400 hover:text-blue-400 transition-all hover:-translate-y-1">
-                    <Linkedin size={20} />
-                  </Button>
-                  <Button className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-gray-400 hover:text-blue-400 transition-all hover:-translate-y-1">
-                    <Twitter size={20} />
-                  </Button>
-                </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Sections Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* My Events Section */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                <span className="w-1 h-8 bg-blue-500 rounded-full block"></span>
-                My Events
-              </h2>
-              <button className="text-sm text-gray-400 hover:text-white flex items-center gap-1 transition-colors">
-                View All <ChevronRight size={16} />
+              <button
+                className="flex items-center gap-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-5 py-2.5 rounded-full font-medium shadow-lg hover:transform hover:scale-105 transition-all active:scale-95 text-sm md:text-base whitespace-nowrap"
+                onClick={onCompleteProfile}
+              >
+                Complete your profile
               </button>
             </div>
 
-            <div className="space-y-4">
-              {myEvents.map((event) => (
-                <div key={event.id} className="group relative bg-[#0a0a0a] border border-white/10 rounded-2xl p-4 overflow-hidden hover:border-white/20 transition-all duration-300 hover:shadow-lg hover:shadow-blue-900/10">
-                  <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-stretch">
-                    {/* Event Image */}
-                    <div className="w-full sm:w-48 h-32 rounded-xl overflow-hidden relative shrink-0">
-                      <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent z-10"></div>
-                      <img src={event.image} alt={event.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" />
-                      <div className={`absolute bottom-2 left-2 z-20 px-2 py-1 rounded text-xs font-medium bg-${event.theme}-500/20 text-${event.theme}-400 border border-${event.theme}-500/30 backdrop-blur-sm`}>
-                        {event.status}
-                      </div>
-                    </div>
+            <p className="text-neutral-600 dark:text-neutral-400 mt-4 max-w-2xl leading-relaxed">
+              {user.bio}
+            </p>
+          </div>
 
-                    {/* Event Details */}
-                    <div className="flex-1 flex flex-col justify-between w-full">
-                      <div>
-                        <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
-                          <Calendar size={14} />
-                          {event.date}
-                        </div>
-                        <h3 className="text-xl font-bold mb-2 group-hover:text-blue-400 transition-colors">{event.title}</h3>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 mt-4 sm:mt-0">
-                        <Button className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-lg shadow-blue-900/20 active:scale-95">
-                          <Download size={16} />
-                          Download Certificate
-                        </Button>
-                        <Button className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
-                          <Share2 size={18} />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+          {/* Contact Pills */}
+          <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+            <div className="flex items-center gap-2 bg-neutral-800 text-neutral-200 px-4 py-2 rounded-lg text-sm">
+              <Mail className="w-4 h-4" />
+              {user.email}
+            </div>
+            <div className="flex items-center gap-2 bg-neutral-800 text-neutral-200 px-4 py-2 rounded-lg text-sm">
+              <Phone className="w-4 h-4" />
+              {user.phone}
+            </div>
+            <div className="flex items-center gap-2 bg-neutral-800 text-neutral-200 px-4 py-2 rounded-lg text-sm">
+              <MapPin className="w-4 h-4" />
+              {user.location}
             </div>
           </div>
 
-          {/* My Badges Section */}
-          <div className="space-y-6">
-             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                <span className="w-1 h-8 bg-yellow-500 rounded-full block"></span>
-                My Badges
-              </h2>
-            </div>
-
-            <div className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-6 relative overflow-hidden">
-               {/* Decorative Gradient */}
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-yellow-500/10 rounded-full blur-[60px] pointer-events-none"></div>
-
-              <div className="grid grid-cols-2 gap-4">
-                {myBadges.map((badge) => (
-                  <div key={badge.id} className="group flex flex-col items-center justify-center p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/20 hover:bg-white/10 transition-all cursor-default">
-                    <div className={`w-12 h-12 rounded-full ${badge.bg} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300`}>
-                      <span className={badge.color}>{badge.icon}</span>
-                    </div>
-                    <span className="text-sm font-medium text-center text-gray-300 group-hover:text-white">{badge.name}</span>
-                  </div>
-                ))}
-              </div>
-
-              <button className="w-full mt-6 py-3 rounded-xl border border-white/10 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center justify-center gap-2">
-                View All Achievements <ExternalLink size={14} />
-              </button>
-            </div>
-            
-            {/* Quick Stats or Additional Info */}
-            <div className="bg-linear-to-br from-blue-900/20 to-purple-900/20 border border-white/10 rounded-3xl p-6 mt-6">
-                <h3 className="text-lg font-bold mb-4">Community Impact</h3>
-                <div className="flex justify-between items-center text-center">
-                    <div>
-                        <div className="text-2xl font-bold text-blue-400">12</div>
-                        <div className="text-xs text-gray-400 uppercase tracking-wider mt-1">Events</div>
-                    </div>
-                     <div className="w-px h-8 bg-white/10"></div>
-                    <div>
-                        <div className="text-2xl font-bold text-red-400">5</div>
-                        <div className="text-xs text-gray-400 uppercase tracking-wider mt-1">Hackathons</div>
-                    </div>
-                     <div className="w-px h-8 bg-white/10"></div>
-                    <div>
-                        <div className="text-2xl font-bold text-green-400">8</div>
-                        <div className="text-xs text-gray-400 uppercase tracking-wider mt-1">Talks</div>
-                    </div>
-                </div>
-            </div>
-
+          {/* Social Icons */}
+          <div className="flex gap-4 justify-center md:justify-start pt-2">
+            {[
+              { Icon: Github, key: "github", href: user.profileLinks.github },
+              {
+                Icon: Linkedin,
+                key: "linkedin",
+                href: user.profileLinks.linkedin,
+              },
+              { Icon: Twitter, key: "twitter", href: user.profileLinks.twitter },
+            ].map(({ Icon, key, href }) =>
+              href ? (
+                <a
+                  key={key}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-full text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                >
+                  <Icon className="w-5 h-5" />
+                </a>
+              ) : (
+                <button
+                  key={key}
+                  className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-full text-neutral-400 cursor-not-allowed"
+                >
+                  <Icon className="w-5 h-5" />
+                </button>
+              )
+            )}
           </div>
         </div>
-      </main>
-
-      {/* Footer */}
-     
+      </div>
     </div>
   );
 };
 
-export default App;
+const EventCard = ({ event }: { event: UIEvent }) => (
+  <div className="group relative flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-neutral-200/70 dark:border-neutral-800/70 bg-gradient-to-br from-neutral-50 to-white dark:from-neutral-900/70 dark:to-neutral-950 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+    {/* Image section */}
+    <div className="relative w-full sm:w-60 h-44 sm:h-auto shrink-0">
+      <img
+        src={event.image}
+        alt={event.title}
+        className="w-full h-full object-cover"
+      />
+
+      {/* Gradient overlay for readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-70 group-hover:opacity-80 transition-opacity" />
+
+      {/* Status pill */}
+      <span
+        className={cn(
+          "absolute top-3 left-3 inline-flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide uppercase shadow-sm",
+          "bg-black/60 text-white backdrop-blur",
+          event.tagColor // you can still pass colors like "bg-blue-600"
+        )}
+      >
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+        {event.tag}
+      </span>
+    </div>
+
+    {/* Content */}
+    <div className="flex flex-col justify-between px-5 py-4 gap-4 w-full">
+      <div className="space-y-2">
+        {/* Date */}
+        <div className="inline-flex items-center gap-2 rounded-full bg-neutral-100/80 dark:bg-neutral-800/70 px-3 py-1 text-[11px] font-medium text-neutral-600 dark:text-neutral-300">
+          <Calendar className="w-3.5 h-3.5" />
+          <span>{event.date}</span>
+        </div>
+
+        {/* Title */}
+        <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-white leading-snug">
+          {event.title}
+        </h3>
+
+        {/* Optional small subtitle / helper text */}
+        <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">
+          You’re registered for this event. Download your certificate or share it with friends.
+        </p>
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-3 pt-1">
+       <button className="
+  flex-1 inline-flex items-center justify-center gap-2
+  rounded-xl px-4 py-2.5
+  text-sm font-medium
+  text-neutral-900 dark:text-white
+  border border-neutral-300 dark:border-neutral-700
+  bg-white/70 dark:bg-neutral-900/60 backdrop-blur
+  hover:bg-neutral-100 dark:hover:bg-neutral-800
+  transition-all
+">
+  <Download className="w-4 h-4" />
+  Download Certificate
+</button>
+
+
+        <button className="inline-flex items-center justify-center rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 px-2.5 py-2 text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+          <Share2 className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+
+    {/* subtle accent bar on the left */}
+    <div className="hidden sm:block absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-blue-500 via-sky-400 to-purple-500" />
+  </div>
+);
+
+const BadgeCard = ({ badge }: { badge: UIBadge }) => (
+  <div
+    className={cn(
+      "flex flex-col items-center justify-center p-4 rounded-xl transition-transform hover:scale-105",
+      badge.color
+    )}
+  >
+    <div className="mb-2 p-2 bg-white/50 dark:bg-black/20 rounded-full">
+      {badge.icon}
+    </div>
+    <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-200 text-center">
+      {badge.name}
+    </span>
+  </div>
+);
+
+// ---------- MAIN COMPONENT ----------
+
+export default function ProfilePage() {
+  const [user, setUser] = useState<UIUser | null>(null);
+  const [events, setEvents] = useState<UIEvent[]>([]);
+  const [badges, setBadges] = useState<UIBadge[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const userId = await getCurrentUserId();
+        if (!userId) {
+          setError("You must be logged in to view your profile.");
+          return;
+        }
+
+        // 1. Fetch user row
+        const { data: userRow, error: userErr } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", userId)
+          .single<SupabaseUserRow>();
+
+        if (userErr || !userRow) {
+          throw userErr || new Error("User not found");
+        }
+
+        // 2. Fetch events whose IDs are in my_events
+        let uiEvents: UIEvent[] = [];
+
+        if (userRow.my_events && userRow.my_events.length > 0) {
+          const { data: eventRows, error: eventsErr } = await supabase
+            .from("events")
+            .select("id, title, event_time, image_url")
+            .in("id", userRow.my_events as string[]);
+
+          if (eventsErr) throw eventsErr;
+
+          uiEvents = buildUIEvents((eventRows || []) as EventRow[]);
+        }
+
+        // 3. Build badges from text[]
+        const uiBadges = buildUIBadges(userRow.badges);
+
+        // 4. Build UI user
+        const uiUser = buildUIUser(userRow, uiEvents.length, uiBadges.length);
+
+        setUser(uiUser);
+        setEvents(uiEvents);
+        setBadges(uiBadges);
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message ?? "Something went wrong");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, []);
+
+  return (
+    <div className="relative min-h-screen w-full overflow-x-hidden bg-neutral-50 dark:bg-neutral-950 font-sans">
+      <div className="fixed inset-0 z-0">
+        <BackgroundRippleEffect />
+      </div>
+
+      <div className="relative z-10 container mx-auto px-4 py-8 md:py-12 max-w-6xl">
+        {loading && (
+          <div className="text-center text-neutral-500 py-10">
+            Loading profile...
+          </div>
+        )}
+
+        {error && !loading && (
+          <div className="text-center text-red-500 py-10">{error}</div>
+        )}
+
+        {!loading && !error && user && (
+          <>
+            {/* 1. Header Section */}
+            <section className="mb-12">
+              <ProfileHeader user={user} />
+            </section>
+
+            {/* 2. Grid Content Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              {/* Left: Events */}
+              <div className="lg:col-span-8 space-y-6">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 border-l-4 border-blue-600 pl-3">
+                    <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
+                      My Events
+                    </h2>
+                  </div>
+                  <button className="text-sm text-neutral-500 hover:text-blue-600 font-medium">
+                    View All &gt;
+                  </button>
+                </div>
+
+                {events.length === 0 ? (
+                  <p className="text-sm text-neutral-500">
+                    You haven&apos;t registered for any events yet.
+                  </p>
+                ) : (
+                  <div className="space-y-4">
+                    {events.map((event) => (
+                      <EventCard key={event.id} event={event} />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Right: Badges */}
+              <div className="lg:col-span-4 space-y-6">
+                <div className="flex items-center gap-2 border-l-4 border-purple-600 pl-3 mb-2">
+                  <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
+                    My Badges
+                  </h2>
+                </div>
+
+                <div className="bg-white/80 dark:bg-neutral-900/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-800">
+                  {badges.length === 0 ? (
+                    <p className="text-sm text-neutral-500">
+                      No badges yet. Participate in events to earn some!
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-4">
+                      {badges.map((badge) => (
+                        <BadgeCard key={badge.id} badge={badge} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      <style jsx global>{`
+        @keyframes cell-ripple {
+          0% {
+            transform: scale(1);
+            opacity: 0.4;
+          }
+          50% {
+            transform: scale(0.9);
+            opacity: 1;
+            background-color: var(--cell-fill-color);
+          }
+          100% {
+            transform: scale(1);
+            opacity: 0.4;
+          }
+        }
+        .animate-cell-ripple {
+          animation: cell-ripple var(--duration) linear var(--delay) forwards;
+        }
+      `}</style>
+    </div>
+  );
+}
