@@ -42,7 +42,7 @@ import { Calendar as Cal } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { cn } from "@/lib/helpers/utils";
+import { cn } from "@/lib/utils";
 
 /**
  * Compound Form component

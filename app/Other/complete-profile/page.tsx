@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { supabase, getCurrentUserId } from "../../supabase/supabase";
+import { supabase, getCurrentUserId } from "../../../supabase/supabase";
 
 type Status =
   | { type: "idle" }

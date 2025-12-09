@@ -120,3 +120,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.LinkButton{
+  @apply text-primary hover:underline p-3 font-medium bg-sky-500 rounded-md text-white;
+}
