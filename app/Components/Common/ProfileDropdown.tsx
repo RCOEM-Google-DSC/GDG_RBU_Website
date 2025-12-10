@@ -12,11 +12,10 @@ import { AiOutlineDown } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CiLogout } from "react-icons/ci";
-import { Settings } from "lucide-react";
 import { CgProfile } from "react-icons/cg";
 import { supabase } from "@/supabase/supabase";
-import { useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const ProfileDropdown = () => {

@@ -1,5 +1,26 @@
 import { ReactNode } from "react";
 
+// ---------- Event Card ----------
+export interface PastEventCardProps {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  image: string;
+  tags?: Array<string>;
+  tagColor?: string;
+}
+export interface UpcomingEventCardProps {
+  id: string;
+  title: string;
+  description: string;
+  date: Date;
+  time: string;
+  image: string;
+  tags?: Array<string>;
+  tagColor?: string;
+}
+
 // ---------- PROFILE TYPES ----------
 
 export type ProfileLinks = {

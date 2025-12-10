@@ -95,7 +95,7 @@ export function RegisterForm() {
                     disabled={isLoading}
                     className="flex-1 flex items-center justify-center gap-2 py-6 border border-gray-300 hover:bg-gray-50 disabled:opacity-50"
                 >
-                    <Image src="/github.svg" alt="GitHub Logo" width={20} height={20} />
+                    <Image src="/icons/github.svg" alt="GitHub Logo" width={20} height={20} />
                     <span className="text-gray-700">GitHub</span>
                 </Button>
                 <Button

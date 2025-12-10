@@ -141,7 +141,7 @@ const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS"];
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       {trigger && <SheetTrigger asChild>{trigger}</SheetTrigger>}
       
-      <SheetContent className="overflow-y-auto p-5 w-full max-w-4xl">
+      <SheetContent className="overflow-y-auto p-5 w-5xl max-w-4xl">
         <form onSubmit={handleSubmit}>
           <SheetHeader>
             <div className="flex items-center gap-4">
