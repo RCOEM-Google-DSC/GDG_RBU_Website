@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 
 const NavBar = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,8 +23,28 @@ const NavBar = () => {
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Show navbar when scrolling up or at the top
+      if (currentScrollY < lastScrollY || currentScrollY < 10) {
+        setIsVisible(true);
+      } 
+      // Hide navbar when scrolling down and past a threshold
+      else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
   return (
-    <nav className="flex items-center justify-between px-10 py-3 shadow-md relative z-50 bg-white">
+    <nav className={`flex items-center justify-between px-10 py-3 shadow-md bg-white border-b transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
       {/* logo */}
       <div>
         <Image src="/icons/gdg.svg" alt="GDG Logo" width={50} height={50} />

@@ -1,5 +1,54 @@
 import { ReactNode } from "react";
 
+// ---------- Event ----------
+export type Event = {
+  id: string;
+  title: string;
+  description: string;
+  venue: string;
+  image_url: string;
+  date: string;
+  time?: string;
+  event_time?: string;
+  is_paid?: boolean;
+  fee?: number | null;
+  max_participants?: number | null;
+  is_team_event?: boolean;
+  max_team_size?: number | null;
+  category?: string;
+  status?: string;
+  organizer_id?: string | null;
+  partner_id?: string | null;
+  partners?: Partner | null;
+};
+
+// ---------- Partner ----------
+export type Partner = {
+  id: string;
+  name: string;
+  website: string;
+  logo_url: string;
+  description: string;
+  image_url: string;
+}
+
+// ---------- Registration ----------
+export interface RegistrationProps {
+  id: string;
+  event_id: string;
+  user_id: string;
+  check_in_time: string | null;
+  created_at: string;
+  status: string;
+
+  team_name?: string;
+  team_members?: Array<string>;
+  is_team_registration?: boolean;
+  wants_random_team?: boolean;
+  is_open_to_alliances?: boolean;
+
+}
+
 // ---------- Event Card ----------
 export interface PastEventCardProps {
   id: string;

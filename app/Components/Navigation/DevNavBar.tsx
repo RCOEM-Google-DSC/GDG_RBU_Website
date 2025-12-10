@@ -16,6 +16,7 @@ const DevNavBar = () => {
             </div>
 
             <div className="flex gap-5">
+                <Link href="/admin">Admin</Link>
                 <Link href="/register">Register</Link>
                 <Link href="/signin">Sign In</Link>
             </div>

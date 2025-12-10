@@ -121,6 +121,19 @@
   }
 }
 
+/* Custom sidebar positioning to account for navbar */
+[data-slot="sidebar-container"] {
+  top: 74px !important;
+  height: calc(100vh - 74px) !important;
+  transition: top 0.3s ease, height 0.3s ease;
+}
+
+/* Adjust sidebar when navbar is hidden */
+body:has(nav.-translate-y-full) [data-slot="sidebar-container"] {
+  top: 0 !important;
+  height: 100vh !important;
+}
+
 Button {
   @apply cursor-pointer;
 }
