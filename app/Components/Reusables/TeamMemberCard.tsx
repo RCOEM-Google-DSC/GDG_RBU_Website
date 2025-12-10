@@ -1,15 +1,14 @@
-import React from "react";
-import { Github, Linkedin } from "lucide-react";
+"use client";
 
-interface PathDimensions {
-  w: number;
-  h: number;
-  r: number;
-  nw: number;
-  nh: number;
-}
+import React, { useEffect, useState } from "react";
+import { Github, Linkedin } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/supabase/supabase";
+
+
 
 interface TeamMemberCardProps {
+  id: string; 
   name: string;
   role: string;
   imageUrl: string;
@@ -17,7 +16,15 @@ interface TeamMemberCardProps {
   linkedinUrl: string;
 }
 
-const createPath = (w: number, h: number, r: number, nw: number, nh: number): string => {
+
+
+const createPath = (
+  w: number,
+  h: number,
+  r: number,
+  nw: number,
+  nh: number
+): string => {
   return `
     M ${r},0 
     L ${w - r},0 
@@ -36,94 +43,139 @@ const createPath = (w: number, h: number, r: number, nw: number, nh: number): st
   `;
 };
 
-export default function TeamMemberCard({
+
+function TeamMemberCard({
+  id,
   name,
   role,
   imageUrl,
   githubUrl,
   linkedinUrl,
-  
 }: TeamMemberCardProps) {
+  const router = useRouter();
+  const [authUserId, setAuthUserId] = useState<string | null>(null);
+
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setAuthUserId(data.session?.user?.id ?? null);
+    });
+  }, []);
+
+  const handleCardClick = () => {
+ 
+    if (authUserId && authUserId === id) {
+      router.push("/profile");
+      return;
+    }
+
+   
+    router.push(`/team-profile/${id}`);
+  };
+
   const width = 300;
   const height = 400;
-  const cornerRadius = 24; 
-  const notchWidth = 160;
+  const cornerRadius = 24;
+  const notchWidth = 180;
   const notchHeight = 110;
   const gap = 12;
 
-  const outerPath = createPath(width, height, cornerRadius, notchWidth, notchHeight);
+  const outerPath = createPath(
+    width,
+    height,
+    cornerRadius,
+    notchWidth,
+    notchHeight
+  );
+
   const innerW = width - gap * 2;
   const innerH = height - gap * 2;
   const innerR = Math.max(0, cornerRadius - gap);
-  const innerPath = createPath(innerW, innerH, innerR, notchWidth, notchHeight);
+  const innerPath = createPath(
+    innerW,
+    innerH,
+    innerR,
+    notchWidth,
+    notchHeight
+  );
 
-  const clipId = `clip-${name.replace(/\s/g, "")}`;
+  const clipId = `clip-${id}`;
 
   return (
     <div
-     
-      className="relative inline-block group cursor-pointer"
+      className="relative inline-block group cursor-pointer transition-transform duration-300 hover:-translate-y-2"
       style={{ width, height }}
+      onClick={handleCardClick}
     >
-      <svg width={width} height={height} className="absolute inset-0 w-full h-full drop-shadow-xl">
+      <svg
+        width={width}
+        height={height}
+        className="absolute inset-0 w-full h-full drop-shadow-xl"
+      >
         <defs>
           <clipPath id={clipId}>
             <path d={innerPath} />
           </clipPath>
         </defs>
 
+        {/* Outer */}
         <path d={outerPath} fill="white" />
 
         <g transform={`translate(${gap}, ${gap})`}>
           <image
             href={imageUrl}
-            x="0"
-            y="0"
             width={innerW}
             height={innerH}
             preserveAspectRatio="xMidYMid slice"
             clipPath={`url(#${clipId})`}
+            className="transition-transform duration-500 group-hover:scale-105"
           />
-
           <path d={innerPath} fill="none" stroke="black" strokeWidth="2" />
         </g>
 
         <path d={outerPath} fill="none" stroke="black" strokeWidth="2.5" />
       </svg>
 
-      {/* Social Icons */}
       <div
-        className="absolute bottom-[35px] left-[24px] flex gap-4 z-10"
-        onClick={(e) => e.stopPropagation()} // So clicking icons doesn’t open profile
+        className="absolute bottom-[35px] flex gap-4 z-10 -translate-x-1/2"
+        style={{ left: (width - notchWidth) / 2 }}
+        onClick={(e) => e.stopPropagation()}
       >
         <a
           href={githubUrl}
           target="_blank"
-          className="text-black hover:scale-110 transition-transform bg-white/30 p-1.5 rounded-full border border-black/10"
+          rel="noopener noreferrer"
+          className="text-black hover:scale-110 transition-transform bg-white/80 p-2 rounded-full border"
         >
-          <Github size={24} strokeWidth={2.5} />
+          <Github size={20} strokeWidth={2.5} />
         </a>
+
         <a
           href={linkedinUrl}
           target="_blank"
-          className="text-black hover:scale-110 transition-transform bg-white/30 p-1.5 rounded-full border border-black/10"
+          rel="noopener noreferrer"
+          className="text-black hover:scale-110 transition-transform bg-white/80 p-2 rounded-full border hover:bg-[#0077b5] hover:text-white"
         >
-          <Linkedin size={24} strokeWidth={2.5} />
+          <Linkedin size={20} strokeWidth={2.5} />
         </a>
       </div>
 
-      {/* Bottom Label */}
+    
       <div
         className="absolute bottom-0 right-0 bg-white border-2 border-black rounded-[20px] flex flex-col items-center justify-center overflow-hidden"
         style={{ width: notchWidth - 10, height: notchHeight - 10 }}
       >
-        <div className="w-full h-1/2 flex items-center justify-center border-b-2 border-black">
-          <span className="text-lg font-medium uppercase">{role}</span>
+        <div className="w-full h-1/2 flex items-center justify-center border-b-2 border-black bg-yellow-50/50">
+          <span className="text-sm tracking-widest font-bold uppercase">
+            {role}
+          </span>
         </div>
-        <div className="w-full h-1/2 flex items-center justify-center">
-          <span className="text-lg font-bold">{name}</span>
+        <div className="w-full h-1/2 flex items-center justify-center px-1 text-center">
+          <span className="text-lg font-black leading-none">{name}</span>
         </div>
       </div>
     </div>
   );
 }
+
+export default TeamMemberCard;
