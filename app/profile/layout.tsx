@@ -1,5 +1,7 @@
 import React from 'react'
-import { GridBackground } from '@/app/Components/Reusables/GridBackground'
+import GridBackground from '../Components/Reusables/grid'
+
+
 
 const layout = ({children}:{children:React.ReactNode}) => {
     return (

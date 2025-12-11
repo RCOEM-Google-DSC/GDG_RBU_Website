@@ -62,16 +62,17 @@ function TeamMemberCard({
     });
   }, []);
 
-  const handleCardClick = () => {
- 
-    if (authUserId && authUserId === id) {
-      router.push("/profile");
-      return;
-    }
+const handleCardClick = () => {
 
-   
+  // SELF CARD CLICK → still go to /team-profile/:id
+  if (authUserId && authUserId === id) {
     router.push(`/team-profile/${id}`);
-  };
+    return;
+  }
+
+  // OTHERS → also go to /team-profile/:id (view-only)
+  router.push(`/team-profile/${id}`);
+};
 
   const width = 300;
   const height = 400;
