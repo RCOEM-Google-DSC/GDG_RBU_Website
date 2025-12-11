@@ -16,8 +16,9 @@ import {
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
+import EditProfileModal from "@/app/Components/team/EditProfileModal";
 
-/* ---------------- SMALL ILLUSTRATION ICONS (UNCHANGED) ---------------- */
+/* ------------------ SVG ILLUSTRATIONS (UNCHANGED) ------------------ */
 
 const IllustrationCoder = ({ className }) => (
   <svg viewBox="0 0 200 150" className={className} fill="none" stroke="currentColor" strokeWidth="2">
@@ -77,25 +78,25 @@ const SocialLink = ({ icon: Icon, href }) => {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="p-3 rounded-2xl bg-white border border-slate-200 text-slate-500 
-                 hover:text-slate-900 hover:border-slate-900 transition-all duration-300 
-                 hover:-translate-y-1 shadow-sm"
+      className="p-3 rounded-2xl bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-900 transition-all duration-300 hover:-translate-y-1 shadow-sm"
     >
       <Icon size={20} strokeWidth={1.5} />
     </a>
   );
 };
 
-/* -------------------------- MAIN PAGE -------------------------- */
+/* -------------------------- MAIN -------------------------- */
 
 export default function TeamProfilePage() {
   const { userId } = useParams();
 
   const [profile, setProfile] = useState(null);
-  const [authUserId, setAuthUserId] = useState<string | null>(null);
-  const [authRole, setAuthRole] = useState<string | null>(null);
+  const [authUserId, setAuthUserId] = useState(null);
+  const [authRole, setAuthRole] = useState(null);
 
-  /* LOAD LOGGED-IN USER ID & ROLE */
+  const [showEdit, setShowEdit] = useState(false); // ✅ FIXED (inside component)
+
+  /* LOAD AUTH DATA */
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       const uid = data.session?.user?.id ?? null;
@@ -146,6 +147,7 @@ export default function TeamProfilePage() {
 
       setProfile(data);
     };
+
     load();
   }, [userId]);
 
@@ -153,16 +155,18 @@ export default function TeamProfilePage() {
 
   const u = profile.users;
   const contactEmail = profile.club_email;
-  const resumeUrl = profile.cv_url || u?.profile_links?.resume; // FIXED
+  const resumeUrl = profile.cv_url || u?.profile_links?.resume;
 
   return (
     <div className="min-h-screen bg-[#FAFAF9] text-slate-800 relative overflow-hidden">
-
-      {/* BACKGROUND DECORATIONS */}
+      {/* BACKGROUND */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div
           className="absolute inset-0 opacity-[0.4]"
-          style={{ backgroundImage: "radial-gradient(#CBD5E1 1px, transparent 1px)", backgroundSize: "32px 32px" }}
+          style={{
+            backgroundImage: "radial-gradient(#CBD5E1 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
         ></div>
 
         <IllustrationSwirl className="absolute top-[-50px] left-[-50px] w-64 h-64 text-slate-200 rotate-45 opacity-60" />
@@ -170,10 +174,10 @@ export default function TeamProfilePage() {
         <IllustrationCube className="absolute bottom-[20%] left-[8%] w-8 h-8 text-slate-300 animate-pulse" />
       </div>
 
-      {/* MAIN CONTENT */}
+      {/* MAIN */}
       <div className="max-w-5xl mx-auto px-6 py-16 relative z-10">
 
-        {/* ------------------ TOP SECTION ------------------ */}
+        {/* ---------------- TOP ---------------- */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center mb-20">
 
           {/* Avatar */}
@@ -192,7 +196,9 @@ export default function TeamProfilePage() {
           <div className="md:col-span-7 text-center md:text-left space-y-8 relative">
             <IllustrationCoder className="absolute -top-24 right-0 w-32 h-24 text-slate-200 hidden md:block" />
 
-            <h1 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight">{u.name}</h1>
+            <h1 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight">
+              {u.name}
+            </h1>
             <p className="text-xl text-slate-500 font-light">{profile.domain}</p>
 
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
@@ -201,8 +207,6 @@ export default function TeamProfilePage() {
 
             {/* BUTTONS */}
             <div className="flex flex-col md:flex-row items-center gap-4 pt-2">
-
-              {/* Say Hello */}
               <a
                 href={`mailto:${contactEmail}`}
                 className="flex items-center gap-2 px-8 py-3 bg-slate-900 text-white rounded-xl shadow-lg"
@@ -210,12 +214,8 @@ export default function TeamProfilePage() {
                 <Send size={18} /> Say Hello
               </a>
 
-              {/* Resume (FIXED: now shows for admin/member self too) */}
               {resumeUrl && (
-                <a
-                  href={resumeUrl}
-                  className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-xl"
-                >
+                <a href={resumeUrl} className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-xl">
                   <Download size={18} /> Resume
                 </a>
               )}
@@ -223,15 +223,13 @@ export default function TeamProfilePage() {
               {/* SELF BUTTONS */}
               {isSelf && (
                 <>
-                  {/* EDIT PROFILE — same style, lucide icon */}
                   <button
-                    onClick={() => (window.location.href = "/profile")}
+                    onClick={() => setShowEdit(true)}
                     className="flex items-center gap-2 px-6 py-3 bg-slate-100 border border-slate-300 rounded-xl"
                   >
                     <Pencil size={18} /> Edit Profile
                   </button>
 
-                  {/* DASHBOARD — same style, lucide icon */}
                   {authRole !== "user" && (
                     <button
                       onClick={() =>
@@ -240,7 +238,7 @@ export default function TeamProfilePage() {
                       }
                       className="flex items-center gap-2 px-6 py-3 bg-blue-100 border border-blue-300 rounded-xl"
                     >
-                      <LayoutDashboard size={18} />{" "}
+                      <LayoutDashboard size={18} />
                       {authRole === "admin" ? "Admin Dashboard" : "Member Dashboard"}
                     </button>
                   )}
@@ -248,9 +246,10 @@ export default function TeamProfilePage() {
               )}
             </div>
           </div>
+
         </div>
 
-        {/* ------------------ BOTTOM SECTION ------------------ */}
+        {/* ------------------ BOTTOM ------------------ */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
           {/* Thought */}
@@ -301,6 +300,7 @@ export default function TeamProfilePage() {
                   <a
                     href={profile.leetcode}
                     target="_blank"
+                    rel="noreferrer"
                     className="flex items-center gap-2 px-4 py-3 bg-yellow-50 border border-yellow-200 rounded-2xl text-yellow-700"
                   >
                     <Code size={18} /> LeetCode
@@ -310,8 +310,16 @@ export default function TeamProfilePage() {
             </div>
           </div>
         </div>
-
       </div>
+
+      {/* EDIT MODAL */}
+      {showEdit && (
+        <EditProfileModal
+          onClose={() => setShowEdit(false)}
+          profile={profile}
+          userId={authUserId}
+        />
+      )}
     </div>
   );
 }
