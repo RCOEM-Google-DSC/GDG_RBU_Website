@@ -109,7 +109,7 @@ export default function TeamPage() {
   return (
     <div className="min-h-screen bg-[#FDFCF8] text-black pt-8 px-4 lg:px-8 pb-8">
    
-      <section className="pt-24 pb-20 border-b-2 border-black">
+      <section className="pt-24 [min-h-screen]-8 pb-20 border-b-2 border-black">
         <div className="w-full flex items-start justify-between">
           <div>
             <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[0.95] lg:mt-10">

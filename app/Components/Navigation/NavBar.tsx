@@ -56,7 +56,6 @@ const NavBar = () => {
         <Link href="/" className="text-gray-700 hover:text-gray-900">Home</Link>
         <Link href="/team" className="text-gray-700 hover:text-gray-900">Team</Link>
         <Link href="/events" className="text-gray-700 hover:text-gray-900">Events</Link>
-        <Link href="/contact" className="text-gray-700 hover:text-gray-900">Contact</Link>
       </div>
 
       {/* profile dropdown or register button */}

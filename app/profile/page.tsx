@@ -59,7 +59,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Right: Badges */}
-              <div className="lg:col-span-4 space-y-6">
+              {/* <div className="lg:col-span-4 space-y-6">
                 <div className="flex items-center gap-2 border-l-4 border-purple-600 pl-3 mb-2">
                   <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
                     My Badges
@@ -79,7 +79,7 @@ export default function ProfilePage() {
                     </div>
                   )}
                 </div>
-              </div>
+              </div> */}
             </div>
           </>
         )}
