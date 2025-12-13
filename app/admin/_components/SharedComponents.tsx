@@ -174,6 +174,7 @@ export function EventModal({
         onChange={(v: string) => setForm({ ...form, event_time: v })}
       />
 
+      {/* Paid event toggle */}
       <div className="mb-3">
         <label className="text-sm flex items-center gap-2">
           <input
@@ -205,6 +206,7 @@ export function EventModal({
         }
       />
 
+      {/* Team event toggle */}
       <div className="mb-3">
         <label className="text-sm flex items-center gap-2">
           <input
@@ -233,12 +235,24 @@ export function EventModal({
         onChange={(v: string) => setForm({ ...form, category: v })}
       />
 
-      <FormInput
-        label="Status"
-        value={form.status}
-        onChange={(v: string) => setForm({ ...form, status: v })}
-      />
+      {/* ✅ STATUS DROPDOWN ADDED (matches your UI style) */}
+      <div className="mb-3">
+        <label className="text-sm font-medium block mb-1">Status</label>
+        <select
+          className="w-full border p-2 rounded"
+          value={form.status}
+          onChange={(e) =>
+            setForm({ ...form, status: e.target.value })
+          }
+        >
+          <option value="">Select status</option>
+          <option value="upcoming">upcoming</option>
+          <option value="ongoing">ongoing</option>
+          <option value="past">past</option>
+        </select>
+      </div>
 
+      {/* PARTNER SELECT */}
       <div className="mb-3">
         <label className="text-sm font-medium block mb-1">Partner</label>
         <select

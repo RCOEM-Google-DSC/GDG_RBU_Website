@@ -36,7 +36,7 @@ const ProfileDropdown = () => {
         const { data: sessionData } = await supabase.auth.getSession();
         setUserEmail(sessionData.session?.user?.email ?? null);
 
-        // 2️⃣ Fetch users table (your actual stored profile)
+      
         const { data: profileData } = await supabase
           .from("users")
           .select("name, image_url, role")
