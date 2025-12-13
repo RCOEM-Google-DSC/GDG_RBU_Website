@@ -7,12 +7,12 @@ export function GridBackground() {
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden">
       <GridPattern
-        width={20}
-        height={20}
-        x={-1}
-        y={-1}
+        width={40}
+        height={40}
+        x={1}
+        y={1}
         className={cn(
-          "[mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)]"
+          "mask-[linear-gradient(to_bottom_right,white,transparent,transparent)]"
         )}
       />
     </div>

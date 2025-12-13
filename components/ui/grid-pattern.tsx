@@ -57,10 +57,10 @@ export function GridPattern({
             <rect
               strokeWidth="0"
               key={`${x}-${y}`}
-              width={width - 1}
-              height={height - 1}
-              x={x * width + 1}
-              y={y * height + 1}
+              width={width * 3}
+              height={height * 3}
+              x={x * width + width * 0.5}
+              y={y * height + height * 0.}
             />
           ))}
         </svg>

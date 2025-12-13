@@ -3,13 +3,14 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "./Components/Navigation/NavBar";
 import DevNavBar from "./Components/Navigation/DevNavBar";
+import { GridBackground } from "./Components/Reusables/GridBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const productSans= Geist({
+const productSans = Geist({
   variable: "--font-product-sans",
   subsets: ["latin"],
 });
@@ -37,6 +38,9 @@ export default function RootLayout({
         {/* <DevNavBar/> */}
         <div className="sticky top-0 z-50">
           <NavBar />
+        </div>
+        <div className="  w-full pointer-events-none z-0">
+          <GridBackground />
         </div>
         <main className="relative">
           {children}
