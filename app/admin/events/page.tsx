@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
 import { Event, Partner } from "@/lib/types";
-import GridBackground from "@/app/Components/Reusables/grid";
-import { Header, Pagination, EventModal } from "../_components/SharedComponents";
-
-const PAGE_SIZE = 6;
+import PastEvents from "@/app/Components/Admin/PastEvents";
+import UpcomingEventAdmin from "@/app/Components/Admin/UpcomingEventAdmin";
+import { pastEvents, upcomingEvents, events } from "@/db/mockdata";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRBAC } from "@/hooks/useRBAC";
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<Event[]>([]);
+  const { canManageEvents } = useRBAC();
+  const [dbEvents, setDbEvents] = useState<Event[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [open, setOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
@@ -42,7 +44,7 @@ export default function EventsPage() {
     supabase
       .from("events")
       .select("*, partners(*)")
-      .then(({ data }) => setEvents(data || []));
+      .then(({ data }) => setDbEvents(data || []));
     supabase.from("partners").select("*").then(({ data }) => setPartners(data || []));
   }, []);
 
@@ -85,122 +87,73 @@ export default function EventsPage() {
     }
 
     const { data } = await supabase.from("events").select("*, partners(*)");
-    setEvents(data || []);
+    setDbEvents(data || []);
     setOpen(false);
     setEditingEvent(null);
     setForm(emptyForm);
     setImageFile(null);
   };
 
-  const filtered = events.filter((e) =>
-    `${e.title} ${e.venue}`.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  // Filter upcoming and past events from mock data
+  const upcomingEventsList = events.filter(e => e.status === "upcoming");
+  const pastEventsList = pastEvents;
 
   return (
-    <div className="relative">
-      <GridBackground>
-        <div className="max-w-6xl mx-auto">
-          <Header
-            title="Events"
-            action="Create Event"
-            onAction={() => {
-              setEditingEvent(null);
-              setForm(emptyForm);
-              setImageFile(null);
-              setOpen(true);
-            }}
-          />
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Events Management</h1>
 
-          <input
-            className="mb-4 w-full rounded p-2 text-sm border border-black"
-            placeholder="Search events..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+      <Tabs defaultValue="upcoming" className="w-full">
+        <TabsList className="mb-6">
+          <TabsTrigger value="upcoming">Upcoming Events</TabsTrigger>
+          <TabsTrigger value="past">Past Events</TabsTrigger>
+        </TabsList>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {paginated.map((e) => (
-              <div key={e.id} className="bg-white shadow rounded-lg overflow-hidden">
-                {e.image_url && (
-                  <img src={e.image_url} className="h-40 w-full object-cover" alt={e.title} />
-                )}
-                <div className="p-4">
-                  <h3 className="font-semibold">{e.title}</h3>
+        <TabsContent value="upcoming" className="space-y-6">
+          {upcomingEventsList.length > 0 ? (
+            upcomingEventsList.map((event: any) => (
+              <UpcomingEventAdmin
+                key={event.id}
+                id={event.id}
+                title={event.title}
+                description={event.description}
+                image_url={event.image_url}
+                date={new Date(event.event_time).toLocaleDateString("en-US", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
+                time={new Date(event.event_time).toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+                venue={event.location || "TBD"}
+                registered_count={event.registered_count}
+                capacity={event.capacity}
+              />
+            ))
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              No upcoming events
+            </div>
+          )}
+        </TabsContent>
 
-                  {e.partners?.logo_url && (
-                    <img src={e.partners.logo_url} className="h-8 mt-2" alt="Partner logo" />
-                  )}
-
-                  <p className="text-sm mt-1">{e.venue}</p>
-                  <button
-                    className="mt-2 px-4 py-1 text-sm text-white rounded border-2 border-black bg-black hover:bg-gray-800"
-                    onClick={() => {
-                      setEditingEvent(e);
-                      setForm({
-                        title: e.title || "",
-                        description: e.description || "",
-                        venue: e.venue || "",
-                        image_url: e.image_url || "",
-                        date: e.date || "",
-                        time: e.time || "",
-                        event_time: e.event_time || "",
-                        is_paid: !!e.is_paid,
-                        fee:
-                          typeof e.fee === "number" && !isNaN(e.fee)
-                            ? String(e.fee)
-                            : "",
-                        max_participants:
-                          typeof e.max_participants === "number" &&
-                            !isNaN(e.max_participants)
-                            ? String(e.max_participants)
-                            : "",
-                        is_team_event: !!e.is_team_event,
-                        max_team_size:
-                          typeof e.max_team_size === "number" &&
-                            !isNaN(e.max_team_size)
-                            ? String(e.max_team_size)
-                            : "",
-                        category: e.category || "",
-                        status: e.status || "",
-                        partner_id: e.partners?.id || e.partner_id || "",
-                      });
-                      setImageFile(null);
-                      setOpen(true);
-                    }}
-                  >
-                    Edit
-                  </button>
-                </div>
-              </div>
+        <TabsContent value="past">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {pastEventsList.map((event: any) => (
+              <PastEvents
+                key={event.id}
+                id={event.id}
+                title={event.title}
+                description={event.description}
+                image_url={event.image}
+                date={event.date}
+                venue=""
+              />
             ))}
           </div>
-
-          <Pagination
-            page={page}
-            totalPages={Math.ceil(filtered.length / PAGE_SIZE)}
-            setPage={setPage}
-          />
-
-          {open && (
-            <EventModal
-              editingEvent={editingEvent}
-              partners={partners}
-              form={form}
-              setForm={setForm}
-              imageFile={imageFile}
-              setImageFile={setImageFile}
-              onClose={() => {
-                setOpen(false);
-                setEditingEvent(null);
-                setImageFile(null);
-              }}
-              onSubmit={handleSubmit}
-            />
-          )}
-        </div>
-      </GridBackground>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

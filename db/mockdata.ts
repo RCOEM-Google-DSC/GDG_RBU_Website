@@ -5,7 +5,7 @@ export const users = [
     email: "rajesh.kumar@example.com",
     phone_number: "+91-9876543210",
     section: "A",
-    branch: "Computer Science",
+    branch: "CS",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Rajesh&backgroundColor=b6e3f4",
     profile_links: {
@@ -25,7 +25,7 @@ export const users = [
     email: "priya.sharma@example.com",
     phone_number: "+91-9876543211",
     section: "B",
-    branch: "Information Technology",
+    branch: "AIML",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=ffd6a5",
     profile_links: {
@@ -45,7 +45,7 @@ export const users = [
     email: "arjun.patel@example.com",
     phone_number: "+91-9876543212",
     section: "C",
-    branch: "Electronics Engineering",
+    branch: "ECS",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun&backgroundColor=caffbf",
     profile_links: {
@@ -65,7 +65,7 @@ export const users = [
     email: "sneha.desai@example.com",
     phone_number: "+91-9876543213",
     section: "A",
-    branch: "Computer Science",
+    branch: "CS",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Sneha&backgroundColor=fdffb6",
     profile_links: {
@@ -85,7 +85,7 @@ export const users = [
     email: "vikram.singh@example.com",
     phone_number: "+91-9876543214",
     section: "B",
-    branch: "Mechanical Engineering",
+    branch: "CS",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Vikram&backgroundColor=ffadad",
     profile_links: {
@@ -99,14 +99,13 @@ export const users = [
     created_at: "2024-05-12T11:25:00Z",
     updated_at: "2024-12-06T14:50:00Z",
   },
-  // Add to `users`
   {
     id: "user-006",
     name: "Neha Verma",
     email: "neha.verma@example.com",
     phone_number: "+91-9876543220",
     section: "C",
-    branch: "Civil Engineering",
+    branch: "CS",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Neha&backgroundColor=e0c3fc",
     profile_links: {
@@ -126,7 +125,7 @@ export const users = [
     email: "aman.joshi@example.com",
     phone_number: "+91-9876543221",
     section: "A",
-    branch: "Electrical Engineering",
+    branch: "AIML",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Aman&backgroundColor=fde2e4",
     profile_links: {
@@ -146,7 +145,7 @@ export const users = [
     email: "riya.gupta@example.com",
     phone_number: "+91-9876543222",
     section: "B",
-    branch: "Information Technology",
+    branch: "AIML",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Riya&backgroundColor=d1f7c4",
     profile_links: {
@@ -166,7 +165,7 @@ export const users = [
     email: "kunal.shah@example.com",
     phone_number: "+91-9876543223",
     section: "C",
-    branch: "Mechanical Engineering",
+    branch: "CS",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Kunal&backgroundColor=ffe5ec",
     profile_links: {
@@ -186,7 +185,7 @@ export const users = [
     email: "shruti.pandey@example.com",
     phone_number: "+91-9876543224",
     section: "A",
-    branch: "Computer Science",
+    branch: "CS",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Shruti&backgroundColor=faf4b7",
     profile_links: {
@@ -206,7 +205,7 @@ export const users = [
     email: "harsh.yadav@example.com",
     phone_number: "+91-9876543225",
     section: "B",
-    branch: "Electronics Engineering",
+    branch: "ECS",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Harsh&backgroundColor=cde7ff",
     profile_links: {
@@ -226,7 +225,7 @@ export const users = [
     email: "pooja.malhotra@example.com",
     phone_number: "+91-9876543226",
     section: "C",
-    branch: "Information Technology",
+    branch: "AIML",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Pooja&backgroundColor=e5d9f2",
     profile_links: {
@@ -246,7 +245,7 @@ export const users = [
     email: "tanmay.kulkarni@example.com",
     phone_number: "+91-9876543227",
     section: "A",
-    branch: "Computer Science",
+    branch: "CS",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Tanmay&backgroundColor=d0f4de",
     profile_links: {
@@ -266,7 +265,7 @@ export const users = [
     email: "ishaan.roy@example.com",
     phone_number: "+91-9876543228",
     section: "B",
-    branch: "Data Science",
+    branch: "AIDS",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Ishaan&backgroundColor=ffeedd",
     profile_links: {
@@ -286,7 +285,7 @@ export const users = [
     email: "simran.kaur@example.com",
     phone_number: "+91-9876543229",
     section: "C",
-    branch: "Computer Science",
+    branch: "CS",
     image_url:
       "https://api.dicebear.com/7.x/avataaars/svg?seed=Simran&backgroundColor=fdebd3",
     profile_links: {
@@ -301,6 +300,7 @@ export const users = [
     updated_at: "2024-12-10T09:00:00Z",
   },
 ];
+
 export const events = [
   {
     id: "event-001",
@@ -395,7 +395,7 @@ export const events = [
     location: "Lab 5, IT Block",
     capacity: 60,
     registered_count: 45,
-    status: "upcoming",
+    status: "completed",
     created_at: "2024-12-01T09:00:00Z",
   },
   // Add to `events`
@@ -476,7 +476,7 @@ export const events = [
     location: "Innovation Center",
     capacity: 100,
     registered_count: 68,
-    status: "upcoming",
+    status: "completed",
     created_at: "2024-11-20T12:00:00Z",
   },
   {
@@ -492,7 +492,7 @@ export const events = [
     location: "XR Studio",
     capacity: 50,
     registered_count: 37,
-    status: "upcoming",
+    status: "completed",
     created_at: "2024-11-28T11:00:00Z",
   },
   {
@@ -508,7 +508,7 @@ export const events = [
     location: "Convention Hall",
     capacity: 400,
     registered_count: 265,
-    status: "upcoming",
+    status: "completed",
     created_at: "2024-12-02T10:30:00Z",
   },
   {
@@ -524,7 +524,7 @@ export const events = [
     location: "Lab 2, Analytics Block",
     capacity: 70,
     registered_count: 49,
-    status: "upcoming",
+    status: "completed",
     created_at: "2024-12-05T09:45:00Z",
   },
   {
@@ -540,7 +540,7 @@ export const events = [
     location: "Android Lab",
     capacity: 60,
     registered_count: 38,
-    status: "upcoming",
+    status: "completed",
     created_at: "2024-12-07T12:15:00Z",
   },
   {

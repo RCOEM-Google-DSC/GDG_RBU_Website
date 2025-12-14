@@ -27,11 +27,6 @@ const Buttons = [
     icon: Users2,
   },
   {
-    title: "Registrations",
-    url: "/admin/registrations",
-    icon: ClipboardList,
-  },
-  {
     title: "Partners",
     url: "/admin/partners",
     icon: Handshake,

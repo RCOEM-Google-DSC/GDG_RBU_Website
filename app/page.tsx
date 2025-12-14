@@ -1,5 +1,4 @@
 "use client"
-import { useEffect, useRef } from "react"
 import UpcomingEvent from "./Components/Common/UpcomingEvent";
 import { upcomingEvents } from "@/db/mockdata";
 import EventTicket from "./Components/Common/UpcomingEvent";

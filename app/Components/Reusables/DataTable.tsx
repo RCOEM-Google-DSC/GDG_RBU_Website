@@ -7,6 +7,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
@@ -20,7 +26,7 @@ import {
 import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, ArrowUp, ArrowDown, Filter, LayoutGrid, TableIcon } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, Filter, LayoutGrid, TableIcon, ChevronDown } from "lucide-react";
 
 import {
   Table,
@@ -37,6 +43,7 @@ export interface FilterOption {
   label: string;        // Display label for the filter
   options: { value: string; label: string }[]; // Available filter options
   placeholder?: string; // Placeholder text
+  multiSelect?: boolean; // Allow multiple selections
 }
 
 // View mode type
@@ -247,11 +254,55 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  // Track selected filter values for each filter
+  // Track selected filter values for each filter (single select)
   const [filterValues, setFilterValues] = useState<Record<string, string>>({});
+  // Track selected filter values for multi-select filters
+  const [multiFilterValues, setMultiFilterValues] = useState<Record<string, string[]>>({});
+
+  // Handle single-select filter change
+  const handleFilterChange = (filterId: string, value: string) => {
+    setFilterValues(prev => ({ ...prev, [filterId]: value }));
+
+    if (value === "all" || value === "") {
+      setColumnFilters(prev => prev.filter(f => f.id !== filterId));
+    } else {
+      setColumnFilters(prev => {
+        const existing = prev.find(f => f.id === filterId);
+        if (existing) {
+          return prev.map(f => f.id === filterId ? { ...f, value } : f);
+        }
+        return [...prev, { id: filterId, value }];
+      });
+    }
+  };
+
+  // Handle multi-select filter toggle
+  const handleMultiFilterToggle = (filterId: string, value: string) => {
+    setMultiFilterValues(prev => {
+      const current = prev[filterId] || [];
+      const updated = current.includes(value)
+        ? current.filter(v => v !== value)
+        : [...current, value];
+      return { ...prev, [filterId]: updated };
+    });
+  };
+
+  // Apply multi-select filters to data
+  const filteredData = useMemo(() => {
+    let result = data;
+    Object.entries(multiFilterValues).forEach(([filterId, values]) => {
+      if (values.length > 0) {
+        result = result.filter((row: any) => {
+          const cellValue = row[filterId];
+          return values.includes(cellValue);
+        });
+      }
+    });
+    return result;
+  }, [data, multiFilterValues]);
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     state: {
       globalFilter,
@@ -269,34 +320,13 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  // Handle filter change
-  const handleFilterChange = (filterId: string, value: string) => {
-    setFilterValues(prev => ({ ...prev, [filterId]: value }));
-
-    if (value === "all" || value === "") {
-      // Remove filter
-      setColumnFilters(prev => prev.filter(f => f.id !== filterId));
-    } else {
-      // Set or update filter
-      setColumnFilters(prev => {
-        const existing = prev.find(f => f.id === filterId);
-        if (existing) {
-          return prev.map(f => f.id === filterId ? { ...f, value } : f);
-        }
-        return [...prev, { id: filterId, value }];
-      });
-    }
-  };
-
   const hasFilters = filters && filters.length > 0;
 
   return (
     <div>
       {/* Search and controls */}
       <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <div className="flex items-center gap-2 flex-1">
-          {/* Filter icon */}
-
+        <div className="flex items-center gap-2 flex-1 flex-wrap">
           <div className="max-w-sm">
             <Input
               placeholder="Search..."
@@ -305,18 +335,15 @@ export function DataTable<TData, TValue>({
               className="w-full"
             />
           </div>
-          {/* Filter selects */}
-          {hasFilters && showFilters && filters.map((filter) => (
-
+          {/* Filter selects - single select */}
+          {hasFilters && showFilters && filters.filter(f => !f.multiSelect).map((filter) => (
             <Select
               key={filter.id}
               value={filterValues[filter.id] || "all"}
               onValueChange={(val) => handleFilterChange(filter.id, val)}
             >
               <SelectTrigger className="h-9 cursor-pointer w-auto rounded-md border border-input bg-background px-2 text-sm">
-                {hasFilters && showFilters && (
-                  <Filter className="h-4 w-4 mx-2 text-muted-foreground" />
-                )}
+                <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
                 <SelectValue placeholder={filter.placeholder || filter.label} />
               </SelectTrigger>
               <SelectContent>
@@ -329,6 +356,53 @@ export function DataTable<TData, TValue>({
               </SelectContent>
             </Select>
           ))}
+          {/* Multi-select filters */}
+          {hasFilters && showFilters && filters.filter(f => f.multiSelect).map((filter) => {
+            const selectedValues = multiFilterValues[filter.id] || [];
+            const selectedCount = selectedValues.length;
+            return (
+              <Popover key={filter.id}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-9 border-input"
+                  >
+                    <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
+                    {filter.label}
+                    {selectedCount > 0 && (
+                      <span className="ml-1 rounded-sm bg-primary px-1 text-xs text-primary-foreground">
+                        {selectedCount}
+                      </span>
+                    )}
+                    <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0" align="start">
+                  <div className="max-h-[300px] overflow-auto p-3 space-y-2">
+                    {filter.options.map((opt) => {
+                      const isSelected = selectedValues.includes(opt.value);
+                      return (
+                        <div
+                          key={opt.value}
+                          className="flex items-center space-x-2 cursor-pointer hover:bg-muted rounded-sm p-1.5"
+                          onClick={() => handleMultiFilterToggle(filter.id, opt.value)}
+                        >
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() => handleMultiFilterToggle(filter.id, opt.value)}
+                          />
+                          <label className="text-sm cursor-pointer flex-1">
+                            {opt.label}
+                          </label>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            );
+          })}
         </div>
         <div className="flex items-center gap-2 ">
           <label className="text-sm text-muted-foreground">Rows</label>
