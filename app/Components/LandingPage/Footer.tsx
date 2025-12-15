@@ -28,7 +28,7 @@ const Links = {
 
 export default function Footer() {
     return (
-        <footer className='bg-black text-white px-20 py-8 flex justify-between'>
+        <footer className='bg-black text-white px-20 py-8 flex justify-between w-full'>
             {/* left: logo */}
             <div>
                 <div className='flex flex-col items-center justify-center gap-3'>

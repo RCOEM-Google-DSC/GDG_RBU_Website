@@ -232,7 +232,7 @@ export default function UsersPage() {
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         title="Are you absolutely sure?"
-        description="This action cannot be undone. This will permanently delete the user account and remove their data from our servers."
+        description="This action cannot be undone. This will permanently delete the user account and remove their data from the server."
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
         confirmText="Delete"

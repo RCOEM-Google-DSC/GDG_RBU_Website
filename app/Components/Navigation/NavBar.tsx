@@ -26,16 +26,16 @@ const NavBar = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       // Show navbar when scrolling up or at the top
       if (currentScrollY < lastScrollY || currentScrollY < 10) {
         setIsVisible(true);
-      } 
+      }
       // Hide navbar when scrolling down and past a threshold
       else if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsVisible(false);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
 
@@ -56,6 +56,7 @@ const NavBar = () => {
         <Link href="/" className="text-gray-700 hover:text-gray-900">Home</Link>
         <Link href="/team" className="text-gray-700 hover:text-gray-900">Team</Link>
         <Link href="/events" className="text-gray-700 hover:text-gray-900">Events</Link>
+        <Link href="/links" className="text-gray-700 hover:text-gray-900">Links</Link>
       </div>
 
       {/* profile dropdown or register button */}
