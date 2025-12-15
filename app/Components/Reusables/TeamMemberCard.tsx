@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Github, Linkedin } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
+import Link from "next/link";
 
 
 
@@ -142,23 +143,23 @@ const handleCardClick = () => {
         style={{ left: (width - notchWidth) / 2 }}
         onClick={(e) => e.stopPropagation()}
       >
-        <a
+        <Link
           href={githubUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-black hover:scale-110 transition-transform bg-white/80 p-2 rounded-full border"
         >
           <Github size={20} strokeWidth={2.5} />
-        </a>
+        </Link>
 
-        <a
+        <Link
           href={linkedinUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-black hover:scale-110 transition-transform bg-white/80 p-2 rounded-full border hover:bg-[#0077b5] hover:text-white"
         >
           <Linkedin size={20} strokeWidth={2.5} />
-        </a>
+        </Link>
       </div>
 
     

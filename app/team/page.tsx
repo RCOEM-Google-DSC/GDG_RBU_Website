@@ -5,7 +5,9 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "@/supabase/supabase";
 import TeamMemberCard from "../Components/Reusables/TeamMemberCard";
 
-
+import { teamImg } from "@/db/mockdata";
+import Image from "next/image";
+import { Button } from "react-day-picker";
 
 type TeamRow = {
   id: string;
@@ -84,7 +86,7 @@ export default function TeamPage() {
     load();
   }, []);
 
- 
+
 
   const groupedDomains = team.reduce<Record<string, Member[]>>((acc, m) => {
     if (!acc[m.domain]) acc[m.domain] = [];
@@ -92,7 +94,7 @@ export default function TeamPage() {
     return acc;
   }, {});
 
-  
+
 
   const domains = DOMAIN_ORDER.reduce<Record<string, Member[]>>(
     (acc, domain) => {
@@ -108,8 +110,9 @@ export default function TeamPage() {
 
   return (
     <div className="min-h-screen bg-[#FDFCF8] text-black pt-8 px-4 lg:px-8 pb-8">
-   
-      <section className="pt-24 [min-h-screen]-8 pb-20 border-b-2 border-black">
+
+      {/* hero: group photo */}
+      <section className="pt-5 [min-h-screen]-8 pb-20 border-b-2 border-black">
         <div className="w-full flex items-start justify-between">
           <div>
             <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[0.95] lg:mt-10">
@@ -118,6 +121,7 @@ export default function TeamPage() {
               team.
             </h1>
 
+            {/* domain jump buttons */}
             <div className="mt-12 flex flex-wrap gap-3 lg:mt-30">
               {Object.keys(domains).map((domain) => (
                 <button
@@ -140,10 +144,12 @@ export default function TeamPage() {
           </div>
 
           <div className="hidden lg:block">
-            <div className="w-[720px] h-[360px] border-2 border-black rounded-2xl overflow-hidden mr-4">
-              <img
-                src="https://res.cloudinary.com/dlvkywzol/image/upload/v1765395573/WhatsApp_Image_2025-12-11_at_01.06.41_ee2575d7_xtjiwx.jpg"
+            <div className="w-[720px] h-[480px] border-2 border-black rounded-2xl overflow-hidden mr-4">
+              <Image
+                src={teamImg}
                 alt="Our Team"
+                width={720}
+                height={480}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -151,7 +157,7 @@ export default function TeamPage() {
         </div>
       </section>
 
-      
+
       <div className="border-t-2 border-black">
         {Object.entries(domains).map(([domain, members]) => (
           <section
@@ -159,23 +165,26 @@ export default function TeamPage() {
             id={`domain-${domain}`}
             className="flex relative min-h-screen border-b border-black"
           >
-           
+            {/* left domain name */}
             <div className="w-[35%] xl:w-[30%] p-8 md:p-12">
               <div className="sticky top-24">
+                {/* top icon */}
                 <div className="w-16 h-16 border-2 border-black rounded-full flex items-center justify-center relative mb-12">
+
                   <div className="absolute w-full h-full rounded-full border border-black top-1 left-1" />
+
                   <div className="w-8 h-8 border border-black rounded-full animate-[spin_10s_linear_infinite]" />
                 </div>
 
-                <h1 className="text-6xl md:text-7xl font-black tracking-tighter uppercase leading-[0.9]">
+                <h1 className="text-5xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]">
                   {domain}
                 </h1>
               </div>
             </div>
 
-            <div className="w-[1px] bg-black mt-16 mb-0" />
+            <div className="ml-10 w-px bg-black mt-16 mb-0" />
 
-            
+
             <div className="flex-1 relative">
               <div
                 className="absolute inset-0 pointer-events-none opacity-[0.03]"

@@ -1,3 +1,5 @@
+export const teamImg= "https://res.cloudinary.com/dlvkywzol/image/upload/v1765395573/WhatsApp_Image_2025-12-11_at_01.06.41_ee2575d7_xtjiwx.jpg"
+
 export const users = [
   {
     id: "user-001",
@@ -300,7 +302,6 @@ export const users = [
     updated_at: "2024-12-10T09:00:00Z",
   },
 ];
-
 export const events = [
   {
     id: "event-001",

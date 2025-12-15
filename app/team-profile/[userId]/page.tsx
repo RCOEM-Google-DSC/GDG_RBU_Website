@@ -17,6 +17,7 @@ import {
 import { useParams } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
 import EditProfileModal from "@/app/Components/team/EditProfileModal";
+import Image from "next/image";
 
 /* ---------------- ILLUSTRATIONS ---------------- */
 
@@ -212,10 +213,13 @@ export default function TeamProfilePage() {
           {/* AVATAR */}
           <div className="md:col-span-5 relative flex flex-col items-center md:items-start">
             <div className="relative z-10 w-52 h-52 sm:w-60 sm:h-60 md:w-64 md:h-64">
-              <div className="w-full h-full rounded-[2rem] overflow-hidden border-2 border-slate-800 shadow-[6px_6px_0_rgba(30,41,59,0.2)] bg-white p-2">
-                <img
+              <div className="w-full h-full rounded-4xl overflow-hidden border-2 border-slate-800 shadow-[6px_6px_0_rgba(30,41,59,0.2)] bg-white p-2">
+                <Image
+                  height={400}
+                  width={400}
+                  alt={u.name}
                   src={u.image_url}
-                  className="w-full h-full object-cover rounded-[1.5rem]"
+                  className="w-full h-full object-cover rounded-3xl"
                 />
               </div>
             </div>
@@ -270,8 +274,8 @@ export default function TeamProfilePage() {
                   {authRole !== "user" && (
                     <button
                       onClick={() =>
-                        (window.location.href =
-                          authRole === "admin" ? "/admin" : "/member-dashboard")
+                      (window.location.href =
+                        authRole === "admin" ? "/admin" : "/member-dashboard")
                       }
                       className="flex items-center gap-2 px-6 py-3 bg-blue-100 border border-blue-300 rounded-xl"
                     >

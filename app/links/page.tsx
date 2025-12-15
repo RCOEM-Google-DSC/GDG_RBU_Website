@@ -6,7 +6,7 @@ import { LINKS } from "@/lib/links";
 import Footer from "../Components/LandingPage/Footer";
 export default function Home() {
     return (
-        <div className="flex flex-col items-center justify-between min-h-screen bg-background text-foreground">
+        <div className="flex flex-col items-center justify-between min-h-screen bg-background text-foreground ">
             {/* hero */}
             <section className="w-full max-w-lg text-center px-4 sm:px-6 md:px-8 lg:px-10 pt-16 pb-10">
                 <Image

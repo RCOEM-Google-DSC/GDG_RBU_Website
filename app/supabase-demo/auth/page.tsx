@@ -456,7 +456,7 @@ export default function AuthDemoPage() {
                                     <>
                                         <div className="flex items-center justify-between py-2 border-b border-white/5">
                                             <span className="text-gray-500 text-sm">User ID</span>
-                                            <span className="text-xs font-mono text-gray-400 truncate max-w-[150px]">
+                                            <span className="text-xs  text-gray-400 truncate max-w-[150px]">
                                                 {user?.id}
                                             </span>
                                         </div>
@@ -485,7 +485,7 @@ export default function AuthDemoPage() {
                                     Access Token
                                 </h3>
                                 <div className="bg-[#151515] rounded-lg p-3 overflow-hidden">
-                                    <code className="text-xs text-gray-400 break-all font-mono">
+                                    <code className="text-xs text-gray-400 break-all ">
                                         {session.access_token?.substring(0, 50)}...
                                     </code>
                                 </div>

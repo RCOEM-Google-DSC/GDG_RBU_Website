@@ -4,7 +4,7 @@ import PastEvent from '../Components/Common/PastEvent'
 import { pastEvents, upcomingEvents } from '@/db/mockdata'
 const page = () => {
     return (
-        <div className="flex flex-col ">
+        <div className="flex flex-col bg-[#FDFCF8] ">
             {/* upcoming event */}
             <div className='p-10'>
                 <h1 className='text-4xl ml-40'>Upcoming Event</h1>

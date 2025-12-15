@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { ArrowUpRight, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UpcomingEventCardProps } from '@/lib/types';
@@ -6,7 +7,7 @@ import { UpcomingEventCardProps } from '@/lib/types';
 const UpcomingEvent = ({ id, title, date, time, image, tags, tagColor, description }: UpcomingEventCardProps) => {
   return (
     // Main Container
-    <div className=" bg-white flex items-center justify-center p-4 md:p-8 font-sans">
+    <div className="  flex items-center justify-center p-4 md:p-8 font-sans">
 
       {/* Card Wrapper - Added gap-6 and removed overlap logic */}
       <div className="flex flex-col md:flex-row w-full max-w-6xl h-auto md:h-[500px] gap-6">
@@ -44,9 +45,11 @@ const UpcomingEvent = ({ id, title, date, time, image, tags, tagColor, descripti
                 </p>
               </div>
 
-              <Button className="w-14 h-14 bg-[#FFC20E] rounded-full flex items-center justify-center hover:bg-yellow-400 transition-colors">
-                <ArrowUpRight className="text-black w-6 h-6" strokeWidth={2.5} />
-              </Button>
+              <Link href={`/events/${id}`} aria-label={`View details for ${title}`}>
+                <Button className="w-14 h-14 bg-[#FFC20E] rounded-full flex items-center justify-center hover:bg-yellow-400 transition-colors">
+                  <ArrowUpRight className="text-black w-6 h-6" strokeWidth={2.5} />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

@@ -1,9 +1,11 @@
 import React from 'react';
+import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { PastEventCardProps } from '@/lib';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
-const PastEvent = ({id,title,date,image,tags,tagColor,description}: PastEventCardProps) => {
+const PastEvent = ({ id, title, date, image, tags, tagColor, description }: PastEventCardProps) => {
   return (
     <div className="w-full flex items-center justify-center p-4">
       {/* Container for the card. 
@@ -11,7 +13,7 @@ const PastEvent = ({id,title,date,image,tags,tagColor,description}: PastEventCar
         Width is set to max-w-sm (approx 384px) to match the mobile card feel.
       */}
       <div className="relative w-full max-w-[340px] drop-shadow-sm filter">
-        
+
         {/* Background SVG Layer 
           Added vectorEffect="non-scaling-stroke" to the path and adjusted viewBox to prevent clipping.
           This ensures the border stays 1.5px thick evenly, even if the container stretches.
@@ -67,7 +69,7 @@ const PastEvent = ({id,title,date,image,tags,tagColor,description}: PastEventCar
           Increased padding to pt-10 and pb-12 to add more breathing room top and bottom.
         */}
         <div className="relative z-10 px-6 pt-10 pb-12 h-full flex flex-col">
-          
+
           {/* Header Badge - Replaced with custom Shadcn-style Badge */}
           <div className="self-start">
             {tags?.map((tag, index) => (
@@ -86,32 +88,34 @@ const PastEvent = ({id,title,date,image,tags,tagColor,description}: PastEventCar
             <h2 className="text-2xl font-bold text-black tracking-tight">
               {title}
             </h2>
-            <button 
-              className="bg-[#fbbf24] hover:bg-[#f59e0b] transition-colors rounded-full p-2 flex items-center justify-center shrink-0"
-              aria-label={`Go to ${title}`}
-            >
-              <ArrowRight className="w-5 h-5 text-black stroke-[2.5]" />
-            </button>
+            <Link href={`/events/${id}`} aria-label={`View details for ${title}`}>
+              <Button
+                className="bg-[#fbbf24] hover:bg-[#f59e0b] transition-colors rounded-full p-2 flex items-center justify-center shrink-0"
+                aria-label={`Go to ${title}`}
+              >
+                <ArrowRight className="w-5 h-5 text-black stroke-[2.5]" />
+              </Button>
+            </Link>
           </div>
 
           {/* Main Image */}
           <div className="w-full aspect-4/3 rounded-2xl overflow-hidden border border-gray-100 shadow-inner bg-gray-900 relative group">
-             {/* Using a placeholder image that closely mimics the vibrant/neon spider-verse aesthetic.
+            {/* Using a placeholder image that closely mimics the vibrant/neon spider-verse aesthetic.
                In a real app, this would be the specific asset.
              */}
-             <img 
-               src={image} 
-               alt={`${title} Poster`} 
-               loading="lazy"
-               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90"
-             />
-             {/* Overlay gradient to make it look more 'poster-like' and vibrant if image is dull */}
-             <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent mix-blend-overlay"></div>
-             
-             {/* Text overlay for the 'SPIDERCRAFT' logo effect in the image */}
-             <div className="absolute bottom-2 left-0 right-0 text-center">
-                {/* This mimics the logo text in the poster if the image doesn't have it */}
-             </div>
+            <img
+              src={image}
+              alt={`${title} Poster`}
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90"
+            />
+            {/* Overlay gradient to make it look more 'poster-like' and vibrant if image is dull */}
+            <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent mix-blend-overlay"></div>
+
+            {/* Text overlay for the 'SPIDERCRAFT' logo effect in the image */}
+            <div className="absolute bottom-2 left-0 right-0 text-center">
+              {/* This mimics the logo text in the poster if the image doesn't have it */}
+            </div>
           </div>
 
           {/* Footer Text */}
