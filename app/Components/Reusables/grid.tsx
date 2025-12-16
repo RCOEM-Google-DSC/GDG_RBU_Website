@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 export default function GridBackground({
   children,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   // IMPORTANT: no more `fixed` – the grid is now confined
   // to whatever container wraps this component.
@@ -28,7 +28,7 @@ export default function GridBackground({
       />
 
       {/* Content sits above the grid */}
-      <div className="relative z-10 w-full min-h-full">{children}</div>
+      {children && <div className="relative z-10 w-full min-h-full">{children}</div>}
     </div>
   );
 }

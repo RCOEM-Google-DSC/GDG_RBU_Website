@@ -18,7 +18,34 @@ import {
   Mail,
 } from "lucide-react";
 
-export default function EditProfileModal({ onClose, profile, userId }) {
+interface EditProfileModalProps {
+  onClose: () => void;
+  profile: {
+    users?: {
+      image_url?: string;
+      branch?: string;
+      section?: string;
+      phone_number?: string;
+      profile_links?: {
+        github?: string;
+        linkedin?: string;
+      };
+      name?: string;
+      email?: string;
+    };
+    domain?: string;
+    bio?: string;
+    thought?: string;
+    leetcode?: string;
+    twitter?: string;
+    instagram?: string;
+    club_email?: string;
+    cv_url?: string;
+  };
+  userId: string;
+}
+
+export default function EditProfileModal({ onClose, profile, userId }: EditProfileModalProps) {
   const u = profile?.users ?? {};
 
   const DOMAINS = ["web dev", "design", "cp", "mac", "marketing", "management", "social"];
@@ -26,7 +53,7 @@ export default function EditProfileModal({ onClose, profile, userId }) {
   const [imagePreview, setImagePreview] = useState(u.image_url || "");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     image_url: u.image_url || "",
@@ -45,11 +72,11 @@ export default function EditProfileModal({ onClose, profile, userId }) {
     cv_url: profile.cv_url || "",
   });
 
-  const updateForm = (key, value) =>
+  const updateForm = (key: string, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
   /* -------- IMAGE UPLOAD -------- */
-  const handleImageUpload = async (event) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -70,7 +97,7 @@ export default function EditProfileModal({ onClose, profile, userId }) {
 
       await supabase.from("users").update({ image_url: data.url }).eq("id", userId);
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setUploading(false);
     }
@@ -111,7 +138,7 @@ export default function EditProfileModal({ onClose, profile, userId }) {
       onClose();
       window.location.reload();
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setSaving(false);
     }
@@ -305,7 +332,15 @@ export default function EditProfileModal({ onClose, profile, userId }) {
 }
 
 /* FIELD COMPONENT */
-function Field({ label, icon, value, onChange, textarea }) {
+interface FieldProps {
+  label: string;
+  icon: React.ReactNode;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  textarea?: boolean;
+}
+
+function Field({ label, icon, value, onChange, textarea }: FieldProps) {
   return (
     <div className="space-y-1">
       <label className="text-sm font-semibold text-slate-600">{label}</label>

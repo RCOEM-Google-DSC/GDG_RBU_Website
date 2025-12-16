@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Trash2, AlertTriangle } from "lucide-react";
 import { supabase } from "@/supabase/supabase";
-import { SupabaseUserRow } from "@/lib/types";
 import DataTable from "@/app/Components/Reusables/DataTable";
 import ConfirmDialog from "@/app/Components/Reusables/ConfirmDialog";
 import {
@@ -17,9 +16,17 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useRBAC } from "@/hooks/useRBAC";
 
+type UserListItem = {
+  id: string;
+  name: string | null;
+  email: string | null;
+  role: string;
+  created_at: string;
+};
+
 export default function UsersPage() {
   const { canManageUsers } = useRBAC();
-  const [users, setUsers] = useState<SupabaseUserRow[]>([]);
+  const [users, setUsers] = useState<UserListItem[]>([]);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [page, setPage] = useState(1);

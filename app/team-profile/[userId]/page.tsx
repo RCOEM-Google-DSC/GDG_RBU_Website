@@ -21,7 +21,7 @@ import Image from "next/image";
 
 /* ---------------- ILLUSTRATIONS ---------------- */
 
-const IllustrationCoder = ({ className }) => (
+const IllustrationCoder = ({ className }: { className?: string }) => (
   <svg
     viewBox="0 0 200 150"
     className={className}
@@ -41,7 +41,7 @@ const IllustrationCoder = ({ className }) => (
   </svg>
 );
 
-const IllustrationPhone = ({ className }) => (
+const IllustrationPhone = ({ className }: { className?: string }) => (
   <svg
     viewBox="0 0 100 160"
     className={className}
@@ -60,7 +60,7 @@ const IllustrationPhone = ({ className }) => (
   </svg>
 );
 
-const IllustrationCoffee = ({ className }) => (
+const IllustrationCoffee = ({ className }: { className?: string }) => (
   <svg
     viewBox="0 0 80 80"
     className={className}
@@ -76,7 +76,7 @@ const IllustrationCoffee = ({ className }) => (
   </svg>
 );
 
-const IllustrationCube = ({ className }) => (
+const IllustrationCube = ({ className }: { className?: string }) => (
   <svg
     viewBox="0 0 24 24"
     className={className}
@@ -90,7 +90,7 @@ const IllustrationCube = ({ className }) => (
   </svg>
 );
 
-const IllustrationSwirl = ({ className }) => (
+const IllustrationSwirl = ({ className }: { className?: string }) => (
   <svg
     viewBox="0 0 100 100"
     className={className}
@@ -102,7 +102,7 @@ const IllustrationSwirl = ({ className }) => (
   </svg>
 );
 
-const SocialLink = ({ icon: Icon, href }) =>
+const SocialLink = ({ icon: Icon, href }: { icon: React.ElementType; href?: string | null }) =>
   !href ? null : (
     <a
       href={href}
@@ -121,9 +121,9 @@ const SocialLink = ({ icon: Icon, href }) =>
 export default function TeamProfilePage() {
   const { userId } = useParams();
 
-  const [profile, setProfile] = useState(null);
-  const [authUserId, setAuthUserId] = useState(null);
-  const [authRole, setAuthRole] = useState(null);
+  const [profile, setProfile] = useState<any>(null);
+  const [authUserId, setAuthUserId] = useState<string | null>(null);
+  const [authRole, setAuthRole] = useState<string | null>(null);
   const [showEdit, setShowEdit] = useState(false);
 
   /* LOAD AUTH USER */
@@ -366,7 +366,7 @@ export default function TeamProfilePage() {
       </div>
 
       {/* MODAL */}
-      {showEdit && (
+      {showEdit && authUserId && (
         <EditProfileModal
           onClose={() => setShowEdit(false)}
           profile={profile}

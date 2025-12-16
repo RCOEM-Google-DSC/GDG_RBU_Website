@@ -39,17 +39,29 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
     const eventImage = ('image' in event ? event.image : event.image_url) || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87';
 
     // Get event date
-    const eventDate = ('date' in event ? event.date : null) || (('event_time' in event && event.event_time) && new Date(event.event_time).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    }));
+    const eventDate: string | null = (() => {
+        if ('date' in event && typeof event.date === 'string' && event.date) return event.date;
+        if ('event_time' in event && event.event_time) {
+            return new Date(event.event_time).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        return null;
+    })();
 
     // Get event time
-    const eventTime = ('time' in event ? event.time : null) || (('event_time' in event && event.event_time) && new Date(event.event_time).toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit'
-    }));
+    const eventTime: string | null = (() => {
+        if ('time' in event && typeof event.time === 'string' && event.time) return event.time;
+        if ('event_time' in event && event.event_time) {
+            return new Date(event.event_time).toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        return null;
+    })();
 
     // Get location
     const eventLocation = ('location' in event ? event.location : null) || eventFromMainList?.location || 'TBA';
