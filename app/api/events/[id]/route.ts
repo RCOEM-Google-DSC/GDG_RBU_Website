@@ -3,10 +3,11 @@ import { getEvent, updateEvent } from '@/supabase/supabase';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const event = await getEvent(params.id);
+    const { id } = await params;
+    const event = await getEvent(id);
     return NextResponse.json({ event });
   } catch (error: any) {
     console.error('Error fetching event:', error);
@@ -19,12 +20,13 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     
-    const event = await updateEvent(params.id, body);
+    const event = await updateEvent(id, body);
     return NextResponse.json({ event });
   } catch (error: any) {
     console.error('Error updating event:', error);

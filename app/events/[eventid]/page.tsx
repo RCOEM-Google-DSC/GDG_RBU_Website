@@ -3,8 +3,7 @@ import { notFound } from 'next/navigation';
 import { events, pastEvents, upcomingEvents } from '@/db/mockdata';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, MapPin, Users, CheckCircle2, Image as ImageIcon, ArrowLeft, Trophy, Medal } from 'lucide-react';
-import Link from 'next/link';
+import { Clock, Users, Image as ImageIcon, Trophy } from 'lucide-react';
 
 interface EventDetailPageProps {
     params: Promise<{
