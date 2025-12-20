@@ -313,7 +313,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                                         alt="Event Gallery"
                                     />
-                                    <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
+                                    <div className="absolute inset-x-0 bottom-0 p-6 bg-linear-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
                                         <span className="text-white text-sm font-semibold">Main Event</span>
                                     </div>
                                 </div>

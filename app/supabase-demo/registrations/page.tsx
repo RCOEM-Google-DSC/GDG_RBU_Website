@@ -64,7 +64,7 @@ export default function RegistrationsDemoPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Register Form */}
                     <div className="bg-[#0F0F0F] rounded-2xl border border-white/10 p-6 relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500"></div>
+                        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-orange-500 via-red-500 to-pink-500"></div>
                         <h2 className="text-xl font-bold mb-2 flex items-center gap-2"><UserPlus size={20} className="text-orange-400" /> Register for Event</h2>
                         <p className="text-gray-500 text-sm mb-6">Tests RLS policy: user_id is auto-set to auth.uid()</p>
 

@@ -8,7 +8,7 @@ interface EventCardProps {
 
 export function EventCard({ event }: EventCardProps) {
   return (
-    <div className="group relative flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-neutral-200/70 dark:border-neutral-800/70 bg-gradient-to-br from-neutral-50 to-white dark:from-neutral-900/70 dark:to-neutral-950 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+    <div className="group relative flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-neutral-200/70 dark:border-neutral-800/70 bg-linear-to-br from-neutral-50 to-white dark:from-neutral-900/70 dark:to-neutral-950 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
       {/* Image section */}
       <div className="relative w-full sm:w-60 h-44 sm:h-auto shrink-0">
         <img
@@ -18,7 +18,7 @@ export function EventCard({ event }: EventCardProps) {
         />
 
         {/* Gradient overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-70 group-hover:opacity-80 transition-opacity" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent opacity-70 group-hover:opacity-80 transition-opacity" />
 
         {/* Status pill */}
         <span
@@ -71,7 +71,7 @@ export function EventCard({ event }: EventCardProps) {
       </div>
 
       {/* subtle accent bar on the left */}
-      <div className="hidden sm:block absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-blue-500 via-sky-400 to-purple-500" />
+      <div className="hidden sm:block absolute left-0 top-0 h-full w-1 bg-linear-to-b from-blue-500 via-sky-400 to-purple-500" />
     </div>
   );
 }

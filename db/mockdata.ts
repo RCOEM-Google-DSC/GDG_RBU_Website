@@ -1,4 +1,71 @@
-export const teamImg= "https://res.cloudinary.com/dlvkywzol/image/upload/v1765395573/WhatsApp_Image_2025-12-11_at_01.06.41_ee2575d7_xtjiwx.jpg"
+export const teamImg =
+  "https://res.cloudinary.com/dlvkywzol/image/upload/v1765395573/WhatsApp_Image_2025-12-11_at_01.06.41_ee2575d7_xtjiwx.jpg";
+
+export const domainLeads = [
+  {
+    id: "1",
+    name: "Rajesh Kumar",
+    email: "rajesh.kumar@example.com",
+    phone_number: "+91-9876543210",
+    section: "A",
+    branch: "CS",
+    domain: "web dev",
+    image_url:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=Rajesh&backgroundColor=b6e3f4",
+    profile_links: {
+      github: "https://github.com/rajeshkumar",
+      linkedin: "https://linkedin.com/in/rajeshkumar",
+      twitter: "https://twitter.com/rajeshkumar",
+    },
+    badges: ["AI Explorer", "Hackathon Hero", "Code Ninja"],
+    my_events: ["event-001", "event-002", "event-004"],
+    role: "Web Dev Lead",
+    created_at: "2024-01-15T10:30:00Z",
+    updated_at: "2024-12-10T08:45:00Z",
+  },
+  {
+    id: "2",
+    name: "Priya Sharma",
+    email: "priya.sharma@example.com",
+    phone_number: "+91-9876543211",
+    section: "B",
+    branch: "AIML",
+    domain: "cp",
+    image_url:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=ffd6a5",
+    profile_links: {
+      github: "https://github.com/priyasharma",
+      linkedin: "https://linkedin.com/in/priyasharma",
+      twitter: null,
+    },
+    badges: ["Community Lead", "Cloud Certified", "Mentor"],
+    my_events: ["event-001", "event-003", "event-005"],
+    role: "CP Lead",
+    created_at: "2024-02-20T14:20:00Z",
+    updated_at: "2024-12-09T16:30:00Z",
+  },
+  {
+    id: "3",
+    name: "Arjun Patel",
+    email: "arjun.patel@example.com",
+    phone_number: "+91-9876543212",
+    section: "C",
+    branch: "ECS",
+    domain: "design",
+    image_url:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun&backgroundColor=caffbf",
+    profile_links: {
+      github: "https://github.com/arjunpatel",
+      linkedin: "https://linkedin.com/in/arjunpatel",
+      twitter: "https://twitter.com/arjunpatel",
+    },
+    badges: ["AI Explorer", "Code Ninja"],
+    my_events: ["event-002", "event-004"],
+    role: "Design Lead",
+    created_at: "2024-03-10T09:15:00Z",
+    updated_at: "2024-12-08T11:20:00Z",
+  },
+];
 
 export const users = [
   {
@@ -1507,4 +1574,3 @@ export const upcomingEvents = [
     spotsLeft: 158,
   },
 ];
-

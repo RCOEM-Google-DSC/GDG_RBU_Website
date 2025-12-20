@@ -8,7 +8,7 @@ import Link from "next/link";
 
 
 
-interface TeamMemberCardProps {
+interface LeaderCardProps {
   id: string;
   name: string;
   role: string;
@@ -45,14 +45,14 @@ const createPath = (
 };
 
 
-function TeamMemberCard({
+function LeaderCard({
   id,
   name,
   role,
   imageUrl,
   githubUrl,
   linkedinUrl,
-}: TeamMemberCardProps) {
+}: LeaderCardProps) {
   const router = useRouter();
   const [authUserId, setAuthUserId] = useState<string | null>(null);
 
@@ -79,7 +79,7 @@ function TeamMemberCard({
   const height = 467;
   const cornerRadius = 24;
   const notchWidth = 200;
-  const notchHeight = 90;
+  const notchHeight = 110;
   const borderWidth = 8;
 
   const outerPath = createPath(
@@ -101,7 +101,7 @@ function TeamMemberCard({
     notchHeight
   );
 
-  const clipId = `clip-team-${id}`;
+  const clipId = `clip-leader-${id}`;
 
   return (
     <div
@@ -144,7 +144,7 @@ function TeamMemberCard({
 
         {/* Social icons - positioned in bottom left leg */}
         <div
-          className="absolute flex items-center justify-center gap-1 z-20"
+          className="absolute  flex items-center justify-center gap-1 z-20"
           style={{
             bottom: borderWidth + 15,
             left: (width - notchWidth) / 2 - 25,
@@ -171,22 +171,29 @@ function TeamMemberCard({
           </Link>
         </div>
 
-        {/* Name section only (no role) */}
+        {/* Role and Name section */}
         <div
-          className="absolute bottom-0 right-0 bg-white border-[3px] border-black rounded-2xl md:rounded-[20px] flex items-center justify-center overflow-hidden px-3 md:px-4 z-10"
+          className="absolute bottom-0 right-0 bg-white border-[3px] border-black rounded-2xl md:rounded-[20px] flex flex-col overflow-hidden z-10"
           style={{
             width: `${(notchWidth - borderWidth * 2) / width * 100}%`,
             height: `${(notchHeight - borderWidth * 2) / height * 100}%`,
             margin: `${borderWidth / width * 100}%`
           }}
         >
-          <span className="text-base md:text-lg font-black leading-tight text-center">
-            {name}
-          </span>
+          <div className="w-full h-[40%] flex items-center justify-center border-b-[3px] border-black bg-linear-to-br from-yellow-50 to-yellow-100">
+            <span className="text-[10px] md:text-[11px] tracking-wider font-extrabold uppercase px-1 text-center leading-none">
+              {role}
+            </span>
+          </div>
+          <div className="w-full h-[60%] flex items-center justify-center px-1">
+            <span className="text-sm md:text-[15px] font-black leading-4 text-center">
+              {name}
+            </span>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-export default TeamMemberCard;
+export default LeaderCard;

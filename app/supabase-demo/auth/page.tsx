@@ -365,7 +365,7 @@ export default function AuthDemoPage() {
                                     <button
                                         type="submit"
                                         disabled={isLoading}
-                                        className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold py-3 rounded-lg hover:from-green-500 hover:to-emerald-500 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                        className="w-full bg-linear-to-r from-green-600 to-emerald-600 text-white font-semibold py-3 rounded-lg hover:from-green-500 hover:to-emerald-500 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                                     >
                                         {isLoading ? (
                                             <Loader2 className="animate-spin" size={18} />

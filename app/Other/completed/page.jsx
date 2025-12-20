@@ -126,7 +126,7 @@ const CompletedEventPage = () => {
 
                     {/* 1st Place (Center - Taller & Elevated) */}
                     <div className="order-1 md:order-2 w-full md:w-[35%] bg-white rounded-t-2xl rounded-b-lg border border-gray-100 shadow-2xl overflow-hidden relative group z-10 transform md:-translate-y-6">
-                        <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
+                        <div className="absolute top-0 w-full h-1 bg-linear-to-r from-transparent via-yellow-400 to-transparent"></div>
                         <div className="h-56 overflow-hidden relative">
                             <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Team 1" />
                             <div className="absolute top-3 left-3 bg-yellow-50 backdrop-blur-md border border-yellow-200 text-yellow-700 text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
@@ -178,7 +178,7 @@ const CompletedEventPage = () => {
                         alt="Organizing Team" 
                         className="w-full h-[400px] object-cover group-hover:scale-105 transition-all duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                    <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent"></div>
                     <div className="absolute bottom-8 left-8 right-8 text-white">
                         <h3 className="text-2xl font-bold mb-2">GDG RBU Team 2024</h3>
                         <p className="text-gray-200 max-w-2xl text-sm">
@@ -201,7 +201,7 @@ const CompletedEventPage = () => {
                     {/* Large Featured Shot */}
                     <div className="md:col-span-2 md:row-span-2 relative group rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
                         <img src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Gallery" />
-                        <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
+                        <div className="absolute inset-x-0 bottom-0 p-6 bg-linear-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
                             <span className="text-white text-sm font-semibold">Keynote Session</span>
                         </div>
                     </div>

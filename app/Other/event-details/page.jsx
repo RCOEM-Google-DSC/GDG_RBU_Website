@@ -46,8 +46,8 @@ const EventDetailsPage = () => {
                alt="Event Hero" 
                className="w-full h-full object-cover"
              />
-             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
-             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent"></div>
+             <div className="absolute inset-0 bg-linear-to-t from-black via-black/80 to-transparent"></div>
+             <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/50 to-transparent"></div>
           </div>
 
           <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -66,7 +66,7 @@ const EventDetailsPage = () => {
             </div>
 
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-5 max-w-4xl leading-tight tracking-tight">
-              Cloud Next <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Extended 2025</span>
+              Cloud Next <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-400">Extended 2025</span>
             </h1>
 
             <p className="text-gray-300 text-base md:text-lg max-w-xl mb-8 leading-relaxed">
@@ -163,10 +163,10 @@ const EventDetailsPage = () => {
                      
                      <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center px-4 md:px-0">
                         {/* Connecting Line (Desktop) */}
-                        <div className="hidden md:block absolute top-5 left-12 right-12 h-0.5 bg-gradient-to-r from-blue-600/30 via-blue-400/50 to-blue-600/30 z-0"></div>
+                        <div className="hidden md:block absolute top-5 left-12 right-12 h-0.5 bg-linear-to-r from-blue-600/30 via-blue-400/50 to-blue-600/30 z-0"></div>
                         
                         {/* Connecting Line (Mobile) */}
-                        <div className="md:hidden absolute left-5 top-6 bottom-6 w-0.5 bg-gradient-to-b from-blue-600/30 via-blue-400/50 to-blue-600/30 z-0"></div>
+                        <div className="md:hidden absolute left-5 top-6 bottom-6 w-0.5 bg-linear-to-b from-blue-600/30 via-blue-400/50 to-blue-600/30 z-0"></div>
                         
                         {[
                             { title: "Enter Details", desc: "Fill personal info", step: "1" },
@@ -226,7 +226,7 @@ const EventDetailsPage = () => {
                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     
                     {/* Certificate Card - Premium & Large */}
-                    <div className="lg:col-span-2 bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-white/10 rounded-3xl p-8 relative overflow-hidden group hover:border-blue-500/30 transition-all duration-500">
+                    <div className="lg:col-span-2 bg-linear-to-br from-[#111] to-[#0a0a0a] border border-white/10 rounded-3xl p-8 relative overflow-hidden group hover:border-blue-500/30 transition-all duration-500">
                         <div className="relative z-10 flex flex-col h-full justify-between">
                             <div>
                                 <div className="flex items-center gap-3 mb-4">

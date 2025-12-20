@@ -74,7 +74,7 @@ export default function ProfileDemoPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Profile Card */}
                         <div className="lg:col-span-1 bg-[#0F0F0F] rounded-2xl border border-white/10 p-6 relative overflow-hidden">
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500"></div>
+                            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-purple-500 via-pink-500 to-red-500"></div>
 
                             <div className="text-center mb-6">
                                 <div className="w-20 h-20 rounded-full bg-purple-500/20 flex items-center justify-center border-2 border-purple-500/30 mx-auto mb-4">

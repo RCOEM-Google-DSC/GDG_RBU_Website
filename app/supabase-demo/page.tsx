@@ -64,7 +64,7 @@ const DemoCard = ({
             className={`group relative bg-[#0F0F0F] rounded-2xl border ${colors.border} p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${colors.glow} overflow-hidden`}
         >
             {/* Gradient overlay */}
-            <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-current to-transparent ${colors.text} opacity-50`}></div>
+            <div className={`absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-current to-transparent ${colors.text} opacity-50`}></div>
 
             {/* Icon */}
             <div className={`w-14 h-14 rounded-xl ${colors.bg} flex items-center justify-center mb-4 border ${colors.border}`}>
@@ -132,7 +132,7 @@ export default function SupabaseDemoPage() {
                         <Database size={16} />
                         Supabase Integration
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-linear-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
                         Database & Auth Demos
                     </h1>
                     <p className="text-gray-400 max-w-2xl mx-auto text-lg">

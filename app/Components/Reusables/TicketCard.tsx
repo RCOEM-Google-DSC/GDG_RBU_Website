@@ -32,7 +32,7 @@ const TicketCard: React.FC<TicketCardProps> = ({
       */}
       <div className="filter drop-shadow-xl transition-transform duration-300 group-hover:-translate-y-1 h-full">
         <div 
-          className="relative bg-white text-black p-6 md:p-8 rounded-[2rem] overflow-hidden h-full min-h-[340px] flex flex-col justify-between"
+          className="relative bg-white text-black p-6 md:p-8 rounded-4xl overflow-hidden h-full min-h-[340px] flex flex-col justify-between"
           style={{
             clipPath: `polygon(
               0 0, 
@@ -65,7 +65,7 @@ const TicketCard: React.FC<TicketCardProps> = ({
               </h3>
               <button 
                 onClick={onClick}
-                className="flex-shrink-0 w-12 h-12 bg-[#EDF256] rounded-full flex items-center justify-center hover:bg-[#dce04e] transition-colors cursor-pointer mt-1"
+                className="shrink-0 w-12 h-12 bg-[#EDF256] rounded-full flex items-center justify-center hover:bg-[#dce04e] transition-colors cursor-pointer mt-1"
                 aria-label="View details"
               >
                 <ArrowRight className="w-6 h-6 text-black" />

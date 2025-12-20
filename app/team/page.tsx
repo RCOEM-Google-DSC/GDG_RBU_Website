@@ -4,10 +4,9 @@ import React, { useEffect, useState } from "react";
 
 import { supabase } from "@/supabase/supabase";
 import TeamMemberCard from "../Components/Reusables/TeamMemberCard";
-
-import { teamImg } from "@/db/mockdata";
+import LeaderCard from "../Components/Reusables/LeaderCard";
+import { teamImg, domainLeads } from "@/db/mockdata";
 import Image from "next/image";
-import { Button } from "react-day-picker";
 
 type TeamRow = {
   id: string;
@@ -33,7 +32,18 @@ type Member = {
   linkedin?: string;
 };
 
-
+type DomainLead = {
+  id: string;
+  name: string;
+  domain: string;
+  image_url: string;
+  profile_links: {
+    github?: string;
+    linkedin?: string;
+    twitter?: string | null;
+  };
+  role: string;
+};
 
 const DOMAIN_ORDER = [
   "web dev",
@@ -112,17 +122,17 @@ export default function TeamPage() {
     <div className="min-h-screen bg-[#FDFCF8] text-black pt-8 px-4 lg:px-8 pb-8">
 
       {/* hero: group photo */}
-      <section className="pt-5 [min-h-screen]-8 pb-20 border-b-2 border-black">
-        <div className="w-full flex items-start justify-between">
-          <div>
-            <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[0.95] lg:mt-10">
+      <section className="pt-5 pb-12 md:pb-20 border-b-2 border-black">
+        <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-8">
+          <div className="flex-1">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] lg:mt-10">
               Meet our
               <br />
               team.
             </h1>
 
             {/* domain jump buttons */}
-            <div className="mt-12 flex flex-wrap gap-3 lg:mt-30">
+            <div className="mt-8 md:mt-12 flex flex-wrap gap-2 md:gap-3">
               {Object.keys(domains).map((domain) => (
                 <button
                   key={domain}
@@ -131,11 +141,7 @@ export default function TeamPage() {
                       .getElementById(`domain-${domain}`)
                       ?.scrollIntoView({ behavior: "smooth", block: "start" })
                   }
-                  className="
-                    px-5 py-2 border-2 border-black rounded-full 
-                    text-sm font-semibold uppercase tracking-wide 
-                    hover:bg-black hover:text-white transition
-                  "
+                  className="px-4 md:px-5 py-1.5 md:py-2 border-2 border-black rounded-full text-xs md:text-sm font-semibold uppercase tracking-wide hover:bg-black hover:text-white transition"
                 >
                   {domain}
                 </button>
@@ -143,8 +149,8 @@ export default function TeamPage() {
             </div>
           </div>
 
-          <div className="hidden lg:block">
-            <div className="w-[720px] h-[480px] border-2 border-black rounded-2xl overflow-hidden mr-4">
+          <div className="hidden lg:block shrink-0">
+            <div className="w-[520px] xl:w-[720px] h-[347px] xl:h-[480px] border-2 border-black rounded-2xl overflow-hidden">
               <Image
                 src={teamImg}
                 alt="Our Team"
@@ -159,62 +165,78 @@ export default function TeamPage() {
 
 
       <div className="border-t-2 border-black">
-        {Object.entries(domains).map(([domain, members]) => (
-          <section
-            key={domain}
-            id={`domain-${domain}`}
-            className="flex relative min-h-screen border-b border-black"
-          >
-            {/* left domain name */}
-            <div className="w-[35%] xl:w-[30%] p-8 md:p-12">
-              <div className="sticky top-24">
-                {/* top icon */}
-                <div className="w-16 h-16 border-2 border-black rounded-full flex items-center justify-center relative mb-12">
+        {Object.entries(domains).map(([domain, members]) => {
+          // Find the domain lead for this domain
+          const domainLead = domainLeads.find((lead) => lead.domain === domain);
 
-                  <div className="absolute w-full h-full rounded-full border border-black top-1 left-1" />
+          return (
+            <section
+              key={domain}
+              id={`domain-${domain}`}
+              className="flex flex-col md:flex-row relative min-h-screen border-b border-black"
+            >
+              {/* left domain name */}
+              <div className="w-full md:w-[35%] xl:w-[30%] p-4 sm:p-6 md:p-8 lg:p-12">
+                <div className="md:sticky md:top-24">
+                  {/* top icon */}
+                  <div className="w-12 h-12 md:w-16 md:h-16 border-2 border-black rounded-full flex items-center justify-center relative mb-6 md:mb-12">
+                    <div className="absolute w-full h-full rounded-full border border-black top-1 left-1" />
+                    <div className="w-6 h-6 md:w-8 md:h-8 border border-black rounded-full animate-[spin_10s_linear_infinite]" />
+                  </div>
 
-                  <div className="w-8 h-8 border border-black rounded-full animate-[spin_10s_linear_infinite]" />
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9]">
+                    {domain}
+                  </h1>
                 </div>
-
-                <h1 className="text-5xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9]">
-                  {domain}
-                </h1>
               </div>
-            </div>
 
-            <div className="ml-10 w-px bg-black mt-16 mb-0" />
+              <div className="hidden md:block md:ml-4 lg:ml-10 w-px bg-black md:mt-16 md:mb-0" />
 
+              <div className="flex-1 relative">
+                <div
+                  className="absolute inset-0 pointer-events-none opacity-[0.03]"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)",
+                    backgroundSize: "40px 40px",
+                  }}
+                />
 
-            <div className="flex-1 relative">
-              <div
-                className="absolute inset-0 pointer-events-none opacity-[0.03]"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)",
-                  backgroundSize: "40px 40px",
-                }}
-              />
+                <div className="p-4 sm:p-6 md:p-12 lg:p-16 xl:p-24 relative z-10">
+                  <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12 justify-items-center">
+                    {/* Render domain lead first if exists */}
+                    {domainLead && (
+                      <LeaderCard
+                        key={domainLead.id}
+                        id={domainLead.id}
+                        name={domainLead.name}
+                        role={domainLead.role}
+                        imageUrl={domainLead.image_url}
+                        githubUrl={domainLead.profile_links.github ?? ""}
+                        linkedinUrl={domainLead.profile_links.linkedin ?? ""}
+                      />
+                    )}
 
-              <div className="p-8 md:p-16 lg:p-24 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-x-32 gap-y-32 justify-items-center">
-                  {members.map((m) => (
-                    <TeamMemberCard
-                      key={m.id}
-                      id={m.userid}
-                      name={m.name}
-                      role="TEAM"
-                      imageUrl={m.image_url}
-                      githubUrl={m.github ?? ""}
-                      linkedinUrl={m.linkedin ?? ""}
-                    />
-                  ))}
+                    {/* Render regular team members */}
+                    {members.map((m) => (
+                      <TeamMemberCard
+                        key={m.id}
+                        id={m.userid}
+                        name={m.name}
+                        role="TEAM"
+                        imageUrl={m.image_url}
+                        githubUrl={m.github ?? ""}
+                        linkedinUrl={m.linkedin ?? ""}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="h-16 md:h-32" />
                 </div>
-
-                <div className="h-32" />
               </div>
-            </div>
-          </section>
-        ))}
+            </section>
+          );
+        })}
       </div>
     </div>
   );
