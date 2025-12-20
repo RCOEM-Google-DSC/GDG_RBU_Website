@@ -1,4 +1,4 @@
-import { BiCalendarEvent } from "react-icons/bi"; 
+import { BiCalendarEvent } from "react-icons/bi";
 import { Calendar, ClipboardList, Handshake, Home, Inbox, Users2 } from "lucide-react"
 import Link from "next/link"
 
@@ -20,6 +20,11 @@ const Buttons = [
     title: "Events",
     url: "/admin/events",
     icon: BiCalendarEvent,
+  },
+  {
+    title: "Add Event",
+    url: "/admin/events/add",
+    icon: Calendar,
   },
   {
     title: "Users",
@@ -50,7 +55,7 @@ export default function SideBar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-              
+
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

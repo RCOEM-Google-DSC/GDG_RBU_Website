@@ -1,8 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
-import { buildUIUser, buildUIEvents, buildUIBadges } from "../app/Components/Profile/Badges";
-import { SupabaseUserRow, UIUser, UIEvent, UIBadge, Registration, EventRow } from "../lib/types";
+import {
+  buildUIUser,
+  buildUIEvents,
+  buildUIBadges,
+} from "../app/Components/Profile/Badges";
+import {
+  SupabaseUserRow,
+  UIUser,
+  UIEvent,
+  UIBadge,
+  Registration,
+  EventRow,
+} from "../lib/types";
 
 interface UseProfileDataReturn {
   user: UIUser | null;
@@ -59,7 +70,7 @@ export function useProfileData(): UseProfileDataReturn {
         // 3. Fetch events for those registrations
         let uiEvents: UIEvent[] = [];
         if (registrations && registrations.length > 0) {
-          const eventIds = registrations.map(r => r.event_id);
+          const eventIds = registrations.map((r) => r.event_id);
           const { data: eventsData, error: eventsErr } = await supabase
             .from("events")
             .select("id, title, event_time, image_url")
@@ -70,7 +81,10 @@ export function useProfileData(): UseProfileDataReturn {
           }
 
           if (eventsData) {
-            uiEvents = buildUIEvents(eventsData as EventRow[], registrations as Registration[]);
+            uiEvents = buildUIEvents(
+              eventsData as EventRow[],
+              registrations as Registration[]
+            );
           }
         }
 

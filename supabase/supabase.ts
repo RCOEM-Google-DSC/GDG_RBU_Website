@@ -83,7 +83,7 @@ export async function registerForEvent(
     .from("registrations")
     .insert({
       event_id: eventId,
-      user_id: userId, 
+      user_id: userId,
       ...registrationData,
       created_at: new Date().toISOString(),
     })
@@ -115,6 +115,7 @@ export async function createEvent(eventData: {
   venue?: string;
   is_paid?: boolean;
   fee?: number;
+  qr_code?: string;
   max_participants?: number;
   is_team_event?: boolean;
   max_team_size?: number;

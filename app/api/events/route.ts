@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createEvent, getEvents } from '@/supabase/supabase';
+import { NextRequest, NextResponse } from "next/server";
+import { createEvent, getEvents } from "@/supabase/supabase";
 
 export async function GET() {
   try {
     const events = await getEvents();
     return NextResponse.json({ events });
   } catch (error: any) {
-    console.error('Error fetching events:', error);
+    console.error("Error fetching events:", error);
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch events' },
+      { error: error.message || "Failed to fetch events" },
       { status: 500 }
     );
   }
@@ -17,7 +17,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     const {
       title,
       description,
@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
       venue,
       is_paid,
       fee,
+      qr_code,
       max_participants,
       is_team_event,
       max_team_size,
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     if (!title || !date) {
       return NextResponse.json(
-        { error: 'Title and date are required' },
+        { error: "Title and date are required" },
         { status: 400 }
       );
     }
@@ -47,6 +48,7 @@ export async function POST(request: NextRequest) {
       venue,
       is_paid,
       fee,
+      qr_code,
       max_participants,
       is_team_event,
       max_team_size,
@@ -55,9 +57,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ event }, { status: 201 });
   } catch (error: any) {
-    console.error('Error creating event:', error);
+    console.error("Error creating event:", error);
     return NextResponse.json(
-      { error: error.message || 'Failed to create event' },
+      { error: error.message || "Failed to create event" },
       { status: 500 }
     );
   }

@@ -12,6 +12,7 @@ export type Event = {
   event_time?: string;
   is_paid?: boolean;
   fee?: number | null;
+  qr_code?: string | null;
   max_participants?: number | null;
   is_team_event?: boolean;
   max_team_size?: number | null;
@@ -30,7 +31,7 @@ export type Partner = {
   logo_url: string;
   description: string;
   image_url: string;
-}
+};
 
 // ---------- Registration ----------
 export interface RegistrationProps {
@@ -46,7 +47,6 @@ export interface RegistrationProps {
   is_team_registration?: boolean;
   wants_random_team?: boolean;
   is_open_to_alliances?: boolean;
-
 }
 
 // ---------- Event Card ----------

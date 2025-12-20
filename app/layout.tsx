@@ -37,13 +37,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${productSans.variable} font-sans antialiased`}
       >
         {/* <DevNavBar/> */}
-        <div className="sticky top-0 z-50">
-          <NavBar />
-        </div>
-        <div className="  w-full pointer-events-none z-0">
+        <NavBar />
+        <div className="w-full pointer-events-none z-0">
           <GridBackground />
         </div>
-        <main className="relative">
+        <main className="relative pt-[70px]">
           {children}
         </main>
         <Toaster position="top-right" richColors />
