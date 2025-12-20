@@ -9,7 +9,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Sheet,
   SheetClose,
@@ -29,9 +29,13 @@ interface CompleteProfileSheetProps {
   trigger?: React.ReactNode;
 }
 
+/* ✅ ONLY ADDITION (DOES NOT REMOVE ANYTHING) */
+const isValidImageUrl = (url?: string) =>
+  typeof url === "string" && url.startsWith("http");
+
 export function CompleteProfileSheet({ user, trigger }: CompleteProfileSheetProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
-  
+
   // Form fields
   const [section, setSection] = useState(user.location?.split(",")[0] || "");
   const [branch, setBranch] = useState("");
@@ -40,12 +44,12 @@ export function CompleteProfileSheet({ user, trigger }: CompleteProfileSheetProp
   const [github, setGithub] = useState(user.profileLinks.github || "");
   const [linkedin, setLinkedin] = useState(user.profileLinks.linkedin || "");
   const [twitter, setTwitter] = useState(user.profileLinks.twitter || "");
-  
+
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState<{ type: "idle" | "success" | "error"; message?: string }>({ type: "idle" });
-  
-const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS"];
+
+  const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS"];
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Open file picker
@@ -120,11 +124,10 @@ const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS"];
         type: "success",
         message: "Profile updated successfully 🎉",
       });
-      
+
       // Close sheet after 1.5 seconds
       setTimeout(() => {
         setSheetOpen(false);
-        // Refresh the page to show updated data
         window.location.reload();
       }, 1500);
     } catch (err: any) {
@@ -140,14 +143,14 @@ const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS"];
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       {trigger && <SheetTrigger asChild>{trigger}</SheetTrigger>}
-      
+
       <SheetContent className="overflow-y-auto p-5 w-5xl max-w-4xl">
         <form onSubmit={handleSubmit}>
           <SheetHeader>
             <div className="flex items-center gap-4">
-              {/* Avatar */}
+              {/* Avatar (ONLY FIX IS HERE) */}
               <div className="relative">
-                {imageUrl ? (
+                {isValidImageUrl(imageUrl) ? (
                   <Image
                     src={imageUrl}
                     width={64}
@@ -225,16 +228,16 @@ const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS"];
               <div className="grid gap-2">
                 <Label htmlFor="branch">Branch</Label>
                 <Select value={branch} onValueChange={setBranch}>
-                    <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Branch" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {branchs.map((b) => (
-                            <SelectItem key={b} value={b}>
-                                {b}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Branch" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {branchs.map((b) => (
+                      <SelectItem key={b} value={b}>
+                        {b}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </div>
               <div className="grid gap-2">

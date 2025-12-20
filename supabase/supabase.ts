@@ -264,3 +264,45 @@ export async function getUserRegistrations() {
 
   return data;
 }
+
+
+
+export async function verifyEventCheckin(eventId: string) {
+  const userId = await getCurrentUserId();
+
+  if (!userId) {
+    throw new Error("User must be logged in to check in");
+  }
+
+ 
+  const { data: registration, error: fetchError } = await supabase
+    .from("registrations")
+    .select("id, status")
+    .eq("event_id", eventId)
+    .eq("user_id", userId)
+    .single();
+
+  if (fetchError || !registration) {
+    throw new Error("You are not registered for this event");
+  }
+
+  
+  if (registration.status === "verified") {
+    return { status: "already_verified" };
+  }
+
+
+  const { error: updateError } = await supabase
+    .from("registrations")
+    .update({
+      status: "verified",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", registration.id);
+
+  if (updateError) {
+    throw new Error("Failed to verify check-in");
+  }
+
+  return { status: "verified" };
+}
