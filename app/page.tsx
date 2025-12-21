@@ -3,16 +3,16 @@ import UpcomingEvent from "./Components/Common/UpcomingEvent";
 import { upcomingEvents } from "@/db/mockdata";
 import EventTicket from "./Components/Common/UpcomingEvent";
 
-import Faq from "./Components/LandingPage/FAQ";
-import MeetOurTeam from "./Components/LandingPage/MeetOurTeam";
-import Footer from "./Components/LandingPage/Footer";
-import Hero from "./Components/LandingPage/Hero";
+import Faq from "./Components/Landing/FAQ";
+import MeetOurTeam from "./Components/Landing/MeetOurTeam";
+import Footer from "./Components/Landing/Footer";
+import Hero from "./Components/Landing/Hero";
 export default function Home() {
   return (
     <div className=" ">
       {/* hero section */}
       <section className="min-w-full">
-        <Hero/>.
+        <Hero />.
       </section>
 
       {/* upcoming events section */}
@@ -44,7 +44,7 @@ export default function Home() {
       </section>
 
       {/* footer */}
-      <Footer/>
+      <Footer />
     </div>
   );
 }

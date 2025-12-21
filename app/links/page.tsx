@@ -3,7 +3,7 @@
 import Image from "next/image";
 import LinkItem from "../Components/Common/LinkItem";
 import { LINKS } from "@/lib/links";
-import Footer from "../Components/LandingPage/Footer";
+import Footer from "../Components/Landing/Footer";
 export default function Home() {
     return (
         <div className="flex flex-col items-center justify-between min-h-screen bg-background text-foreground ">
@@ -17,7 +17,7 @@ export default function Home() {
                     className="mx-auto mb-4"
                 />
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">
-                    Follow us 
+                    Follow us
                 </h1>
                 {/* <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                     Empowering students with cutting-edge tech skills, community, and

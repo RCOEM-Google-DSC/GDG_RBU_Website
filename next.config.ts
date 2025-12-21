@@ -1,10 +1,20 @@
 import type { NextConfig } from "next";
+import { createMDX } from "fumadocs-mdx/next";
 
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-     domains: ['placehold.co', 'images.unsplash.com', 'api.dicebear.com','res.cloudinary.com' ],
+    domains: [
+      "placehold.co",
+      "images.unsplash.com",
+      "api.dicebear.com",
+      "res.cloudinary.com",
+    ],
   },
 };
 
-export default nextConfig;
+const withMDX = createMDX({
+  // configPath: 'source.config.ts' is the default
+});
+
+export default withMDX(nextConfig);

@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/supabase/supabase";
 import { useRBAC } from "@/hooks/useRBAC";
-import { CheckInModal } from "../Components/checkin/CheckInModal";
+import { CheckInModal } from "../../Components/checkin/CheckInModal";
 import { Registration } from "@/lib/types";
 
 export default function CheckInClient() {

@@ -1,0 +1,16 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "index",
+    "getting-started",
+    "---Google Technologies---",
+    "google-maps",
+    "firebase",
+    "gemini",
+    "google-cloud",
+    "google-auth",
+    "---Ideathon Resources---",
+    "idea-submission-form",
+    "starter"
+  ]
+}

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
 
-import { isProfileComplete } from "@/lib/profile";
+import { isProfileComplete } from "@/lib/types";
 import BraveCleanQR from "@/app/Components/checkin/QRCodeWithSvgLogo";
 
 export default function EventRegisterPage() {
@@ -111,8 +111,7 @@ export default function EventRegisterPage() {
     // Check if adding another member would exceed max team size
     if (emails.length + 1 >= event.max_team_size) {
       alert(
-        `Maximum team size is ${event.max_team_size}. You can only add ${
-          event.max_team_size - 1
+        `Maximum team size is ${event.max_team_size}. You can only add ${event.max_team_size - 1
         } members.`
       );
       return;

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -123,8 +125,8 @@
 
 /* Custom sidebar positioning to account for navbar */
 [data-slot="sidebar-container"] {
-  top: 74px !important;
-  height: calc(100vh - 74px) !important;
+  top: 70px !important;
+  height: calc(100vh - 70px) !important;
   transition: top 0.3s ease, height 0.3s ease;
 }
 
@@ -132,6 +134,36 @@
 body:has(nav.-translate-y-full) [data-slot="sidebar-container"] {
   top: 0 !important;
   height: 100vh !important;
+}
+
+/* Fumadocs navigation positioning - below navbar */
+[data-fumadocs-nav] {
+  top: 70px !important;
+  z-index: 40 !important;
+  transition: top 0.3s ease !important;
+}
+
+/* When navbar is hidden, move nav to top */
+body:has(nav.-translate-y-full) [data-fumadocs-nav] {
+  top: 0 !important;
+}
+
+/* Fumadocs sidebar toggle buttons - positioned below navbar with spacing */
+[data-fumadocs-sidebar-toggle] {
+  top: calc(70px + 0.75rem) !important;
+  z-index: 50 !important;
+  transition: top 0.3s ease !important;
+}
+
+/* When navbar is hidden, move toggle buttons to top with small margin */
+body:has(nav.-translate-y-full) [data-fumadocs-sidebar-toggle] {
+  top: 0.75rem !important;
+}
+
+/* Search button positioning */
+.docs-search-button,
+[data-search-toggle] {
+  transition: top 0.3s ease !important;
 }
 
 Button {

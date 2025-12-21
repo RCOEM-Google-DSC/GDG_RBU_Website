@@ -48,7 +48,7 @@ const UpcomingEvent = ({ id, title, date, time, image, tags, tagColor, descripti
                   </p>
                 </div>
 
-                <Link href={`/events/${id}`} aria-label={`View details for ${title}`}>
+                <Link href={`/events/upcoming/${id}`} aria-label={`View details for ${title}`}>
                   <Button className="w-14 h-14 bg-[#FFC20E] rounded-full flex items-center justify-center hover:bg-yellow-400 transition-colors">
                     <ArrowUpRight className="text-black w-6 h-6" strokeWidth={2.5} />
                   </Button>
@@ -131,7 +131,7 @@ const UpcomingEvent = ({ id, title, date, time, image, tags, tagColor, descripti
                 </p>
               </div>
 
-              <Link href={`/events/${id}`} aria-label={`View details for ${title}`}>
+              <Link href={`/events/upcoming/${id}`} aria-label={`View details for ${title}`}>
                 <Button className="w-12 h-12 bg-[#FFC20E] rounded-full flex items-center justify-center hover:bg-yellow-400 transition-colors mb-4">
                   <ArrowUpRight className="text-black w-5 h-5" strokeWidth={2.5} />
                 </Button>

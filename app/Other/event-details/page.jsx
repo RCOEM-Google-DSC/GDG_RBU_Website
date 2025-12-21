@@ -7,33 +7,9 @@ import {
 } from 'lucide-react';
 
 const EventDetailsPage = () => {
-  // Reused Navbar for consistency
-  const Navbar = () => (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              <span className="text-blue-500 font-bold text-xl">{`<`}</span>
-              <div className="h-3 w-3 bg-red-500 rounded-full"></div>
-              <div className="h-3 w-3 bg-yellow-400 rounded-full"></div>
-              <span className="text-green-500 font-bold text-xl">{`>`}</span>
-            </div>
-            <span className="text-white font-medium text-lg tracking-tight ml-2">GDG RBU</span>
-          </div>
-          <div className="flex items-center gap-4">
-             <button className="bg-white text-black px-4 py-2 rounded-full text-xs font-bold hover:bg-gray-200 transition-colors">
-                Join Community
-             </button>
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-blue-500/30 text-sm md:text-base">
-      <Navbar />
 
       <main className="pt-16">
         

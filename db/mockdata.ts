@@ -448,6 +448,7 @@ export const events = [
     capacity: 500,
     registered_count: 342,
     status: "upcoming",
+    entry_fee: "₹299",
     created_at: "2024-11-01T10:00:00Z",
   },
   {
@@ -625,6 +626,7 @@ export const events = [
     capacity: 50,
     registered_count: 27,
     status: "upcoming",
+    entry_fee: "₹149",
     created_at: "2024-12-10T08:30:00Z",
   },
 ];
