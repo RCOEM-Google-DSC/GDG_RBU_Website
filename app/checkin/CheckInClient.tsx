@@ -5,75 +5,135 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/supabase/supabase";
 import { useRBAC } from "@/hooks/useRBAC";
 import { CheckInModal } from "../Components/checkin/CheckInModal";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  section: string;
-  branch: string;
-}
-
-interface Registration {
-  id: string;
-  status: string;
-  check_in_time: string | null;
-  users: User;
-}
+import { Registration } from "@/lib/types";
 
 export default function CheckInClient() {
   const params = useSearchParams();
   const encoded = params.get("d");
+
   const { canViewParticipants, loading } = useRBAC();
 
-  const [registration, setRegistration] = useState<Registration | null>(null);
+  const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!encoded || !canViewParticipants) return;
+    if (loading) return;
 
-    try {
-      const { e, u } = JSON.parse(atob(encoded));
-
-      supabase
-        .from("registrations")
-        .select(`
-          id,
-          status,
-          check_in_time,
-          users (
-            id,
-            name,
-            email,
-            image_url,
-            section,
-            branch
-          )
-        `)
-        .eq("event_id", e)
-        .eq("user_id", u)
-        .single()
-        .then(({ data, error }) => {
-          if (error) throw error;
-          if (!data) throw new Error("Not found");
-
-          setRegistration({
-            ...data,
-            users: Array.isArray(data.users)
-              ? data.users[0]
-              : data.users,
-          });
-        });
-    } catch {
-      setError("Invalid QR");
+    if (!canViewParticipants) {
+      setError("Not authorized");
+      return;
     }
-  }, [encoded, canViewParticipants]);
+
+    if (!encoded) {
+      setError("Invalid QR");
+      return;
+    }
+
+    const run = async () => {
+      try {
+        const payload = JSON.parse(atob(encoded));
+
+        /* ---------- SOLO ---------- */
+        if (payload.u) {
+          const { data, error } = await supabase
+            .from("registrations")
+            .select(
+              `
+              id,
+              status,
+              check_in_time,
+              users (
+                id,
+                name,
+                email,
+                image_url,
+                section,
+                branch,
+                phone_number,
+                role,
+                profile_links,
+                badges,
+                created_at
+              )
+            `
+            )
+            .eq("event_id", payload.e)
+            .eq("user_id", payload.u)
+            .single();
+
+          if (error || !data) throw new Error("Registration not found");
+
+          setRegistrations([data]);
+          return;
+        }
+
+        /* ---------- TEAM ---------- */
+        if (payload.leader) {
+          const { data: leaderReg } = await supabase
+            .from("registrations")
+            .select("team_name")
+            .eq("event_id", payload.e)
+            .eq("user_id", payload.leader)
+            .single();
+
+          if (!leaderReg?.team_name) {
+            throw new Error("Team not found");
+          }
+
+          const { data: teamRegs, error: teamErr } = await supabase
+            .from("registrations")
+            .select(
+              `
+              id,
+              status,
+              check_in_time,
+              team_name,
+              users (
+                id,
+                name,
+                email,
+                image_url,
+                section,
+                branch,
+                phone_number,
+                role,
+                profile_links,
+                badges,
+                created_at
+              )
+            `
+            )
+            .eq("event_id", payload.e)
+            .eq("team_name", leaderReg.team_name);
+
+          if (teamErr || !teamRegs) {
+            throw new Error("Team members not found");
+          }
+
+          setRegistrations(teamRegs);
+          return;
+        }
+
+        throw new Error("Invalid QR payload");
+      } catch (err: any) {
+        setError(err.message || "Invalid QR");
+      }
+    };
+
+    run();
+  }, [encoded, canViewParticipants, loading]);
+
+  /* ---------- UI STATES ---------- */
 
   if (loading) return <p>Checking permissions...</p>;
-  if (!canViewParticipants) return <p>Not authorized</p>;
   if (error) return <p>{error}</p>;
-  if (!registration) return <p>Loading registration...</p>;
+  if (registrations.length === 0) return <p>No registrations found</p>;
 
-  return <CheckInModal reg={registration} />;
+  return (
+    <div className="flex flex-col gap-6">
+      {registrations.map((reg) => (
+        <CheckInModal key={reg.id} reg={reg} />
+      ))}
+    </div>
+  );
 }
