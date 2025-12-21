@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
 
 import { isProfileComplete } from "@/lib/types";
-import BraveCleanQR from "@/app/Components/checkin/QRCodeWithSvgLogo";
+import QRCodeWithSvgLogo from "@/app/Components/checkin/QRCodeWithSvgLogo";
+
 
 export default function EventRegisterPage() {
   const { eventid } = useParams<{ eventid: string }>();
@@ -202,7 +203,7 @@ export default function EventRegisterPage() {
       {/* QR */}
       {qrValue && (
         <>
-          <BraveCleanQR value={qrValue} />
+          <QRCodeWithSvgLogo value={qrValue} />
           <button
             onClick={() => {
               const canvas = document.querySelector("canvas");
