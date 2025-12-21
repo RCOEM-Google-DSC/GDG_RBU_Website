@@ -9,6 +9,15 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 
+// Common navigation links array
+const NAV_LINKS = [
+  { href: '/', label: 'Home' },
+  { href: '/team', label: 'Team' },
+  { href: '/events', label: 'Events' },
+  { href: '/links', label: 'Links' },
+  { href: '/docs', label: 'Docs' },
+];
+
 const NavBar = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isVisible, setIsVisible] = useState(true);
@@ -70,11 +79,15 @@ const NavBar = () => {
 
         {/* Desktop navigation links */}
         <div className="hidden md:flex space-x-6">
-          <Link href="/" className="text-gray-700 hover:text-gray-900 transition-colors">Home</Link>
-          <Link href="/team" className="text-gray-700 hover:text-gray-900 transition-colors">Team</Link>
-          <Link href="/events" className="text-gray-700 hover:text-gray-900 transition-colors">Events</Link>
-          <Link href="/links" className="text-gray-700 hover:text-gray-900 transition-colors">Links</Link>
-          <Link href='/docs' className='text-gray-700 hover:text-gray-900 transition-colors'>Docs</Link>
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-gray-700 hover:text-gray-900 transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
 
         {/* Desktop profile dropdown or register button */}
@@ -118,34 +131,16 @@ const NavBar = () => {
         <div className="flex flex-col h-full pt-20 px-6">
           {/* Mobile navigation links */}
           <div className="flex flex-col space-y-6">
-            <Link
-              href="/"
-              className="text-lg text-gray-700 hover:text-gray-900 transition-colors py-2 border-b border-gray-100"
-              onClick={closeMobileMenu}
-            >
-              Home
-            </Link>
-            <Link
-              href="/team"
-              className="text-lg text-gray-700 hover:text-gray-900 transition-colors py-2 border-b border-gray-100"
-              onClick={closeMobileMenu}
-            >
-              Team
-            </Link>
-            <Link
-              href="/events"
-              className="text-lg text-gray-700 hover:text-gray-900 transition-colors py-2 border-b border-gray-100"
-              onClick={closeMobileMenu}
-            >
-              Events
-            </Link>
-            <Link
-              href="/links"
-              className="text-lg text-gray-700 hover:text-gray-900 transition-colors py-2 border-b border-gray-100"
-              onClick={closeMobileMenu}
-            >
-              Links
-            </Link>
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-lg text-gray-700 hover:text-gray-900 transition-colors py-2 border-b border-gray-100"
+                onClick={closeMobileMenu}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
 
           {/* Mobile profile section */}
