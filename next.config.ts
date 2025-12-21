@@ -4,11 +4,23 @@ import { createMDX } from "fumadocs-mdx/next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: [
-      "placehold.co",
-      "images.unsplash.com",
-      "api.dicebear.com",
-      "res.cloudinary.com",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "api.dicebear.com",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
     ],
   },
 };

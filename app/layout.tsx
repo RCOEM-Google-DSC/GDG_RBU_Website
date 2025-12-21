@@ -33,7 +33,7 @@ export default function RootLayout({
   const isDocsPage = pathname?.startsWith('/docs');
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="light" style={{ colorScheme: 'light' }} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${productSans.variable} font-sans antialiased flex flex-col min-h-screen`}
       >
