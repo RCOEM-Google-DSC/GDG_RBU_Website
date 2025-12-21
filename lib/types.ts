@@ -143,5 +143,20 @@ export type Registration = {
   id: string;
   event_id: string;
   status: string;
+  check_in_time: string | null;
   created_at: string;
+  team_name?: string | null;
+  users: {
+    id: string;
+    name: string;
+    email: string;
+    image_url?: string | null;
+    section: string;
+    branch: string;
+    phone_number?: string | null;
+    role?: string | null;
+    profile_links?: any;
+    badges?: string[] | null;
+    created_at?: string;
+  }[];
 };

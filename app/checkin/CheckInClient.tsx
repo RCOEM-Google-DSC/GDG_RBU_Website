@@ -40,8 +40,10 @@ export default function CheckInClient() {
             .select(
               `
               id,
+              event_id,
               status,
               check_in_time,
+              created_at,
               users (
                 id,
                 name,
@@ -85,8 +87,10 @@ export default function CheckInClient() {
             .select(
               `
               id,
+              event_id,
               status,
               check_in_time,
+              created_at,
               team_name,
               users (
                 id,
