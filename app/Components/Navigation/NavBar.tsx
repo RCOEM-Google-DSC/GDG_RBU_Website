@@ -74,6 +74,7 @@ const NavBar = () => {
           <Link href="/team" className="text-gray-700 hover:text-gray-900 transition-colors">Team</Link>
           <Link href="/events" className="text-gray-700 hover:text-gray-900 transition-colors">Events</Link>
           <Link href="/links" className="text-gray-700 hover:text-gray-900 transition-colors">Links</Link>
+          <Link href='/docs' className='text-gray-700 hover:text-gray-900 transition-colors'>Docs</Link>
         </div>
 
         {/* Desktop profile dropdown or register button */}

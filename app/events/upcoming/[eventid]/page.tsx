@@ -63,17 +63,11 @@ export default async function UpcomingEventDetailPage({ params }: PageProps) {
                         {/* Text Column */}
                         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                             <div className="flex flex-wrap items-center gap-3">
-                                <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100 text-xs font-bold uppercase tracking-wide">
-                                    Upcoming
-                                </span>
                                 {event.tags?.map((tag, idx) => (
                                     <span key={idx} className="px-3 py-1 rounded-full bg-gray-100 text-gray-600 border border-gray-200 text-xs font-bold uppercase tracking-wide">
                                         {tag}
                                     </span>
                                 ))}
-                                <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-600 border border-amber-100 text-xs font-bold uppercase tracking-wide flex items-center gap-1">
-                                    <Star size={12} className="fill-amber-600" /> Premium
-                                </span>
                             </div>
 
                             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-[1.1] tracking-tight">
@@ -85,10 +79,10 @@ export default async function UpcomingEventDetailPage({ params }: PageProps) {
                             </p>
 
                             <div className="flex flex-wrap items-center gap-4 pt-2">
-                                <Button className="h-14 px-8 rounded-full bg-gray-900 hover:bg-black text-white text-base font-semibold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-2">
+                                <Button className="h-12 px-8 rounded-xl bg-gray-900 hover:bg-black text-white text-base font-semibold shadow-xl hover:shadow-2xl flex items-center gap-2">
                                     Register Now <ArrowRight size={20} />
                                 </Button>
-                                <Button variant="outline" className="h-14 px-8 rounded-full border-2 border-gray-200 bg-transparent text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center gap-2">
+                                <Button variant="outline" className="h-12 px-8 rounded-xl border-2 border-gray-200 bg-transparent text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center gap-2">
                                     <Share2 size={20} /> Share
                                 </Button>
                             </div>
@@ -96,7 +90,7 @@ export default async function UpcomingEventDetailPage({ params }: PageProps) {
 
                         {/* Image Column */}
                         <div className="relative isolate group hidden md:block">
-                            <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white bg-gray-100 z-10 transition-transform duration-500 group-hover:scale-[1.01]">
+                            <div className="relative aspect-4/3 rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white bg-gray-100 z-10 transition-transform duration-500 group-hover:scale-[1.01]">
                                 <img
                                     src={eventImage}
                                     alt={event.title}
@@ -163,7 +157,7 @@ export default async function UpcomingEventDetailPage({ params }: PageProps) {
                     <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
                         <div>
                             <h2 className="text-2xl md:text-3xl font-bold mb-4 flex items-center gap-3 text-gray-900">
-                                <Zap className="text-yellow-500 fill-yellow-500" size={28} /> About The Event
+                                About The Event
                             </h2>
                             <div className="prose prose-gray max-w-none text-gray-600 text-base leading-relaxed space-y-3">
                                 <p>
@@ -223,7 +217,6 @@ export default async function UpcomingEventDetailPage({ params }: PageProps) {
                     <section>
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-3">
                             <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-3 text-gray-900">
-                                <Target className="text-red-500" size={28} /> Your Mission
                             </h2>
                         </div>
 
@@ -249,7 +242,7 @@ export default async function UpcomingEventDetailPage({ params }: PageProps) {
                     {/* Rewards & Perks */}
                     <section>
                         <h2 className="text-2xl md:text-3xl font-bold mb-8 flex items-center gap-3 text-gray-900">
-                            <Award className="text-blue-500" size={28} /> Rewards & Perks
+                            Rewards & Perks
                         </h2>
 
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -292,8 +285,6 @@ export default async function UpcomingEventDetailPage({ params }: PageProps) {
                                         </div>
                                     </div>
                                 </div>
-                                {/* Background Glow - lighter */}
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                             </div>
 
                             {/* Swag List */}

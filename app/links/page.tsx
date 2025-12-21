@@ -40,8 +40,7 @@ export default function Home() {
                 ))}
             </section>
 
-            {/* footer */}
-            <Footer />
+
         </div>
     );
 }
