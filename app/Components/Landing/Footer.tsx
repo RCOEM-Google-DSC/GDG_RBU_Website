@@ -1,124 +1,176 @@
-import { GrLinkedinOption } from "react-icons/gr";
+"use client";
+import { BsTwitter } from "react-icons/bs";
+
+import { IoLocationOutline } from "react-icons/io5";
+import { CgMail } from "react-icons/cg";
+import { FaLinkedinIn } from "react-icons/fa";
 import { AiOutlineInstagram } from "react-icons/ai";
-import Image from 'next/image';
-import Link from 'next/link';
-import { FaFacebookF } from 'react-icons/fa';
-import { BsTwitterX } from "react-icons/bs";
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useTheme } from "next-themes";
 
-const Links = {
-    community: [
-        { name: 'About Us', href: '#about' },
-        { name: 'Events', href: '#events' },
-        { name: 'Team', href: '#team' },
-        { name: 'Join GDG', href: '#join' },
-    ],
-    resources: [
-        { name: 'Resources', href: '#resources' },
-        { name: 'Blog', href: '#blog' },
-        { name: 'Meetup', href: '#meetup' },
-        { name: 'Workshops', href: '#workshops' },
-    ],
-    legal: [
-        { name: 'Community Guidelines', href: '#guidelines' },
-        { name: 'Code of Conduct', href: '#code-of-conduct' },
-        { name: 'Privacy Policy', href: '#privacy' },
-        { name: 'Terms of Service', href: '#terms' },
-    ],
-}
+const Footer = () => {
+  const { theme, systemTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
 
-export default function Footer() {
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Determine current theme, accounting for system preference
+  const currentTheme = theme === "system" ? systemTheme : theme;
+  const isDark = currentTheme === "dark";
+
+  // Fallback for SSR
+  if (!mounted) {
     return (
-        <footer className='bg-black text-white px-6 md:px-12 lg:px-20 py-8 md:py-10'>
-            <div className='flex flex-col md:flex-row justify-between items-center md:items-start gap-8 md:gap-6 w-full'>
-                {/* left: logo */}
-                <div className='flex-shrink-0'>
-                    <div className='flex flex-col items-center justify-center gap-3'>
-                        <Image
-                            src='/icons/gdg.svg'
-                            alt='GDG Logo'
-                            width={120}
-                            height={120}
-                            className='md:w-[150px] md:h-[150px]'
-                        />
-                        <div className='flex flex-col justify-center items-center text-center'>
-                            <h4 className='text-xl md:text-2xl font-semibold'>Google Developers Group</h4>
-                            <p className='text-sm md:text-base text-white/80'>On Campus Ramdeobaba University</p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* divider (only on md+) */}
-                <div className="hidden md:flex items-center justify-center">
-                    <div className="h-48 lg:h-64 w-px bg-white/20" />
-                </div>
-
-                {/* divider only on mobile */}
-                <div className="md:hidden w-full">
-                    <div className="h-px w-full bg-white/20" />
-                </div>
-
-                {/* right: text/links */}
-                <div className='flex flex-col gap-6 md:gap-8 items-center md:items-start justify-center w-full md:w-auto'>
-                    {/* links */}
-                    <div className='flex flex-col sm:flex-row gap-6 sm:gap-8 lg:gap-10 w-full md:w-auto'>
-                        {Object.entries(Links).map(([section, links]) => (
-                            <div key={section} className='flex flex-col gap-2 text-center sm:text-left'>
-                                <h5 className='text-white/90 capitalize tracking-widest text-sm md:text-base font-semibold mb-1'>
-                                    {section}
-                                </h5>
-                                {links.map((link) => (
-                                    <Link
-                                        key={link.name}
-                                        href={link.href}
-                                        className='hover:underline text-white/70 hover:text-white transition-colors text-sm md:text-base'
-                                    >
-                                        {link.name}
-                                    </Link>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* socials */}
-                    <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
-                        <h5 className="tracking-widest text-sm md:text-base font-semibold">Follow Us:</h5>
-                        <div className='flex flex-row gap-4 md:gap-6'>
-                            <Link
-                                href='#'
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='hover:text-white/70 transition-colors'
-                            >
-                                <FaFacebookF size={20} className='md:w-6 md:h-6' />
-                            </Link>
-                            <Link
-                                href='#'
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='hover:text-white/70 transition-colors'
-                            >
-                                <BsTwitterX size={20} className='md:w-6 md:h-6' />
-                            </Link>
-                            <Link
-                                href='#'
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='hover:text-white/70 transition-colors'
-                            >
-                                <AiOutlineInstagram size={20} className='md:w-6 md:h-6' />
-                            </Link>
-                            <Link
-                                href='#'
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='hover:text-white/70 transition-colors'
-                            >
-                                <GrLinkedinOption size={20} className='md:w-6 md:h-6' />
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
+      <footer className="w-full pt-8 bg-gray-100 text-black">
+        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 md:gap-10 items-center">
+            {/* Simplified content for SSR */}
+            <div>Loading...</div>
+          </div>
+        </div>
+      </footer>
     );
-}
+  }
+
+  return (
+    <footer
+      className="w-full pt-8"
+      style={{
+        backgroundColor: isDark ? "rgb(24 24 27)" : "#f3f4f6",
+        color: isDark ? "white" : "black",
+      }}
+    >
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 md:gap-10 items-center">
+          {/* left section */}
+          <aside className="flex flex-col items-center justify-center gap-2">
+            <Image
+              src="/icons/gdg.svg"
+              alt="Logo"
+              width={120}
+              height={120}
+              className="mb-1"
+            />
+            <h1
+              className="font-medium text-2xl sm:text-3xl text-center md:text-left"
+              style={{ color: isDark ? "white" : "black" }}
+            >
+              Google Developer Groups
+            </h1>
+            <p className="text-base sm:text-lg font-medium text-muted-foreground text-center md:text-left">
+              <span className="text-blue-500">On Campus</span> • Ramdeobaba
+              University
+            </p>
+          </aside>
+
+          {/* divider (only on md+) */}
+          <div className="hidden md:flex items-center justify-center">
+            <div className="h-64 w-px bg-gray-300 dark:bg-slate-600" />
+          </div>
+
+          {/* divider only on sm */}
+          <div className="md:hidden w-full ">
+            <div className="h-px w-full bg-gray-300 dark:bg-slate-600" />
+          </div>
+
+          {/* right section */}
+          <div className="flex flex-col gap-6">
+            <span className="flex items-start gap-3">
+              <IoLocationOutline
+                size={28}
+                style={{ color: isDark ? "white" : "black" }}
+              />
+              <div
+                className="flex flex-col text-sm sm:text-base leading-tight"
+                style={{ color: isDark ? "white" : "black" }}
+              >
+                <span>
+                  Shri Ramdeobaba College of Engineering and Management,
+                </span>
+                <span>
+                  Ramdeo Tekdi, Gittikhadan, Katol Road, Nagpur-440013
+                </span>
+              </div>
+            </span>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-8 w-full">
+              <Link href="#" className="underline text-sm sm:text-base">
+                <span className="flex items-center gap-2">
+                  <CgMail
+                    size={24}
+                    style={{ color: isDark ? "white" : "black" }}
+                  />
+                  <p style={{ color: isDark ? "white" : "black" }}>
+                    dsc.rknec@gmail.com
+                  </p>
+                </span>
+              </Link>
+
+              {/* social media  */}
+              <div className="flex flex-col items-start gap-2">
+                <p
+                  className="text-base font-semibold"
+                  style={{ color: isDark ? "white" : "black" }}
+                >
+                  Follow Us:
+                </p>
+                <div className="flex gap-3 items-center">
+                  <Link
+                    href="#"
+                    target="_blank"
+                    className="rounded-full p-2 flex items-center justify-center bg-muted-foreground/10 hover:bg-muted-foreground/20 transition-all duration-300 ease-in-out"
+                    aria-label="Instagram"
+                  >
+                    <AiOutlineInstagram
+                      size={20}
+                      style={{ color: isDark ? "white" : "black" }}
+                    />
+                  </Link>
+                  <Link
+                    href="#"
+                    target="_blank"
+                    className="rounded-full p-2 flex items-center justify-center bg-muted-foreground/10 hover:bg-muted-foreground/20 transition-all duration-300 ease-in-out"
+                    aria-label="LinkedIn"
+                  >
+                    <FaLinkedinIn
+                      size={20}
+                      style={{ color: isDark ? "white" : "black" }}
+                    />
+                  </Link>
+                  <Link
+                    href="#"
+                    target="_blank"
+                    className="rounded-full p-2 flex items-center justify-center bg-muted-foreground/10 hover:bg-muted-foreground/20 transition-all duration-300 ease-in-out"
+                    aria-label="X"
+                  >
+                    <BsTwitter
+                      size={20}
+                      style={{ color: isDark ? "white" : "" }}
+                    />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* bottom pic */}
+      <div className="w-full mt-8">
+        <Image
+          src="/assets/footer-pic.svg"
+          alt="Footer"
+          width={1920}
+          height={180}
+          className="w-full h-40 sm:h-48 md:h-52 object-cover"
+        />
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;

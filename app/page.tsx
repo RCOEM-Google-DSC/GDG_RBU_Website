@@ -7,9 +7,10 @@ import Faq from "./Components/Landing/FAQ";
 import MeetOurTeam from "./Components/Landing/MeetOurTeam";
 import Footer from "./Components/Landing/Footer";
 import Hero from "./Components/Landing/Hero";
+import Footer1 from "./Components/Landing/Footer1";
 export default function Home() {
   return (
-    <div className=" ">
+    <div>
       {/* hero section */}
       <section className="min-w-full">
         <Hero />.
@@ -44,7 +45,8 @@ export default function Home() {
       </section>
 
       {/* footer */}
-      <Footer />
+      <Footer1 />
+      {/* <Footer /> */}
     </div>
   );
 }
