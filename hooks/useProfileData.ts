@@ -42,43 +42,35 @@ export function useProfileData(): UseProfileDataReturn {
           return;
         }
 
-        // 1. Fetch user row
+        // 1. Fetch user
         const { data: userRow, error: userErr } = await supabase
           .from("users")
           .select("*")
           .eq("id", userId)
           .maybeSingle<SupabaseUserRow>();
 
-        if (userErr) {
-          throw userErr;
-        }
+        if (userErr) throw userErr;
+        if (!userRow) throw new Error("User not found");
 
-        if (!userRow) {
-          throw new Error("User not found");
-        }
-
-        // 2. Fetch user's registrations
+        // 2. Fetch registrations
         const { data: registrations, error: regErr } = await supabase
           .from("registrations")
           .select("*")
           .eq("user_id", userId);
 
-        if (regErr) {
-          throw regErr;
-        }
+        if (regErr) throw regErr;
 
-        // 3. Fetch events for those registrations
+        // 3. Fetch events
         let uiEvents: UIEvent[] = [];
         if (registrations && registrations.length > 0) {
           const eventIds = registrations.map((r) => r.event_id);
+
           const { data: eventsData, error: eventsErr } = await supabase
             .from("events")
             .select("id, title, event_time, image_url")
             .in("id", eventIds);
 
-          if (eventsErr) {
-            throw eventsErr;
-          }
+          if (eventsErr) throw eventsErr;
 
           if (eventsData) {
             uiEvents = buildUIEvents(
@@ -88,10 +80,10 @@ export function useProfileData(): UseProfileDataReturn {
           }
         }
 
-        // 4. Build badges from text[]
+        // 4. Badges
         const uiBadges = buildUIBadges(userRow.badges);
 
-        // 5. Build UI user
+        // 5. User
         const uiUser = buildUIUser(userRow, uiEvents.length, uiBadges.length);
 
         setUser(uiUser);

@@ -143,6 +143,7 @@ export type UIEvent = {
   image: string;
   tag: string;
   tagColor: string;
+  certificate_url?: string | null;
 };
 
 // ---------- BADGE TYPES ----------
@@ -163,6 +164,7 @@ export type Registration = {
   check_in_time: string | null;
   created_at: string;
   team_name?: string | null;
+  certificate_url?: string | null;
   users: {
     id: string;
     name: string;

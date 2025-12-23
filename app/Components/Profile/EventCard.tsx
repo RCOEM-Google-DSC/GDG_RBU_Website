@@ -1,12 +1,36 @@
 import { cn } from "@/lib/utils";
 import { Calendar, Download, Share2 } from "lucide-react";
 import { UIEvent } from "../../../lib/types";
+import { supabase } from "@/supabase/supabase";
 
 interface EventCardProps {
   event: UIEvent;
 }
 
 export function EventCard({ event }: EventCardProps) {
+  const handleDownload = async () => {
+    console.log("Downloading certificate for event:", event);
+  if (!event.certificate_url) return;
+
+  const { data, error } = await supabase.storage
+    .from("certificates")
+    .download(event.certificate_url);
+
+  if (error || !data) {
+    alert("Failed to download certificate");
+    return;
+  }
+
+  const blobUrl = URL.createObjectURL(data);
+  const a = document.createElement("a");
+  a.href = blobUrl;
+  a.download = event.certificate_url.split("/").pop()!;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(blobUrl);
+};
+
   return (
     <div className="group relative flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-neutral-200/70 dark:border-neutral-800/70 bg-linear-to-br from-neutral-50 to-white dark:from-neutral-900/70 dark:to-neutral-950 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
       {/* Image section */}
@@ -55,7 +79,7 @@ export function EventCard({ event }: EventCardProps) {
 
         {/* Actions */}
         <div className="flex items-center gap-3 pt-1">
-          <button className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-neutral-900 dark:text-white border border-neutral-300 dark:border-neutral-700 bg-white/70 dark:bg-neutral-900/60 backdrop-blur hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all">
+          <button className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-neutral-900 dark:text-white border border-neutral-300 dark:border-neutral-700 bg-white/70 dark:bg-neutral-900/60 backdrop-blur hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all " onClick={handleDownload} disabled={!event.certificate_url}>
             <Download className="w-4 h-4" />
             Download Certificate
           </button>

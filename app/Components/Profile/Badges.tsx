@@ -96,6 +96,7 @@ export function buildUIEvents(events: EventRow[], registrations: Registration[])
       image: ev.image_url || DEFAULT_EVENT_IMAGE,
       tag: reg?.status === "checked_in" ? "Attended" : isPast ? "Completed" : "Registered",
       tagColor: reg?.status === "checked_in" ? "bg-green-600" : isPast ? "bg-gray-600" : "bg-blue-600",
+      certificate_url: reg?.certificate_url || null,
     };
   });
 }
