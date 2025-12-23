@@ -1,24 +1,70 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import Image from "next/image";
+import Link from "next/link";
 import { supabase } from "@/supabase/supabase";
 import {
-  X,
-  Upload,
   Github,
   Linkedin,
   Instagram,
   Code,
   FileText,
   Type,
-  Hash,
   Phone,
   MapPin,
   User as UserIcon,
   Mail,
+  Pencil,
+  Loader2,
 } from "lucide-react";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+
+// Zod Schema for Profile Form
+const profileFormSchema = z.object({
+  image_url: z.string().url().optional().or(z.literal("")),
+  branch: z.string().optional(),
+  section: z.string().optional(),
+  phone_number: z.string().optional(),
+  github: z.string().url().optional().or(z.literal("")),
+  linkedin: z.string().url().optional().or(z.literal("")),
+  domain: z.string().optional(),
+  bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
+  thought: z.string().max(500, "Thought must be less than 500 characters").optional(),
+  leetcode: z.string().url().optional().or(z.literal("")),
+  twitter: z.string().url().optional().or(z.literal("")),
+  instagram: z.string().url().optional().or(z.literal("")),
+  club_email: z.string().email().optional().or(z.literal("")),
+  cv_url: z.string().url().optional().or(z.literal("")),
+});
+
+type ProfileFormValues = z.infer<typeof profileFormSchema>;
+
 interface EditProfileModalProps {
+  open: boolean;
   onClose: () => void;
   profile: {
     users?: {
@@ -45,35 +91,38 @@ interface EditProfileModalProps {
   userId: string;
 }
 
-export default function EditProfileModal({ onClose, profile, userId }: EditProfileModalProps) {
+export default function EditProfileModal({
+  open,
+  onClose,
+  profile,
+  userId,
+}: EditProfileModalProps) {
   const u = profile?.users ?? {};
-
-  const DOMAINS = ["web dev", "design", "cp", "mac", "marketing", "management", "social"];
 
   const [imagePreview, setImagePreview] = useState(u.image_url || "");
   const [uploading, setUploading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [form, setForm] = useState({
-    image_url: u.image_url || "",
-    branch: u.branch || "",
-    section: u.section || "",
-    phone_number: u.phone_number || "",
-    github: u?.profile_links?.github || "",
-    linkedin: u?.profile_links?.linkedin || "",
-    domain: profile.domain || "",
-    bio: profile.bio || "",
-    thought: profile.thought || "",
-    leetcode: profile.leetcode || "",
-    twitter: profile.twitter || "",
-    instagram: profile.instagram || "",
-    club_email: profile.club_email || "",
-    cv_url: profile.cv_url || "",
+  // Initialize form with react-hook-form and zod
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      image_url: u.image_url || "",
+      branch: u.branch || "",
+      section: u.section || "",
+      phone_number: u.phone_number || "",
+      github: u?.profile_links?.github || "",
+      linkedin: u?.profile_links?.linkedin || "",
+      domain: profile.domain || "",
+      bio: profile.bio || "",
+      thought: profile.thought || "",
+      leetcode: profile.leetcode || "",
+      twitter: profile.twitter || "",
+      instagram: profile.instagram || "",
+      club_email: profile.club_email || "",
+      cv_url: profile.cv_url || "",
+    },
   });
-
-  const updateForm = (key: string, value: string) =>
-    setForm((prev) => ({ ...prev, [key]: value }));
 
   /* -------- IMAGE UPLOAD -------- */
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,276 +142,449 @@ export default function EditProfileModal({ onClose, profile, userId }: EditProfi
       if (!data?.url) throw new Error("Upload failed");
 
       setImagePreview(data.url);
-      updateForm("image_url", data.url);
+      form.setValue("image_url", data.url);
 
       await supabase.from("users").update({ image_url: data.url }).eq("id", userId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setUploading(false);
     }
   };
 
   /* -------- SAVE -------- */
-  const handleSave = async () => {
-    setSaving(true);
+  const onSubmit = async (values: ProfileFormValues) => {
     setError(null);
 
     try {
+      console.log("Form values:", values);
+
       const userUpdate = {
-        branch: form.branch,
-        section: form.section,
-        phone_number: form.phone_number,
-        image_url: form.image_url,
+        branch: values.branch,
+        section: values.section,
+        phone_number: values.phone_number,
+        image_url: values.image_url,
         profile_links: {
-          github: form.github,
-          linkedin: form.linkedin,
+          github: values.github,
+          linkedin: values.linkedin,
         },
       };
 
-      await supabase.from("users").update(userUpdate).eq("id", userId);
+      const { error: userError } = await supabase.from("users").update(userUpdate).eq("id", userId);
+
+      if (userError) {
+        console.error("User update error:", userError);
+        throw userError;
+      }
 
       const memberUpdate = {
-        domain: form.domain,
-        bio: form.bio,
-        thought: form.thought,
-        instagram: form.instagram,
-        twitter: form.twitter,
-        leetcode: form.leetcode,
-        club_email: form.club_email,
-        cv_url: form.cv_url,
+        domain: values.domain,
+        bio: values.bio,
+        thought: values.thought,
+        instagram: values.instagram,
+        twitter: values.twitter,
+        leetcode: values.leetcode,
+        club_email: values.club_email,
+        cv_url: values.cv_url,
       };
 
-      await supabase.from("team_members").update(memberUpdate).eq("userid", userId);
+      console.log("Member update:", memberUpdate);
 
+      const { error: memberError } = await supabase.from("team_members").update(memberUpdate).eq("userid", userId);
+
+      if (memberError) {
+        console.error("Member update error:", memberError);
+        throw memberError;
+      }
+
+      console.log("Updates successful!");
       onClose();
       window.location.reload();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setSaving(false);
+      console.error("Save error:", err);
+      setError(err instanceof Error ? err.message : "An error occurred");
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[999] p-4">
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-2xl relative">
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold text-slate-800">
+            Edit Profile
+          </DialogTitle>
+          <DialogDescription className="text-slate-500">
+            Update your team details
+          </DialogDescription>
+        </DialogHeader>
 
-        <button onClick={onClose} className="absolute right-4 top-4 text-slate-500 hover:text-black">
-          <X size={22} />
-        </button>
-
-        <div className="p-6 border-b border-slate-200">
-          <h2 className="text-2xl font-bold text-slate-800">Edit Profile</h2>
-          <p className="text-slate-500 text-sm">Update your team details</p>
-        </div>
-
-        <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-
-          {/* IMAGE + EMAIL DISPLAY */}
-          <div className="flex items-center gap-6">
-            <img
-              src={imagePreview}
-              className="w-28 h-28 rounded-2xl border border-slate-300 object-cover"
-            />
-
-            <div className="flex flex-col gap-3">
-              <label className="px-4 py-2 bg-slate-900 text-white rounded-xl cursor-pointer flex items-center gap-2 shadow">
-                <Upload size={18} />
-                {uploading ? "Uploading..." : "Change Image"}
-                <input type="file" className="hidden" onChange={handleImageUpload} />
-              </label>
-
-              <div className="text-sm text-slate-600">
-                <div className="flex items-center gap-2">
-                  <UserIcon size={14} />
-                  <span>{u.name}</span>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* IMAGE + NAME & EMAIL DISPLAY */}
+            <div className="flex items-start gap-6 pb-6 border-b border-slate-200">
+              {/* Profile Image with Pencil Icon */}
+              <div className="relative group">
+                <div className="w-28 h-28 rounded-2xl border-2 border-slate-200 overflow-hidden shadow-sm">
+                  {imagePreview ? (
+                    <Image
+                      src={imagePreview}
+                      alt="Profile"
+                      width={112}
+                      height={112}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-slate-100 flex items-center justify-center">
+                      <UserIcon className="w-12 h-12 text-slate-400" />
+                    </div>
+                  )}
                 </div>
 
-                <div className="mt-1 text-xs text-slate-500">Email (not editable)</div>
-                <input
-                  value={u.email}
-                  disabled
-                  className="w-full bg-slate-50 border border-slate-100 rounded-md px-3 py-2 text-sm text-slate-600"
-                />
+                {/* Pencil Icon Button */}
+                <Label
+                  htmlFor="image-upload"
+                  className="absolute bottom-1 right-1 bg-slate-900 hover:bg-black text-white p-2 rounded-full cursor-pointer shadow-lg transition-all duration-200 hover:scale-110"
+                  title="Change profile picture"
+                >
+                  <Pencil size={16} />
+                  <input
+                    id="image-upload"
+                    type="file"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                  />
+                </Label>
+
+                {/* Upload Indicator */}
+                {uploading && (
+                  <div className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center">
+                    <Loader2 className="w-6 h-6 text-white animate-spin" />
+                  </div>
+                )}
+              </div>
+
+              {/* Name & Email Info */}
+              <div className="flex flex-col items-start justify-center gap-2 flex-1">
+                <div className="flex items-center gap-2">
+                  <UserIcon size={18} className="text-slate-400" />
+                  <span className="text-lg font-semibold text-slate-800">
+                    {u.name || "Name not set"}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Mail size={18} className="text-slate-400" />
+                  <span className="text-sm text-slate-600">
+                    {u.email || "Email not set"}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* USER FIELDS */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Field
-              label="Phone Number"
-              icon={<Phone size={18} />}
-              value={form.phone_number}
-              onChange={(e) => updateForm("phone_number", e.target.value)}
+            {/* USER FIELDS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="phone_number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                      <Phone size={16} />
+                      Phone Number
+                      <span className="text-red-500 ">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter phone number"
+                        {...field}
+                        className="border-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="branch"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                      <MapPin size={16} />
+                      Branch
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter branch"
+                        {...field}
+                        className="border-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="section"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                      <Type size={16} />
+                      Section
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter section"
+                        {...field}
+                        className="border-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="club_email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                      <Mail size={16} />
+                      Club Email
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="email@example.com"
+                        type="email"
+                        {...field}
+                        className="border-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* BIO */}
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2 text-slate-700">
+                    <Type size={16} />
+                    Bio
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Tell us about yourself..."
+                      className="resize-none border-slate-300"
+                      rows={3}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
 
-            <Field
-              label="Branch"
-              icon={<MapPin size={18} />}
-              value={form.branch}
-              onChange={(e) => updateForm("branch", e.target.value)}
+            {/* THOUGHT */}
+            <FormField
+              control={form.control}
+              name="thought"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2 text-slate-700">
+                    <FileText size={16} />
+                    Thought
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Share your thoughts..."
+                      className="resize-none border-slate-300"
+                      rows={3}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
 
-            <Field
-              label="Section"
-              icon={<Type size={18} />}
-              value={form.section}
-              onChange={(e) => updateForm("section", e.target.value)}
-            />
-          </div>
+            {/* SOCIAL LINKS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="github"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                      <Github size={16} />
+                      GitHub URL
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://github.com/username"
+                        {...field}
+                        className="border-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {/* DOMAIN */}
-          <div>
-            <label className="text-sm font-semibold text-slate-600">Domain</label>
+              <FormField
+                control={form.control}
+                name="linkedin"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                      <Linkedin size={16} />
+                      LinkedIn URL
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://linkedin.com/in/username"
+                        {...field}
+                        className="border-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <div className="flex gap-2 items-center border border-slate-300 rounded-xl p-3 bg-white">
-              <Hash size={18} className="text-slate-500" />
-              <select
-                className="w-full outline-none text-slate-700 bg-transparent"
-                value={form.domain}
-                onChange={(e) => updateForm("domain", e.target.value)}
+              <FormField
+                control={form.control}
+                name="instagram"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                      <Instagram size={16} />
+                      Instagram
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://instagram.com/username"
+                        {...field}
+                        className="border-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="twitter"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                      <Code size={16} />
+                      Twitter
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://twitter.com/username"
+                        {...field}
+                        className="border-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="leetcode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                      <Code size={16} />
+                      LeetCode URL
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://leetcode.com/username"
+                        {...field}
+                        className="border-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="cv_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                      <FileText size={16} />
+                      Resume URL
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://example.com/resume.pdf"
+                        {...field}
+                        className="border-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+
+            </div>
+
+            {/* ERROR MESSAGE */}
+            {error && (
+              <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md border border-red-200">
+                {error}
+              </div>
+            )}
+
+            {/* FOOTER BUTTONS */}
+            <DialogFooter className="gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="border-slate-200"
               >
-                <option value="">Select Domain</option>
-                {DOMAINS.map((d) => (
-                  <option key={d} value={d}>
-                    {d.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* BIO */}
-          <Field
-            label="Bio"
-            textarea
-            icon={<Type size={18} />}
-            value={form.bio}
-            onChange={(e) => updateForm("bio", e.target.value)}
-          />
-
-          {/* THOUGHT */}
-          <Field
-            label="Thought"
-            textarea
-            icon={<FileText size={18} />}
-            value={form.thought}
-            onChange={(e) => updateForm("thought", e.target.value)}
-          />
-
-          {/* LINKS */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Field
-              label="GitHub URL"
-              icon={<Github size={18} />}
-              value={form.github}
-              onChange={(e) => updateForm("github", e.target.value)}
-            />
-            <Field
-              label="LinkedIn URL"
-              icon={<Linkedin size={18} />}
-              value={form.linkedin}
-              onChange={(e) => updateForm("linkedin", e.target.value)}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Field
-              label="Instagram"
-              icon={<Instagram size={18} />}
-              value={form.instagram}
-              onChange={(e) => updateForm("instagram", e.target.value)}
-            />
-            <Field
-              label="Twitter"
-              icon={<Code size={18} />}
-              value={form.twitter}
-              onChange={(e) => updateForm("twitter", e.target.value)}
-            />
-          </div>
-
-          <Field
-            label="LeetCode URL"
-            icon={<Code size={18} />}
-            value={form.leetcode}
-            onChange={(e) => updateForm("leetcode", e.target.value)}
-          />
-
-          <Field
-            label="Resume URL"
-            icon={<FileText size={18} />}
-            value={form.cv_url}
-            onChange={(e) => updateForm("cv_url", e.target.value)}
-          />
-
-          <Field
-            label="Club Email"
-            icon={<Mail size={18} />}
-            value={form.club_email}
-            onChange={(e) => updateForm("club_email", e.target.value)}
-          />
-
-          {error && (
-            <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
-              {error}
-            </div>
-          )}
-        </div>
-
-        <div className="p-6 border-t border-slate-200 flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-6 py-3 bg-white border border-slate-200 rounded-xl"
-          >
-            Cancel
-          </button>
-
-          <button
-            onClick={handleSave}
-            className="px-6 py-3 bg-slate-900 text-white rounded-xl shadow hover:bg-black transition"
-          >
-            {saving ? "Saving..." : "Save Changes"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* FIELD COMPONENT */
-interface FieldProps {
-  label: string;
-  icon: React.ReactNode;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  textarea?: boolean;
-}
-
-function Field({ label, icon, value, onChange, textarea }: FieldProps) {
-  return (
-    <div className="space-y-1">
-      <label className="text-sm font-semibold text-slate-600">{label}</label>
-
-      <div className="flex gap-2 items-start border border-slate-300 rounded-xl p-3 bg-white">
-        <div className="text-slate-500 mt-1">{icon}</div>
-
-        {textarea ? (
-          <textarea
-            className="w-full outline-none resize-none text-slate-700"
-            rows={3}
-            value={value}
-            onChange={onChange}
-          />
-        ) : (
-          <input
-            className="w-full outline-none text-slate-700"
-            value={value}
-            onChange={onChange}
-          />
-        )}
-      </div>
-    </div>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting}
+                className="bg-slate-900 hover:bg-black text-white"
+              >
+                {form.formState.isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -6,13 +6,12 @@ import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import * as z from "zod"
 import Image from "next/image"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
 import {
     Field,
-    FieldDescription,
     FieldError,
-    FieldGroup,
     FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
@@ -22,64 +21,42 @@ import { Eye, EyeOff } from "lucide-react"
 
 
 const formSchema = z.object({
-    name: z.string().min(2, { message: "Name must be at least 2 characters long" }),
-    email: z.email({ message: "Invalid email address" }),
-    password: z.string().min(8, { message: "Password must be at least 8 characters long" }),
-
+    email: z.string().email({ message: "Invalid email address" }),
+    password: z.string().min(1, { message: "Password is required" }),
 })
 
-export function RegisterForm() {
+export function LoginForm() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
             email: "",
             password: "",
         },
     })
 
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
     async function onSubmit(data: z.infer<typeof formSchema>) {
         try {
             setIsLoading(true);
 
-            // Sign up with Supabase Auth
-            const { data: authData, error: signUpError } = await supabase.auth.signUp({
+            // Sign in with Supabase Auth
+            const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
                 email: data.email,
                 password: data.password,
-                options: {
-                    data: {
-                        full_name: data.name,
-                    },
-                    emailRedirectTo: `${window.location.origin}/auth/callback`,
-                }
             });
 
-            if (signUpError) {
-                toast.error("Registration Failed", {
-                    description: signUpError.message,
+            if (signInError) {
+                toast.error("Login Failed", {
+                    description: signInError.message,
                     position: "bottom-right",
                 });
                 return;
             }
 
             if (authData.user) {
-                // Create user record in public.users table
-                const { error: insertError } = await supabase.from("users").insert({
-                    id: authData.user.id,
-                    email: data.email,
-                    name: data.name,
-                    image_url: 'user.png',
-                    provider: 'email',
-                    role: 'user',
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString(),
-                });
-
-                if (insertError) {
-                    console.error("Error creating user record:", insertError);
-                }
-
-                toast.success("Registration Successful!", {
+                toast.success("Login Successful!", {
                     description: "Redirecting to your profile...",
                     position: "bottom-right",
                 });
@@ -90,8 +67,8 @@ export function RegisterForm() {
                 }, 1000);
             }
         } catch (error) {
-            console.error("Registration error:", error);
-            toast.error("Registration Failed", {
+            console.error("Login error:", error);
+            toast.error("Login Failed", {
                 description: "An unexpected error occurred. Please try again.",
                 position: "bottom-right",
             });
@@ -99,9 +76,6 @@ export function RegisterForm() {
             setIsLoading(false);
         }
     }
-
-    const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
 
     async function handleOAuthLogin(provider: 'github' | 'google') {
         try {
@@ -169,28 +143,7 @@ export function RegisterForm() {
             </div>
 
             {/* Form */}
-            <form id="registerform" onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                <Controller
-                    name="name"
-                    control={form.control}
-                    render={({ field, fieldState }) => (
-                        <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel htmlFor="name" className="text-sm text-gray-600">
-                                Name
-                            </FieldLabel>
-                            <Input
-                                {...field}
-                                id="name"
-                                placeholder="John Doe"
-                                autoComplete="off"
-                                className="border-0 border-b border-gray-300 rounded-none px-0 focus-visible:ring-0 focus-visible:border-gray-500"
-                            />
-                            {fieldState.invalid && (
-                                <FieldError errors={[fieldState.error]} />
-                            )}
-                        </Field>
-                    )}
-                />
+            <form id="loginform" onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                 <Controller
                     name="email"
                     control={form.control}
@@ -205,7 +158,7 @@ export function RegisterForm() {
                                 type="email"
                                 aria-invalid={fieldState.invalid}
                                 placeholder="jhondoe@gmail.com"
-                                autoComplete="off"
+                                autoComplete="email"
                                 className="border-0 border-b border-gray-300 rounded-none px-0 focus-visible:ring-0 focus-visible:border-gray-500"
                             />
                             {fieldState.invalid && (
@@ -228,8 +181,8 @@ export function RegisterForm() {
                                     type={showPassword ? "text" : "password"}
                                     id="password"
                                     aria-invalid={fieldState.invalid}
-                                    placeholder="Minimum 8 characters"
-                                    autoComplete="off"
+                                    placeholder="Enter your password"
+                                    autoComplete="current-password"
                                     className="border-0 border-b border-gray-300 rounded-none px-0 pr-12 focus-visible:ring-0 focus-visible:border-gray-500"
                                 />
                                 <button
@@ -247,23 +200,29 @@ export function RegisterForm() {
                     )}
                 />
 
+                <div className="text-right">
+                    <Link href="/forgot-password" className="text-sm text-gray-600 hover:text-gray-800">
+                        Forgot Password?
+                    </Link>
+                </div>
+
                 <Button
                     type="submit"
-                    form="registerform"
+                    form="loginform"
                     disabled={isLoading}
                     className="w-full bg-sky-500 hover:bg-sky-600 text-white py-6 text-lg font-medium rounded-md disabled:opacity-50"
                 >
-                    {isLoading ? "Registering..." : "Register"}
+                    {isLoading ? "Logging in..." : "Login"}
                 </Button>
             </form>
 
             {/* Footer */}
             <div className="text-center mt-6">
                 <p className="text-sm text-gray-600">
-                    Already have an account?{" "}
-                    <a href="/login" className="text-gray-800 font-medium hover:underline">
-                        Login Now
-                    </a>
+                    Don't have an account?{" "}
+                    <Link href="/register" className="text-gray-800 font-medium hover:underline">
+                        Register Now
+                    </Link>
                 </p>
             </div>
         </div>

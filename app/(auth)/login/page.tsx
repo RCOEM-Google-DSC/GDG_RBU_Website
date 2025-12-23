@@ -1,9 +1,20 @@
 import React from 'react'
+import { LoginForm } from '@/app/Components/Auth/LoginForm'
 
-const page = () => {
+const LoginPage = () => {
   return (
-    <div>page</div>
+    <div className="grid grid-cols-2 min-h-screen w-full p-10">
+      {/* Left Panel - Form */}
+      <div className=''>
+        <LoginForm />
+      </div>
+
+      {/* Right Panel - Branding */}
+      <div>
+        {/* Add branding content here if needed */}
+      </div>
+    </div>
   )
 }
 
-export default page
+export default LoginPage

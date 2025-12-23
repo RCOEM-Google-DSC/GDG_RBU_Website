@@ -120,6 +120,8 @@
   }
   body {
     @apply bg-background text-foreground;
+    margin: 0;
+    padding: 0;
   }
 }
 
@@ -158,6 +160,13 @@ body:has(nav.-translate-y-full) [data-fumadocs-nav] {
 /* When navbar is hidden, move toggle buttons to top with small margin */
 body:has(nav.-translate-y-full) [data-fumadocs-sidebar-toggle] {
   top: 0.75rem !important;
+}
+
+/* Hide theme toggle in docs */
+[data-theme-toggle],
+button[aria-label*="theme" i],
+button[aria-label*="Toggle theme" i] {
+  display: none !important;
 }
 
 /* Search button positioning */

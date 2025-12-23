@@ -37,7 +37,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${productSans.variable} font-sans antialiased flex flex-col min-h-screen`}
       >
-        <RootProvider>
+        <RootProvider
+          theme={{
+            enabled: false
+          }}
+        >
           {/* <DevNavBar/> */}
           <NavBar />
           {!isDocsPage && (
@@ -45,7 +49,7 @@ export default function RootLayout({
               <GridBackground />
             </div>
           )}
-          <main className="relative pt-[70px]">
+          <main className="relative w-full pt-[70px]">
             {children}
           </main>
           <Toaster position="top-right" richColors />

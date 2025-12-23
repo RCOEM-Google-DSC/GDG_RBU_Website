@@ -18,6 +18,8 @@ import { useParams } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
 import EditProfileModal from "@/app/Components/team/EditProfileModal";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 /* ---------------- ILLUSTRATIONS ---------------- */
 
@@ -242,14 +244,14 @@ export default function TeamProfilePage() {
             </div>
 
             {/* BUTTONS */}
-            <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-3 md:gap-4 pt-2">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4 pt-2">
               {/* Say Hello */}
-              <a
+              <Link
                 href={`mailto:${u.email}`}
-                className="flex items-center gap-2 px-7 py-3 bg-slate-900 text-white rounded-xl shadow-lg"
+                className="flex items-center gap-2 px-7 py-3 bg-slate-900 text-white rounded-xl shadow-lg hover:bg-slate-800 transition-colors duration-2"
               >
                 <Send size={18} /> Say Hello
-              </a>
+              </Link>
 
               {/* Resume */}
               {resumeUrl && (
@@ -266,25 +268,16 @@ export default function TeamProfilePage() {
                 <>
                   <button
                     onClick={() => setShowEdit(true)}
-                    className="flex items-center gap-2 px-6 py-3 bg-slate-100 border border-slate-300 rounded-xl"
+                    className="flex items-center gap-2 px-6 py-3 bg-slate-100 border border-slate-300 rounded-xl hover:bg-slate-200 transition-colors duration-200"
                   >
                     <Pencil size={18} /> Edit Profile
                   </button>
 
-                  {authRole !== "user" && (
-                    <button
-                      onClick={() =>
-                      (window.location.href =
-                        authRole === "admin" ? "/admin" : "/member-dashboard")
-                      }
-                      className="flex items-center gap-2 px-6 py-3 bg-blue-100 border border-blue-300 rounded-xl"
-                    >
-                      <LayoutDashboard size={18} />{" "}
-                      {authRole === "admin"
-                        ? "Admin Dashboard"
-                        : "Member Dashboard"}
-                    </button>
-                  )}
+                  <button className=" bg-blue-100 border border-blue-300 hover:bg-blue-200 text-black rounded-xl transition-colors duration-200">
+                    <Link href='/admin' className="flex gap-2 px-6 py-3 items-center">
+                      <LayoutDashboard size={18} /> Dashboard
+                    </Link>
+                  </button>
                 </>
               )}
             </div>
@@ -368,6 +361,7 @@ export default function TeamProfilePage() {
       {/* MODAL */}
       {showEdit && authUserId && (
         <EditProfileModal
+          open={showEdit}
           onClose={() => setShowEdit(false)}
           profile={profile}
           userId={authUserId}

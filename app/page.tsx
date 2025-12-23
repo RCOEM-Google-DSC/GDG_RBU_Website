@@ -10,15 +10,15 @@ import Hero from "./Components/Landing/Hero";
 import Footer1 from "./Components/Landing/Footer1";
 export default function Home() {
   return (
-    <div>
+    <div className="w-full">
       {/* hero section */}
-      <section className="min-w-full">
-        <Hero />.
+      <section className="w-full">
+        <Hero />
       </section>
 
       {/* upcoming events section */}
-      <section className="p-10 mt-10">
-        <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 self-start ml-40">Upcoming Event</h2>
+      <section className="w-full px-6 md:px-10 lg:px-20 py-10">
+        <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 self-start">Upcoming Event</h2>
         {upcomingEvents.map((event) => (
           <EventTicket
             key={event.id}
@@ -35,12 +35,12 @@ export default function Home() {
       </section>
 
       {/* team section */}
-      <section className="mt-10 p-10">
+      <section className="w-full px-6 md:px-10 lg:px-20 py-10">
         <MeetOurTeam />
       </section>
 
       {/* faq section */}
-      <section>
+      <section className="w-full">
         <Faq />
       </section>
 

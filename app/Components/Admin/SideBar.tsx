@@ -1,5 +1,5 @@
 import { BiCalendarEvent } from "react-icons/bi";
-import { Calendar, ClipboardList, Handshake, Home, Inbox, Users2 } from "lucide-react"
+import { Calendar, ClipboardList, Handshake, Home, Inbox, Users2, UserCog } from "lucide-react"
 import Link from "next/link"
 
 import {
@@ -30,6 +30,11 @@ const Buttons = [
     title: "Users",
     url: "/admin/users",
     icon: Users2,
+  },
+  {
+    title: "Team Members",
+    url: "/admin/team-members",
+    icon: UserCog,
   },
   {
     title: "Partners",

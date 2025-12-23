@@ -6,7 +6,6 @@ import { supabase } from "@/supabase/supabase";
 import { User } from "@supabase/supabase-js";
 import ProfileDropdown from '../Common/ProfileDropdown'
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 
 // Common navigation links array
@@ -96,7 +95,7 @@ const NavBar = () => {
             <ProfileDropdown />
           ) : (
             <Link href={"/register"} className="text-gray-700 hover:text-gray-900 transition-colors">
-              Register
+              Join Us
             </Link>
           )}
         </div>
