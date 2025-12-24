@@ -12,7 +12,5 @@ jobs:
       - name: Call Supabase cleanup function
         run: |
           curl -X POST \
-          https://<PROJECT_ID>.supabase.co/functions/v1/cleanup-certificates-cron \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-          -H "Content-Type: application/json" \
-          -d '{}'
+          https://muxvkcwwclzmuqwyffkj.supabase.co/functions/v1/cleanup-certificates-cron \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
