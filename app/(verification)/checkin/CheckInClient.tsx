@@ -44,6 +44,7 @@ export default function CheckInClient() {
               status,
               check_in_time,
               created_at,
+              certificate_generated_once,
               users (
                 id,
                 name,
@@ -92,6 +93,7 @@ export default function CheckInClient() {
               check_in_time,
               created_at,
               team_name,
+              certificate_generated_once,
               users (
                 id,
                 name,

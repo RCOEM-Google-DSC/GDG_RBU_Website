@@ -16,7 +16,6 @@ export function isProfileComplete(user: {
   );
 }
 
-
 // ---------- Event ----------
 export type Event = {
   id: string;
@@ -144,6 +143,8 @@ export type UIEvent = {
   tag: string;
   tagColor: string;
   certificate_url?: string | null;
+  certificate_generated_once: boolean;
+  registration_status: string;
 };
 
 // ---------- BADGE TYPES ----------
@@ -165,6 +166,8 @@ export type Registration = {
   created_at: string;
   team_name?: string | null;
   certificate_url?: string | null;
+  certificate_generated_once: boolean;
+
   users: {
     id: string;
     name: string;

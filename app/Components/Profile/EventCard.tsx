@@ -43,7 +43,7 @@ export function EventCard({ event }: EventCardProps) {
    * HANDLE BUTTON CLICK
    */
   const handleAction = async () => {
-    // CASE 1: Certificate already exists → download
+    // CASE 1: Certificate exists → download
     if (certificateUrl) {
       await downloadCertificate(certificateUrl);
       return;
@@ -53,16 +53,32 @@ export function EventCard({ event }: EventCardProps) {
     try {
       setLoading(true);
 
+      // 🔑 GET USER SESSION (CRITICAL FIX)
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        throw new Error("User not authenticated");
+      }
+
+      // 🔥 CALL EDGE FUNCTION WITH AUTH HEADER
       const { data, error } = await supabase.functions.invoke(
         "generate-certificate-on-demand",
         {
           body: {
             event_id: event.id,
           },
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
         }
       );
 
-      if (error) throw error;
+      if (error) {
+        console.error("Edge Function Error:", error);
+        throw error;
+      }
 
       if (!data?.certificate_url) {
         throw new Error("Certificate generation failed");
@@ -70,7 +86,7 @@ export function EventCard({ event }: EventCardProps) {
 
       setCertificateUrl(data.certificate_url);
 
-      // Auto-download once generated
+      // Auto-download
       await downloadCertificate(data.certificate_url);
     } catch (err) {
       console.error(err);
@@ -122,44 +138,46 @@ export function EventCard({ event }: EventCardProps) {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-3 pt-1">
-          <button
-            onClick={handleAction}
-            disabled={loading}
-            className={cn(
-              "flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium border backdrop-blur transition-all",
-              "border-neutral-300 dark:border-neutral-700",
-              "bg-white/70 dark:bg-neutral-900/60",
-              "hover:bg-neutral-100 dark:hover:bg-neutral-800",
-              loading && "opacity-60 cursor-not-allowed"
-            )}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Generating…
-              </>
-            ) : certificateUrl ? (
-              <>
-                <Download className="w-4 h-4" />
-                Download Certificate
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4" />
-                Generate Certificate
-              </>
-            )}
-          </button>
+        {event.registration_status === "verified" && (
+          <div className="flex items-center gap-3 pt-1">
+            <button
+              onClick={handleAction}
+              disabled={loading}
+              className={cn(
+                "flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium border backdrop-blur transition-all",
+                "border-neutral-300 dark:border-neutral-700",
+                "bg-white/70 dark:bg-neutral-900/60",
+                "hover:bg-neutral-100 dark:hover:bg-neutral-800",
+                loading && "opacity-60 cursor-not-allowed"
+              )}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Generating…
+                </>
+              ) : certificateUrl ? (
+                <>
+                  <Download className="w-4 h-4" />
+                  Download Certificate
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  Generate Certificate
+                </>
+              )}
+            </button>
 
-          <button
-            aria-label="Share event"
-            title="Share event"
-            className="inline-flex items-center justify-center rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 px-2.5 py-2 text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-          >
-            <Share2 className="w-4 h-4" />
-          </button>
-        </div>
+            {/* <button
+              aria-label="Share event"
+              title="Share event"
+              className="inline-flex items-center justify-center rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 px-2.5 py-2 text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            >
+              <Share2 className="w-4 h-4" />
+            </button> */}
+          </div>
+        )}
       </div>
 
       <div className="hidden sm:block absolute left-0 top-0 h-full w-1 bg-linear-to-b from-blue-500 via-sky-400 to-purple-500" />

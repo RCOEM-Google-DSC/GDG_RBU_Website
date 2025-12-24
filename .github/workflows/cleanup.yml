@@ -2,8 +2,8 @@ name: Cleanup Certificates
 
 on:
   schedule:
-    - cron: "0 * * * *" # every hour
-  workflow_dispatch:   # manual trigger button
+    - cron: "*/5 * * * *" # every 5 minutes
+  workflow_dispatch:
 
 jobs:
   cleanup:
@@ -12,5 +12,7 @@ jobs:
       - name: Call Supabase cleanup function
         run: |
           curl -X POST \
-          https://muxvkcwwclzmuqwyffkj.supabase.co/functions/v1/cleanup-certificates-cron \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+          https://<PROJECT_ID>.supabase.co/functions/v1/cleanup-certificates-cron \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{}'
