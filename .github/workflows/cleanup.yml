@@ -1,0 +1,18 @@
+name: Cleanup Certificates
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # every 5 minutes
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Supabase cleanup function
+        run: |
+          curl -X POST \
+          "https://muxvkcwwclzmuqwyffkj.supabase.co/functions/v1/super-worker" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{}'

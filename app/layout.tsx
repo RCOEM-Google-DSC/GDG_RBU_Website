@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "./Components/Navigation/NavBar";
-import DevNavBar from "./Components/Navigation/DevNavBar";
+
 import { Toaster } from "sonner";
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import { usePathname } from 'next/navigation';
