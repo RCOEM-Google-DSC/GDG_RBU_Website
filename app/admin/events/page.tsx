@@ -1,98 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { supabase, getCurrentUserId } from "@/supabase/supabase";
-import { Event, Partner } from "@/lib/types";
 import PastEvents from "@/app/Components/Admin/PastEvents";
 import UpcomingEventAdmin from "@/app/Components/Admin/UpcomingEventAdmin";
-import { pastEvents, upcomingEvents, events } from "@/db/mockdata";
+import { pastEvents, events } from "@/db/mockdata";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRBAC } from "@/hooks/useRBAC";
 
 export default function EventsPage() {
   const { canManageEvents } = useRBAC();
-  const [dbEvents, setDbEvents] = useState<Event[]>([]);
-  const [partners, setPartners] = useState<Partner[]>([]);
-  const [open, setOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-
-  const emptyForm = {
-    title: "",
-    description: "",
-    venue: "",
-    image_url: "",
-    date: "",
-    time: "",
-    event_time: "",
-    is_paid: false,
-    fee: "",
-    max_participants: "",
-    is_team_event: false,
-    max_team_size: "",
-    category: "",
-    status: "",
-    partner_id: "",
-  };
-
-  const [form, setForm] = useState<any>(emptyForm);
-
-  useEffect(() => {
-    supabase
-      .from("events")
-      .select("*, partners(*)")
-      .then(({ data }) => setDbEvents(data || []));
-    supabase.from("partners").select("*").then(({ data }) => setPartners(data || []));
-  }, []);
-
-  const uploadImageIfNeeded = async () => {
-    if (!imageFile) return form.image_url || null;
-    const fd = new FormData();
-    fd.append("file", imageFile);
-    const res = await fetch("/api/upload", { method: "POST", body: fd });
-    const data = await res.json();
-    return data.url;
-  };
-
-  const handleSubmit = async () => {
-    const image_url = await uploadImageIfNeeded();
-
-    const payload: any = {
-      ...form,
-      image_url,
-      fee: form.fee ? Number(form.fee) : null,
-      max_participants: form.max_participants
-        ? Number(form.max_participants)
-        : null,
-      max_team_size: form.max_team_size ? Number(form.max_team_size) : null,
-      is_paid: !!form.is_paid,
-      is_team_event: !!form.is_team_event,
-    };
-
-    if (!payload.category) payload.category = null;
-    if (!payload.status) delete payload.status;
-    if (!payload.partner_id) payload.partner_id = null;
-
-    if (editingEvent) {
-      await supabase.from("events").update(payload).eq("id", editingEvent.id);
-    } else {
-      const organizer_id = await getCurrentUserId();
-      await supabase.from("events").insert({
-        ...payload,
-        organizer_id,
-      });
-    }
-
-    const { data } = await supabase.from("events").select("*, partners(*)");
-    setDbEvents(data || []);
-    setOpen(false);
-    setEditingEvent(null);
-    setForm(emptyForm);
-    setImageFile(null);
-  };
 
   // Filter upcoming and past events from mock data
   const upcomingEventsList = events.filter(e => e.status === "upcoming");

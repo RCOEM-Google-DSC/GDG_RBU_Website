@@ -5,6 +5,8 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
 
+  let redirectUrl = "/profile";
+
   if (code) {
     // Exchange code for session
     const { data: sessionData, error: sessionError } =
@@ -19,16 +21,21 @@ export async function GET(request: Request) {
 
     // Check if user exists in users table
     if (sessionData?.user) {
+      const userId = sessionData.user.id;
+      let role = "user";
+
       const { data: existingUser, error: fetchError } = await supabase
         .from("users")
-        .select("id")
-        .eq("id", sessionData.user.id)
+        .select("id, role")
+        .eq("id", userId)
         .single();
 
-      // If user doesn't exist in users table, create them
-      if (!existingUser && fetchError?.code === "PGRST116") {
+      if (existingUser) {
+        role = existingUser.role;
+      } else if (fetchError?.code === "PGRST116") {
+        // If user doesn't exist in users table, create them
         const { error: insertError } = await supabase.from("users").insert({
-          id: sessionData.user.id,
+          id: userId,
           email: sessionData.user.email || "",
           name:
             sessionData.user.user_metadata?.full_name ||
@@ -47,12 +54,16 @@ export async function GET(request: Request) {
 
         if (insertError) {
           console.error("Error creating user record:", insertError);
-          // Continue anyway - user is authenticated in auth.users
         }
+      }
+
+      // Redirect admins and members to team profile page
+      if (role === "admin" || role === "member") {
+        redirectUrl = `/team/profile/${userId}`;
+      } else {
+        redirectUrl = "/profile";
       }
     }
   }
-
-  // URL to redirect to after sign in process completes
-  return NextResponse.redirect(new URL("/profile", requestUrl.origin));
+  return NextResponse.redirect(new URL(redirectUrl, requestUrl.origin));
 }

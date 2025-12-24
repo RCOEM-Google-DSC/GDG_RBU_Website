@@ -1,5 +1,5 @@
 import { BiCalendarEvent } from "react-icons/bi";
-import { Calendar, ClipboardList, Handshake, Home, Inbox, Users2, UserCog } from "lucide-react"
+import { Calendar, Handshake, Users2, UserCog } from "lucide-react"
 import Link from "next/link"
 
 import {
@@ -7,12 +7,11 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator";
+
 
 // Menu items.
 const Buttons = [

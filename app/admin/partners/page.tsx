@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Upload } from "lucide-react";
 import { supabase } from "@/supabase/supabase";
 import { Partner } from "@/lib/types";
-import GridBackground from "@/app/Components/Reusables/grid";
+// import GridBackground from "@/app/Components/Reusables/grid";
 import { useRBAC } from "@/hooks/useRBAC";
 
 export default function PartnersPage() {

@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { TimePicker } from "@/components/ui/time-picker";
-import { Calendar as CalendarIcon, Upload, Loader2, Clock } from "lucide-react";
+import { Calendar as CalendarIcon, Loader2, } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function AddEventPage() {

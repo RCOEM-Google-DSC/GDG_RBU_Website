@@ -82,7 +82,7 @@ const ProfileDropdown = () => {
   // Dynamic profile:
   const profileLink =
     role === "admin" || role === "member"
-      ? `/team-profile/${teamId}`
+      ? `/team/profile/${teamId}`
       : "/profile";
 
   return (

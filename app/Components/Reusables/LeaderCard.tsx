@@ -65,14 +65,14 @@ function LeaderCard({
 
   const handleCardClick = () => {
 
-    // SELF CARD CLICK → still go to /team-profile/:id
+    // SELF CARD CLICK → still go to /team/profile/:id
     if (authUserId && authUserId === id) {
-      router.push(`/team-profile/${id}`);
+      router.push(`/team/profile/${id}`);
       return;
     }
 
-    // OTHERS → also go to /team-profile/:id (view-only)
-    router.push(`/team-profile/${id}`);
+    // OTHERS → also go to /team/profile/:id (view-only)
+    router.push(`/team/profile/${id}`);
   };
 
   const width = 350;

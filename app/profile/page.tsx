@@ -1,9 +1,8 @@
 "use client";
 import { ProfileHeader } from "../Components/Profile/ProfileHeader";
 import { EventCard } from "../Components/Profile/EventCard";
-import { BadgeCard } from "../Components/Profile/BadgeCard";
 import { useProfileData } from "../../hooks/useProfileData";
-import { GridBackground } from "../Components/Reusables/GridBackground";
+// import { GridBackground } from "../Components/Reusables/GridBackground";
 // ---------- MAIN COMPONENT ----------
 
 export default function ProfilePage() {

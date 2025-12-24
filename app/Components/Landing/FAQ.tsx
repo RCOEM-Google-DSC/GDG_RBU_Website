@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import AccordionComponent from "../Common/AccordionComponent";
 import { motion } from "framer-motion";
 
