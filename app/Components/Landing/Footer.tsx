@@ -49,11 +49,11 @@ const Footer = () => {
           {/* left section */}
           <aside className="flex flex-col items-center justify-center gap-2">
             <Image
-              src="/icons/gdg.svg"
+              src="/icons/gdg-logo.svg"
               alt="Logo"
-              width={120}
-              height={120}
-              className="mb-1"
+              width={170}
+              height={170}
+              className=""
             />
             <h1
               className="font-medium text-2xl sm:text-3xl text-center md:text-left"
@@ -111,7 +111,7 @@ const Footer = () => {
               </Link>
 
               {/* social media  */}
-              <div className="flex flex-col items-start gap-2">
+              <div className="flex flex-col gap-2 sm:items-center sm:justify-center">
                 <p
                   className="text-base font-semibold"
                   style={{ color: isDark ? "white" : "black" }}
@@ -160,7 +160,7 @@ const Footer = () => {
       </div>
 
       {/* bottom pic */}
-      <div className="w-full mt-8">
+      <div className="w-full ">
         <Image
           src="/assets/footer-pic.svg"
           alt="Footer"

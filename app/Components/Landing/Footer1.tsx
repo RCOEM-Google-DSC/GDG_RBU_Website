@@ -4,7 +4,7 @@ import { BsTwitter } from "react-icons/bs";
 import { CgMail } from "react-icons/cg";
 import { FaLinkedinIn } from "react-icons/fa";
 import { IoLocationOutline } from "react-icons/io5";
-
+import Image from "next/image";
 const Footer1 = () => {
     return (
         <footer id="contact" className="relative bg-gray-100 dark:bg-gray-900">
@@ -12,15 +12,24 @@ const Footer1 = () => {
             <div className="mx-auto max-w-6xl px-4 py-8 grid gap-6 lg:grid-cols-2 items-start">
 
 
-                <div className="flex justify-center lg:justify-start relative w-full">
-                    <img
-                        src="/icons/gdg.svg"
-                        alt="GDG Logo"
-                        className="w-36 md:w-52 lg:w-60 h-auto"
+                <aside className="flex flex-col items-center justify-center gap-2">
+                    <Image
+                        src="/icons/gdg-logo.svg"
+                        alt="Logo"
+                        width={120}
+                        height={120}
+                        className="mb-1"
                     />
-
-                    <div className="hidden lg:block absolute top-0 right-0 h-full w-px bg-gray-400"></div>
-                </div>
+                    <h1
+                        className="font-medium text-2xl sm:text-3xl text-center md:text-left"
+                    >
+                        Google Developer Groups
+                    </h1>
+                    <p className="text-base sm:text-lg font-medium text-muted-foreground text-center md:text-left">
+                        <span className="text-blue-500">On Campus</span> • Ramdeobaba
+                        University
+                    </p>
+                </aside>
 
                 <div className="flex flex-col items-center lg:items-start text-center lg:text-left text-gray-700 dark:text-gray-300 leading-relaxed gap-4">
 

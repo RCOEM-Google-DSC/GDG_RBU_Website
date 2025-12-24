@@ -45,16 +45,6 @@ type DomainLead = {
   role: string;
 };
 
-const DOMAIN_ORDER = [
-  "web dev",
-  "cp",
-  "mac",
-  "design",
-  "marketing",
-  "management",
-  "social",
-];
-
 
 export default function TeamPage() {
   const [team, setTeam] = useState<Member[]>([]);
@@ -96,24 +86,17 @@ export default function TeamPage() {
     load();
   }, []);
 
-
-
+  // Group members by domain
   const groupedDomains = team.reduce<Record<string, Member[]>>((acc, m) => {
+    if (!m.domain) return acc; // Skip members without domain
     if (!acc[m.domain]) acc[m.domain] = [];
     acc[m.domain].push(m);
     return acc;
   }, {});
 
-
-
-  const domains = DOMAIN_ORDER.reduce<Record<string, Member[]>>(
-    (acc, domain) => {
-      if (groupedDomains[domain]) {
-        acc[domain] = groupedDomains[domain];
-      }
-      return acc;
-    },
-    {}
+  // Get all unique domains and sort them alphabetically
+  const domains = Object.keys(groupedDomains).sort((a, b) =>
+    a.toLowerCase().localeCompare(b.toLowerCase())
   );
 
 
@@ -133,7 +116,7 @@ export default function TeamPage() {
 
             {/* domain jump buttons */}
             <div className="mt-8 md:mt-12 flex flex-wrap gap-2 md:gap-3">
-              {Object.keys(domains).map((domain) => (
+              {domains.map((domain) => (
                 <button
                   key={domain}
                   onClick={() =>
@@ -165,7 +148,8 @@ export default function TeamPage() {
 
 
       <div className="border-t-2 border-black">
-        {Object.entries(domains).map(([domain, members]) => {
+        {domains.map((domain) => {
+          const members = groupedDomains[domain];
           // Find the domain lead for this domain
           const domainLead = domainLeads.find((lead) => lead.domain === domain);
 

@@ -42,3 +42,10 @@ next-env.d.ts
 
 .gemini/
 gha-creds-*.json
+
+TODO.md
+
+rls.json
+seed-database.ts
+mockdata.ts
+supabase-schema.sql

@@ -58,7 +58,7 @@ export default function PartnersPage() {
 
   return (
     <div className="relative">
-      <GridBackground>
+      {/* <GridBackground> */}
         <div className="max-w-6xl mx-auto">
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -101,7 +101,7 @@ export default function PartnersPage() {
           </div>
 
         </div>
-      </GridBackground>
+      {/* </GridBackground> */}
     </div>
   );
 }

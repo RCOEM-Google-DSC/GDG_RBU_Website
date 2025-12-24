@@ -149,39 +149,40 @@ export default function TeamProfilePage() {
   const isSelf = authUserId === userId;
 
   /* LOAD PROFILE */
-  useEffect(() => {
-    const load = async () => {
-      const { data } = await supabase
-        .from("team_members")
-        .select(
-          `
-          userid,
-          domain,
-          bio,
-          thought,
-          leetcode,
-          twitter,
-          instagram,
-          club_email,
-          cv_url,
-          users (
-            id,
-            name,
-            email,
-            image_url,
-            profile_links,
-            branch,
-            section,
-            phone_number
-          )
+  const loadProfile = async () => {
+    const { data } = await supabase
+      .from("team_members")
+      .select(
         `
+        userid,
+        domain,
+        bio,
+        thought,
+        leetcode,
+        twitter,
+        instagram,
+        club_email,
+        cv_url,
+        users (
+          id,
+          name,
+          email,
+          image_url,
+          profile_links,
+          branch,
+          section,
+          phone_number
         )
-        .eq("userid", userId)
-        .maybeSingle();
+      `
+      )
+      .eq("userid", userId)
+      .maybeSingle();
 
-      setProfile(data);
-    };
-    load();
+    setProfile(data);
+  };
+
+  useEffect(() => {
+    loadProfile();
   }, [userId]);
 
   if (!profile) return <div className="p-10">Loading...</div>;
@@ -363,6 +364,7 @@ export default function TeamProfilePage() {
         <EditProfileModal
           open={showEdit}
           onClose={() => setShowEdit(false)}
+          onSuccess={loadProfile}
           profile={profile}
           userId={authUserId}
         />

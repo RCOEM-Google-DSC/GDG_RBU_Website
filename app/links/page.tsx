@@ -10,7 +10,7 @@ export default function Home() {
             {/* hero */}
             <section className="w-full max-w-lg text-center px-4 sm:px-6 md:px-8 lg:px-10 pt-16 pb-10">
                 <Image
-                    src="/icons/gdg.svg"
+                    src="/icons/gdg-logo.svg"
                     alt="GDG RBU Logo"
                     width={120}
                     height={120}

@@ -13,7 +13,7 @@ export default function QRCodeWithSvgLogo({ value, size = 300 }: Props) {
   // ===============================
   // HARD-CODED STYLING CONTROLS
   // ===============================
-  const backgroundImage = "/icons/gdg.svg"; // e.g. "/icons/gdg.svg"
+  const backgroundImage = "/icons/gdg-logo.svg"; // e.g. "/icons/gdg-logo.svg"
   const backgroundOpacity = 0.4; // 0 → invisible | 1 → fully visible
   const backgroundScale = 0.8; // relative size of bg image (0.3 – 1.2 works well)
 

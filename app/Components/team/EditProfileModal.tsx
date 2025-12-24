@@ -66,6 +66,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 interface EditProfileModalProps {
   open: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   profile: {
     users?: {
       image_url?: string;
@@ -94,6 +95,7 @@ interface EditProfileModalProps {
 export default function EditProfileModal({
   open,
   onClose,
+  onSuccess,
   profile,
   userId,
 }: EditProfileModalProps) {
@@ -178,28 +180,67 @@ export default function EditProfileModal({
       }
 
       const memberUpdate = {
-        domain: values.domain,
-        bio: values.bio,
-        thought: values.thought,
-        instagram: values.instagram,
-        twitter: values.twitter,
-        leetcode: values.leetcode,
-        club_email: values.club_email,
-        cv_url: values.cv_url,
+        domain: values.domain || null,
+        bio: values.bio || null,
+        thought: values.thought || null,
+        instagram: values.instagram || null,
+        twitter: values.twitter || null,
+        leetcode: values.leetcode || null,
+        club_email: values.club_email || null,
+        cv_url: values.cv_url || null,
       };
 
-      console.log("Member update:", memberUpdate);
+      console.log("Member update payload:", memberUpdate);
+      console.log("Bio value:", values.bio);
+      console.log("Thought value:", values.thought);
+      console.log("Updating for userId:", userId);
 
-      const { error: memberError } = await supabase.from("team_members").update(memberUpdate).eq("userid", userId);
+      // First, check if a team_members record exists for this user
+      const { data: existingMember } = await supabase
+        .from("team_members")
+        .select("id")
+        .eq("userid", userId)
+        .maybeSingle();
+
+      console.log("Existing team member record:", existingMember);
+
+      let updateData;
+      let memberError;
+
+      if (!existingMember) {
+        // If no record exists, insert a new one
+        console.log("No team_members record found, creating one...");
+        const insertResult = await supabase
+          .from("team_members")
+          .insert({ userid: userId, ...memberUpdate })
+          .select();
+
+        updateData = insertResult.data;
+        memberError = insertResult.error;
+      } else {
+        // Update existing record
+        console.log("Updating existing team_members record...");
+        const updateResult = await supabase
+          .from("team_members")
+          .update(memberUpdate)
+          .eq("userid", userId)
+          .select();
+
+        updateData = updateResult.data;
+        memberError = updateResult.error;
+      }
 
       if (memberError) {
         console.error("Member update error:", memberError);
         throw memberError;
       }
 
-      console.log("Updates successful!");
+      // Trigger data refresh in parent component
+      if (onSuccess) {
+        onSuccess();
+      }
+
       onClose();
-      window.location.reload();
     } catch (err) {
       console.error("Save error:", err);
       setError(err instanceof Error ? err.message : "An error occurred");

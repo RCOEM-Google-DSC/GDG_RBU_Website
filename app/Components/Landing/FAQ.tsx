@@ -10,7 +10,7 @@ const questions = [
     color: "red",
   },
   {
-    q: "How can you become a part of GDG ?",
+    q: "How to join GDG ?",
     a: "We conduct an annual team recruitment process. The details of recruitment are posted online a few weeks prior. It’s a two step process involving form filling and personal interview. Students acing both rounds are selected to be the part of the core team.",
     color: "green",
   },
@@ -26,7 +26,14 @@ const questions = [
   },
   {
     q: "How to reach us?",
-    a: 'Mail us at "dsc.rknec@gmail.com"',
+    a: (
+      <span>
+        Mail us at{" "}
+        <a href="mailto:dsc.rknec@gmail.com" className="underline">
+          dsc.rknec@gmail.com
+        </a>
+      </span>
+    ),
     color: "red",
   },
 ];
@@ -36,6 +43,7 @@ const Faq = () => {
       className="w-full flex flex-col items-center justify-center pt-0 pb-12 sm:pt-0 sm:pb-14 bg-background text-foreground px-4"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ amount: 0.3 }}
       transition={{ duration: 0.3, ease: "easeInOut", delay: 0.2 }}
     >
       <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 ">FAQs</h1>
@@ -44,7 +52,7 @@ const Faq = () => {
           <AccordionComponent
             key={index}
             trigger={item.q}
-            content={item.a}
+            content={item.a as any}
             color={item.color as "red" | "green" | "blue" | "yellow"}
           />
         ))}

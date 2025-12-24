@@ -266,8 +266,6 @@ export async function getUserRegistrations() {
   return data;
 }
 
-
-
 export async function verifyEventCheckin(eventId: string) {
   const userId = await getCurrentUserId();
 
@@ -275,7 +273,6 @@ export async function verifyEventCheckin(eventId: string) {
     throw new Error("User must be logged in to check in");
   }
 
- 
   const { data: registration, error: fetchError } = await supabase
     .from("registrations")
     .select("id, status")
@@ -287,11 +284,9 @@ export async function verifyEventCheckin(eventId: string) {
     throw new Error("You are not registered for this event");
   }
 
-  
   if (registration.status === "verified") {
     return { status: "already_verified" };
   }
-
 
   const { error: updateError } = await supabase
     .from("registrations")
@@ -306,4 +301,40 @@ export async function verifyEventCheckin(eventId: string) {
   }
 
   return { status: "verified" };
+}
+
+/**
+ * Get upcoming events (status = 'upcoming')
+ */
+export async function getUpcomingEvents() {
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .eq("status", "upcoming")
+    .order("event_time", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching upcoming events:", error);
+    throw new Error(error.message || "Failed to fetch upcoming events");
+  }
+
+  return data;
+}
+
+/**
+ * Get past events (status = 'completed')
+ */
+export async function getPastEvents() {
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .eq("status", "completed")
+    .order("event_time", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching past events:", error);
+    throw new Error(error.message || "Failed to fetch past events");
+  }
+
+  return data;
 }

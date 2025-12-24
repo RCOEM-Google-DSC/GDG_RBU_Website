@@ -77,9 +77,9 @@ const UpcomingEvent = ({ id, title, date, time, image, tags, tagColor, descripti
                 <div className="h-px w-full border-b border-dashed border-black/50"></div>
               </div>
 
-              <p className="font-mono text-black/70 text-sm tracking-wide">
+              {/* <p className="font-mono text-black/70 text-sm tracking-wide">
                 Access to all VIP labs
-              </p>
+              </p> */}
             </div>
 
             {/* Ticket Bottom */}
@@ -150,9 +150,9 @@ const UpcomingEvent = ({ id, title, date, time, image, tags, tagColor, descripti
 
               <div className="w-full h-px border-b border-dashed border-black/30"></div>
 
-              <p className="font-mono text-black/70 text-[8px] sm:text-[9px] tracking-wide leading-tight">
+              {/* <p className="font-mono text-black/70 text-[8px] sm:text-[9px] tracking-wide leading-tight">
                 Access to all VIP labs
-              </p>
+              </p> */}
 
               <div>
                 <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-black/60 mb-0.5">Date & Time</p>

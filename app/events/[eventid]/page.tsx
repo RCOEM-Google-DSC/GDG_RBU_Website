@@ -1,6 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { events, pastEvents, upcomingEvents } from '@/db/mockdata';
+import { getEvent } from '@/supabase/supabase';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Clock, Users, Image as ImageIcon, Trophy } from 'lucide-react';
@@ -22,26 +22,30 @@ const CheckCircleIcon = ({ size = 16, className = "" }: { size?: number; classNa
 export default async function EventDetailPage({ params }: EventDetailPageProps) {
     const { eventid } = await params;
 
-    // Find event in all event sources
-    const allEvents = [...events, ...pastEvents, ...upcomingEvents];
-    const event = allEvents.find((e) => e.id === eventid);
-
-    if (!event) {
+    // Fetch event from Supabase
+    let event;
+    try {
+        event = await getEvent(eventid);
+    } catch (error) {
         notFound();
     }
 
-    // Determine if event is upcoming or past
-    const isUpcoming = upcomingEvents.some((e) => e.id === eventid);
-    const isPast = pastEvents.some((e) => e.id === eventid);
-    const eventFromMainList = events.find((e) => e.id === eventid);
+
+    // Determine if event is upcoming or past based on status from database
+    const isUpcoming = event.status === 'upcoming';
+    const isPast = event.status === 'past';
 
     // Get event image
-    const eventImage = ('image' in event ? event.image : event.image_url) || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87';
+    const eventImage = event.image_url || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87';
 
     // Get event date
     const eventDate: string | null = (() => {
-        if ('date' in event && typeof event.date === 'string' && event.date) return event.date;
-        if ('event_time' in event && event.event_time) {
+        if (event.date) return new Date(event.date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+        if (event.event_time) {
             return new Date(event.event_time).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'short',
@@ -53,8 +57,8 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
 
     // Get event time
     const eventTime: string | null = (() => {
-        if ('time' in event && typeof event.time === 'string' && event.time) return event.time;
-        if ('event_time' in event && event.event_time) {
+        if (event.time) return event.time;
+        if (event.event_time) {
             return new Date(event.event_time).toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit'
@@ -64,7 +68,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
     })();
 
     // Get location
-    const eventLocation = ('location' in event ? event.location : null) || eventFromMainList?.location || 'TBA';
+    const eventLocation = event.venue || 'TBA';
 
     // Sample gallery images (using Unsplash)
     const galleryImages = [
@@ -105,15 +109,14 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                                             <CheckCircleIcon size={10} /> Completed
                                         </span>
                                     )}
-                                    {event.tags?.map((tag, index) => (
+                                    {event.category && (
                                         <Badge
-                                            key={index}
                                             className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide"
-                                            style={{ backgroundColor: ('tagColor' in event ? event.tagColor : event.tag_color) || '#4285F4' }}
+                                            style={{ backgroundColor: '#4285F4' }}
                                         >
-                                            {tag}
+                                            {event.category}
                                         </Badge>
-                                    ))}
+                                    )}
                                 </div>
                                 <h1 className="text-4xl md:text-6xl font-bold mb-2 text-white shadow-black drop-shadow-md">
                                     {event.title}
@@ -127,17 +130,17 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                             </div>
 
                             {/* Quick Stats */}
-                            {eventFromMainList && (
+                            {event.max_participants && (
                                 <div className="flex gap-6 mt-6 md:mt-0">
                                     <div className="text-center">
                                         <p className="text-2xl font-bold text-white shadow-black drop-shadow-md">
-                                            {eventFromMainList.registered_count || 0}
+                                            0
                                         </p>
                                         <p className="text-[10px] text-gray-400 uppercase tracking-wider">Registered</p>
                                     </div>
                                     <div className="text-center">
                                         <p className="text-2xl font-bold text-white shadow-black drop-shadow-md">
-                                            {eventFromMainList.capacity || 'N/A'}
+                                            {event.max_participants || 'N/A'}
                                         </p>
                                         <p className="text-[10px] text-gray-400 uppercase tracking-wider">Capacity</p>
                                     </div>
@@ -176,11 +179,11 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                                     <p className="text-sm text-gray-900">{eventLocation}</p>
                                 </div>
 
-                                {eventFromMainList?.capacity && (
+                                {event.max_participants && (
                                     <div className="space-y-1">
                                         <p className="text-xs text-gray-600 uppercase tracking-wide font-semibold">Attendance</p>
                                         <p className="text-sm text-gray-900">
-                                            {eventFromMainList.registered_count || 0} / {eventFromMainList.capacity}
+                                            0 / {event.max_participants}
                                         </p>
                                     </div>
                                 )}
@@ -191,16 +194,16 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg h-fit">
                             <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Highlights</h3>
                             <ul className="space-y-3">
-                                {event.tags?.map((tag, index) => (
-                                    <li key={index} className="flex items-center gap-3 text-sm text-gray-600">
+                                {event.category && (
+                                    <li className="flex items-center gap-3 text-sm text-gray-600">
                                         <span className="w-2 h-2 rounded-full bg-blue-500 shadow-sm"></span>
-                                        {tag}
+                                        {event.category}
                                     </li>
-                                ))}
-                                {eventFromMainList?.status && (
+                                )}
+                                {event.status && (
                                     <li className="flex items-center gap-3 text-sm text-gray-600">
                                         <span className="w-2 h-2 rounded-full bg-green-500 shadow-sm"></span>
-                                        Status: {eventFromMainList.status}
+                                        Status: {event.status}
                                     </li>
                                 )}
                             </ul>
