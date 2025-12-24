@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import EventTicket from '../Components/Common/UpcomingEvent'
 import PastEvent from '../Components/Common/PastEvent'
 import { getUpcomingEvents, getPastEvents } from '@/supabase/supabase'
+import Footer from '../Components/Landing/Footer';
 
 type Event = {
     id: string;
@@ -115,6 +116,11 @@ const EventsPage = () => {
                         </div>
                     )}
                 </div>
+            </section>
+
+            <section className='mt-20'>
+                {/* footer */}
+                <Footer />
             </section>
         </div>
     )

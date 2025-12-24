@@ -154,7 +154,7 @@ const NavBar = () => {
                 className="block w-full text-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors"
                 onClick={closeMobileMenu}
               >
-                Register
+                Join Us
               </Link>
             )}
           </div>

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/supabase/supabase";
+import { generateProfileImageUrl } from "@/lib/utils";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
@@ -34,19 +35,24 @@ export async function GET(request: Request) {
         role = existingUser.role;
       } else if (fetchError?.code === "PGRST116") {
         // If user doesn't exist in users table, create them
+        const userName = sessionData.user.user_metadata?.full_name ||
+                        sessionData.user.user_metadata?.name ||
+                        sessionData.user.email?.split("@")[0] ||
+                        "User";
+        
+        // Use OAuth avatar if available, otherwise generate from initials
+        const oAuthAvatar = sessionData.user.user_metadata?.avatar_url ||
+                           sessionData.user.user_metadata?.picture;
+        const imageUrl = oAuthAvatar || generateProfileImageUrl(userName, sessionData.user.email || "");
+        
+        const provider = sessionData.user.app_metadata?.provider || "email";
+
         const { error: insertError } = await supabase.from("users").insert({
           id: userId,
           email: sessionData.user.email || "",
-          name:
-            sessionData.user.user_metadata?.full_name ||
-            sessionData.user.user_metadata?.name ||
-            sessionData.user.email?.split("@")[0] ||
-            "User",
-          image_url:
-            sessionData.user.user_metadata?.avatar_url ||
-            sessionData.user.user_metadata?.picture ||
-            "user.png",
-          provider: sessionData.user.app_metadata?.provider || "oauth",
+          name: userName,
+          image_url: imageUrl,
+          provider: provider,
           role: "user",
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
@@ -54,6 +60,7 @@ export async function GET(request: Request) {
 
         if (insertError) {
           console.error("Error creating user record:", insertError);
+          // Don't fail the auth flow, but log the error
         }
       }
 

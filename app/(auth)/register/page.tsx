@@ -2,6 +2,7 @@
 
 import * as z from "zod";
 import { RegisterForm } from '@/app/Components/Auth/RegisterForm';
+import Footer from "@/app/Components/Landing/Footer";
 
 const schema = z.object({
     name: z.string().min(2, { message: "Name must be at least 2 characters long" }),
@@ -20,16 +21,24 @@ const RegisterPage = () => {
     }
 
     return (
-        <div className="grid grid-cols-2  min-h-screen w-full p-10">
-            {/* Left Panel - Form */}
-            <div className=''>
-                <RegisterForm />
-            </div>
+        <div>
 
-            {/* Right Panel - Branding */}
-            <div>
-                
+            <div className="grid grid-cols-2  min-h-screen w-full p-10">
+                {/* Left Panel - Form */}
+                <div className=''>
+                    <RegisterForm />
+                </div>
+
+                {/* Right Panel - Branding */}
+                <div>
+
+                </div>
+
             </div>
+            {/* footer */}
+            <section className='mt-20'>
+                <Footer />
+            </section>
         </div>
     )
 }

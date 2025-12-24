@@ -1,0 +1,199 @@
+---
+title: Clone the Ideathon Starter Repository
+description: How to clone and start your own project from the ideathon repository
+index: 9
+---
+
+## Ideathon Starter Repository
+
+The [GDG Ideathon Repository](https://github.com/RCOEM-Google-DSC/ideathon) provides a pre-configured starter template for building your projects quickly.
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+Before you begin, ensure you have:
+
+- **Git** installed on your computer
+
+  - [Download Git](https://git-scm.com/downloads)
+
+- **Node.js** (v18 or later) installed
+
+  - [Download Node.js](https://nodejs.org/)
+
+- A code editor, such as:
+  - [VS Code](https://code.visualstudio.com/)
+  - [Antigravity](https://antigravity.google.com/)
+  - [Cursor](https://cursor.com/download)
+
+---
+
+## Clone the Repository
+
+### Step 1: Open Terminal
+
+- **Windows**: Open Command Prompt or PowerShell
+- **Mac/Linux**: Open Terminal
+
+### Step 2: Clone the Repository
+
+Run the following command to clone the repository:
+
+```bash
+git clone https://github.com/RCOEM-Google-DSC/ideathon.git
+```
+
+### Step 3: Navigate to the Project
+
+```bash
+cd ideathon
+```
+
+---
+
+## Install Dependencies
+
+Install all required packages using npm:
+
+```bash
+npm install
+```
+
+This will download and install all the necessary dependencies listed in `package.json`.
+
+---
+
+## Configure Your Project
+
+### 1. Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```bash
+# Create the file
+touch .env.local  # Mac/Linux
+# OR
+type nul > .env.local  # Windows
+```
+
+Add your configuration variables (refer to `.env.example` if available):
+
+```bash
+# Add your environment variables here
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
+# Add other required variables
+```
+
+### 2. Review the Documentation
+
+Check the `README.md` file in the repository for specific setup instructions and project details.
+
+---
+
+## Run Your Project
+
+### Development Mode
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Your project will be available at: [http://localhost:3000](http://localhost:3000)
+
+### Build for Production
+
+To create an optimized production build:
+
+```bash
+npm run build
+```
+
+Then start the production server:
+
+```bash
+npm start
+```
+
+---
+
+## Making It Your Own
+
+### 1. Initialize a New Git Repository
+
+If you want to create your own project based on this starter:
+
+```bash
+# Remove the existing git history
+rm -rf .git  # Mac/Linux
+# OR
+rmdir /s .git  # Windows
+
+# Initialize a new repository
+git init
+
+# Create your first commit
+git add .
+git commit -m "Initial commit: Starting from ideathon template"
+```
+
+### 2. Create Your Own Repository
+
+1. Go to [GitHub](https://github.com) and create a new repository
+2. Link your local project to the new repository:
+
+```bash
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+git branch -M main
+git push -u origin main
+```
+
+### 3. Customize Your Project
+
+- Update `package.json` with your project name and details
+- Modify the content in `/content` and `/app` directories
+- Add your own components and features
+- Update the README with your project information
+
+---
+
+## Project Structure
+
+The ideathon repository follows this structure:
+
+```
+ideathon/
+├── app/              # Next.js app directory
+├── components/       # Reusable UI components
+├── content/          # Documentation and content files
+├── lib/              # Utility functions and configurations
+├── public/           # Static assets
+├── supabase/         # Database configurations
+└── package.json      # Project dependencies
+```
+
+---
+
+## Need Help?
+
+- Check the [Getting Started Guide](/docs/getting-started) for project ideas
+- Review the [Google Technology Guides](/docs/google-maps) in the sidebar
+- Ask questions in the [GDG Discord server](https://discord.gg/ZnWa95Yd5Y)
+
+---
+
+## Next Steps
+
+1. Clone the repository
+2. Install dependencies
+3. Configure environment variables
+4. Run the development server
+5. Start building your project idea
+6. Deploy your finished project
+
+Ready to build something amazing? Start coding! 

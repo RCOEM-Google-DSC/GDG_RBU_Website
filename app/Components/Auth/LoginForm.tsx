@@ -19,6 +19,7 @@ import { Separator } from "@/components/ui/separator"
 import { supabase } from "@/supabase/supabase"
 import { Eye, EyeOff } from "lucide-react"
 import GoogleLogo from "../Reusables/GoogleLogo"
+import { generateProfileImageUrl } from "@/lib/utils"
 
 
 const formSchema = z.object({
@@ -57,14 +58,41 @@ export function LoginForm() {
             }
 
             if (authData.user) {
-                // Fetch user role to determine redirect
-                const { data: userData } = await supabase
+                // Fetch user data or create if doesn't exist
+                const { data: userData, error: fetchError } = await supabase
                     .from("users")
                     .select("role")
                     .eq("id", authData.user.id)
                     .single();
 
-                const role = userData?.role || 'user';
+                let role = userData?.role || 'user';
+
+                // If user doesn't exist in users table, create them
+                if (fetchError?.code === "PGRST116") {
+                    const userName = authData.user.user_metadata?.full_name || 
+                                    authData.user.email?.split("@")[0] || "User";
+                    const profileImageUrl = generateProfileImageUrl(userName, authData.user.email || "");
+                    
+                    const { error: insertError } = await supabase.from("users").insert({
+                        id: authData.user.id,
+                        email: authData.user.email || "",
+                        name: userName,
+                        image_url: profileImageUrl,
+                        provider: "email",
+                        role: "user",
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString(),
+                    });
+
+                    if (insertError) {
+                        console.error("Error creating user record:", insertError);
+                        toast.error("Profile Error", {
+                            description: "Could not create user profile. Please contact support.",
+                            position: "bottom-right",
+                        });
+                        return;
+                    }
+                }
 
                 toast.success("Login Successful!", {
                     description: "Redirecting...",

@@ -10,7 +10,7 @@ import Hero from "./Components/Landing/Hero";
 import Footer1 from "./Components/Landing/Footer1";
 export default function Home() {
   return (
-    <div className="w-full">
+    <div className="w-full ">
       {/* hero section */}
       <section className="w-full">
         <Hero />

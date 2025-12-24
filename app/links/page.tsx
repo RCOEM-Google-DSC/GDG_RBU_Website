@@ -40,7 +40,10 @@ export default function Home() {
                 ))}
             </section>
 
-
+            <section className='mt-20'>
+                {/* footer */}
+                <Footer />
+            </section>
         </div>
     );
 }

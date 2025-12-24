@@ -23,7 +23,7 @@ const MeetOurTeam = () => {
 
                 {/* Paragraph Text */}
                 <p className="text-sm sm:text-base md:text-sm lg:text-base text-gray-600 leading-relaxed">
-                  Google Developer Groups (GDG) are open and volunteer-run communities for developers who are interested in Google technologies. Our team is dedicated to fostering learning, networking, and collaboration through events, workshops, and hands-on sessions.
+                  Google Developer Groups (GDG) are open and volunteer-run communities for developers interested in Google technologies. Our team focuses on learning, networking, and collaboration through events and hands-on sessions.
                 </p>
 
                 {/* Bullet Points */}
@@ -37,7 +37,7 @@ const MeetOurTeam = () => {
                         Passionate Community Leaders
                       </h3>
                       <p className="text-sm sm:text-base md:text-sm lg:text-base text-gray-600 leading-relaxed">
-                        Our organizers are committed to building an inclusive environment where developers of all backgrounds can connect, share knowledge, and grow together.
+                        Our organizers build an inclusive environment where developers can connect, share knowledge, and grow together.
                       </p>
                     </div>
                   </div>
@@ -51,7 +51,7 @@ const MeetOurTeam = () => {
                         Empowering Developers
                       </h3>
                       <p className="text-sm sm:text-base md:text-sm lg:text-base text-gray-600 leading-relaxed">
-                        We organize meetups, codelabs, and conferences to help developers stay up-to-date with the latest Google technologies and best practices.
+                         We host meetups and codelabs to help developers stay current with modern tools and best practices.
                       </p>
                     </div>
                   </div>

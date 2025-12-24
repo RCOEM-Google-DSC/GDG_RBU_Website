@@ -166,7 +166,7 @@ const Footer = () => {
           alt="Footer"
           width={1920}
           height={180}
-          className="w-full h-40 sm:h-48 md:h-52 object-cover"
+          className="w-full h-30 sm:h-48 md:h-52 object-cover"
         />
       </div>
     </footer>

@@ -7,6 +7,7 @@ import TeamMemberCard from "../Components/Reusables/TeamMemberCard";
 import LeaderCard from "../Components/Reusables/LeaderCard";
 import { teamImg, domainLeads } from "@/db/mockdata";
 import Image from "next/image";
+import Footer from "../Components/Landing/Footer";
 
 type TeamRow = {
   id: string;
@@ -102,11 +103,12 @@ export default function TeamPage() {
 
 
   return (
-    <div className="min-h-screen bg-[#FDFCF8] text-black pt-8 px-4 lg:px-8 pb-8">
+    <div className="min-h-screen bg-[#FDFCF8] text-black pt-8 ">
 
       {/* hero: group photo */}
-      <section className="pt-5 pb-12 md:pb-20 border-b-2 border-black">
+      <section className="pt-5 pb-12 md:pb-20 border-b-2 border-black px-8">
         <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-8">
+          {/* left: title and domain buttons */}
           <div className="flex-1">
             <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] lg:mt-10">
               Meet our
@@ -115,7 +117,7 @@ export default function TeamPage() {
             </h1>
 
             {/* domain jump buttons */}
-            <div className="mt-8 md:mt-12 flex flex-wrap gap-2 md:gap-3">
+            <div className="mt-8 md:mt-12 flex flex-wrap gap-2 md:gap-3 ">
               {domains.map((domain) => (
                 <button
                   key={domain}
@@ -132,7 +134,8 @@ export default function TeamPage() {
             </div>
           </div>
 
-          <div className="hidden lg:block shrink-0">
+          {/* right: team image */}
+          <div className="hidden lg:block shrink-0 ">
             <div className="w-[520px] xl:w-[720px] h-[347px] xl:h-[480px] border-2 border-black rounded-2xl overflow-hidden">
               <Image
                 src={teamImg}
@@ -146,8 +149,8 @@ export default function TeamPage() {
         </div>
       </section>
 
-
-      <div className="border-t-2 border-black">
+      {/* domains section */}
+      <div className="border-t-2 border-black px-8">
         {domains.map((domain) => {
           const members = groupedDomains[domain];
           // Find the domain lead for this domain
@@ -222,6 +225,11 @@ export default function TeamPage() {
           );
         })}
       </div>
+      
+      {/* footer */}
+      <section className='mt-20'>
+        <Footer />
+      </section>
     </div>
   );
 }

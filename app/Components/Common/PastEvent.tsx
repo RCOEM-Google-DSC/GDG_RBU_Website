@@ -8,7 +8,7 @@ const PastEvent = ({ id, title, date, image, tags, tagColor, description }: Past
   return (
     <div className="w-full flex items-center justify-center">
       {/* Container for the card with fixed dimensions */}
-      <div className="relative w-full max-w-[340px] h-[490px] drop-shadow-sm filter">
+      <div className="relative w-full max-w-[340px] h-[450px] drop-shadow-sm filter">
 
         {/* Background SVG Layer - Fixed viewBox to prevent border clipping */}
         <svg

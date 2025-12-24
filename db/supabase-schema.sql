@@ -23,6 +23,7 @@ CREATE TABLE public.events (
   category text DEFAULT 'workshop'::text,
   min_team_size smallint DEFAULT '2'::smallint,
   qr_code text,
+  certificate_template_url text,
   CONSTRAINT events_pkey PRIMARY KEY (id),
   CONSTRAINT events_organizer_id_fkey FOREIGN KEY (organizer_id) REFERENCES public.users(id),
   CONSTRAINT events_partner_id_fkey FOREIGN KEY (partner_id) REFERENCES public.partners(id)
@@ -58,13 +59,14 @@ CREATE TABLE public.registrations (
   is_open_to_alliances boolean DEFAULT false,
   status USER-DEFINED NOT NULL DEFAULT 'registered'::registration_status,
   certificate_url text,
+  certificate_generated_at timestamp with time zone,
+  certificate_generated_once boolean DEFAULT false,
   CONSTRAINT registrations_pkey PRIMARY KEY (id),
   CONSTRAINT registrations_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(id),
   CONSTRAINT registrations_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
 );
 CREATE TABLE public.team_members (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
-  domain USER-DEFINED,
   bio text,
   thought text,
   leetcode text,
@@ -77,6 +79,7 @@ CREATE TABLE public.team_members (
   userid uuid NOT NULL UNIQUE,
   linkedin text,
   github text,
+  domain USER-DEFINED,
   CONSTRAINT team_members_pkey PRIMARY KEY (id),
   CONSTRAINT team_members_userid_fkey FOREIGN KEY (userid) REFERENCES public.users(id)
 );

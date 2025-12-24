@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator"
 import { supabase } from "@/supabase/supabase"
 import { Eye, EyeOff } from "lucide-react"
 import GoogleLogo from "../Reusables/GoogleLogo"
+import { generateProfileImageUrl } from "@/lib/utils"
 
 
 const formSchema = z.object({
@@ -62,31 +63,52 @@ export function RegisterForm() {
             }
 
             if (authData.user) {
-                // Create user record in public.users table
-                const { error: insertError } = await supabase.from("users").insert({
-                    id: authData.user.id,
-                    email: data.email,
-                    name: data.name,
-                    image_url: 'user.png',
-                    provider: 'email',
-                    role: 'user',
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString(),
-                });
+                // Check if email confirmation is required
+                if (authData.session) {
+                    // User is immediately confirmed - create user record
+                    const profileImageUrl = generateProfileImageUrl(data.name, data.email);
+                    
+                    const { error: insertError } = await supabase.from("users").insert({
+                        id: authData.user.id,
+                        email: data.email,
+                        name: data.name,
+                        image_url: profileImageUrl,
+                        provider: 'email',
+                        role: 'user',
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString(),
+                    });
 
-                if (insertError) {
-                    console.error("Error creating user record:", insertError);
+                    if (insertError) {
+                        console.error("Error creating user record:", insertError);
+                        toast.error("Registration Error", {
+                            description: "Could not create user profile. Please contact support.",
+                            position: "bottom-right",
+                        });
+                        return;
+                    }
+
+                    toast.success("Registration Successful!", {
+                        description: "Redirecting to your profile...",
+                        position: "bottom-right",
+                    });
+
+                    // Redirect to profile page
+                    setTimeout(() => {
+                        window.location.href = '/profile';
+                    }, 1000);
+                } else {
+                    // Email confirmation required
+                    toast.success("Registration Successful!", {
+                        description: "Please check your email to confirm your account.",
+                        position: "bottom-right",
+                    });
+
+                    // Redirect to login page after a delay
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 3000);
                 }
-
-                toast.success("Registration Successful!", {
-                    description: "Redirecting to your profile...",
-                    position: "bottom-right",
-                });
-
-                // Redirect to profile page
-                setTimeout(() => {
-                    window.location.href = '/profile';
-                }, 1000);
             }
         } catch (error) {
             console.error("Registration error:", error);
