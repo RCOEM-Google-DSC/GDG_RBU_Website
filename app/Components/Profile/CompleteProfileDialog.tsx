@@ -151,7 +151,7 @@ export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogPr
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-4">
-              {/* Avatar (ONLY FIX IS HERE) */}
+              {/* Avatar */}
               <div className="relative">
                 {isValidImageUrl(imageUrl) ? (
                   <Image
