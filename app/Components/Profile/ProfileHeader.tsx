@@ -12,7 +12,7 @@ import { UIUser } from "../../../lib/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { CompleteProfileSheet } from "./CompleteProfileSheet";
+import { CompleteProfileDialog } from "./CompleteProfileDialog";
 
 interface ProfileHeaderProps {
   user: UIUser;
@@ -65,7 +65,7 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
                 )}
               </div>
 
-              <CompleteProfileSheet
+              <CompleteProfileDialog
                 user={user}
                 trigger={
                   <Button className="flex items-center gap-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-5 py-2.5 rounded-full font-medium shadow-lg hover:scale-105 transition-all active:scale-95 text-sm md:text-base whitespace-nowrap">

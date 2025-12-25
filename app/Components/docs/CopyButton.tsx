@@ -37,7 +37,7 @@ export function CopyButton({ content, filename }: CopyButtonProps) {
             ) : (
                 <>
                     <Copy size={16} />
-                    Copy {filename}
+                    Copy {filename.split('.')[0]}
                 </>
             )}
         </Button>

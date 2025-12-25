@@ -11,20 +11,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { supabase, getCurrentUserId } from "../../../supabase/supabase";
 
-interface CompleteProfileSheetProps {
+interface CompleteProfileDialogProps {
   user: UIUser;
   trigger?: React.ReactNode;
 }
@@ -33,12 +33,15 @@ interface CompleteProfileSheetProps {
 const isValidImageUrl = (url?: string) =>
   typeof url === "string" && url.startsWith("http");
 
-export function CompleteProfileSheet({ user, trigger }: CompleteProfileSheetProps) {
-  const [sheetOpen, setSheetOpen] = useState(false);
+export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogProps) {
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   // Form fields
-  const [section, setSection] = useState(user.location?.split(",")[0] || "");
+  const [section, setSection] = useState(
+    user.location?.includes(",") ? user.location.split(",")[0].trim() : (user.location || "")
+  );
   const [branch, setBranch] = useState("");
+  const [customBranch, setCustomBranch] = useState("");
   const [phone, setPhone] = useState(user.phone || "");
   const [imageUrl, setImageUrl] = useState(user.avatarUrl || "");
   const [github, setGithub] = useState(user.profileLinks.github || "");
@@ -49,7 +52,7 @@ export function CompleteProfileSheet({ user, trigger }: CompleteProfileSheetProp
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState<{ type: "idle" | "success" | "error"; message?: string }>({ type: "idle" });
 
-  const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS"];
+  const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS","Mechanical", "Civil"];
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Open file picker
@@ -106,7 +109,7 @@ export function CompleteProfileSheet({ user, trigger }: CompleteProfileSheetProp
         .from("users")
         .update({
           section,
-          branch,
+          branch: branch === "Other" ? customBranch : branch,
           phone_number: phone,
           image_url: imageUrl || null,
           profile_links: {
@@ -125,9 +128,9 @@ export function CompleteProfileSheet({ user, trigger }: CompleteProfileSheetProp
         message: "Profile updated successfully 🎉",
       });
 
-      // Close sheet after 1.5 seconds
+      // Close dialog after 1.5 seconds
       setTimeout(() => {
-        setSheetOpen(false);
+        setDialogOpen(false);
         window.location.reload();
       }, 1500);
     } catch (err: any) {
@@ -141,12 +144,12 @@ export function CompleteProfileSheet({ user, trigger }: CompleteProfileSheetProp
   };
 
   return (
-    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-      {trigger && <SheetTrigger asChild>{trigger}</SheetTrigger>}
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
 
-      <SheetContent className="overflow-y-auto p-5 w-5xl max-w-4xl">
+      <DialogContent className="overflow-y-auto p-5 max-w-4xl max-h-[90vh]">
         <form onSubmit={handleSubmit}>
-          <SheetHeader>
+          <DialogHeader>
             <div className="flex items-center gap-4">
               {/* Avatar (ONLY FIX IS HERE) */}
               <div className="relative">
@@ -183,13 +186,13 @@ export function CompleteProfileSheet({ user, trigger }: CompleteProfileSheetProp
               </div>
 
               <div>
-                <SheetTitle>Complete your profile</SheetTitle>
-                <SheetDescription>
+                <DialogTitle>Complete your profile</DialogTitle>
+                <DialogDescription>
                   Add your details so we can recognize you in events.
-                </SheetDescription>
+                </DialogDescription>
               </div>
             </div>
-          </SheetHeader>
+          </DialogHeader>
 
           <div className="grid gap-6 py-6">
             {/* Name & Email (Read-only) */}
@@ -237,8 +240,18 @@ export function CompleteProfileSheet({ user, trigger }: CompleteProfileSheetProp
                         {b}
                       </SelectItem>
                     ))}
+                    <SelectItem value="Other">Other</SelectItem>
                   </SelectContent>
                 </Select>
+                {branch === "Other" && (
+                  <Input
+                    id="customBranch"
+                    placeholder="Enter your branch"
+                    value={customBranch}
+                    onChange={(e) => setCustomBranch(e.target.value)}
+                    className="mt-2"
+                  />
+                )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="phone">Phone</Label>
@@ -294,16 +307,16 @@ export function CompleteProfileSheet({ user, trigger }: CompleteProfileSheetProp
             )}
           </div>
 
-          <SheetFooter>
-            <SheetClose asChild>
+          <DialogFooter>
+            <DialogClose asChild>
               <Button variant="outline" type="button">Cancel</Button>
-            </SheetClose>
+            </DialogClose>
             <Button type="submit" disabled={loading || uploading}>
               {loading ? "Saving..." : "Save Profile"}
             </Button>
-          </SheetFooter>
+          </DialogFooter>
         </form>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 }
