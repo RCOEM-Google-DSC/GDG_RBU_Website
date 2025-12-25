@@ -1,167 +1,222 @@
-"use client"
-import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { supabase } from "@/supabase/supabase";
-import { User } from "@supabase/supabase-js";
-import ProfileDropdown from '../Common/ProfileDropdown'
-import { useRouter } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
+// components/NavBar.tsx
+"use client";
 
-// Common navigation links array
-const NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/team', label: 'Team' },
-  { href: '/events', label: 'Events' },
-  { href: '/links', label: 'Links' },
-  { href: '/docs', label: 'Docs' },
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { supabase } from "@/supabase/supabase";
+import ProfileDropdown from "../Common/ProfileDropdown";
+import { Menu, X, Terminal, User as UserIcon } from "lucide-react";
+
+/* ---------- NAV CONFIG (edit these) ---------- */
+
+// Change accent colors: edit the Tailwind bg-* classes below.
+// Example: to use a different blue, replace "bg-blue-400" with "bg-blue-500" or any other Tailwind color.
+const LINK_STYLES = [
+  { color: "bg-blue-400", hover: "hover:bg-blue-500" },
+  { color: "bg-red-400", hover: "hover:bg-red-500" },
+  { color: "bg-yellow-400", hover: "hover:bg-yellow-500" },
+  { color: "bg-green-400", hover: "hover:bg-green-500" },
+  { color: "bg-indigo-400", hover: "hover:bg-indigo-500" },
 ];
 
-const NavBar = () => {
-  const [user, setUser] = useState<User | null>(null);
+// Change overall rounding for nav tags here:
+const NAV_ROUND = "rounded-md"; // options: rounded-sm | rounded | rounded-md | rounded-lg | rounded-xl
+
+/* ---------- Navigation links & label colors ---------- */
+const NAV_LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/team", label: "Team" },
+  { href: "/events", label: "Events" },
+  { href: "/links", label: "Links" },
+  { href: "/docs", label: "Docs" },
+];
+
+export default function NavBar() {
+  const [user, setUser] = useState<any | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const router = useRouter();
 
+  /* ---------- load supabase user ---------- */
   useEffect(() => {
+    let mounted = true;
     const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+      const { data } = await supabase.auth.getUser();
+      if (mounted) setUser(data.user ?? null);
     };
-
     fetchUser();
+
+    const { data: sub } = supabase.auth.onAuthStateChange((ev, sess) => {
+      if (ev === "SIGNED_IN") setUser(sess?.user ?? null);
+      if (ev === "SIGNED_OUT") setUser(null);
+    });
+
+    return () => {
+      mounted = false;
+      sub.subscription?.unsubscribe?.();
+    };
   }, []);
 
+  /* ---------- scroll show/hide ---------- */
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      // Show navbar when scrolling up or at the top
-      if (currentScrollY < lastScrollY || currentScrollY < 10) {
-        setIsVisible(true);
-      }
-      // Hide navbar when scrolling down and past a threshold
-      else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false);
-      }
-
-      setLastScrollY(currentScrollY);
+      const curr = window.scrollY;
+      if (curr < lastScrollY || curr < 10) setIsVisible(true);
+      else if (curr > lastScrollY && curr > 100) setIsVisible(false);
+      setLastScrollY(curr);
     };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  // Close mobile menu when clicking outside
+  /* ---------- lock body while mobile menu open ---------- */
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
   }, [isMobileMenuOpen]);
-
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 h-[70px] flex items-center justify-between px-6 md:px-10 shadow-md bg-white border-b transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
-        {/* logo */}
-        <div className="z-50">
-          <Link href="/">
-            <Image src="/icons/gdg-logo.svg" alt="GDG Logo" width={50} height={50} />
-          </Link>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 h-[80px] flex items-center justify-between px-6 md:px-10 bg-white border-b-2 border-black transition-transform duration-300 ${
+          isVisible ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
+        {/* Logo */}
+        <Link
+          href="/"
+          className="group flex items-center px-2 py-1 border-2 border-transparent hover:border-black hover:bg-yellow-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+        >
+          <img
+            src="/icons/gdg-logo.svg"
+            alt="GDG Logo"
+            className="w-[72px] h-[52px] object-contain"
+            onError={(e: any) => {
+              e.target.style.display = "none";
+              e.target.nextSibling.style.display = "flex";
+            }}
+          />
+          <div className="hidden w-[72px] h-[52px] items-center justify-center border-2 border-black bg-white">
+            <Terminal size={24} />
+          </div>
+        </Link>
+
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center space-x-6">
+          {NAV_LINKS.map((link, idx) => {
+            const style = LINK_STYLES[idx % LINK_STYLES.length];
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-5 py-2 font-black text-black ${style.color}
+                border-2 border-black
+                shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+                hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
+                hover:scale-110 ${style.hover}
+                active:translate-x-[2px] active:translate-y-[2px] active:shadow-none
+                transition-all duration-200 ${NAV_ROUND}`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </div>
 
-        {/* Desktop navigation links */}
-        <div className="hidden md:flex space-x-6">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Desktop profile dropdown or register button */}
+        {/* Desktop profile / join */}
         <div className="hidden md:block">
           {user ? (
             <ProfileDropdown />
           ) : (
-            <Link href={"/register"} className="text-gray-700 hover:text-gray-900 transition-colors">
+            <Link
+              href="/register"
+              className={`px-6 py-3 font-bold text-white bg-black border-2 border-black
+              shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+              hover:bg-green-500 hover:text-black
+              hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
+              active:translate-x-[2px] active:translate-y-[2px] active:shadow-none
+              transition-all ${NAV_ROUND}`}
+            >
               Join Us
             </Link>
           )}
         </div>
 
-        {/* Mobile hamburger button */}
+        {/* Mobile hamburger */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="md:hidden z-50 p-2 text-gray-700 hover:text-gray-900 transition-colors"
-          aria-label="Toggle menu"
+          className="md:hidden p-2 bg-white border-2 border-black
+          shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]
+          active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
         >
-          {isMobileMenuOpen ? (
-            <X size={28} className="transition-transform duration-300" />
-          ) : (
-            <Menu size={28} className="transition-transform duration-300" />
-          )}
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </nav>
 
-      {/* Mobile menu overlay */}
+      {/* Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300"
-          onClick={closeMobileMenu}
+          className="fixed inset-0 bg-black/20 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      {/* Mobile menu */}
+      {/* Mobile sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-[280px] bg-white shadow-2xl z-40 md:hidden transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
+        className={`fixed top-0 right-0 h-full w-[300px] bg-white z-40
+        border-l-2 border-black
+        shadow-[-4px_0px_0px_0px_rgba(0,0,0,0.1)]
+        transition-transform duration-300
+        ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        <div className="flex flex-col h-full pt-20 px-6">
-          {/* Mobile navigation links */}
-          <div className="flex flex-col space-y-6">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-lg text-gray-700 hover:text-gray-900 transition-colors py-2 border-b border-gray-100"
-                onClick={closeMobileMenu}
-              >
-                {link.label}
-              </Link>
-            ))}
+        <div className="pt-28 px-6 flex flex-col h-full">
+          <h2 className="mb-6 pb-4 border-b-2 border-black font-black text-2xl uppercase">
+            Menu
+          </h2>
+
+          <div className="flex flex-col space-y-5">
+            {NAV_LINKS.map((link, idx) => {
+              const style = LINK_STYLES[idx % LINK_STYLES.length];
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`px-4 py-3 font-black text-black ${style.color}
+                  border-2 border-black
+                  shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+                  active:translate-x-[4px] active:translate-y-[4px] active:shadow-none
+                  transition-all ${NAV_ROUND}`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Mobile profile section */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
+          <div className="mt-auto mb-10 pt-6 border-t-2 border-black">
             {user ? (
-              <div onClick={closeMobileMenu}>
-                <ProfileDropdown />
-              </div>
+              <button
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`w-full py-3 font-bold border-2 border-black hover:bg-red-300 ${NAV_ROUND}`}
+              >
+                Sign Out
+              </button>
             ) : (
               <Link
-                href={"/register"}
-                className="block w-full text-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                onClick={closeMobileMenu}
+                href="/register"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`block text-center py-3 font-black text-white bg-blue-600
+                border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${NAV_ROUND}`}
               >
-                Join Us
+                JOIN US
               </Link>
             )}
           </div>
         </div>
       </div>
     </>
-  )
+  );
 }
-
-export default NavBar

@@ -1,54 +1,39 @@
-"use client"
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// app/layout.tsx
 import "./globals.css";
 import NavBar from "./Components/Navigation/NavBar";
-
 import { Toaster } from "sonner";
-import { RootProvider } from 'fumadocs-ui/provider/next';
-import { usePathname } from 'next/navigation';
+import { RootProvider } from "fumadocs-ui/provider/next";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 
-const productSans = Geist({
-  variable: "--font-product-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+export const metadata = {
+  title: "GDG",
+  description: "GDG Website",
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const pathname = usePathname();
-  const isDocsPage = pathname?.startsWith('/docs');
-
+}) {
   return (
-    <html lang="en" className="light" style={{ colorScheme: 'light' }} suppressHydrationWarning>
+    <html
+      lang="en"
+      className="light"
+      style={{ colorScheme: "light" }}
+      suppressHydrationWarning
+    >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${productSans.variable} font-sans antialiased flex flex-col min-h-screen`}
+        className={`
+          ${GeistSans.variable}
+          ${GeistMono.variable}
+          font-sans antialiased flex flex-col min-h-screen
+        `}
       >
-        <RootProvider
-          theme={{
-            enabled: false
-          }}
-        >
-          {/* <DevNavBar/> */}
+        <RootProvider theme={{ enabled: false }}>
           <NavBar />
-          {/* {!isDocsPage && (
-            <div className="w-full pointer-events-none z-0">
-              <GridBackground />
-            </div>
-          )} */}
-          <main className="relative w-full pt-[70px]">
+          <main className="relative w-full pt-[80px]">
             {children}
           </main>
           <Toaster position="top-right" richColors />
