@@ -182,3 +182,19 @@ export type Registration = {
     created_at?: string;
   }[];
 };
+
+export function isEventProfileComplete(user: {
+  name?: string | null;
+  email?: string | null;
+  phone_number?: string | null;
+  section?: string | null;
+  branch?: string | null;
+}) {
+  return Boolean(
+    user?.name &&
+    user?.email &&
+    user?.phone_number &&
+    user?.section &&
+    user?.branch
+  );
+}
