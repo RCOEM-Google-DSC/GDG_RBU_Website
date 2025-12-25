@@ -52,7 +52,7 @@ export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogPr
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState<{ type: "idle" | "success" | "error"; message?: string }>({ type: "idle" });
 
-  const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS","Mechanical", "Civil"];
+  const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS", "Mechanical", "Civil"];
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Open file picker
@@ -182,6 +182,7 @@ export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogPr
                   accept="image/*"
                   className="hidden"
                   onChange={handleFileChange}
+                  aria-label="Upload profile picture"
                 />
               </div>
 
