@@ -342,17 +342,25 @@ export async function getPastEvents() {
 /**
  * Get gallery images for a specific event
  */
-export async function getEventGalleryImages(eventId: string) {
+export async function getGalleryImages(galleryUid: string) {
+  console.log("Fetching gallery for UID:", galleryUid);
+
   const { data, error } = await supabase
     .from("gallery")
-    .select("*")
-    .eq("event_id", eventId)
-    .order("uploaded_at", { ascending: false });
+    .select("image_url")
+    .eq("id", galleryUid)
+    .single();
 
   if (error) {
-    console.error("Error fetching gallery images:", error);
-    throw new Error(error.message || "Failed to fetch gallery images");
+    console.error("❌ GALLERY RLS ERROR:", error);
+    return [];
   }
 
-  return data;
+  console.log("✅ RAW GALLERY DATA:", data);
+
+  if (!data?.image_url) return [];
+
+  return Array.isArray(data.image_url)
+    ? data.image_url
+    : [data.image_url];
 }
