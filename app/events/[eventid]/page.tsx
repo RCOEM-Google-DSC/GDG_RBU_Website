@@ -1,398 +1,218 @@
-"use client"
-import { notFound } from 'next/navigation';
-import { getEvent, getEventGalleryImages } from '@/supabase/supabase';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Clock, Users, Image as ImageIcon, Trophy } from 'lucide-react';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { useEffect, useState } from 'react';
+"use client";
 
-interface EventDetailPageProps {
-    params: Promise<{
-        eventid: string;
-    }>;
-}
+import { useEffect, useState } from "react";
+import { notFound } from "next/navigation";
+import { Ticket, Users, ArrowDownRight, Sparkles } from "lucide-react";
+import { getEvent, getGalleryImages } from "@/supabase/supabase";
 
-// CheckCircle Icon Component
-const CheckCircleIcon = ({ size = 16, className = "" }: { size?: number; className?: string }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-    </svg>
-);
+export default function EventPage({
+  params,
+}: {
+  params: Promise<{ eventid: string }>;
+}) {
+  const [event, setEvent] = useState<any>(null);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default function EventDetailPage({ params }: EventDetailPageProps) {
-    const [eventid, setEventid] = useState<string>('');
-    const [event, setEvent] = useState<any>(null);
-    const [galleryImages, setGalleryImages] = useState<string[]>([]);
-    const [loading, setLoading] = useState(true);
+  /* ---------------- FETCH DATA ---------------- */
+  useEffect(() => {
+    params.then(async ({ eventid }) => {
+      try {
+        const eventData = await getEvent(eventid);
+        if (!eventData) notFound();
 
-    useEffect(() => {
-        params.then(({ eventid: id }) => {
-            setEventid(id);
-        });
-    }, [params]);
+        setEvent(eventData);
 
-    useEffect(() => {
-        if (!eventid) return;
+        if (eventData.gallery_uid) {
+          const images = await getGalleryImages(eventData.gallery_uid);
+          setGalleryImages(images);
 
-        async function fetchData() {
-            try {
-                // Fetch event data
-                const eventData = await getEvent(eventid);
-                setEvent(eventData);
 
-                // Fetch gallery images from Cloudinary via Supabase
-                const galleryData = await getEventGalleryImages(eventid);
-
-                // Extract image URLs from gallery data
-                if (galleryData && galleryData.length > 0) {
-                    const imageUrls = galleryData.map((item: any) => item.image_url || item.url);
-                    setGalleryImages(imageUrls);
-                } else {
-                    // Fallback to sample images if no gallery images exist
-                    setGalleryImages([
-                        'https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2012&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1551818255-e6e10975bc17?q=80&w=2073&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2070&auto=format&fit=crop',
-                    ]);
-                }
-
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching event data:', error);
-                notFound();
-            }
         }
 
-        fetchData();
-    }, [eventid]);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        notFound();
+      }
+    });
+  }, [params]);
 
-    if (loading || !event) {
-        return (
-            <div className="min-h-screen bg-[#FDFCF8] flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading event details...</p>
-                </div>
-            </div>
-        );
-    }
-
-    // Determine if event is upcoming or past based on status from database
-    const isUpcoming = event.status === 'upcoming';
-    const isPast = event.status === 'past';
-
-    // Get event image
-    const eventImage = event.image_url || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87';
-
-    // Get event date
-    const eventDate: string | null = (() => {
-        if (event.date) return new Date(event.date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-        if (event.event_time) {
-            return new Date(event.event_time).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-        }
-        return null;
-    })();
-
-    // Get event time
-    const eventTime: string | null = (() => {
-        if (event.time) return event.time;
-        if (event.event_time) {
-            return new Date(event.event_time).toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-        return null;
-    })();
-
-    // Get location
-    const eventLocation = event.venue || 'TBA';
-
+  if (loading || !event) {
     return (
-        <div className="min-h-screen bg-[#FDFCF8] text-gray-900 font-sans selection:bg-blue-500/30">
-            <main>
-                {/* Hero Section */}
-                <section className="relative h-[55vh] min-h-[450px] w-full overflow-hidden flex flex-col justify-end pb-12">
-                    <div className="absolute inset-0">
-                        <img
-                            src={eventImage}
-                            alt={event.title}
-                            className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent"></div>
-                    </div>
-
-                    <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-
-                        <div className="flex flex-col md:flex-row md:items-end justify-between">
-                            <div>
-                                <div className="flex items-center gap-3 mb-4">
-                                    {isUpcoming && (
-                                        <span className="px-2.5 py-0.5 rounded-full bg-blue-500/90 text-white border border-blue-400/50 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1 shadow-sm">
-                                            <Clock size={10} /> Upcoming
-                                        </span>
-                                    )}
-                                    {isPast && (
-                                        <span className="px-2.5 py-0.5 rounded-full bg-green-500/90 text-white border border-green-400/50 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1 shadow-sm">
-                                            <CheckCircleIcon size={10} /> Completed
-                                        </span>
-                                    )}
-                                    {event.category && (
-                                        <Badge
-                                            className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide"
-                                            style={{ backgroundColor: '#4285F4' }}
-                                        >
-                                            {event.category}
-                                        </Badge>
-                                    )}
-                                </div>
-                                <h1 className="text-4xl md:text-6xl font-bold mb-2 text-white shadow-black drop-shadow-md">
-                                    {event.title}
-                                </h1>
-                                <p className="text-gray-200 text-base max-w-xl shadow-black drop-shadow-sm">
-                                    {event.description}
-                                </p>
-                                <span className="text-gray-300 text-xs shadow-black drop-shadow-md mt-2 inline-block">
-                                    {eventDate}
-                                </span>
-                            </div>
-
-                            {/* Quick Stats */}
-                            {event.max_participants && (
-                                <div className="flex gap-6 mt-6 md:mt-0">
-                                    <div className="text-center">
-                                        <p className="text-2xl font-bold text-white shadow-black drop-shadow-md">
-                                            0
-                                        </p>
-                                        <p className="text-[10px] text-gray-400 uppercase tracking-wider">Registered</p>
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="text-2xl font-bold text-white shadow-black drop-shadow-md">
-                                            {event.max_participants || 'N/A'}
-                                        </p>
-                                        <p className="text-[10px] text-gray-400 uppercase tracking-wider">Capacity</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Content Container */}
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
-                    {/* Event Details */}
-                    <section className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                        <div className="md:col-span-2 prose prose-gray max-w-none">
-                            <h2 className="text-3xl font-bold mb-4 text-gray-900">Event Wrap-up</h2>
-                            <p className="text-gray-600 leading-relaxed mb-4">
-                                {event.description}
-                            </p>
-
-                            {/* Event Info - Minimalistic */}
-                            <div className="grid grid-cols-2 gap-5 mt-6 not-prose rounded-lg shadow-sm border-gray-200 p-5 bg-white">
-                                <div className="space-y-1">
-                                    <p className="text-xs text-gray-600 uppercase tracking-wide font-semibold">Date</p>
-                                    <p className="text-sm text-gray-900">{eventDate}</p>
-                                </div>
-
-                                {eventTime && (
-                                    <div className="space-y-1">
-                                        <p className="text-xs text-gray-600 uppercase tracking-wide font-semibold">Time</p>
-                                        <p className="text-sm text-gray-900">{eventTime}</p>
-                                    </div>
-                                )}
-
-                                <div className="space-y-1">
-                                    <p className="text-xs text-gray-600 uppercase tracking-wide font-semibold">Location</p>
-                                    <p className="text-sm text-gray-900">{eventLocation}</p>
-                                </div>
-
-                                {event.max_participants && (
-                                    <div className="space-y-1">
-                                        <p className="text-xs text-gray-600 uppercase tracking-wide font-semibold">Attendance</p>
-                                        <p className="text-sm text-gray-900">
-                                            0 / {event.max_participants}
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Highlights Sidebar */}
-                        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg h-fit">
-                            <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Highlights</h3>
-                            <ul className="space-y-3">
-                                {event.category && (
-                                    <li className="flex items-center gap-3 text-sm text-gray-600">
-                                        <span className="w-2 h-2 rounded-full bg-blue-500 shadow-sm"></span>
-                                        {event.category}
-                                    </li>
-                                )}
-                                {event.status && (
-                                    <li className="flex items-center gap-3 text-sm text-gray-600">
-                                        <span className="w-2 h-2 rounded-full bg-green-500 shadow-sm"></span>
-                                        Status: {event.status}
-                                    </li>
-                                )}
-                            </ul>
-
-                            {/* Action Button */}
-                            {isUpcoming && (
-                                <div className="mt-6 pt-6 border-t border-gray-100">
-                                    <Button className="w-full bg-[#4285F4] hover:bg-[#3367D6] text-white py-3 text-sm font-bold rounded-xl">
-                                        Register Now
-                                    </Button>
-                                </div>
-                            )}
-                        </div>
-                    </section>
-
-                    {/* Hall of Fame - Winners Podium */}
-                    {isPast && (
-                        <section>
-                            <div className="flex items-center justify-center gap-3 mb-12">
-                                <Trophy className="text-yellow-500" size={24} />
-                                <h2 className="text-2xl font-bold text-center text-gray-900">Hall of Fame</h2>
-                            </div>
-
-                            {/* Podium Layout */}
-                            <div className="flex flex-col md:flex-row items-end justify-center gap-6 max-w-5xl mx-auto">
-
-                                {/* 2nd Place (Left) */}
-                                <div className="order-2 md:order-1 w-full md:w-[30%] bg-white rounded-t-2xl rounded-b-lg border border-gray-100 shadow-lg overflow-hidden relative group hover:shadow-xl transition-shadow duration-300">
-                                    <div className="h-44 overflow-hidden relative">
-                                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Team 2" />
-                                    </div>
-                                    <div className="p-5">
-                                        <h3 className="font-bold text-gray-900 mb-1">Team Runner-Up</h3>
-                                        <p className="text-xs text-gray-500 mb-3">Outstanding Performance</p>
-                                    </div>
-                                    {/* Silver Base Line */}
-                                    <div className="h-1.5 w-full bg-gray-300"></div>
-                                </div>
-
-                                {/* 1st Place (Center - Taller & Elevated) */}
-                                <div className="order-1 md:order-2 w-full md:w-[35%] bg-white rounded-t-2xl rounded-b-lg border border-gray-100 shadow-2xl overflow-hidden relative group z-10 transform md:-translate-y-6">
-                                    <div className="absolute top-0 w-full h-1 bg-linear-to-r from-transparent via-yellow-400 to-transparent"></div>
-                                    <div className="h-56 overflow-hidden relative">
-                                        <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Team 1" />
-                                    </div>
-                                    <div className="p-6 text-center">
-                                        <h3 className="text-xl font-bold text-gray-900 mb-1">Champion Team</h3>
-                                        <p className="text-sm text-yellow-600 mb-4 font-medium">Best Overall Project</p>
-                                    </div>
-                                    {/* Gold Base Line */}
-                                    <div className="h-2 w-full bg-yellow-400"></div>
-                                </div>
-
-                                {/* 3rd Place (Right) */}
-                                <div className="order-3 md:order-3 w-full md:w-[30%] bg-white rounded-t-2xl rounded-b-lg border border-gray-100 shadow-lg overflow-hidden relative group hover:shadow-xl transition-shadow duration-300">
-                                    <div className="h-40 overflow-hidden relative">
-                                        <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Team 3" />
-                                    </div>
-                                    <div className="p-5">
-                                        <h3 className="font-bold text-gray-900 mb-1">Team Bronze</h3>
-                                        <p className="text-xs text-gray-500 mb-3">Excellent Achievement</p>
-                                    </div>
-                                    {/* Bronze Base Line */}
-                                    <div className="h-1.5 w-full bg-amber-700/60"></div>
-                                </div>
-
-                            </div>
-                        </section>
-                    )}
-
-                    {/* The Crew - Organizing Team */}
-                    {isPast && (
-                        <section>
-                            <div className="flex items-center gap-3 mb-8">
-                                <Users className="text-blue-600" size={24} />
-                                <h2 className="text-2xl font-bold text-gray-900">The Crew</h2>
-                            </div>
-                            <div className="relative rounded-3xl overflow-hidden shadow-2xl group">
-                                <img
-                                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop"
-                                    alt="Organizing Team"
-                                    className="w-full h-[400px] object-cover group-hover:scale-105 transition-all duration-700"
-                                />
-                                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent"></div>
-                                <div className="absolute bottom-8 left-8 right-8 text-white">
-                                    <h3 className="text-2xl font-bold mb-2">GDG Team 2024</h3>
-                                    <p className="text-gray-200 max-w-2xl text-sm">
-                                        The passionate individuals who worked behind the scenes to make this event a reality. From logistics to technical support, this team made it happen.
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-                    )}
-
-                    {/* Photo Gallery */}
-                    {isPast && (
-                        <section>
-                            <div className="flex items-center justify-between mb-8">
-                                <div className="flex items-center gap-3">
-                                    <ImageIcon className="text-pink-600" size={24} />
-                                    <h2 className="text-2xl font-bold text-gray-900">Event Gallery</h2>
-                                </div>
-                            </div>
-
-                            <Carousel
-                                opts={{
-                                    align: "center",
-                                    loop: true,
-                                }}
-                                className="w-full px-12"
-                            >
-                                <CarouselContent className="-ml-6">
-                                    {galleryImages.map((img, index) => (
-                                        <CarouselItem key={index} className="pl-6 md:basis-3/4 lg:basis-3/5">
-                                            <div className="relative group rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 aspect-4/3">
-                                                <img
-                                                    src={img}
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                                    alt={`Event Gallery ${index + 1}`}
-                                                />
-                                                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                                                        <span className="text-white text-sm font-semibold">
-                                                            Photo {index + 1} of {galleryImages.length}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </CarouselItem>
-                                    ))}
-                                </CarouselContent>
-                                <CarouselPrevious className="left-0 bg-white/90 hover:bg-white shadow-lg border-gray-200" />
-                                <CarouselNext className="right-0 bg-white/90 hover:bg-white shadow-lg border-gray-200" />
-                            </Carousel>
-
-                            <style jsx>{`
-                                [data-slot="carousel-item"]:not(.embla__slide--active) {
-                                    opacity: 0.3;
-                                    transition: opacity 0.3s ease-in-out;
-                                }
-                                [data-slot="carousel-item"].embla__slide--active {
-                                    opacity: 1;
-                                }
-                            `}</style>
-                        </section>
-                    )}
-                </div>
-            </main>
-        </div>
+      <div className="min-h-screen grid place-items-center font-black text-2xl">
+        LOADING EVENT…
+      </div>
     );
+  }
+
+  /* ---------------- DERIVED ---------------- */
+  const eventDate = new Date(
+    event.event_time || event.date
+  ).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  const participants =
+    event.max_participants ? `${event.max_participants}+` : "∞";
+
+  const price = event.is_paid ? `₹${event.fee}` : "FREE";
+
+  /* ---------------- STYLES ---------------- */
+  const border = "border-4 border-black";
+  const shadow = "shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]";
+  const cardBase = `bg-white ${border} ${shadow}`;
+
+  return (
+    <div className="min-h-screen bg-[#f0f0f0] font-mono text-black selection:bg-[#8338ec] selection:text-white pb-32 relative overflow-x-hidden">
+
+      {/* BACKGROUND DOTS */}
+      <div
+        className="fixed inset-0 opacity-10 pointer-events-none"
+        style={{
+          backgroundImage: "radial-gradient(#000 2px, transparent 2px)",
+          backgroundSize: "24px 24px",
+        }}
+      />
+
+      {/* ---------------- HERO ---------------- */}
+      <div className="relative max-w-7xl mx-auto p-4 md:p-12 pt-12 mb-12">
+        {/* TITLE CARD */}
+        <div
+          className={`absolute top-0 left-4 md:left-12 z-20 bg-[#ffbe0b] p-6 -rotate-2 ${border} ${shadow} max-w-lg`}
+        >
+          <h1 className="text-5xl md:text-7xl font-black leading-[0.9] tracking-tighter uppercase">
+            {event.title}
+          </h1>
+          <div className="mt-2 font-bold border-t-4 border-black pt-2 flex justify-between">
+            <span>{eventDate}</span>
+            <span>{event.venue || "TBA"}</span>
+          </div>
+        </div>
+
+        {/* HERO IMAGE */}
+        <div
+          className={`relative z-10 w-full aspect-video md:aspect-[21/9] ${border}
+          shadow-[16px_16px_0px_0px_#8338ec] bg-white p-2 rotate-1 mt-16 md:mt-8`}
+        >
+          <img
+            src={event.image_url}
+            alt={event.title}
+            className="w-full h-full object-cover border-2 border-black"
+          />
+
+          <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] z-30">
+            <ArrowDownRight size={48} className="text-[#8338ec]" />
+          </div>
+        </div>
+      </div>
+
+      {/* ---------------- DESCRIPTION + STATS ---------------- */}
+      <section className="max-w-7xl mx-auto p-4 md:p-12 grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative z-10">
+
+        {/* DESCRIPTION */}
+        <div className="md:col-span-8">
+          <div className={`${cardBase} p-8 md:p-12 -rotate-1 relative`}>
+            <Sparkles
+              className="absolute -top-6 -left-6 text-[#ffbe0b] fill-[#ffbe0b]"
+              size={64}
+            />
+            <h2 className="text-3xl font-black bg-black text-white inline-block px-2 py-1 mb-6 -rotate-1">
+              THE BRIEF
+            </h2>
+            <p className="text-xl md:text-3xl font-bold leading-relaxed">
+              {event.description}
+            </p>
+          </div>
+        </div>
+
+        {/* STATS */}
+        <div className="md:col-span-4">
+          <div
+            className={`bg-[#8338ec] p-8 ${border} shadow-[8px_8px_0px_0px_#000]
+            rotate-2 text-center text-white flex flex-col items-center justify-center aspect-square`}
+          >
+            <Users size={64} className="mb-4" />
+            <span className="text-8xl font-black">{participants}</span>
+            <span className="bg-white text-black px-4 py-1 font-black uppercase text-xl mt-2 -rotate-2 border-2 border-black">
+              Minds Blown
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- THE CREW ---------------- */}
+      {event.crew_url && (
+        <section className="max-w-7xl mx-auto p-4 md:p-12 relative z-10">
+          <div className="flex justify-center mb-8">
+            <h2 className="text-5xl font-black bg-white px-8 py-2 border-4 border-black -rotate-2 shadow-[4px_4px_0px_0px_#000]">
+              THE CREW
+            </h2>
+          </div>
+
+          <div className={`${cardBase} p-4 bg-[#ffbe0b] rotate-1`}>
+            <div className="bg-black p-2 border-4 border-black -rotate-1">
+              <img
+                src={event.crew_url}
+                alt="The Crew"
+                className="w-full h-[420px] object-cover border-2 border-white contrast-125"
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ---------------- GALLERY ---------------- */}
+      {galleryImages.length > 0 && (
+        <section className="max-w-7xl mx-auto p-4 md:p-12 pb-24 relative z-10">
+          <h2 className="text-4xl font-black uppercase mb-12 border-b-8 border-[#8338ec] inline-block">
+            Evidence
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+            {galleryImages.map((src, i) => (
+              <div key={i} className="relative group">
+                <div
+                  className={`bg-white p-4 pb-12 ${border}
+                  shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)]
+                  ${i % 2 === 0 ? "-rotate-2" : "rotate-2"}
+                  hover:rotate-0 hover:scale-105 transition-transform duration-300`}
+                >
+                  <div className="aspect-square border-2 border-black overflow-hidden bg-gray-200">
+                    <img
+                      src={src}
+                      alt={`Gallery ${i + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="mt-4 font-black text-center text-gray-400 uppercase tracking-widest">
+                    FIG. {String(i + 1).padStart(2, "0")}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ---------------- CTA ---------------- */}
+      {event.status === "upcoming" && (
+        <div className="fixed bottom-8 right-4 md:right-8 z-50">
+          <button
+            className={`bg-[#ffbe0b] text-black text-xl md:text-2xl font-black
+            py-4 px-8 border-4 border-black
+            shadow-[8px_8px_0px_0px_#000]
+            hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_#000]
+            active:translate-y-1 active:shadow-[4px_4px_0px_0px_#000]
+            transition-all flex items-center gap-3 rotate-1`}
+          >
+            <Ticket size={28} />
+            GRAB TICKET {price}
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
