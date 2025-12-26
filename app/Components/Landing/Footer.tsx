@@ -38,124 +38,157 @@ const Footer = () => {
 
   return (
     <footer
-      className="w-full pt-8"
+      className="w-full pt-8 pb-0"
       style={{
-        backgroundColor: isDark ? "rgb(24 24 27)" : "#f3f4f6",
+        backgroundColor: isDark ? "rgb(24 24 27)" : "#ffffff",
         color: isDark ? "white" : "black",
       }}
     >
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 md:gap-10 items-center">
-          {/* left section */}
-          <aside className="flex flex-col items-center justify-center gap-2">
+        {/* Unified Footer Section - Neo-brutalism style */}
+        <div
+          className="w-full p-6 md:p-10"
+          style={{
+            backgroundColor: isDark ? "#1f2937" : "#f9fafb",
+            border: "4px solid #000000",
+            boxShadow: "8px 8px 0px #000000",
+          }}
+        >
+          {/* Top Section: Logo and Title */}
+          <div className="flex flex-col items-center justify-center gap-4 mb-8 pb-8 border-b-4 border-black border-dashed">
             <Image
               src="/icons/gdg-logo.svg"
               alt="Logo"
-              width={170}
-              height={170}
+              width={150}
+              height={150}
               className=""
             />
             <h1
-              className="font-medium text-2xl sm:text-3xl text-center md:text-left"
-              style={{ color: isDark ? "white" : "black" }}
+              className="font-black text-2xl sm:text-3xl text-center"
+              style={{ color: isDark ? "#ffffff" : "#000000" }}
             >
               Google Developer Groups
             </h1>
-            <p className="text-base sm:text-lg font-medium text-muted-foreground text-center md:text-left">
-              <span className="text-blue-500">On Campus</span> • Ramdeobaba
-              University
+            <p className="text-base sm:text-lg font-bold text-center" style={{ color: isDark ? "#ffffff" : "#000000" }}>
+              <span>On Campus</span> • Ramdeobaba University
             </p>
-          </aside>
-
-          {/* divider (only on md+) */}
-          <div className="hidden md:flex items-center justify-center">
-            <div className="h-64 w-px bg-gray-300 dark:bg-slate-600" />
           </div>
 
-          {/* divider only on sm */}
-          <div className="md:hidden w-full ">
-            <div className="h-px w-full bg-gray-300 dark:bg-slate-600" />
-          </div>
 
-          {/* right section */}
-          <div className="flex flex-col gap-6">
-            <span className="flex items-start gap-3">
-              <IoLocationOutline
-                size={28}
-                style={{ color: isDark ? "white" : "black" }}
-              />
+
+          <div className="flex flex-col md:flex-row justify-between items-stretch gap-5">
+            {/* Middle Section: Contact Info */}
+            <div className="flex flex-col gap-5 flex-1">
+              {/* Location */}
               <div
-                className="flex flex-col text-sm sm:text-base leading-tight"
-                style={{ color: isDark ? "white" : "black" }}
+                className="p-5 flex items-start gap-3"
+                style={{
+                  backgroundColor: "#60a5fa",
+                  border: "3px solid #000000",
+                  boxShadow: "4px 4px 0px #000000",
+                }}
               >
-                <span>
-                  Shri Ramdeobaba College of Engineering and Management,
-                </span>
-                <span>
-                  Ramdeo Tekdi, Gittikhadan, Katol Road, Nagpur-440013
-                </span>
+                <IoLocationOutline
+                  size={28}
+                  style={{ color: "#000000", flexShrink: 0 }}
+                />
+                <div
+                  className="flex flex-col text-sm sm:text-base leading-tight font-bold"
+                  style={{ color: "#000000" }}
+                >
+                  <span>
+                    Shri Ramdeobaba College of Engineering and Management,
+                  </span>
+                  <span>
+                    Ramdeo Tekdi, Gittikhadan, Katol Road, Nagpur-440013
+                  </span>
+                </div>
               </div>
-            </span>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-8 w-full">
-              <Link href="#" className="underline text-sm sm:text-base">
-                <span className="flex items-center gap-2">
-                  <CgMail
-                    size={24}
-                    style={{ color: isDark ? "white" : "black" }}
-                  />
-                  <p style={{ color: isDark ? "white" : "black" }}>
-                    dsc.rknec@gmail.com
-                  </p>
+              {/* Email */}
+              <Link
+                href="#"
+                className="p-5 text-sm sm:text-base font-black transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
+                style={{
+                  backgroundColor: "#FFC20E",
+                  border: "3px solid #000000",
+                  boxShadow: "4px 4px 0px #000000",
+                  color: "#000000",
+                }}
+              >
+                <span className="flex items-center gap-3">
+                  <CgMail size={28} />
+                  <p>dsc.rknec@gmail.com</p>
                 </span>
               </Link>
+            </div>
 
-              {/* social media  */}
-              <div className="flex flex-col gap-2 sm:items-center sm:justify-center">
-                <p
-                  className="text-base font-semibold"
-                  style={{ color: isDark ? "white" : "black" }}
+            {/* Bottom Section: Social Media */}
+            <div className="flex flex-col items-center justify-center bg-indigo-500/90 gap-6 p-5 md:min-w-[280px]"
+              style={{
+                border: "3px solid #000000",
+                boxShadow: "4px 4px 0px #000000",
+                color: "#000000",
+              }}>
+              <p
+                className="text-lg font-black"
+                style={{ color: "#ffffff" }}
+              >
+                Follow Us:
+              </p>
+              <div className="flex gap-4 items-center">
+                <Link
+                  href="#"
+                  target="_blank"
+                  className="p-4 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
+                  style={{
+                    backgroundColor: "#f87171",
+                    border: "3px solid #000000",
+                    boxShadow: "4px 4px 0px #000000",
+                  }}
+                  aria-label="Instagram"
                 >
-                  Follow Us:
-                </p>
-                <div className="flex gap-3 items-center">
-                  <Link
-                    href="#"
-                    target="_blank"
-                    className="rounded-full p-2 flex items-center justify-center bg-muted-foreground/10 hover:bg-muted-foreground/20 transition-all duration-300 ease-in-out"
-                    aria-label="Instagram"
-                  >
-                    <AiOutlineInstagram
-                      size={20}
-                      style={{ color: isDark ? "white" : "black" }}
-                    />
-                  </Link>
-                  <Link
-                    href="#"
-                    target="_blank"
-                    className="rounded-full p-2 flex items-center justify-center bg-muted-foreground/10 hover:bg-muted-foreground/20 transition-all duration-300 ease-in-out"
-                    aria-label="LinkedIn"
-                  >
-                    <FaLinkedinIn
-                      size={20}
-                      style={{ color: isDark ? "white" : "black" }}
-                    />
-                  </Link>
-                  <Link
-                    href="#"
-                    target="_blank"
-                    className="rounded-full p-2 flex items-center justify-center bg-muted-foreground/10 hover:bg-muted-foreground/20 transition-all duration-300 ease-in-out"
-                    aria-label="X"
-                  >
-                    <BsTwitter
-                      size={20}
-                      style={{ color: isDark ? "white" : "" }}
-                    />
-                  </Link>
-                </div>
+                  <AiOutlineInstagram
+                    size={24}
+                    style={{ color: "#000000" }}
+                  />
+                </Link>
+                <Link
+                  href="#"
+                  target="_blank"
+                  className="p-4 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
+                  style={{
+                    backgroundColor: "#60a5fa",
+                    border: "3px solid #000000",
+                    boxShadow: "4px 4px 0px #000000",
+                  }}
+                  aria-label="LinkedIn"
+                >
+                  <FaLinkedinIn
+                    size={24}
+                    style={{ color: "#000000" }}
+                  />
+                </Link>
+                <Link
+                  href="#"
+                  target="_blank"
+                  className="p-4 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
+                  style={{
+                    backgroundColor: "#4ade80",
+                    border: "3px solid #000000",
+                    boxShadow: "4px 4px 0px #000000",
+                  }}
+                  aria-label="X"
+                >
+                  <BsTwitter
+                    size={24}
+                    style={{ color: "#000000" }}
+                  />
+                </Link>
               </div>
             </div>
           </div>
+
         </div>
       </div>
 

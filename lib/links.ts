@@ -1,53 +1,7 @@
-export type LinkItem = {
-  id: string;
-  title: string;
-  logo: string,
-  description?: string;
-  url: string;
-  
+export const svgPaths = {
+    p10230200: "M45.8991 40.5H2.59832L24.2487 2.99902L45.8991 40.5Z",
+    p23e1eb00: "M98.7071 8.07107C99.0976 7.68054 99.0976 7.04738 98.7071 6.65685L92.3431 0.292893C91.9526 -0.0976309 91.3195 -0.0976309 90.9289 0.292893C90.5384 0.683418 90.5384 1.31658 90.9289 1.70711L96.5858 7.36396L90.9289 13.0208C90.5384 13.4113 90.5384 14.0445 90.9289 14.435C91.3195 14.8256 91.9526 14.8256 92.3431 14.435L98.7071 8.07107ZM0 7.36396V8.36396H98V7.36396V6.36396H0V7.36396Z",
+    p27f72e00: "M9.20254 2.5C10.3573 0.500242 13.2431 0.500242 14.3979 2.5L22.1928 16C23.3474 18 21.9035 20.5 19.5941 20.5H4.00625C1.6969 20.5 0.253042 18 1.40762 16L9.20254 2.5Z",
+    p34e4bd00: "M26.977 0.5L1.47696 20H294.477V118.5H1.47696L26.977 146.5H336.477V27L294.477 0.5H26.977Z",
 };
 
-export const LINKS: LinkItem[] = [
-  {
-    id: "email",
-    title: "Email",
-    logo: "email",
-    url: "gdsc@rknec.edu",
-    description: "Contact us via email",
-  },
-  {
-    id: "discord",
-    title: "Join Discord",
-    logo: "discord",
-    url: "https://discord.com/invite/SBKyNqkaCp",
-    description: "Join our community on Discord",
-  },
-  {
-    id: "linkedin",
-    title: "LinkedIn",
-    logo: "linkedin",
-    url: "https://www.linkedin.com/company/gdsc-rcoem/",
-    description: "Connect with us on LinkedIn",
-  },
-  {
-    id: "instagram",
-    title: "Instagram",
-    logo: "instagram",
-    url: "https://www.instagram.com/gdg_rbu/",
-    description: "Follow us on Instagram",
-  },
-  {
-    id: "twitter",
-    title: "Twitter",
-    logo: "twitter",
-    url: "https://twitter.com/gdsc_rcoem",
-    description: "Follow us on Twitter",
-  },
-  {
-    id: "contact",
-    title: "YouTube",
-    logo: "youtube",
-    url: "https://youtube.com/@gdsc_rcoem",
-    description: "Watch our latest videos and tutorials",
-  },
-];

@@ -49,20 +49,20 @@ export function canManageUsers(userRole: UserRole | string): boolean {
 
 /**
  * Check if user can manage events (create, edit, delete events)
- * Only admin role can manage events
+ * Both admin and member roles can manage events
  */
 export function canManageEvents(userRole: UserRole | string): boolean {
   if (isDevelopmentMode) return true;
-  return userRole === "admin";
+  return userRole === "admin" || userRole === "member";
 }
 
 /**
  * Check if user can manage partners (create, edit, delete partners)
- * Only admin role can manage partners
+ * Both admin and member roles can manage partners
  */
 export function canManagePartners(userRole: UserRole | string): boolean {
   if (isDevelopmentMode) return true;
-  return userRole === "admin";
+  return userRole === "admin" || userRole === "member";
 }
 
 /**

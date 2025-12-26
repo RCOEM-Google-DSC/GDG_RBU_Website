@@ -154,7 +154,7 @@ export default function EditProfileModal({
     }
   };
 
-  /* -------- SAVE -------- */
+  // save
   const onSubmit = async (values: ProfileFormValues) => {
     setError(null);
 
@@ -249,12 +249,17 @@ export default function EditProfileModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" style={{
+        backgroundColor: "#ffffff",
+        border: "4px solid #000000",
+        boxShadow: "4px 4px 0px #000000",
+        borderRadius: 0,
+      }}>
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-slate-800">
+          <DialogTitle className="text-2xl font-black" style={{ color: "#000000" }}>
             Edit Profile
           </DialogTitle>
-          <DialogDescription className="text-slate-500">
+          <DialogDescription className="font-bold" style={{ color: "#000000" }}>
             Update your team details
           </DialogDescription>
         </DialogHeader>
@@ -262,10 +267,15 @@ export default function EditProfileModal({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* IMAGE + NAME & EMAIL DISPLAY */}
-            <div className="flex items-start gap-6 pb-6 border-b border-slate-200">
+            <div className="flex items-start gap-6 pb-6" style={{
+              borderBottom: "3px solid #000000",
+            }}>
               {/* Profile Image with Pencil Icon */}
               <div className="relative group">
-                <div className="w-28 h-28 rounded-2xl border-2 border-slate-200 overflow-hidden shadow-sm">
+                <div className="w-28 h-28 overflow-hidden" style={{
+                  border: "3px solid #000000",
+                  boxShadow: "4px 4px 0px #000000",
+                }}>
                   {imagePreview ? (
                     <Image
                       src={imagePreview}
@@ -284,7 +294,12 @@ export default function EditProfileModal({
                 {/* Pencil Icon Button */}
                 <Label
                   htmlFor="image-upload"
-                  className="absolute bottom-1 right-1 bg-slate-900 hover:bg-black text-white p-2 rounded-full cursor-pointer shadow-lg transition-all duration-200 hover:scale-110"
+                  className="absolute bottom-1 right-1 text-white p-2 cursor-pointer transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
+                  style={{
+                    backgroundColor: "#000000",
+                    border: "2px solid #000000",
+                    boxShadow: "2px 2px 0px #000000",
+                  }}
                   title="Change profile picture"
                 >
                   <Pencil size={16} />
@@ -299,7 +314,7 @@ export default function EditProfileModal({
 
                 {/* Upload Indicator */}
                 {uploading && (
-                  <div className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                     <Loader2 className="w-6 h-6 text-white animate-spin" />
                   </div>
                 )}
@@ -330,16 +345,20 @@ export default function EditProfileModal({
                 name="phone_number"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
                       <Phone size={16} />
                       Phone Number
-                      <span className="text-red-500 ">*</span>
+                      <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter phone number"
                         {...field}
-                        className="border-slate-300"
+                        className="font-medium"
+                        style={{
+                          border: "3px solid #000000",
+                          boxShadow: "3px 3px 0px #000000",
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -352,7 +371,7 @@ export default function EditProfileModal({
                 name="branch"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
                       <MapPin size={16} />
                       Branch
                       <span className="text-red-500">*</span>
@@ -361,7 +380,11 @@ export default function EditProfileModal({
                       <Input
                         placeholder="Enter branch"
                         {...field}
-                        className="border-slate-300"
+                        className="font-medium"
+                        style={{
+                          border: "3px solid #000000",
+                          boxShadow: "3px 3px 0px #000000",
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -374,7 +397,7 @@ export default function EditProfileModal({
                 name="section"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
                       <Type size={16} />
                       Section
                       <span className="text-red-500">*</span>
@@ -383,7 +406,11 @@ export default function EditProfileModal({
                       <Input
                         placeholder="Enter section"
                         {...field}
-                        className="border-slate-300"
+                        className="font-medium"
+                        style={{
+                          border: "3px solid #000000",
+                          boxShadow: "3px 3px 0px #000000",
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -395,7 +422,7 @@ export default function EditProfileModal({
                 name="club_email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
                       <Mail size={16} />
                       Club Email
                       <span className="text-red-500">*</span>
@@ -405,7 +432,11 @@ export default function EditProfileModal({
                         placeholder="email@example.com"
                         type="email"
                         {...field}
-                        className="border-slate-300"
+                        className="font-medium"
+                        style={{
+                          border: "3px solid #000000",
+                          boxShadow: "3px 3px 0px #000000",
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -420,14 +451,18 @@ export default function EditProfileModal({
               name="bio"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-slate-700">
+                  <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
                     <Type size={16} />
                     Bio
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Tell us about yourself..."
-                      className="resize-none border-slate-300"
+                      className="resize-none font-medium"
+                      style={{
+                        border: "3px solid #000000",
+                        boxShadow: "3px 3px 0px #000000",
+                      }}
                       rows={3}
                       {...field}
                     />
@@ -443,14 +478,18 @@ export default function EditProfileModal({
               name="thought"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-slate-700">
+                  <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
                     <FileText size={16} />
                     Thought
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Share your thoughts..."
-                      className="resize-none border-slate-300"
+                      className="resize-none font-medium"
+                      style={{
+                        border: "3px solid #000000",
+                        boxShadow: "3px 3px 0px #000000",
+                      }}
                       rows={3}
                       {...field}
                     />
@@ -467,7 +506,7 @@ export default function EditProfileModal({
                 name="github"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
                       <Github size={16} />
                       GitHub URL
                     </FormLabel>
@@ -475,7 +514,11 @@ export default function EditProfileModal({
                       <Input
                         placeholder="https://github.com/username"
                         {...field}
-                        className="border-slate-300"
+                        className="font-medium"
+                        style={{
+                          border: "3px solid #000000",
+                          boxShadow: "3px 3px 0px #000000",
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -488,7 +531,7 @@ export default function EditProfileModal({
                 name="linkedin"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
                       <Linkedin size={16} />
                       LinkedIn URL
                     </FormLabel>
@@ -496,7 +539,11 @@ export default function EditProfileModal({
                       <Input
                         placeholder="https://linkedin.com/in/username"
                         {...field}
-                        className="border-slate-300"
+                        className="font-medium"
+                        style={{
+                          border: "3px solid #000000",
+                          boxShadow: "3px 3px 0px #000000",
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -509,7 +556,7 @@ export default function EditProfileModal({
                 name="instagram"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
                       <Instagram size={16} />
                       Instagram
                     </FormLabel>
@@ -517,7 +564,11 @@ export default function EditProfileModal({
                       <Input
                         placeholder="https://instagram.com/username"
                         {...field}
-                        className="border-slate-300"
+                        className="font-medium"
+                        style={{
+                          border: "3px solid #000000",
+                          boxShadow: "3px 3px 0px #000000",
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -530,7 +581,7 @@ export default function EditProfileModal({
                 name="twitter"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
                       <Code size={16} />
                       Twitter
                     </FormLabel>
@@ -538,7 +589,11 @@ export default function EditProfileModal({
                       <Input
                         placeholder="https://twitter.com/username"
                         {...field}
-                        className="border-slate-300"
+                        className="font-medium"
+                        style={{
+                          border: "3px solid #000000",
+                          boxShadow: "3px 3px 0px #000000",
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -551,7 +606,7 @@ export default function EditProfileModal({
                 name="leetcode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
                       <Code size={16} />
                       LeetCode URL
                     </FormLabel>
@@ -559,7 +614,11 @@ export default function EditProfileModal({
                       <Input
                         placeholder="https://leetcode.com/username"
                         {...field}
-                        className="border-slate-300"
+                        className="font-medium"
+                        style={{
+                          border: "3px solid #000000",
+                          boxShadow: "3px 3px 0px #000000",
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -572,7 +631,7 @@ export default function EditProfileModal({
                 name="cv_url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-slate-700">
+                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
                       <FileText size={16} />
                       Resume URL
                     </FormLabel>
@@ -580,7 +639,11 @@ export default function EditProfileModal({
                       <Input
                         placeholder="https://example.com/resume.pdf"
                         {...field}
-                        className="border-slate-300"
+                        className="font-medium"
+                        style={{
+                          border: "3px solid #000000",
+                          boxShadow: "3px 3px 0px #000000",
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -593,7 +656,12 @@ export default function EditProfileModal({
 
             {/* ERROR MESSAGE */}
             {error && (
-              <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md border border-red-200">
+              <div className="text-sm font-bold p-3" style={{
+                color: "#dc2626",
+                backgroundColor: "#fef2f2",
+                border: "3px solid #000000",
+                boxShadow: "3px 3px 0px #000000",
+              }}>
                 {error}
               </div>
             )}
@@ -604,14 +672,25 @@ export default function EditProfileModal({
                 type="button"
                 variant="outline"
                 onClick={onClose}
-                className="border-slate-200"
+                className="font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
+                style={{
+                  border: "3px solid #000000",
+                  boxShadow: "4px 4px 0px #000000",
+                  backgroundColor: "#ffffff",
+                  color: "#000000",
+                }}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={form.formState.isSubmitting}
-                className="bg-slate-900 hover:bg-black text-white"
+                className="font-bold text-white transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
+                style={{
+                  backgroundColor: "#000000",
+                  border: "3px solid #000000",
+                  boxShadow: "4px 4px 0px #000000",
+                }}
               >
                 {form.formState.isSubmitting ? (
                   <>

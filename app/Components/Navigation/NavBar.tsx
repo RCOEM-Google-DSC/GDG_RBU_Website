@@ -7,22 +7,18 @@ import { supabase } from "@/supabase/supabase";
 import ProfileDropdown from "../Common/ProfileDropdown";
 import { Menu, X, Terminal, User as UserIcon } from "lucide-react";
 
-/* ---------- NAV CONFIG (edit these) ---------- */
-
-// Change accent colors: edit the Tailwind bg-* classes below.
-// Example: to use a different blue, replace "bg-blue-400" with "bg-blue-500" or any other Tailwind color.
 const LINK_STYLES = [
-  { color: "bg-blue-400", hover: "hover:bg-blue-500" },
-  { color: "bg-red-400", hover: "hover:bg-red-500" },
-  { color: "bg-yellow-400", hover: "hover:bg-yellow-500" },
-  { color: "bg-green-400", hover: "hover:bg-green-500" },
-  { color: "bg-indigo-400", hover: "hover:bg-indigo-500" },
+  { color: "bg-blue-400", hover: "hover:bg-blue-500/90" },
+  { color: "bg-red-400", hover: "hover:bg-red-500/90" },
+  { color: "bg-yellow-400", hover: "hover:bg-yellow-500/90" },
+  { color: "bg-green-400", hover: "hover:bg-green-500/90" },
+  { color: "bg-indigo-400", hover: "hover:bg-indigo-500/90" },
 ];
 
-// Change overall rounding for nav tags here:
-const NAV_ROUND = "rounded-md"; // options: rounded-sm | rounded | rounded-md | rounded-lg | rounded-xl
 
-/* ---------- Navigation links & label colors ---------- */
+const NAV_ROUND = "rounded-md"; 
+
+
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/team", label: "Team" },
@@ -37,7 +33,7 @@ export default function NavBar() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  /* ---------- load supabase user ---------- */
+// load user data
   useEffect(() => {
     let mounted = true;
     const fetchUser = async () => {
@@ -57,7 +53,7 @@ export default function NavBar() {
     };
   }, []);
 
-  /* ---------- scroll show/hide ---------- */
+// handle scroll
   useEffect(() => {
     const handleScroll = () => {
       const curr = window.scrollY;
@@ -69,7 +65,7 @@ export default function NavBar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  /* ---------- lock body while mobile menu open ---------- */
+// lock body while mobile menu open
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
   }, [isMobileMenuOpen]);
@@ -77,9 +73,7 @@ export default function NavBar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 h-[80px] flex items-center justify-between px-6 md:px-10 bg-white border-b-2 border-black transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 h-[70px] flex items-center justify-between px-6 md:px-10 bg-white border-b-2 border-black transition-transform duration-300 ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
       >
         {/* Logo */}
         <Link
@@ -113,7 +107,7 @@ export default function NavBar() {
                 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
                 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
                 hover:scale-110 ${style.hover}
-                active:translate-x-[2px] active:translate-y-[2px] active:shadow-none
+                active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
                 transition-all duration-200 ${NAV_ROUND}`}
               >
                 {link.label}
@@ -131,9 +125,9 @@ export default function NavBar() {
               href="/register"
               className={`px-6 py-3 font-bold text-white bg-black border-2 border-black
               shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-              hover:bg-green-500 hover:text-black
+              hover:bg-gray-300 hover:text-black
               hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
-              active:translate-x-[2px] active:translate-y-[2px] active:shadow-none
+              active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
               transition-all ${NAV_ROUND}`}
             >
               Join Us
@@ -146,7 +140,7 @@ export default function NavBar() {
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="md:hidden p-2 bg-white border-2 border-black
           shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]
-          active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+          active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -184,7 +178,7 @@ export default function NavBar() {
                   className={`px-4 py-3 font-black text-black ${style.color}
                   border-2 border-black
                   shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-                  active:translate-x-[4px] active:translate-y-[4px] active:shadow-none
+                  active:translate-x-1 active:translate-y-1 active:shadow-none
                   transition-all ${NAV_ROUND}`}
                 >
                   {link.label}

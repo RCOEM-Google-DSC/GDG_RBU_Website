@@ -31,6 +31,7 @@
     "cloudinary": "^2.8.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.26",
     "fumadocs-core": "^16.3.2",
     "fumadocs-mdx": "^14.2.2",

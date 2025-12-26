@@ -24,6 +24,7 @@ CREATE TABLE public.events (
   min_team_size smallint DEFAULT '2'::smallint,
   qr_code text,
   certificate_template_url text,
+  whatsapp_url text,
   CONSTRAINT events_pkey PRIMARY KEY (id),
   CONSTRAINT events_organizer_id_fkey FOREIGN KEY (organizer_id) REFERENCES public.users(id),
   CONSTRAINT events_partner_id_fkey FOREIGN KEY (partner_id) REFERENCES public.partners(id)
@@ -61,6 +62,7 @@ CREATE TABLE public.registrations (
   certificate_url text,
   certificate_generated_at timestamp with time zone,
   certificate_generated_once boolean DEFAULT false,
+  is_team_leader boolean DEFAULT false,
   CONSTRAINT registrations_pkey PRIMARY KEY (id),
   CONSTRAINT registrations_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(id),
   CONSTRAINT registrations_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)

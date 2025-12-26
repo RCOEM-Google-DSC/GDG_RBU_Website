@@ -338,3 +338,21 @@ export async function getPastEvents() {
 
   return data;
 }
+
+/**
+ * Get gallery images for a specific event
+ */
+export async function getEventGalleryImages(eventId: string) {
+  const { data, error } = await supabase
+    .from("gallery")
+    .select("*")
+    .eq("event_id", eventId)
+    .order("uploaded_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching gallery images:", error);
+    throw new Error(error.message || "Failed to fetch gallery images");
+  }
+
+  return data;
+}

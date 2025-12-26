@@ -1,9 +1,11 @@
-import React from 'react';
+"use client"
 import { notFound } from 'next/navigation';
-import { getEvent } from '@/supabase/supabase';
+import { getEvent, getEventGalleryImages } from '@/supabase/supabase';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Clock, Users, Image as ImageIcon, Trophy } from 'lucide-react';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { useEffect, useState } from 'react';
 
 interface EventDetailPageProps {
     params: Promise<{
@@ -19,17 +21,66 @@ const CheckCircleIcon = ({ size = 16, className = "" }: { size?: number; classNa
     </svg>
 );
 
-export default async function EventDetailPage({ params }: EventDetailPageProps) {
-    const { eventid } = await params;
+export default function EventDetailPage({ params }: EventDetailPageProps) {
+    const [eventid, setEventid] = useState<string>('');
+    const [event, setEvent] = useState<any>(null);
+    const [galleryImages, setGalleryImages] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    // Fetch event from Supabase
-    let event;
-    try {
-        event = await getEvent(eventid);
-    } catch (error) {
-        notFound();
+    useEffect(() => {
+        params.then(({ eventid: id }) => {
+            setEventid(id);
+        });
+    }, [params]);
+
+    useEffect(() => {
+        if (!eventid) return;
+
+        async function fetchData() {
+            try {
+                // Fetch event data
+                const eventData = await getEvent(eventid);
+                setEvent(eventData);
+
+                // Fetch gallery images from Cloudinary via Supabase
+                const galleryData = await getEventGalleryImages(eventid);
+
+                // Extract image URLs from gallery data
+                if (galleryData && galleryData.length > 0) {
+                    const imageUrls = galleryData.map((item: any) => item.image_url || item.url);
+                    setGalleryImages(imageUrls);
+                } else {
+                    // Fallback to sample images if no gallery images exist
+                    setGalleryImages([
+                        'https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2012&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1551818255-e6e10975bc17?q=80&w=2073&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2070&auto=format&fit=crop',
+                    ]);
+                }
+
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching event data:', error);
+                notFound();
+            }
+        }
+
+        fetchData();
+    }, [eventid]);
+
+    if (loading || !event) {
+        return (
+            <div className="min-h-screen bg-[#FDFCF8] flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading event details...</p>
+                </div>
+            </div>
+        );
     }
-
 
     // Determine if event is upcoming or past based on status from database
     const isUpcoming = event.status === 'upcoming';
@@ -69,16 +120,6 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
 
     // Get location
     const eventLocation = event.venue || 'TBA';
-
-    // Sample gallery images (using Unsplash)
-    const galleryImages = [
-        'https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2012&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1551818255-e6e10975bc17?q=80&w=2073&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2070&auto=format&fit=crop',
-    ];
 
     return (
         <div className="min-h-screen bg-[#FDFCF8] text-gray-900 font-sans selection:bg-blue-500/30">
@@ -308,42 +349,46 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[200px] gap-4">
-                                {/* Large Featured Shot */}
-                                <div className="md:col-span-2 md:row-span-2 relative group rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
-                                    <img
-                                        src={galleryImages[0]}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                                        alt="Event Gallery"
-                                    />
-                                    <div className="absolute inset-x-0 bottom-0 p-6 bg-linear-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
-                                        <span className="text-white text-sm font-semibold">Main Event</span>
-                                    </div>
-                                </div>
+                            <Carousel
+                                opts={{
+                                    align: "center",
+                                    loop: true,
+                                }}
+                                className="w-full px-12"
+                            >
+                                <CarouselContent className="-ml-6">
+                                    {galleryImages.map((img, index) => (
+                                        <CarouselItem key={index} className="pl-6 md:basis-3/4 lg:basis-3/5">
+                                            <div className="relative group rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 aspect-4/3">
+                                                <img
+                                                    src={img}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                                    alt={`Event Gallery ${index + 1}`}
+                                                />
+                                                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                                                        <span className="text-white text-sm font-semibold">
+                                                            Photo {index + 1} of {galleryImages.length}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </CarouselItem>
+                                    ))}
+                                </CarouselContent>
+                                <CarouselPrevious className="left-0 bg-white/90 hover:bg-white shadow-lg border-gray-200" />
+                                <CarouselNext className="right-0 bg-white/90 hover:bg-white shadow-lg border-gray-200" />
+                            </Carousel>
 
-                                {/* Tall Shot */}
-                                <div className="md:col-span-1 md:row-span-2 relative group rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
-                                    <img
-                                        src={galleryImages[1]}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                                        alt="Event Gallery"
-                                    />
-                                </div>
-
-                                {/* Standard Shots */}
-                                {galleryImages.slice(2).map((img, index) => (
-                                    <div
-                                        key={index}
-                                        className={`relative group rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ${index === 2 ? 'md:col-span-2' : ''}`}
-                                    >
-                                        <img
-                                            src={img}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                                            alt="Event Gallery"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
+                            <style jsx>{`
+                                [data-slot="carousel-item"]:not(.embla__slide--active) {
+                                    opacity: 0.3;
+                                    transition: opacity 0.3s ease-in-out;
+                                }
+                                [data-slot="carousel-item"].embla__slide--active {
+                                    opacity: 1;
+                                }
+                            `}</style>
                         </section>
                     )}
                 </div>

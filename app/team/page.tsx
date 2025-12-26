@@ -106,7 +106,9 @@ export default function TeamPage() {
     <div className="min-h-screen bg-[#FDFCF8] text-black pt-8 ">
 
       {/* hero: group photo */}
-      <section className="pt-5 pb-12 md:pb-20 border-b-2 border-black px-8">
+      <section className="pt-5 pb-12 md:pb-20 px-8" style={{
+        borderBottom: "4px solid #000000",
+      }}>
         <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-8">
           {/* left: title and domain buttons */}
           <div className="flex-1">
@@ -126,7 +128,21 @@ export default function TeamPage() {
                       .getElementById(`domain-${domain}`)
                       ?.scrollIntoView({ behavior: "smooth", block: "start" })
                   }
-                  className="px-4 md:px-5 py-1.5 md:py-2 border-2 border-black rounded-full text-xs md:text-sm font-semibold uppercase tracking-wide hover:bg-black hover:text-white transition"
+                  className="px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-bold uppercase tracking-wide transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
+                  style={{
+                    border: "3px solid #000000",
+                    boxShadow: "3px 3px 0px #000000",
+                    backgroundColor: "#ffffff",
+                    color: "#000000",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#000000";
+                    e.currentTarget.style.color = "#ffffff";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                    e.currentTarget.style.color = "#000000";
+                  }}
                 >
                   {domain}
                 </button>
@@ -136,7 +152,10 @@ export default function TeamPage() {
 
           {/* right: team image */}
           <div className="hidden lg:block shrink-0 ">
-            <div className="w-[520px] xl:w-[720px] h-[347px] xl:h-[480px] border-2 border-black rounded-2xl overflow-hidden">
+            <div className="w-[520px] xl:w-[720px] h-[347px] xl:h-[480px] overflow-hidden" style={{
+              border: "4px solid #000000",
+              boxShadow: "6px 6px 0px #000000",
+            }}>
               <Image
                 src={teamImg}
                 alt="Our Team"
@@ -150,7 +169,9 @@ export default function TeamPage() {
       </section>
 
       {/* domains section */}
-      <div className="border-t-2 border-black px-8">
+      <div className="px-8" style={{
+        borderTop: "4px solid #000000",
+      }}>
         {domains.map((domain) => {
           const members = groupedDomains[domain];
           // Find the domain lead for this domain
@@ -160,15 +181,25 @@ export default function TeamPage() {
             <section
               key={domain}
               id={`domain-${domain}`}
-              className="flex flex-col md:flex-row relative min-h-screen border-b border-black"
+              className="flex flex-col md:flex-row relative min-h-screen"
+              style={{
+                borderBottom: "3px solid #000000",
+              }}
             >
               {/* left domain name */}
               <div className="w-full md:w-[35%] xl:w-[30%] p-4 sm:p-6 md:p-8 lg:p-12">
                 <div className="md:sticky md:top-24">
                   {/* top icon */}
-                  <div className="w-12 h-12 md:w-16 md:h-16 border-2 border-black rounded-full flex items-center justify-center relative mb-6 md:mb-12">
-                    <div className="absolute w-full h-full rounded-full border border-black top-1 left-1" />
-                    <div className="w-6 h-6 md:w-8 md:h-8 border border-black rounded-full animate-[spin_10s_linear_infinite]" />
+                  <div className="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center relative mb-6 md:mb-12" style={{
+                    border: "3px solid #000000",
+                    boxShadow: "3px 3px 0px #000000",
+                  }}>
+                    <div className="absolute w-full h-full top-1 left-1" style={{
+                      border: "2px solid #000000",
+                    }} />
+                    <div className="w-6 h-6 md:w-8 md:h-8 animate-[spin_10s_linear_infinite]" style={{
+                      border: "2px solid #000000",
+                    }} />
                   </div>
 
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9]">
@@ -225,7 +256,7 @@ export default function TeamPage() {
           );
         })}
       </div>
-      
+
       {/* footer */}
       <section className='mt-20'>
         <Footer />

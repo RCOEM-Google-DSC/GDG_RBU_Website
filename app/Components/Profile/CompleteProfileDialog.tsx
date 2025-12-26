@@ -37,11 +37,8 @@ export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogPr
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // Form fields
-  const [section, setSection] = useState(
-    user.location?.includes(",") ? user.location.split(",")[0].trim() : (user.location || "")
-  );
+  const [section, setSection] = useState(user.location?.split(",")[0] || "");
   const [branch, setBranch] = useState("");
-  const [customBranch, setCustomBranch] = useState("");
   const [phone, setPhone] = useState(user.phone || "");
   const [imageUrl, setImageUrl] = useState(user.avatarUrl || "");
   const [github, setGithub] = useState(user.profileLinks.github || "");
@@ -52,7 +49,7 @@ export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogPr
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState<{ type: "idle" | "success" | "error"; message?: string }>({ type: "idle" });
 
-  const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS", "Mechanical", "Civil"];
+  const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS","Mechanical", "Civil"];
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Open file picker
@@ -109,7 +106,7 @@ export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogPr
         .from("users")
         .update({
           section,
-          branch: branch === "Other" ? customBranch : branch,
+          branch,
           phone_number: phone,
           image_url: imageUrl || null,
           profile_links: {
@@ -151,7 +148,7 @@ export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogPr
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-4">
-              {/* Avatar */}
+              {/* Avatar (ONLY FIX IS HERE) */}
               <div className="relative">
                 {isValidImageUrl(imageUrl) ? (
                   <Image
@@ -182,7 +179,6 @@ export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogPr
                   accept="image/*"
                   className="hidden"
                   onChange={handleFileChange}
-                  aria-label="Upload profile picture"
                 />
               </div>
 
@@ -241,18 +237,8 @@ export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogPr
                         {b}
                       </SelectItem>
                     ))}
-                    <SelectItem value="Other">Other</SelectItem>
                   </SelectContent>
                 </Select>
-                {branch === "Other" && (
-                  <Input
-                    id="customBranch"
-                    placeholder="Enter your branch"
-                    value={customBranch}
-                    onChange={(e) => setCustomBranch(e.target.value)}
-                    className="mt-2"
-                  />
-                )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="phone">Phone</Label>

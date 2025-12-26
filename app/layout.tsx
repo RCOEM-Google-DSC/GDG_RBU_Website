@@ -33,7 +33,7 @@ export default function RootLayout({
       >
         <RootProvider theme={{ enabled: false }}>
           <NavBar />
-          <main className="relative w-full pt-[80px]">
+          <main className="relative w-full mt-20">
             {children}
           </main>
           <Toaster position="top-right" richColors />
