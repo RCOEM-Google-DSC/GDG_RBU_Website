@@ -7,7 +7,6 @@ import Faq from "./Components/Landing/FAQ";
 import MeetOurTeam from "./Components/Landing/MeetOurTeam";
 import Footer from "./Components/Landing/Footer";
 import Hero from "./Components/Landing/Hero";
-import Footer1 from "./Components/Landing/Footer1";
 export default function Home() {
   return (
     <div className="w-full ">
