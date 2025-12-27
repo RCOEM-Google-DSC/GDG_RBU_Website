@@ -79,7 +79,7 @@ function LeftLogo() {
 
 function Desktop10Component() {
     return (
-        <div className="bg-white relative w-[1440px] h-[1024px]" data-name="Desktop - 10">
+        <div className="bg-[#FDFCF8] relative w-[1440px] h-[1024px]" data-name="Desktop - 10">
             <div className="absolute h-24 left-[377px] top-[516px] w-[675px]">
                 <div aria-hidden="true" className="absolute border-[5px] border-black border-solid inset-[-2.5px] pointer-events-none shadow-[9px_7px_0px_0px_black]" />
             </div>

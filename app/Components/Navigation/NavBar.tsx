@@ -1,11 +1,12 @@
-// components/NavBar.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/supabase/supabase";
 import ProfileDropdown from "../Common/ProfileDropdown";
+import MobileProfileDropdown from "../Common/MobileProfileDropdown";
 import { Menu, X, Terminal, User as UserIcon } from "lucide-react";
+import Image from "next/image";
 
 const LINK_STYLES = [
   { color: "bg-blue-400", hover: "hover:bg-blue-500/90" },
@@ -16,7 +17,7 @@ const LINK_STYLES = [
 ];
 
 
-const NAV_ROUND = "rounded-md"; 
+const NAV_ROUND = "rounded-md";
 
 
 const NAV_LINKS = [
@@ -33,7 +34,7 @@ export default function NavBar() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-// load user data
+  // load user data
   useEffect(() => {
     let mounted = true;
     const fetchUser = async () => {
@@ -53,7 +54,7 @@ export default function NavBar() {
     };
   }, []);
 
-// handle scroll
+  // handle scroll
   useEffect(() => {
     const handleScroll = () => {
       const curr = window.scrollY;
@@ -65,7 +66,7 @@ export default function NavBar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-// lock body while mobile menu open
+  // lock body while mobile menu open
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
   }, [isMobileMenuOpen]);
@@ -73,17 +74,18 @@ export default function NavBar() {
   return (
     <>
       <nav
-        className={`fixed  top-0 left-0 right-0 z-50 h-[70px] flex items-center justify-between px-6 md:px-10 bg-white border-b-2 border-black transition-transform duration-300 ${isVisible ? "translate-y-0" : "-translate-y-full"} mb-7 `}
+        className={`fixed  top-0 left-0 right-0 z-50 h-[70px] flex items-center justify-between px-6 md:px-10 bg-[#fffef8] border-b-2 border-black transition-transform duration-300 ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
       >
         {/* Logo */}
         <Link
           href="/"
-          className="group flex items-center px-2 py-1 border-2 border-transparent hover:border-black hover:bg-yellow-300 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
         >
-          <img
+          <Image
             src="/icons/gdg-logo.svg"
+            width={72}
+            height={52}
             alt="GDG Logo"
-            className="w-[72px] h-[52px] object-contain"
+            className=" object-contain"
             onError={(e: any) => {
               e.target.style.display = "none";
               e.target.nextSibling.style.display = "flex";
@@ -189,21 +191,19 @@ export default function NavBar() {
 
           <div className="mt-auto mb-10 pt-6 border-t-2 border-black">
             {user ? (
-              <button
-                onClick={async () => {
-                  await supabase.auth.signOut();
-                  setIsMobileMenuOpen(false);
-                }}
-                className={`w-full py-3 font-bold border-2 border-black hover:bg-red-300 ${NAV_ROUND}`}
-              >
-                Sign Out
-              </button>
+              <MobileProfileDropdown
+                onLogout={() => setIsMobileMenuOpen(false)}
+              />
             ) : (
               <Link
                 href="/register"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block text-center py-3 font-black text-white bg-blue-600
-                border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${NAV_ROUND}`}
+                className={` block px-6 py-3 font-bold text-white bg-black border-2 border-black
+              shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+              hover:bg-gray-300 hover:text-black
+              hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
+              active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
+              transition-all ${NAV_ROUND}`}
               >
                 JOIN US
               </Link>

@@ -97,7 +97,7 @@ const Footer = () => {
                   style={{ color: "#000000" }}
                 >
                   <span>
-                    Shri Ramdeobaba College of Engineering and Management,
+                    Ramdeobaba University
                   </span>
                   <span>
                     Ramdeo Tekdi, Gittikhadan, Katol Road, Nagpur-440013
@@ -180,10 +180,14 @@ const Footer = () => {
                   }}
                   aria-label="X"
                 >
-                  <BsTwitter
-                    size={24}
+
+                  <Image
+                    src="/icons/x-logo.png"
+                    width={24}
+                    height={24}
                     style={{ color: "#000000" }}
-                  />
+                    alt="X Logo">
+                  </Image>
                 </Link>
               </div>
             </div>
