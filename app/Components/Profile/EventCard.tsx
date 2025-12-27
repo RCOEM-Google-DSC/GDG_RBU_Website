@@ -97,90 +97,93 @@ export function EventCard({ event }: EventCardProps) {
   };
 
   return (
-    <div className="group relative flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-neutral-200/70 dark:border-neutral-800/70 bg-linear-to-br from-neutral-50 to-white dark:from-neutral-900/70 dark:to-neutral-950 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
-      {/* Image section */}
-      <div className="relative w-full sm:w-60 h-44 sm:h-auto shrink-0">
-        <img
-          src={event.image}
-          alt={event.title}
-          className="w-full h-full object-cover"
-        />
+    <div className="relative">
+      {/* Shadow */}
+      <div className="absolute bg-black h-full w-full rounded-xl top-1.5 left-1.5" />
+      
+      {/* Main Card */}
+      <div className="relative flex flex-col sm:flex-row overflow-hidden rounded-xl border-[3px] border-black bg-white">
+        {/* Image section */}
+        <div className="relative w-full sm:w-64 h-48 sm:h-auto shrink-0">
+          <img
+            src={event.image}
+            alt={event.title}
+            className="w-full h-full object-cover"
+          />
 
-        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent opacity-70 group-hover:opacity-80 transition-opacity" />
-
-        <span
-          className={cn(
-            "absolute top-3 left-3 inline-flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide uppercase shadow-sm",
-            "bg-black/60 text-white backdrop-blur",
-            event.tagColor,
-          )}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-          {event.tag}
-        </span>
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-col justify-between px-5 py-4 gap-4 w-full">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 rounded-full bg-neutral-100/80 dark:bg-neutral-800/70 px-3 py-1 text-[11px] font-medium text-neutral-600 dark:text-neutral-300">
-            <Calendar className="w-3.5 h-3.5" />
-            <span>{event.date}</span>
+          {/* Tag Badge */}
+          <div className="absolute top-3 left-3">
+            <div className="absolute bg-black h-full w-full rounded-lg top-1 left-1" />
+            <span className="relative inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-black tracking-wide uppercase bg-[#00f566] border-2 border-black">
+              <span className="w-2 h-2 rounded-full bg-black" />
+              {event.tag}
+            </span>
           </div>
-
-          <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-white leading-snug">
-            {event.title}
-          </h3>
-
-          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">
-            Download or generate your participation certificate.
-          </p>
         </div>
 
-        {/* Actions */}
-        {event.registration_status === "verified" && (
-          <div className="flex items-center gap-3 pt-1">
-            <button
-              onClick={handleAction}
-              disabled={loading}
-              className={cn(
-                "flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium border backdrop-blur transition-all",
-                "border-neutral-300 dark:border-neutral-700",
-                "bg-white/70 dark:bg-neutral-900/60",
-                "hover:bg-neutral-100 dark:hover:bg-neutral-800",
-                loading && "opacity-60 cursor-not-allowed",
-              )}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Generating…
-                </>
-              ) : certificateUrl ? (
-                <>
-                  <Download className="w-4 h-4" />
-                  Download Certificate
-                </>
-              ) : (
-                <>
-                  <Download className="w-4 h-4" />
-                  Generate Certificate
-                </>
-              )}
-            </button>
+        {/* Content */}
+        <div className="flex flex-col justify-between px-6 py-5 gap-5 w-full">
+          <div className="space-y-3">
+            {/* Date Badge */}
+            <div className="inline-block relative">
+              <div className="absolute bg-black h-full w-full rounded-lg top-0.5 left-0.5" />
+              <div className="relative inline-flex items-center gap-2 rounded-lg bg-[#ffd23d] border-2 border-black px-3 py-1.5 text-xs font-bold">
+                <Calendar className="w-4 h-4" />
+                <span>{event.date}</span>
+              </div>
+            </div>
 
-            {/* <button
-              aria-label="Share event"
-              title="Share event"
-              className="inline-flex items-center justify-center rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 px-2.5 py-2 text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-            >
-              <Share2 className="w-4 h-4" />
-            </button> */}
+            <h3 className="text-xl sm:text-2xl font-black text-black leading-tight tracking-tight">
+              {event.title}
+            </h3>
+
+            <p className="text-sm text-neutral-600 font-medium">
+              Download or generate your participation certificate.
+            </p>
           </div>
-        )}
-      </div>
 
-      <div className="hidden sm:block absolute left-0 top-0 h-full w-1 bg-linear-to-b from-blue-500 via-sky-400 to-purple-500" />
+          {/* Actions */}
+          {event.registration_status === "verified" && (
+            <div className="flex items-center gap-3 pt-1">
+              <div className="relative flex-1">
+                <div className="absolute bg-black h-full w-full rounded-lg top-1 left-1" />
+                <button
+                  onClick={handleAction}
+                  disabled={loading}
+                  className={cn(
+                    "relative w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-bold border-2 border-black transition-transform hover:translate-y-0.5",
+                    loading
+                      ? "bg-neutral-300 cursor-not-allowed"
+                      : certificateUrl
+                      ? "bg-[#4284ff] text-white"
+                      : "bg-white text-black",
+                  )}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      GENERATING…
+                    </>
+                  ) : certificateUrl ? (
+                    <>
+                      <Download className="w-4 h-4" />
+                      DOWNLOAD
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4" />
+                      GENERATE
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Accent Bar */}
+        <div className="hidden sm:block absolute left-0 top-0 h-full w-2 bg-[#ff5050]" />
+      </div>
     </div>
   );
 }

@@ -60,10 +60,8 @@ export function buildUIUser(
     bio: "GDG on Campus Member • Building amazing things with technology",
     email: row.email ?? "no-email@example.com",
     phone: row.phone_number ?? "N/A",
-    location:
-      row.section && row.branch
-        ? `${row.section} • ${row.branch}`
-        : "RBU Campus, Nagpur",
+    section: row.section ?? "",
+    branch: row.branch ?? "",
     avatarUrl: row.image_url || defaultAvatar,
     stats: {
       events: eventsCount,

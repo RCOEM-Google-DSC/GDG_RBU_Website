@@ -98,17 +98,20 @@ export default function RegisterPage() {
   };
 
   return (
-    <AuthForm
-      isLogin={isLogin}
-      toggleForm={toggleForm}
-      handleSignup={handleSignup}
-      handleLogin={handleLogin}
-      handleOAuthLogin={handleOAuthLogin}
-      signupData={signupData}
-      setSignupData={setSignupData}
-      loginData={loginData}
-      setLoginData={setLoginData}
-      loading={loading}
-    />
+    <div className="overflow-hidden min-h-screen">
+
+      <AuthForm
+        isLogin={isLogin}
+        toggleForm={toggleForm}
+        handleSignup={handleSignup}
+        handleLogin={handleLogin}
+        handleOAuthLogin={handleOAuthLogin}
+        signupData={signupData}
+        setSignupData={setSignupData}
+        loginData={loginData}
+        setLoginData={setLoginData}
+        loading={loading}
+      />
+    </div>
   );
 }

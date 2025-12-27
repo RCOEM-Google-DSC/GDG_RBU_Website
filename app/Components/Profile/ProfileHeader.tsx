@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, Phone, MapPin, Github, Linkedin, Twitter } from "lucide-react";
+import { Mail, Phone, MapPin, Github, Linkedin } from "lucide-react";
 import { UIUser } from "../../../lib/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -24,119 +24,152 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
       : DEFAULT_AVATAR;
 
   return (
-    <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm rounded-3xl p-6 md:p-10 shadow-xl border border-neutral-200 dark:border-neutral-800 relative z-10">
-      <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-        {/* Avatar Section */}
-        <div className="relative group">
-          <div className="w-32 h-32 md:w-40 md:h-40 rounded-full p-1 bg-linear-to-tr from-blue-500 via-purple-500 to-pink-500 shadow-lg">
-            <div className="w-full h-full rounded-full bg-white dark:bg-neutral-900 p-1 overflow-hidden relative">
-              <Image
-                src={avatarSrc}
-                width={300}
-                height={300}
-                alt={user.name || "Profile"}
-                className="w-full h-full object-cover rounded-full"
-                priority
-              />
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Left Side - Avatar & Social */}
+      <div className="lg:col-span-4">
+        <div className="relative">
+          <div className="absolute bg-black h-full w-full rounded-xl top-2 left-2" />
+          <div className="relative bg-white border-[3px] border-black rounded-xl p-6 flex flex-col items-center">
+            {/* Avatar */}
+            <div className="relative mb-6">
+              <div className="absolute bg-black size-40 rounded-full top-2 left-2" />
+              <div className="relative size-40 rounded-full border-[3px] border-black overflow-hidden bg-white">
+                <Image
+                  src={avatarSrc}
+                  width={300}
+                  height={300}
+                  alt={user.name || "Profile"}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+              </div>
             </div>
+
+            {/* Name & Title */}
+            <div className="text-center mb-6">
+              <h1 className="text-2xl font-black text-black tracking-tight mb-1">
+                {user.name || "UNNAMED USER"}
+              </h1>
+            </div>
+
+            {/* Social Icons - Fixed */}
+            <div className="flex gap-2 justify-center mb-6">
+              {[
+                { Icon: Github, key: "github", href: user.profileLinks?.github, color: "bg-black", isImage: false },
+                { Icon: Linkedin, key: "linkedin", href: user.profileLinks?.linkedin, color: "bg-[#4284ff]", isImage: false },
+                { Icon: null, key: "twitter", href: user.profileLinks?.twitter, color: "bg-black", isImage: true, imageSrc: "/icons/x-logo.png" },
+              ].map(({ Icon, key, href, color, isImage, imageSrc }) =>
+                href ? (
+                  <div key={key} className="relative">
+                    <div className="absolute bg-black size-11 rounded-lg top-1 left-1" />
+                    <Link
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Visit ${key} profile`}
+                      className={`relative flex items-center justify-center size-11 ${color} border-2 border-black rounded-lg text-white hover:translate-y-0.5 transition-transform`}
+                    >
+                      {isImage && imageSrc ? (
+                        <Image src={imageSrc} alt={key} width={20} height={20} className="w-5 h-5" />
+                      ) : (
+                        Icon && <Icon className="w-5 h-5" />
+                      )}
+                    </Link>
+                  </div>
+                ) : (
+                  <div key={key} className="relative opacity-40">
+                    <div className="absolute bg-neutral-400 size-11 rounded-lg top-1 left-1" />
+                    <div className="relative flex items-center justify-center size-11 bg-neutral-300 border-2 border-black rounded-lg text-neutral-500 cursor-not-allowed">
+                      {isImage && imageSrc ? (
+                        <Image src={imageSrc} alt={key} width={20} height={20} className="w-5 h-5 opacity-50" />
+                      ) : (
+                        Icon && <Icon className="w-5 h-5" />
+                      )}
+                    </div>
+                  </div>
+                ),
+              )}
+            </div>
+
+            {/* Edit Button */}
+            <CompleteProfileDialog
+              user={user}
+              trigger={
+                <div className="relative w-full">
+                  <div className="absolute bg-black h-full w-full rounded-xl top-1.5 left-1.5" />
+                  <Button className="relative w-full flex items-center justify-center gap-2 bg-black hover:bg-neutral-800 border-2 border-black text-white px-5 py-3 rounded-xl font-bold text-sm whitespace-nowrap transition-transform hover:translate-y-0.5">
+                    EDIT PROFILE
+                  </Button>
+                </div>
+              }
+            />
           </div>
         </div>
+      </div>
 
-        {/* Info Section */}
-        <div className="flex-1 text-center md:text-left space-y-4">
-          <div>
-            <div className="flex flex-col md:flex-row md:items-center gap-3 justify-center md:justify-between">
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">
-                  {user.name || "Unnamed User"}
-                </h1>
-                {user.title && (
-                  <p className="text-blue-600 dark:text-blue-400 font-medium text-lg mt-1">
-                    {user.title}
-                  </p>
-                )}
+      {/* Right Side - Info & Contact */}
+      <div className="lg:col-span-8 space-y-6">
+        {/* Bio Card */}
+        {user.bio && (
+          <div className="relative">
+            <div className="absolute bg-black h-full w-full rounded-xl top-2 left-2" />
+            <div className="relative bg-white border-[3px] border-black rounded-xl p-6">
+              <div className="flex items-start gap-3 mb-3">
+                <h3 className="text-xl font-black text-black tracking-tight pt-1">ABOUT ME</h3>
               </div>
-
-              <CompleteProfileDialog
-                user={user}
-                trigger={
-                  <Button className="flex items-center gap-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-5 py-2.5 rounded-full font-medium shadow-lg hover:scale-105 transition-all active:scale-95 text-sm md:text-base whitespace-nowrap">
-                    Complete your profile
-                  </Button>
-                }
-              />
-            </div>
-
-            {user.bio && (
-              <p className="text-neutral-600 dark:text-neutral-400 mt-4 max-w-2xl leading-relaxed">
+              <p className="text-neutral-700 leading-relaxed font-medium pl-1">
                 {user.bio}
               </p>
-            )}
+            </div>
           </div>
+        )}
 
-          {/* Contact Pills */}
-          <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-            {user.email && (
-              <div className="flex items-center gap-2 bg-neutral-800 text-neutral-200 px-4 py-2 rounded-lg text-sm">
-                <Mail className="w-4 h-4" />
-                {user.email}
-              </div>
-            )}
+        {/* Contact Info Grid */}
+        <div className="relative">
+          <div className="absolute bg-black h-full w-full rounded-xl top-2 left-2" />
+          <div className="relative h-63 bg-white border-[3px] border-black rounded-xl p-6">
+            <div className="flex items-start gap-3 mb-4">
+              <h3 className="text-xl font-black text-black tracking-tight pt-1">CONTACT INFO</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-1">
+              {user.email && (
+                <div className="relative">
+                  <div className="absolute bg-black h-full w-full rounded-lg top-1 left-1" />
+                  <div className="relative flex items-center gap-2 bg-yellow-200 border-2 border-black px-4 py-3 rounded-lg font-medium">
+                    <Mail className="w-4 h-4 shrink-0" />
+                    <span className="text-sm truncate">{user.email}</span>
+                  </div>
+                </div>
+              )}
 
-            {user.phone && (
-              <div className="flex items-center gap-2 bg-neutral-800 text-neutral-200 px-4 py-2 rounded-lg text-sm">
-                <Phone className="w-4 h-4" />
-                {user.phone}
-              </div>
-            )}
+              {user.phone && (
+                <div className="relative">
+                  <div className="absolute bg-black h-full w-full rounded-lg top-1 left-1" />
+                  <div className="relative flex items-center gap-2 bg-red-400 border-2 border-black px-4 py-3 rounded-lg font-medium text-white">
+                    <Phone className="w-4 h-4 shrink-0" />
+                    <span className="text-sm">{user.phone}</span>
+                  </div>
+                </div>
+              )}
 
-            {user.location && (
-              <div className="flex items-center gap-2 bg-neutral-800 text-neutral-200 px-4 py-2 rounded-lg text-sm">
-                <MapPin className="w-4 h-4" />
-                {user.location}
-              </div>
-            )}
-          </div>
-
-          {/* Social Icons */}
-          <div className="flex gap-4 justify-center md:justify-start pt-2">
-            {[
-              { Icon: Github, key: "github", href: user.profileLinks?.github },
-              {
-                Icon: Linkedin,
-                key: "linkedin",
-                href: user.profileLinks?.linkedin,
-              },
-              {
-                Icon: Twitter,
-                key: "twitter",
-                href: user.profileLinks?.twitter,
-              },
-            ].map(({ Icon, key, href }) =>
-              href ? (
-                <Link
-                  key={key}
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={`Visit ${key} profile`}
-                  className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-full text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-                >
-                  <Icon className="w-5 h-5" />
-                </Link>
-              ) : (
-                <Button
-                  key={key}
-                  disabled
-                  aria-label={`${key} profile not available`}
-                  className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-full text-neutral-400 cursor-not-allowed"
-                >
-                  <Icon className="w-5 h-5" />
-                </Button>
-              ),
-            )}
+              {(user.section || user.branch) && (
+                <div className="relative md:col-span-2">
+                  <div className="absolute bg-black h-full w-full rounded-lg top-1 left-1" />
+                  <div className="relative flex items-center gap-2 bg-indigo-400 border-2 border-black px-4 py-3 rounded-lg font-medium text-white">
+                    <MapPin className="w-4 h-4 shrink-0" />
+                    <span className="text-sm">
+                      {user.section && user.branch 
+                        ? `${user.section} - ${user.branch}`
+                        : user.section || user.branch}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   );

@@ -117,7 +117,8 @@ export type UIUser = {
   bio: string;
   email: string;
   phone: string;
-  location: string;
+  section: string;
+  branch: string;
   avatarUrl: string;
   stats: {
     events: number;

@@ -25,6 +25,8 @@ CREATE TABLE public.events (
   qr_code text,
   certificate_template_url text,
   whatsapp_url text,
+  crew_url text,
+  gallery_uid uuid,
   CONSTRAINT events_pkey PRIMARY KEY (id),
   CONSTRAINT events_organizer_id_fkey FOREIGN KEY (organizer_id) REFERENCES public.users(id),
   CONSTRAINT events_partner_id_fkey FOREIGN KEY (partner_id) REFERENCES public.partners(id)
@@ -32,13 +34,8 @@ CREATE TABLE public.events (
 CREATE TABLE public.gallery (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   title text NOT NULL,
-  image_url text NOT NULL,
-  uploaded_by uuid,
-  event_id uuid,
-  uploaded_at timestamp with time zone NOT NULL DEFAULT now(),
-  CONSTRAINT gallery_pkey PRIMARY KEY (id),
-  CONSTRAINT gallery_uploaded_by_fkey FOREIGN KEY (uploaded_by) REFERENCES public.team_members(id),
-  CONSTRAINT gallery_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(id)
+  image_url ARRAY NOT NULL,
+  CONSTRAINT gallery_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.partners (
   id uuid NOT NULL DEFAULT gen_random_uuid(),

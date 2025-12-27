@@ -159,89 +159,84 @@ const UpcomingEvent = ({
         </div>
 
         {/* Mobile: Image with overlaid ticket card */}
-        <div className="lg:hidden relative w-full h-[500px] sm:h-[600px] rounded-3xl overflow-hidden border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-          {/* Background Image */}
-          <img
-            src={imageSrc}
-            alt={title || "Event image"}
-            className="absolute inset-0 w-full h-full object-cover"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = FALLBACK_IMAGE;
-            }}
-          />
+        <div className="lg:hidden relative w-full h-auto rounded-3xl overflow-hidden border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          {/* Background Image Section */}
+          <div className="relative w-full h-[400px] sm:h-[450px]">
+            <img
+              src={imageSrc}
+              alt={title || "Event image"}
+              className="absolute inset-0 w-full h-full object-cover"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = FALLBACK_IMAGE;
+              }}
+            />
 
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-black/10" />
+            {/* Dark Overlay */}
+            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-black/10" />
 
-          {/* Content Container */}
-          <div className="absolute inset-0 p-5 sm:p-6 flex flex-col justify-between z-10">
-            {/* Top Tags */}
-            <div className="flex flex-wrap gap-2">
-              <span className="px-3 py-1 rounded-full border-2 border-black bg-white text-black text-xs font-bold tracking-wider uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                {tags && tags[0]}
-              </span>
-            </div>
+            {/* Content Container */}
+            <div className="absolute inset-0 p-5 sm:p-6 flex flex-col justify-between z-10">
+              {/* Top Tags */}
+              <div className="flex flex-wrap gap-2">
+                <span className="px-3 py-1 rounded-full border-2 border-black bg-white text-black text-xs font-bold tracking-wider uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  {tags && tags[0]}
+                </span>
+              </div>
 
-            {/* Bottom Section with Title */}
-            <div className="relative">
-              <div className="mb-3">
+              {/* Bottom Section with Title */}
+              <div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-2">
                   {title}
                 </h2>
                 <p className="text-sm text-white/80 line-clamp-2 mb-4">
                   {description}
                 </p>
-              </div>
 
-              <Link
-                href={`/events/upcoming/${id}`}
-                aria-label={`View details for ${title}`}
-              >
-                <Button className="w-12 h-12 bg-[#FFC20E] rounded-full flex items-center justify-center border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-yellow-400 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all mb-4">
-                  <ArrowUpRight
-                    className="text-black w-5 h-5"
-                    strokeWidth={2.5}
-                  />
-                </Button>
-              </Link>
+                <Link
+                  href={`/events/upcoming/${id}`}
+                  aria-label={`View details for ${title}`}
+                >
+                  <Button className="w-12 h-12 bg-[#FFC20E] rounded-full flex items-center justify-center border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-yellow-400 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all">
+                    <ArrowUpRight
+                      className="text-black w-5 h-5"
+                      strokeWidth={2.5}
+                    />
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
 
-          {/* Overlaid Ticket Card - Top Right - More Compact */}
-          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-32 sm:w-36 bg-[#FFC20E] rounded-2xl p-3 sm:p-3.5 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-20">
-            {/* Ticket Content - Compact Layout */}
-            <div className="space-y-2">
-              <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-black stroke-[1.5]" />
-              <h3 className="text-lg sm:text-xl font-black text-black leading-[0.85]">
-                New
-                <br />
-                Event
-              </h3>
-
-              <div className="w-full h-px border-b border-dashed border-black/30"></div>
-
-              {/* <p className="font-mono text-black/70 text-[8px] sm:text-[9px] tracking-wide leading-tight">
-                Access to all VIP labs
-              </p> */}
-
-              <div>
-                <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-black/60 mb-0.5">
-                  Date & Time
-                </p>
-                <p className="text-[10px] sm:text-xs font-bold text-black leading-tight">
-                  {date instanceof Date
-                    ? date.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })
-                    : date}
-                  <br />
-                  {time}
-                </p>
+          {/* Bottom Ticket Section */}
+          <div className="relative bg-[#FFC20E] p-5 sm:p-6">
+            <div className="flex items-center justify-between gap-4">
+              {/* Date & Time */}
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-3">
+                  <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-black stroke-[1.5]" />
+                  <div>
+                    <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-black/60">
+                      Date & Time
+                    </p>
+                    <p className="text-base sm:text-lg font-bold text-black leading-tight">
+                      {date instanceof Date
+                        ? date.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })
+                        : date}{" "}
+                      • {time}
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <Button className="w-full bg-black text-white py-1.5 sm:py-2 rounded-lg font-bold text-[10px] sm:text-xs border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all">
-                Register
+              {/* Register Button */}
+              <Button
+                className="bg-black text-white px-6 sm:px-8 py-3 rounded-xl font-bold text-sm sm:text-base border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all whitespace-nowrap"
+                onClick={handleRegisterClick}
+              >
+                Register Now
               </Button>
             </div>
           </div>

@@ -23,6 +23,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { supabase, getCurrentUserId } from "../../../supabase/supabase";
+import { Camera } from "lucide-react";
 
 interface CompleteProfileDialogProps {
   user: UIUser;
@@ -40,8 +41,10 @@ export function CompleteProfileDialog({
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // Form fields
-  const [section, setSection] = useState(user.location?.split(",")[0] || "");
+  const [section, setSection] = useState(user.section || "");
   const [branch, setBranch] = useState("");
+  const [isOtherBranch, setIsOtherBranch] = useState(false);
+  const [customBranch, setCustomBranch] = useState("");
   const [phone, setPhone] = useState(user.phone || "");
   const [imageUrl, setImageUrl] = useState(user.avatarUrl || "");
   const [github, setGithub] = useState(user.profileLinks.github || "");
@@ -55,9 +58,20 @@ export function CompleteProfileDialog({
     message?: string;
   }>({ type: "idle" });
 
-  const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS", "Mechanical", "Civil"];
+  const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS", "Mechanical", "Civil", "Other"];
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  // Handle branch selection
+  const handleBranchChange = (value: string) => {
+    if (value === "Other") {
+      setIsOtherBranch(true);
+      setBranch("");
+      setCustomBranch("");
+    } else {
+      setIsOtherBranch(false);
+      setBranch(value);
+      setCustomBranch("");
+    }
+  };
   // Open file picker
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -112,7 +126,7 @@ export function CompleteProfileDialog({
         .from("users")
         .update({
           section,
-          branch,
+          branch: isOtherBranch ? customBranch : branch,
           phone_number: phone,
           image_url: imageUrl || null,
           profile_links: {
@@ -150,33 +164,58 @@ export function CompleteProfileDialog({
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
 
-      <DialogContent className="overflow-y-auto p-5 max-w-4xl max-h-[90vh]">
+      <DialogContent 
+        className="overflow-y-auto p-6 max-w-4xl max-h-[90vh]"
+        style={{
+          backgroundColor: "#ffffff",
+          border: "4px solid #000000",
+          boxShadow: "4px 4px 0px #000000",
+          borderRadius: 0,
+        }}
+      >
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <div className="flex items-center gap-4">
-              {/* Avatar (ONLY FIX IS HERE) */}
-              <div className="relative">
-                {isValidImageUrl(imageUrl) ? (
-                  <Image
-                    src={imageUrl}
-                    width={64}
-                    height={64}
-                    className="h-16 w-16 rounded-full object-cover border-2 border-neutral-200 dark:border-neutral-700"
-                    alt="Profile"
-                  />
-                ) : (
-                  <div className="h-16 w-16 rounded-full bg-neutral-200 dark:bg-neutral-800 border-2 border-neutral-300 dark:border-neutral-700 flex items-center justify-center text-2xl">
-                    👤
-                  </div>
-                )}
+            <div className="flex items-center gap-5">
+              {/* Avatar with Neo-Brutalism */}
+              <div className="relative shrink-0">
+                <div
+                  className="size-20 overflow-hidden"
+                  style={{
+                    border: "3px solid #000000",
+                    boxShadow: "4px 4px 0px #000000",
+                    borderRadius: 0,
+                  }}
+                >
+                  {isValidImageUrl(imageUrl) ? (
+                    <Image
+                      src={imageUrl}
+                      width={80}
+                      height={80}
+                      className="size-20 object-cover"
+                      alt="Profile"
+                    />
+                  ) : (
+                    <div 
+                      className="size-20 flex items-center justify-center text-3xl"
+                      style={{ backgroundColor: "#ffd23d" }}
+                    >
+                      👤
+                    </div>
+                  )}
+                </div>
 
                 <button
                   type="button"
                   onClick={handleAvatarClick}
                   disabled={uploading}
-                  className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center disabled:opacity-60"
+                  className="bg-gray-300 absolute -bottom-1 -right-1 size-8 flex items-center justify-center font-bold transition-all duration-200 hover:translate-x-0.5 hover:translate-y-0.5"
+                  style={{
+                    border: "3px solid #000000",
+                    boxShadow: "3px 3px 0px #000000",
+                    borderRadius: 0,
+                  }}
                 >
-                  📷
+                  <Camera/>
                 </button>
 
                 <input
@@ -189,8 +228,16 @@ export function CompleteProfileDialog({
               </div>
 
               <div>
-                <DialogTitle>Complete your profile</DialogTitle>
-                <DialogDescription>
+                <DialogTitle 
+                  className="text-2xl font-black tracking-tight"
+                  style={{ color: "#000000" }}
+                >
+                  COMPLETE YOUR PROFILE
+                </DialogTitle>
+                <DialogDescription 
+                  className="font-bold mt-1"
+                  style={{ color: "#000000" }}
+                >
                   Add your details so we can recognize you in events.
                 </DialogDescription>
               </div>
@@ -201,58 +248,125 @@ export function CompleteProfileDialog({
             {/* Name & Email (Read-only) */}
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name" className="font-bold text-sm" style={{ color: "#000000" }}>NAME</Label>
                 <Input
                   id="name"
                   value={user.name}
                   readOnly
-                  className="bg-neutral-100 dark:bg-neutral-800 cursor-not-allowed"
+                  className="bg-neutral-100 cursor-not-allowed font-medium"
+                  style={{
+                    border: "3px solid #000000",
+                    boxShadow: "3px 3px 0px #000000",
+                    borderRadius: 0,
+                  }}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="font-bold text-sm" style={{ color: "#000000" }}>EMAIL</Label>
                 <Input
                   id="email"
                   value={user.email}
                   readOnly
-                  className="bg-neutral-100 dark:bg-neutral-800 cursor-not-allowed"
+                  className="bg-neutral-100 cursor-not-allowed font-medium"
+                  style={{
+                    border: "3px solid #000000",
+                    boxShadow: "3px 3px 0px #000000",
+                    borderRadius: 0,
+                  }}
                 />
               </div>
             </div>
 
             {/* Academic Information */}
-            <div className="grid grid-cols-3 gap-6 space-x-3">
+            <div className="grid grid-cols-3 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="section">Section</Label>
+                <Label htmlFor="section" className="font-bold text-sm" style={{ color: "#000000" }}>SECTION</Label>
                 <Input
                   id="section"
                   placeholder="A, B, C..."
                   value={section}
                   onChange={(e) => setSection(e.target.value)}
+                  className="bg-white font-medium"
+                  style={{
+                    border: "3px solid #000000",
+                    boxShadow: "3px 3px 0px #000000",
+                    borderRadius: 0,
+                  }}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="branch">Branch</Label>
-                <Select value={branch} onValueChange={setBranch}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Branch" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {branchs.map((b) => (
-                      <SelectItem key={b} value={b}>
-                        {b}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="branch" className="font-bold text-sm" style={{ color: "#000000" }}>
+                  BRANCH
+                  {isOtherBranch && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsOtherBranch(false);
+                        setBranch("");
+                        setCustomBranch("");
+                      }}
+                      className="ml-2 text-xs font-normal underline"
+                      style={{ color: "#4284ff" }}
+                    >
+                      (Back to dropdown)
+                    </button>
+                  )}
+                </Label>
+                {isOtherBranch ? (
+                  <Input
+                    id="branch"
+                    placeholder="Enter your branch"
+                    value={customBranch}
+                    onChange={(e) => setCustomBranch(e.target.value)}
+                    className="bg-white font-medium"
+                    style={{
+                      border: "3px solid #000000",
+                      boxShadow: "3px 3px 0px #000000",
+                      borderRadius: 0,
+                    }}
+                    autoFocus
+                  />
+                ) : (
+                  <Select value={branch} onValueChange={handleBranchChange}>
+                    <SelectTrigger 
+                      className="w-full bg-white font-medium"
+                      style={{
+                        border: "3px solid #000000",
+                        boxShadow: "3px 3px 0px #000000",
+                        borderRadius: 0,
+                      }}
+                    >
+                      <SelectValue placeholder="Select Branch" />
+                    </SelectTrigger>
+                    <SelectContent 
+                      style={{
+                        border: "3px solid #000000",
+                        boxShadow: "3px 3px 0px #000000",
+                        borderRadius: 0,
+                      }}
+                    >
+                      {branchs.map((b) => (
+                        <SelectItem key={b} value={b} className="font-medium">
+                          {b}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone" className="font-bold text-sm" style={{ color: "#000000" }}>PHONE</Label>
                 <Input
                   id="phone"
                   placeholder="1234567890"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  className="bg-white font-medium"
+                  style={{
+                    border: "3px solid #000000",
+                    boxShadow: "3px 3px 0px #000000",
+                    borderRadius: 0,
+                  }}
                 />
               </div>
             </div>
@@ -260,58 +374,116 @@ export function CompleteProfileDialog({
             {/* Social Links */}
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="github">GitHub URL</Label>
+                <Label htmlFor="github" className="font-bold text-sm" style={{ color: "#000000" }}>GITHUB URL</Label>
                 <Input
                   id="github"
                   placeholder="https://github.com/username"
                   value={github}
                   onChange={(e) => setGithub(e.target.value)}
+                  className="bg-white font-medium"
+                  style={{
+                    border: "3px solid #000000",
+                    boxShadow: "3px 3px 0px #000000",
+                    borderRadius: 0,
+                  }}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="linkedin">LinkedIn URL</Label>
+                <Label htmlFor="linkedin" className="font-bold text-sm" style={{ color: "#000000" }}>LINKEDIN URL</Label>
                 <Input
                   id="linkedin"
                   placeholder="https://linkedin.com/in/username"
                   value={linkedin}
                   onChange={(e) => setLinkedin(e.target.value)}
+                  className="bg-white font-medium"
+                  style={{
+                    border: "3px solid #000000",
+                    boxShadow: "3px 3px 0px #000000",
+                    borderRadius: 0,
+                  }}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="twitter">Twitter URL</Label>
+                <Label htmlFor="twitter" className="font-bold text-sm" style={{ color: "#000000" }}>TWITTER URL</Label>
                 <Input
                   id="twitter"
                   placeholder="https://twitter.com/username"
                   value={twitter}
                   onChange={(e) => setTwitter(e.target.value)}
+                  className="bg-white font-medium"
+                  style={{
+                    border: "3px solid #000000",
+                    boxShadow: "3px 3px 0px #000000",
+                    borderRadius: 0,
+                  }}
                 />
               </div>
             </div>
 
             {/* Status Messages */}
             {status.type === "error" && (
-              <p className="text-sm text-red-600 dark:text-red-400">
+              <div
+                className="text-sm font-bold px-4 py-2"
+                style={{
+                  color: "#000000",
+                  backgroundColor: "#ff5050",
+                  border: "3px solid #000000",
+                  boxShadow: "3px 3px 0px #000000",
+                  borderRadius: 0,
+                }}
+              >
                 {status.message}
-              </p>
+              </div>
             )}
             {status.type === "success" && (
-              <p className="text-sm text-green-600 dark:text-green-400">
+              <div
+                className="text-sm font-bold px-4 py-2"
+                style={{
+                  color: "#000000",
+                  backgroundColor: "#00f566",
+                  border: "3px solid #000000",
+                  boxShadow: "3px 3px 0px #000000",
+                  borderRadius: 0,
+                }}
+              >
                 {status.message}
-              </p>
+              </div>
             )}
             {uploading && (
-              <p className="text-xs text-neutral-500">Uploading image…</p>
+              <p className="text-sm font-bold" style={{ color: "#000000" }}>Uploading image…</p>
             )}
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-3">
             <DialogClose asChild>
-              <Button variant="outline" type="button">
-                Cancel
+              <Button 
+                variant="outline" 
+                type="button"
+                className="font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
+                style={{
+                  backgroundColor: "#ffffff",
+                  border: "3px solid #000000",
+                  boxShadow: "4px 4px 0px #000000",
+                  borderRadius: 0,
+                  color: "#000000",
+                }}
+              >
+                CANCEL
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={loading || uploading}>
-              {loading ? "Saving..." : "Save Profile"}
+            <Button 
+              type="submit" 
+              disabled={loading || uploading}
+              className="font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
+              style={{
+                backgroundColor: loading || uploading ? "#d1d5db" : "#000000",
+                border: "3px solid #000000",
+                boxShadow: "4px 4px 0px #000000",
+                borderRadius: 0,
+                color: "#ffffff",
+              }}
+            >
+              {loading ? "SAVING..." : "SAVE PROFILE"}
             </Button>
           </DialogFooter>
         </form>

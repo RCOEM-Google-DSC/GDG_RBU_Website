@@ -1,8 +1,4 @@
-// app/components/HeroExact.tsx
-// Responsive Neo-Brutalist Hero – SVG fully visible (NO CUT, NO SCROLL)
-
 'use client';
-
 import React from 'react';
 
 export default function Hero() {
@@ -55,7 +51,7 @@ export default function Hero() {
               max-w-[520px]
             "
           >
-            empowering students with<br />
+            Empowering students with<br />
             cutting-edge tech skills,<br />
             community, and resources<br />
             for a future in technology
@@ -107,6 +103,7 @@ export default function Hero() {
         <div
           className="
             lg:col-span-6
+            ml-5
             mt-6 lg:mt-10
             flex justify-center lg:justify-end
           "
