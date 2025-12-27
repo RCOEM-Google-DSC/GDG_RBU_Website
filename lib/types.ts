@@ -84,6 +84,7 @@ export interface UpcomingEventCardProps {
   image: string;
   tags?: Array<string>;
   tagColor?: string;
+  registerUrl?: string;
 }
 
 // ---------- PROFILE TYPES ----------

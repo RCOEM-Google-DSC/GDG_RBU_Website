@@ -3,7 +3,18 @@ import { ArrowUpRight, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UpcomingEventCardProps } from '@/lib/types';
 
-const UpcomingEvent = ({ id, title, date, time, image, tags, tagColor, description }: UpcomingEventCardProps) => {
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop";
+
+const UpcomingEvent = ({ id, title, date, time, image, tags, tagColor, description, registerUrl }: UpcomingEventCardProps) => {
+  // use the image prop, fallback if missing
+  const imageSrc = image || FALLBACK_IMAGE;
+  const handleRegisterClick = () => {
+    if (registerUrl) {
+      window.open(registerUrl, '_blank');
+    }
+  };
+
   return (
     // Main Container
     <div className="w-full font-sans">
@@ -18,9 +29,10 @@ const UpcomingEvent = ({ id, title, date, time, image, tags, tagColor, descripti
           <div className="relative w-[65%] h-full rounded-3xl overflow-hidden group border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all">
             {/* Background Image */}
             <img
-              src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=2070&auto=format&fit=crop"
-              alt="Robot AI"
+              src={imageSrc}
+              alt={title || "Event image"}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).src = FALLBACK_IMAGE; }}
             />
 
             {/* Dark Overlay */}
@@ -108,7 +120,7 @@ const UpcomingEvent = ({ id, title, date, time, image, tags, tagColor, descripti
                     </p>
                   </div>
 
-                  <Button className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all">
+                  <Button className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all" onClick={handleRegisterClick}>
                     Register Now
                   </Button>
                 </div>
@@ -121,9 +133,10 @@ const UpcomingEvent = ({ id, title, date, time, image, tags, tagColor, descripti
         <div className="lg:hidden relative w-full h-[500px] sm:h-[600px] rounded-3xl overflow-hidden border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           {/* Background Image */}
           <img
-            src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=2070&auto=format&fit=crop"
-            alt="Robot AI"
+            src={imageSrc}
+            alt={title || "Event image"}
             className="absolute inset-0 w-full h-full object-cover"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = FALLBACK_IMAGE; }}
           />
 
           {/* Dark Overlay */}

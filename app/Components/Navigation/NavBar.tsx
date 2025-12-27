@@ -73,7 +73,7 @@ export default function NavBar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 h-[70px] flex items-center justify-between px-6 md:px-10 bg-white border-b-2 border-black transition-transform duration-300 ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
+        className={`fixed  top-0 left-0 right-0 z-50 h-[70px] flex items-center justify-between px-6 md:px-10 bg-white border-b-2 border-black transition-transform duration-300 ${isVisible ? "translate-y-0" : "-translate-y-full"} mb-7 `}
       >
         {/* Logo */}
         <Link

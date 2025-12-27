@@ -343,24 +343,15 @@ export async function getPastEvents() {
  * Get gallery images for a specific event
  */
 export async function getGalleryImages(galleryUid: string) {
-  console.log("Fetching gallery for UID:", galleryUid);
-
   const { data, error } = await supabase
     .from("gallery")
     .select("image_url")
     .eq("id", galleryUid)
     .single();
 
-  if (error) {
-    console.error("❌ GALLERY RLS ERROR:", error);
-    return [];
-  }
+  if (error || !data?.image_url) return [];
 
-  console.log("✅ RAW GALLERY DATA:", data);
-
-  if (!data?.image_url) return [];
-
-  return Array.isArray(data.image_url)
-    ? data.image_url
-    : [data.image_url];
+  return data.image_url.map((url: string) =>
+    url.replace("/upload/", "/upload/f_auto,q_auto/")
+  );
 }
