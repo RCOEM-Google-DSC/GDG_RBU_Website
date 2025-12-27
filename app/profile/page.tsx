@@ -69,49 +69,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Right: Badges Section (4 columns) */}
-                              <div className="lg:col-span-4 space-y-6">
-                {/* Badges Header */}
-                <div className="relative">
-                  <div className="absolute bg-black h-full w-full rounded-xl top-1.5 left-1.5" />
-                  <div className="relative bg-[#ff5050] border-[3px] border-black rounded-xl px-5 py-4">
-                    <h2 className="text-xl font-black text-white tracking-tight">
-                      BADGES
-                    </h2>
-                  </div>
-                </div>
 
-                {/* Badges Content */}
-                <div className="relative">
-                  <div className="absolute bg-black h-full w-full rounded-xl top-1.5 left-1.5" />
-                  <div className="relative h-45 bg-white border-[3px] border-black rounded-xl p-6">
-                    {badges.length === 0 ? (
-                      <div className="text-center min-h-[180px] flex flex-col items-center justify-center">
-                        <p className="text-neutral-700 font-bold text-lg mb-2">
-                          No Badges Yet
-                        </p>
-                        <p className="text-neutral-500 font-medium text-sm">
-                          Participate in events to earn badges!
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-3">
-                        {badges.map((badge) => (
-                          <div key={badge.id} className="relative">
-                            <div className="absolute bg-black h-full w-full rounded-lg top-1 left-1" />
-                            <div className="relative bg-[#ffd23d] border-2 border-black rounded-lg p-3 text-center">
-                              <div className="text-3xl mb-1">🏅</div>
-                              <p className="text-xs font-bold text-black truncate">
-                                {badge.name}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-              </div>
 
             </div>
           </>

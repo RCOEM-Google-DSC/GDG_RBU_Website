@@ -45,4 +45,5 @@ gha-creds-*.json
 
 TODO.md
 
-/db
+db/*
+!db/members.ts

@@ -1,27 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-
-import { supabase } from "@/supabase/supabase";
 import TeamMemberCard from "../Components/Reusables/TeamMemberCard";
 import LeaderCard from "../Components/Reusables/LeaderCard";
-import { teamImg, domainLeads } from "@/db/mockdata";
+import { teamImg } from "@/db/mockdata";
+import { domainLeads, teamMembers } from "@/db/members";
 import Image from "next/image";
 import Footer from "../Components/Landing/Footer";
-
-type TeamRow = {
-  id: string;
-  userid: string;
-  domain: string;
-  users: {
-    name: string;
-    image_url: string | null;
-    profile_links: {
-      github?: string;
-      linkedin?: string;
-    } | null;
-  } | null;
-};
 
 type Member = {
   id: string;
@@ -33,56 +17,10 @@ type Member = {
   linkedin?: string;
 };
 
-type DomainLead = {
-  id: string;
-  name: string;
-  domain: string;
-  image_url: string;
-  profile_links: {
-    github?: string;
-    linkedin?: string;
-    twitter?: string | null;
-  };
-  role: string;
-};
 
 export default function TeamPage() {
-  const [team, setTeam] = useState<Member[]>([]);
-
-  useEffect(() => {
-    const load = async () => {
-      const { data, error } = await supabase.from("team_members").select(`
-          id,
-          userid,
-          domain,
-          users (
-            name,
-            image_url,
-            profile_links
-          )
-        `);
-
-      if (error) {
-        console.error("Supabase error:", error);
-        return;
-      }
-
-      const formatted: Member[] =
-        (data as any)?.map((row: TeamRow) => ({
-          id: row.id,
-          userid: row.userid,
-          domain: row.domain,
-          name: row.users?.name ?? "Unknown",
-          image_url: row.users?.image_url ?? "",
-          github: row.users?.profile_links?.github,
-          linkedin: row.users?.profile_links?.linkedin,
-        })) ?? [];
-
-      setTeam(formatted);
-    };
-
-    load();
-  }, []);
+  // Use hardcoded team members data
+  const team = teamMembers;
 
   // Group members by domain
   const groupedDomains = team.reduce<Record<string, Member[]>>((acc, m) => {
@@ -98,7 +36,7 @@ export default function TeamPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#FDFCF8] text-black pt-8 ">
+    <div className="min-h-screen  text-black pt-8 ">
       <div
         className="fixed inset-0 -z-10 pointer-events-none"
         style={{
@@ -200,27 +138,6 @@ export default function TeamPage() {
               {/* left domain name */}
               <div className="w-full md:w-[35%] xl:w-[30%] p-4 sm:p-6 md:p-8 lg:p-12">
                 <div className="md:sticky md:top-24">
-                  {/* top icon */}
-                  <div
-                    className="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center relative mb-6 md:mb-12"
-                    style={{
-                      border: "3px solid #000000",
-                      boxShadow: "3px 3px 0px #000000",
-                    }}
-                  >
-                    <div
-                      className="absolute w-full h-full top-1 left-1"
-                      style={{
-                        border: "2px solid #000000",
-                      }}
-                    />
-                    <div
-                      className="w-6 h-6 md:w-8 md:h-8 animate-[spin_10s_linear_infinite]"
-                      style={{
-                        border: "2px solid #000000",
-                      }}
-                    />
-                  </div>
 
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9]">
                     {domain}

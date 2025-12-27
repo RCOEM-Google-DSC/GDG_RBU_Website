@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Github, Linkedin } from "lucide-react";
+import { Github, Linkedin, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
 import Link from "next/link";
@@ -97,6 +97,32 @@ function LeaderCard({
     >
       {/* Card container with hover effect */}
       <div className="relative w-full h-full group transition-transform duration-300 hover:-translate-y-2">
+
+        {/* 🔹 GLASS ARROW BUTTON */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCardClick();
+          }}
+          className="
+            absolute top-3 right-3 z-30
+            w-9 h-9
+            flex items-center justify-center
+            rounded-full
+            backdrop-blur-md
+            bg-white/40
+            border border-black/20
+            shadow-[2px_2px_0px_#000]
+            transition-all duration-200
+            hover:bg-black
+            hover:text-white
+            hover:scale-110
+          "
+          aria-label="Open profile"
+        >
+          <ArrowUpRight className="w-4 h-4" strokeWidth={2.5} />
+        </button>
+
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="absolute inset-0 w-full h-full drop-shadow-xl"
@@ -173,9 +199,9 @@ function LeaderCard({
             margin: `${(borderWidth / width) * 100}%`,
           }}
         >
-          <div className="w-full h-[40%] flex items-center justify-center border-b-[3px] border-black bg-linear-to-br from-yellow-50 to-yellow-100">
+          <div className="w-full h-[40%] flex items-center justify-center border-b-[3px] border-black bg-gradient-to-br from-yellow-50 to-yellow-100">
             <span className="text-[10px] md:text-[11px] tracking-wider font-extrabold uppercase px-1 text-center leading-none">
-              {role}
+              Lead
             </span>
           </div>
           <div className="w-full h-[60%] flex items-center justify-center px-1">
