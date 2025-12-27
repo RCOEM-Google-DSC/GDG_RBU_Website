@@ -67,7 +67,7 @@ const LinkItem = ({ id, title, url, logo, description }: LinkItemProps) => {
     }
   };
 
-  //? copy whitelist 
+  //? copy whitelist
   const copyIds = ["email"];
   const isEmail = copyIds.includes(String(id));
 
@@ -157,4 +157,3 @@ const LinkItem = ({ id, title, url, logo, description }: LinkItemProps) => {
 };
 
 export default LinkItem;
-

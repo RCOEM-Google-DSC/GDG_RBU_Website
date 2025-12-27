@@ -23,23 +23,41 @@ import Image from "next/image";
 import Link from "next/link";
 import EditProfileModal from "@/app/Components/team/EditProfileModal";
 
-
 /* Decorations */
 const DecoCross = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="4">
+  <svg
+    viewBox="0 0 24 24"
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="4"
+  >
     <path d="M6 6L18 18M6 18L18 6" />
   </svg>
 );
 const DecoZigZag = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 100 20" className={className} fill="none" stroke="currentColor" strokeWidth="4">
+  <svg
+    viewBox="0 0 100 20"
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="4"
+  >
     <path d="M0 10 L10 0 L20 10 L30 0 L40 10 L50 0 L60 10 L70 0 L80 10 L90 0 L100 10" />
   </svg>
 );
 const DecoCircle = ({ className }: { className?: string }) => (
-  <div className={`${className} rounded-full border-4 border-black bg-transparent`} />
+  <div
+    className={`${className} rounded-full border-4 border-black bg-transparent`}
+  />
 );
 
-const SocialLinkNeo = ({ icon: Icon, href, label, colorClass = "hover:bg-blue-200" }: any) =>
+const SocialLinkNeo = ({
+  icon: Icon,
+  href,
+  label,
+  colorClass = "hover:bg-blue-200",
+}: any) =>
   !href ? null : (
     <a
       href={href}
@@ -75,7 +93,11 @@ export default function TeamProfilePage() {
       setAuthUserId(uid);
 
       if (uid) {
-        const { data: row } = await supabase.from("users").select("role").eq("id", uid).single();
+        const { data: row } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", uid)
+          .single();
         setAuthRole((row as any)?.role ?? null);
       }
     });
@@ -108,7 +130,7 @@ export default function TeamProfilePage() {
           section,
           phone_number
         )
-      `
+      `,
       )
       .eq("userid", userId)
       .maybeSingle();
@@ -123,7 +145,9 @@ export default function TeamProfilePage() {
   if (!profile)
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-2xl font-black animate-pulse">LOADING PROFILE...</div>
+        <div className="text-2xl font-black animate-pulse">
+          LOADING PROFILE...
+        </div>
       </div>
     );
 
@@ -172,7 +196,9 @@ export default function TeamProfilePage() {
 
             <div className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative">
               <DecoZigZag className="absolute -top-3 left-4 w-20 h-4 text-yellow-400" />
-              <p className="text-xl font-bold leading-relaxed">"{profile.bio || "No bio yet."}"</p>
+              <p className="text-xl font-bold leading-relaxed">
+                "{profile.bio || "No bio yet."}"
+              </p>
             </div>
 
             <div className="flex flex-wrap gap-4 justify-center md:justify-start pt-2">
@@ -250,8 +276,12 @@ export default function TeamProfilePage() {
               <Code size={32} strokeWidth={2.5} />
             </div>
 
-            <h3 className="text-base font-black uppercase text-black mb-4 border-b-2 border-black inline-block self-start">Philosophy</h3>
-            <p className="text-2xl font-black italic text-black leading-tight">"{profile.thought || "No thought shared."}"</p>
+            <h3 className="text-base font-black uppercase text-black mb-4 border-b-2 border-black inline-block self-start">
+              Philosophy
+            </h3>
+            <p className="text-2xl font-black italic text-black leading-tight">
+              "{profile.thought || "No thought shared."}"
+            </p>
           </div>
 
           <div className="md:col-span-2 bg-white border-2 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
@@ -281,13 +311,35 @@ export default function TeamProfilePage() {
 
             <div className="border-t-4 border-black pt-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <span className="font-black text-xl uppercase">Find me on:</span>
+                <span className="font-black text-xl uppercase">
+                  Find me on:
+                </span>
 
                 <div className="flex gap-4 flex-wrap">
-                  <SocialLinkNeo icon={Github} href={u?.profile_links?.github} label="GitHub" colorClass="hover:bg-gray-200" />
-                  <SocialLinkNeo icon={Linkedin} href={u?.profile_links?.linkedin} label="LinkedIn" colorClass="hover:bg-blue-300" />
-                  <SocialLinkNeo icon={Twitter} href={profile.twitter} label="Twitter" colorClass="hover:bg-sky-300" />
-                  <SocialLinkNeo icon={Instagram} href={profile.instagram} label="Instagram" colorClass="hover:bg-pink-300" />
+                  <SocialLinkNeo
+                    icon={Github}
+                    href={u?.profile_links?.github}
+                    label="GitHub"
+                    colorClass="hover:bg-gray-200"
+                  />
+                  <SocialLinkNeo
+                    icon={Linkedin}
+                    href={u?.profile_links?.linkedin}
+                    label="LinkedIn"
+                    colorClass="hover:bg-blue-300"
+                  />
+                  <SocialLinkNeo
+                    icon={Twitter}
+                    href={profile.twitter}
+                    label="Twitter"
+                    colorClass="hover:bg-sky-300"
+                  />
+                  <SocialLinkNeo
+                    icon={Instagram}
+                    href={profile.instagram}
+                    label="Instagram"
+                    colorClass="hover:bg-pink-300"
+                  />
 
                   {profile.leetcode && (
                     <a
@@ -307,7 +359,13 @@ export default function TeamProfilePage() {
       </div>
 
       {showEdit && authUserId && (
-        <EditProfileModal open={showEdit} onClose={() => setShowEdit(false)} onSuccess={loadProfile} profile={profile} userId={authUserId} />
+        <EditProfileModal
+          open={showEdit}
+          onClose={() => setShowEdit(false)}
+          onSuccess={loadProfile}
+          profile={profile}
+          userId={authUserId}
+        />
       )}
     </div>
   );

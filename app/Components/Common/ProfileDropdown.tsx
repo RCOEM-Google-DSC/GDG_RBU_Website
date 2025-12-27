@@ -97,7 +97,9 @@ const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
             {imageUrl ? (
               <AvatarImage src={imageUrl} alt={fullName ?? userEmail} />
             ) : (
-              <AvatarFallback>{userEmail.charAt(0).toUpperCase()}</AvatarFallback>
+              <AvatarFallback>
+                {userEmail.charAt(0).toUpperCase()}
+              </AvatarFallback>
             )}
           </Avatar>
 

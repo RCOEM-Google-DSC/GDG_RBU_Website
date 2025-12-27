@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Github,
-  Linkedin,
-  Twitter,
-} from "lucide-react";
+import { Mail, Phone, MapPin, Github, Linkedin, Twitter } from "lucide-react";
 import { UIUser } from "../../../lib/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -33,7 +26,6 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
   return (
     <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm rounded-3xl p-6 md:p-10 shadow-xl border border-neutral-200 dark:border-neutral-800 relative z-10">
       <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-        
         {/* Avatar Section */}
         <div className="relative group">
           <div className="w-32 h-32 md:w-40 md:h-40 rounded-full p-1 bg-linear-to-tr from-blue-500 via-purple-500 to-pink-500 shadow-lg">
@@ -110,8 +102,16 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
           <div className="flex gap-4 justify-center md:justify-start pt-2">
             {[
               { Icon: Github, key: "github", href: user.profileLinks?.github },
-              { Icon: Linkedin, key: "linkedin", href: user.profileLinks?.linkedin },
-              { Icon: Twitter, key: "twitter", href: user.profileLinks?.twitter },
+              {
+                Icon: Linkedin,
+                key: "linkedin",
+                href: user.profileLinks?.linkedin,
+              },
+              {
+                Icon: Twitter,
+                key: "twitter",
+                href: user.profileLinks?.twitter,
+              },
             ].map(({ Icon, key, href }) =>
               href ? (
                 <Link
@@ -133,7 +133,7 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
                 >
                   <Icon className="w-5 h-5" />
                 </Button>
-              )
+              ),
             )}
           </div>
         </div>

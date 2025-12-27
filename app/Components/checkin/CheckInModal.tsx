@@ -79,7 +79,7 @@ export function CheckInModal({ reg }: { reg: Registration }) {
 
             {reg.status === "verified" && (
               <p className="mt-3 text-green-600 font-medium">
-                 Already Verified
+                Already Verified
               </p>
             )}
 

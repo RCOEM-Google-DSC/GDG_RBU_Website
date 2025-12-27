@@ -1,15 +1,22 @@
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { PastEventCardProps } from '@/lib';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { PastEventCardProps } from "@/lib";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-const PastEvent = ({ id, title, date, image, tags, tagColor, description }: PastEventCardProps) => {
+const PastEvent = ({
+  id,
+  title,
+  date,
+  image,
+  tags,
+  tagColor,
+  description,
+}: PastEventCardProps) => {
   return (
     <div className="w-full flex items-center justify-center">
       {/* Container for the card with fixed dimensions */}
       <div className="relative w-full max-w-[340px] h-[450px] drop-shadow-sm filter">
-
         {/* Background SVG Layer - Fixed viewBox to prevent border clipping */}
         <svg
           viewBox="0 0 340 520"
@@ -17,7 +24,7 @@ const PastEvent = ({ id, title, date, image, tags, tagColor, description }: Past
           xmlns="http://www.w3.org/2000/svg"
           className="absolute inset-0 w-full h-full text-white"
           preserveAspectRatio="none"
-          style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.05))' }}
+          style={{ filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.05))" }}
         >
           {/* Updated path with proper proportions for 520px height */}
           <path
@@ -48,7 +55,6 @@ const PastEvent = ({ id, title, date, image, tags, tagColor, description }: Past
 
         {/* Content Layer - Fixed padding and spacing */}
         <div className="relative z-10 px-5 sm:px-6 pt-9 pb-8 h-full flex flex-col">
-
           {/* Header Badge */}
           <div className="self-start mb-3">
             {tags?.map((tag, index) => (
@@ -67,7 +73,10 @@ const PastEvent = ({ id, title, date, image, tags, tagColor, description }: Past
             <h2 className="text-xl sm:text-2xl font-bold text-black tracking-tight leading-tight flex-1 pr-2 line-clamp-2">
               {title}
             </h2>
-            <Link href={`/events/${id}`} aria-label={`View details for ${title}`}>
+            <Link
+              href={`/events/${id}`}
+              aria-label={`View details for ${title}`}
+            >
               <Button
                 className="bg-[#fbbf24] hover:bg-[#f59e0b] transition-colors rounded-full p-2 flex items-center justify-center shrink-0"
                 aria-label={`Go to ${title}`}
@@ -95,7 +104,6 @@ const PastEvent = ({ id, title, date, image, tags, tagColor, description }: Past
               {description}
             </p>
           </div>
-
         </div>
       </div>
     </div>

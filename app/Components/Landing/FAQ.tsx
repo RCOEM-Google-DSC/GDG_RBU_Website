@@ -45,7 +45,9 @@ const Faq = () => {
       viewport={{ amount: 0.3 }}
       transition={{ duration: 0.3, ease: "easeInOut", delay: 0.2 }}
     >
-      <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-geist-mono font-bold my-6 sm:my-10 ">FAQs</h1>
+      <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-geist-mono font-bold my-6 sm:my-10 ">
+        FAQs
+      </h1>
       <div className="w-full max-w-3xl space-y-4">
         {questions.map((item, index) => (
           <AccordionComponent

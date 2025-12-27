@@ -69,12 +69,13 @@ const Footer = () => {
             >
               Google Developer Groups
             </h1>
-            <p className="text-base sm:text-lg font-bold text-center" style={{ color: isDark ? "#ffffff" : "#000000" }}>
+            <p
+              className="text-base sm:text-lg font-bold text-center"
+              style={{ color: isDark ? "#ffffff" : "#000000" }}
+            >
               <span>On Campus</span> • Ramdeobaba University
             </p>
           </div>
-
-
 
           <div className="flex flex-col md:flex-row justify-between items-stretch gap-5">
             {/* Middle Section: Contact Info */}
@@ -96,9 +97,7 @@ const Footer = () => {
                   className="flex flex-col text-sm sm:text-base leading-tight font-bold"
                   style={{ color: "#000000" }}
                 >
-                  <span>
-                    Ramdeobaba University
-                  </span>
+                  <span>Ramdeobaba University</span>
                   <span>
                     Ramdeo Tekdi, Gittikhadan, Katol Road, Nagpur-440013
                   </span>
@@ -124,16 +123,15 @@ const Footer = () => {
             </div>
 
             {/* Bottom Section: Social Media */}
-            <div className="flex flex-col items-center justify-center bg-indigo-500/90 gap-6 p-5 md:min-w-[280px]"
+            <div
+              className="flex flex-col items-center justify-center bg-indigo-500/90 gap-6 p-5 md:min-w-[280px]"
               style={{
                 border: "3px solid #000000",
                 boxShadow: "4px 4px 0px #000000",
                 color: "#000000",
-              }}>
-              <p
-                className="text-lg font-black"
-                style={{ color: "#ffffff" }}
-              >
+              }}
+            >
+              <p className="text-lg font-black" style={{ color: "#ffffff" }}>
                 Follow Us:
               </p>
               <div className="flex gap-4 items-center">
@@ -148,10 +146,7 @@ const Footer = () => {
                   }}
                   aria-label="Instagram"
                 >
-                  <AiOutlineInstagram
-                    size={24}
-                    style={{ color: "#000000" }}
-                  />
+                  <AiOutlineInstagram size={24} style={{ color: "#000000" }} />
                 </Link>
                 <Link
                   href="#"
@@ -164,10 +159,7 @@ const Footer = () => {
                   }}
                   aria-label="LinkedIn"
                 >
-                  <FaLinkedinIn
-                    size={24}
-                    style={{ color: "#000000" }}
-                  />
+                  <FaLinkedinIn size={24} style={{ color: "#000000" }} />
                 </Link>
                 <Link
                   href="#"
@@ -180,19 +172,17 @@ const Footer = () => {
                   }}
                   aria-label="X"
                 >
-
                   <Image
                     src="/icons/x-logo.png"
                     width={24}
                     height={24}
                     style={{ color: "#000000" }}
-                    alt="X Logo">
-                  </Image>
+                    alt="X Logo"
+                  ></Image>
                 </Link>
               </div>
             </div>
           </div>
-
         </div>
       </div>
 

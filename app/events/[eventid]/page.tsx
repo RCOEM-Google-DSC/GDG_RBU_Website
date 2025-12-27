@@ -52,7 +52,7 @@ export default function EventPage({
       month: "short",
       day: "numeric",
       year: "numeric",
-    }
+    },
   );
 
   const participants = event.max_participants
@@ -77,7 +77,7 @@ export default function EventPage({
         }}
       />
 
-        {/* hero */}
+      {/* hero */}
       <div className="relative max-w-6xl mx-auto p-4 md:p-6 pt-20 pb-12 md:pb-16">
         {/* TITLE CARD */}
         <div
@@ -104,7 +104,10 @@ export default function EventPage({
           />
 
           <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] z-30">
-            <ArrowDownRight size={24} className="md:w-8 md:h-8 text-[#8338ec]" />
+            <ArrowDownRight
+              size={24}
+              className="md:w-8 md:h-8 text-[#8338ec]"
+            />
           </div>
         </div>
       </div>
@@ -113,7 +116,9 @@ export default function EventPage({
       <section className="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-start relative z-10">
         {/* DESCRIPTION */}
         <div className="md:col-span-8">
-          <div className={`${cardBase} p-6 md:p-8 rotate-0 md:-rotate-1 relative`}>
+          <div
+            className={`${cardBase} p-6 md:p-8 rotate-0 md:-rotate-1 relative`}
+          >
             <Sparkles
               className="absolute -top-4 -left-4 text-[#ffbe0b] fill-[#ffbe0b]"
               size={40}
@@ -134,7 +139,9 @@ export default function EventPage({
             rotate-0 md:rotate-2 text-center text-white flex flex-col items-center justify-center h-full min-h-[240px]`}
           >
             <Users size={40} className="md:w-12 md:h-12 mb-3" />
-            <span className="text-5xl md:text-6xl font-black">{participants}</span>
+            <span className="text-5xl md:text-6xl font-black">
+              {participants}
+            </span>
             <span className="bg-white text-black px-3 py-1 font-black uppercase text-sm md:text-base mt-2 -rotate-0 md:-rotate-2 border-2 border-black">
               Minds Blown
             </span>
@@ -151,10 +158,15 @@ export default function EventPage({
             </h2>
           </div>
 
-          <div className={`${cardBase} p-3 md:p-4 bg-[#ffbe0b] rotate-0 md:rotate-1`}>
+          <div
+            className={`${cardBase} p-3 md:p-4 bg-[#ffbe0b] rotate-0 md:rotate-1`}
+          >
             <div className="bg-black p-2 border-4 border-black rotate-0 md:-rotate-1">
               <img
-                src={event.crew_url.replace("/upload/", "/upload/f_auto,q_auto/")}
+                src={event.crew_url.replace(
+                  "/upload/",
+                  "/upload/f_auto,q_auto/",
+                )}
                 alt="The Crew"
                 className="w-full h-[280px] md:h-[340px] object-cover border-2 border-white contrast-125"
               />
@@ -172,7 +184,8 @@ export default function EventPage({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {galleryImages.map((src, i) => {
-              const rotationClass = i % 2 === 0 ? "md:-rotate-2" : "md:rotate-2";
+              const rotationClass =
+                i % 2 === 0 ? "md:-rotate-2" : "md:rotate-2";
               return (
                 <div key={i} className="relative group">
                   <div
@@ -182,7 +195,11 @@ export default function EventPage({
                   hover:rotate-0 hover:scale-105 transition-transform duration-300`}
                   >
                     <div className="aspect-square border-2 border-black overflow-hidden bg-gray-200">
-                      <img src={src} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" />
+                      <img
+                        src={src}
+                        alt={`Gallery ${i + 1}`}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div className="mt-4 font-black text-center text-gray-400 uppercase tracking-widest">
                       FIG. {String(i + 1).padStart(2, "0")}

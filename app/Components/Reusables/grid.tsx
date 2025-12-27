@@ -16,7 +16,7 @@ export default function GridBackground({
           "absolute inset-0 pointer-events-none",
           "bg-size-40px_40px",
           "bg-[linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)]",
-          "dark:bg-[linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]"
+          "dark:bg-[linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]",
         )}
         aria-hidden="true"
       />
@@ -28,7 +28,9 @@ export default function GridBackground({
       />
 
       {/* Content sits above the grid */}
-      {children && <div className="relative z-10 w-full min-h-full">{children}</div>}
+      {children && (
+        <div className="relative z-10 w-full min-h-full">{children}</div>
+      )}
     </div>
   );
 }

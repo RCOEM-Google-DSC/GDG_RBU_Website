@@ -52,10 +52,11 @@ export default function NotFound() {
             className="bg-[#8338ec] text-white px-4 md:px-8 py-2 md:py-3 border-3 md:border-4 border-black 
             shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] -rotate-2"
           >
-            <span className="text-lg md:text-2xl font-black uppercase tracking-wider">Error 404</span>
+            <span className="text-lg md:text-2xl font-black uppercase tracking-wider">
+              Error 404
+            </span>
           </div>
         </div>
-
 
         {/* Message card */}
         <div
@@ -66,7 +67,7 @@ export default function NotFound() {
             Page Not Found!
           </h1>
           <p className="text-base sm:text-lg md:text-xl font-bold text-center text-gray-700 leading-relaxed">
-            Oops! Looks like this page took a coffee break and never came back. 
+            Oops! Looks like this page took a coffee break and never came back.
           </p>
         </div>
 
@@ -98,7 +99,6 @@ export default function NotFound() {
             <ArrowLeft size={20} className="md:w-6 md:h-6" />
             Go Back
           </button>
-
         </div>
 
         {/* Fun fact */}

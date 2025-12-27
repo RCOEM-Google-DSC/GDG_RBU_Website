@@ -17,7 +17,9 @@ import { CgProfile } from "react-icons/cg";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
 import { toast } from "sonner";
 
-const MobileProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
+const MobileProfileDropdown = ({
+  onLogout,
+}: { onLogout?: () => void } = {}) => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [fullName, setFullName] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -100,7 +102,9 @@ const MobileProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => 
             {imageUrl ? (
               <AvatarImage src={imageUrl} alt={fullName ?? userEmail} />
             ) : (
-              <AvatarFallback>{userEmail.charAt(0).toUpperCase()}</AvatarFallback>
+              <AvatarFallback>
+                {userEmail.charAt(0).toUpperCase()}
+              </AvatarFallback>
             )}
           </Avatar>
           <span>{fullName || userEmail.split("@")[0]}</span>

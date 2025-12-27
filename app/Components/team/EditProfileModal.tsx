@@ -53,7 +53,10 @@ const profileFormSchema = z.object({
   linkedin: z.string().url().optional().or(z.literal("")),
   domain: z.string().optional(),
   bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
-  thought: z.string().max(500, "Thought must be less than 500 characters").optional(),
+  thought: z
+    .string()
+    .max(500, "Thought must be less than 500 characters")
+    .optional(),
   leetcode: z.string().url().optional().or(z.literal("")),
   twitter: z.string().url().optional().or(z.literal("")),
   instagram: z.string().url().optional().or(z.literal("")),
@@ -127,7 +130,9 @@ export default function EditProfileModal({
   });
 
   /* -------- IMAGE UPLOAD -------- */
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -146,7 +151,10 @@ export default function EditProfileModal({
       setImagePreview(data.url);
       form.setValue("image_url", data.url);
 
-      await supabase.from("users").update({ image_url: data.url }).eq("id", userId);
+      await supabase
+        .from("users")
+        .update({ image_url: data.url })
+        .eq("id", userId);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -172,7 +180,10 @@ export default function EditProfileModal({
         },
       };
 
-      const { error: userError } = await supabase.from("users").update(userUpdate).eq("id", userId);
+      const { error: userError } = await supabase
+        .from("users")
+        .update(userUpdate)
+        .eq("id", userId);
 
       if (userError) {
         console.error("User update error:", userError);
@@ -249,14 +260,20 @@ export default function EditProfileModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" style={{
-        backgroundColor: "#ffffff",
-        border: "4px solid #000000",
-        boxShadow: "4px 4px 0px #000000",
-        borderRadius: 0,
-      }}>
+      <DialogContent
+        className="max-w-2xl max-h-[90vh] overflow-y-auto"
+        style={{
+          backgroundColor: "#ffffff",
+          border: "4px solid #000000",
+          boxShadow: "4px 4px 0px #000000",
+          borderRadius: 0,
+        }}
+      >
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black" style={{ color: "#000000" }}>
+          <DialogTitle
+            className="text-2xl font-black"
+            style={{ color: "#000000" }}
+          >
             Edit Profile
           </DialogTitle>
           <DialogDescription className="font-bold" style={{ color: "#000000" }}>
@@ -267,15 +284,21 @@ export default function EditProfileModal({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* IMAGE + NAME & EMAIL DISPLAY */}
-            <div className="flex items-start gap-6 pb-6" style={{
-              borderBottom: "3px solid #000000",
-            }}>
+            <div
+              className="flex items-start gap-6 pb-6"
+              style={{
+                borderBottom: "3px solid #000000",
+              }}
+            >
               {/* Profile Image with Pencil Icon */}
               <div className="relative group">
-                <div className="w-28 h-28 overflow-hidden" style={{
-                  border: "3px solid #000000",
-                  boxShadow: "4px 4px 0px #000000",
-                }}>
+                <div
+                  className="w-28 h-28 overflow-hidden"
+                  style={{
+                    border: "3px solid #000000",
+                    boxShadow: "4px 4px 0px #000000",
+                  }}
+                >
                   {imagePreview ? (
                     <Image
                       src={imagePreview}
@@ -345,7 +368,10 @@ export default function EditProfileModal({
                 name="phone_number"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
+                    <FormLabel
+                      className="flex items-center gap-2 font-bold"
+                      style={{ color: "#000000" }}
+                    >
                       <Phone size={16} />
                       Phone Number
                       <span className="text-red-500">*</span>
@@ -371,7 +397,10 @@ export default function EditProfileModal({
                 name="branch"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
+                    <FormLabel
+                      className="flex items-center gap-2 font-bold"
+                      style={{ color: "#000000" }}
+                    >
                       <MapPin size={16} />
                       Branch
                       <span className="text-red-500">*</span>
@@ -397,7 +426,10 @@ export default function EditProfileModal({
                 name="section"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
+                    <FormLabel
+                      className="flex items-center gap-2 font-bold"
+                      style={{ color: "#000000" }}
+                    >
                       <Type size={16} />
                       Section
                       <span className="text-red-500">*</span>
@@ -422,7 +454,10 @@ export default function EditProfileModal({
                 name="club_email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
+                    <FormLabel
+                      className="flex items-center gap-2 font-bold"
+                      style={{ color: "#000000" }}
+                    >
                       <Mail size={16} />
                       Club Email
                       <span className="text-red-500">*</span>
@@ -451,7 +486,10 @@ export default function EditProfileModal({
               name="bio"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
+                  <FormLabel
+                    className="flex items-center gap-2 font-bold"
+                    style={{ color: "#000000" }}
+                  >
                     <Type size={16} />
                     Bio
                   </FormLabel>
@@ -478,7 +516,10 @@ export default function EditProfileModal({
               name="thought"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
+                  <FormLabel
+                    className="flex items-center gap-2 font-bold"
+                    style={{ color: "#000000" }}
+                  >
                     <FileText size={16} />
                     Thought
                   </FormLabel>
@@ -506,7 +547,10 @@ export default function EditProfileModal({
                 name="github"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
+                    <FormLabel
+                      className="flex items-center gap-2 font-bold"
+                      style={{ color: "#000000" }}
+                    >
                       <Github size={16} />
                       GitHub URL
                     </FormLabel>
@@ -531,7 +575,10 @@ export default function EditProfileModal({
                 name="linkedin"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
+                    <FormLabel
+                      className="flex items-center gap-2 font-bold"
+                      style={{ color: "#000000" }}
+                    >
                       <Linkedin size={16} />
                       LinkedIn URL
                     </FormLabel>
@@ -556,7 +603,10 @@ export default function EditProfileModal({
                 name="instagram"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
+                    <FormLabel
+                      className="flex items-center gap-2 font-bold"
+                      style={{ color: "#000000" }}
+                    >
                       <Instagram size={16} />
                       Instagram
                     </FormLabel>
@@ -581,7 +631,10 @@ export default function EditProfileModal({
                 name="twitter"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
+                    <FormLabel
+                      className="flex items-center gap-2 font-bold"
+                      style={{ color: "#000000" }}
+                    >
                       <Code size={16} />
                       Twitter
                     </FormLabel>
@@ -606,7 +659,10 @@ export default function EditProfileModal({
                 name="leetcode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
+                    <FormLabel
+                      className="flex items-center gap-2 font-bold"
+                      style={{ color: "#000000" }}
+                    >
                       <Code size={16} />
                       LeetCode URL
                     </FormLabel>
@@ -631,7 +687,10 @@ export default function EditProfileModal({
                 name="cv_url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 font-bold" style={{ color: "#000000" }}>
+                    <FormLabel
+                      className="flex items-center gap-2 font-bold"
+                      style={{ color: "#000000" }}
+                    >
                       <FileText size={16} />
                       Resume URL
                     </FormLabel>
@@ -650,18 +709,19 @@ export default function EditProfileModal({
                   </FormItem>
                 )}
               />
-
-
             </div>
 
             {/* ERROR MESSAGE */}
             {error && (
-              <div className="text-sm font-bold p-3" style={{
-                color: "#dc2626",
-                backgroundColor: "#fef2f2",
-                border: "3px solid #000000",
-                boxShadow: "3px 3px 0px #000000",
-              }}>
+              <div
+                className="text-sm font-bold p-3"
+                style={{
+                  color: "#dc2626",
+                  backgroundColor: "#fef2f2",
+                  border: "3px solid #000000",
+                  boxShadow: "3px 3px 0px #000000",
+                }}
+              >
                 {error}
               </div>
             )}

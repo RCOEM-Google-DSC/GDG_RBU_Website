@@ -33,7 +33,10 @@ interface CompleteProfileDialogProps {
 const isValidImageUrl = (url?: string) =>
   typeof url === "string" && url.startsWith("http");
 
-export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogProps) {
+export function CompleteProfileDialog({
+  user,
+  trigger,
+}: CompleteProfileDialogProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // Form fields
@@ -47,9 +50,12 @@ export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogPr
 
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [status, setStatus] = useState<{ type: "idle" | "success" | "error"; message?: string }>({ type: "idle" });
+  const [status, setStatus] = useState<{
+    type: "idle" | "success" | "error";
+    message?: string;
+  }>({ type: "idle" });
 
-  const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS","Mechanical", "Civil"];
+  const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS", "Mechanical", "Civil"];
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Open file picker
@@ -284,10 +290,14 @@ export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogPr
 
             {/* Status Messages */}
             {status.type === "error" && (
-              <p className="text-sm text-red-600 dark:text-red-400">{status.message}</p>
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {status.message}
+              </p>
             )}
             {status.type === "success" && (
-              <p className="text-sm text-green-600 dark:text-green-400">{status.message}</p>
+              <p className="text-sm text-green-600 dark:text-green-400">
+                {status.message}
+              </p>
             )}
             {uploading && (
               <p className="text-xs text-neutral-500">Uploading image…</p>
@@ -296,7 +306,9 @@ export function CompleteProfileDialog({ user, trigger }: CompleteProfileDialogPr
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline" type="button">Cancel</Button>
+              <Button variant="outline" type="button">
+                Cancel
+              </Button>
             </DialogClose>
             <Button type="submit" disabled={loading || uploading}>
               {loading ? "Saving..." : "Save Profile"}

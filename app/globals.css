@@ -129,7 +129,9 @@
 [data-slot="sidebar-container"] {
   top: 70px !important;
   height: calc(100vh - 70px) !important;
-  transition: top 0.3s ease, height 0.3s ease;
+  transition:
+    top 0.3s ease,
+    height 0.3s ease;
 }
 
 /* Adjust sidebar when navbar is hidden */

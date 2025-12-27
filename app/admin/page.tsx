@@ -7,7 +7,7 @@ const data = [
   { title: "Total Users", data: 1200, icon: Users },
   { title: "Event Registrations", data: 850, icon: Users },
   { title: "Team Members", data: 150, icon: Users },
-]
+];
 
 export default function AdminPage() {
   return (
@@ -15,7 +15,12 @@ export default function AdminPage() {
       {/* info card grid */}
       <div className="grid grid-cols-3 gap-4 p-4">
         {data.map((item) => (
-          <InfoCard key={item.title} title={item.title} data={item.data} icon={<item.icon />} />
+          <InfoCard
+            key={item.title}
+            title={item.title}
+            data={item.data}
+            icon={<item.icon />}
+          />
         ))}
       </div>
 

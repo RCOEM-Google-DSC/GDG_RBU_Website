@@ -10,7 +10,7 @@ export default function EventsPage() {
   const { canManageEvents } = useRBAC();
 
   // Filter upcoming and past events from mock data
-  const upcomingEventsList = events.filter(e => e.status === "upcoming");
+  const upcomingEventsList = events.filter((e) => e.status === "upcoming");
   const pastEventsList = pastEvents;
 
   return (

@@ -1,14 +1,22 @@
 "use client";
 
-import React from 'react'
-import { redirect } from 'next/navigation'
-import SideBar from '../Components/Admin/SideBar'
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
-import { Separator } from '@/components/ui/separator'
-import { useRBAC } from '@/hooks/useRBAC'
-import { useRouter } from 'next/navigation'
+import React from "react";
+import { redirect } from "next/navigation";
+import SideBar from "../Components/Admin/SideBar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { useRBAC } from "@/hooks/useRBAC";
+import { useRouter } from "next/navigation";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { canAccessAdminPanel, loading } = useRBAC();
   const router = useRouter();
 
@@ -26,13 +34,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // Redirect if user doesn't have permission
   if (!canAccessAdminPanel) {
-    router.push('/');
+    router.push("/");
     return null;
   }
 
   return (
     <SidebarProvider>
-      <div className="flex w-full" style={{ minHeight: 'calc(100vh - 74px)' }}>
+      <div className="flex w-full" style={{ minHeight: "calc(100vh - 74px)" }}>
         <SideBar />
         <SidebarInset className="flex-1">
           {/* Sidebar trigger and header */}
@@ -41,11 +49,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Separator orientation="vertical" className="mr-2 h-4" />
             <h1 className="text-lg font-semibold">Admin Dashboard</h1>
           </header>
-          <main className="p-6">
-            {children}
-          </main>
+          <main className="p-6">{children}</main>
         </SidebarInset>
       </div>
     </SidebarProvider>
-  )
+  );
 }

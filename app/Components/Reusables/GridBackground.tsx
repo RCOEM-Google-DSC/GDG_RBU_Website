@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
-import { GridPattern } from "@/components/ui/grid-pattern"
+import { cn } from "@/lib/utils";
+import { GridPattern } from "@/components/ui/grid-pattern";
 
 export function GridBackground() {
   return (
@@ -12,9 +12,9 @@ export function GridBackground() {
         x={1}
         y={1}
         className={cn(
-          "mask-[linear-gradient(to_bottom_right,white,transparent,transparent)]"
+          "mask-[linear-gradient(to_bottom_right,white,transparent,transparent)]",
         )}
       />
     </div>
-  )
+  );
 }

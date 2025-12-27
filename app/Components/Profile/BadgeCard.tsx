@@ -10,7 +10,7 @@ export function BadgeCard({ badge }: BadgeCardProps) {
     <div
       className={cn(
         "flex flex-col items-center justify-center p-4 rounded-xl transition-transform hover:scale-105",
-        badge.color
+        badge.color,
       )}
     >
       <div className="mb-2 p-2 bg-white/50 dark:bg-black/20 rounded-full">

@@ -98,7 +98,7 @@ export default function UsersPage() {
       console.error(error);
     } else {
       setUsers((prev) =>
-        prev.map((u) => (u.id === id ? { ...u, role: role as any } : u))
+        prev.map((u) => (u.id === id ? { ...u, role: role as any } : u)),
       );
       toast.success("Role updated successfully");
     }
@@ -175,37 +175,25 @@ export default function UsersPage() {
             <SelectTrigger className="w-[140px]">
               <SelectValue>
                 {user.role === "user" && (
-                  <span className="flex items-center gap-2">
-                    user
-                  </span>
+                  <span className="flex items-center gap-2">user</span>
                 )}
                 {user.role === "member" && (
-                  <span className="flex items-center gap-2">
-                    member
-                  </span>
+                  <span className="flex items-center gap-2">member</span>
                 )}
                 {user.role === "admin" && (
-                  <span className="flex items-center gap-2">
-                    admin
-                  </span>
+                  <span className="flex items-center gap-2">admin</span>
                 )}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="user" className="cursor-pointer">
-                <span className="flex items-center gap-2">
-                  user
-                </span>
+                <span className="flex items-center gap-2">user</span>
               </SelectItem>
               <SelectItem value="member" className="cursor-pointer">
-                <span className="flex items-center gap-2">
-                  member
-                </span>
+                <span className="flex items-center gap-2">member</span>
               </SelectItem>
               <SelectItem value="admin" className="cursor-pointer">
-                <span className="flex items-center gap-2">
-                  admin
-                </span>
+                <span className="flex items-center gap-2">admin</span>
               </SelectItem>
             </SelectContent>
           </Select>

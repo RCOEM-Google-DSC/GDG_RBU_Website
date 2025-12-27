@@ -1,15 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { registerForEvent, getUserRegistrations } from '@/supabase/supabase';
+import { NextRequest, NextResponse } from "next/server";
+import { registerForEvent, getUserRegistrations } from "@/supabase/supabase";
 
 export async function GET() {
   try {
     const registrations = await getUserRegistrations();
     return NextResponse.json({ registrations });
   } catch (error: any) {
-    console.error('Error fetching registrations:', error);
+    console.error("Error fetching registrations:", error);
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch registrations' },
-      { status: error.message.includes('authenticated') ? 401 : 500 }
+      { error: error.message || "Failed to fetch registrations" },
+      { status: error.message.includes("authenticated") ? 401 : 500 },
     );
   }
 }
@@ -17,7 +17,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     const {
       event_id,
       team_name,
@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
 
     if (!event_id) {
       return NextResponse.json(
-        { error: 'Event ID is required' },
-        { status: 400 }
+        { error: "Event ID is required" },
+        { status: 400 },
       );
     }
 
@@ -44,10 +44,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ registration }, { status: 201 });
   } catch (error: any) {
-    console.error('Error creating registration:', error);
+    console.error("Error creating registration:", error);
     return NextResponse.json(
-      { error: error.message || 'Failed to create registration' },
-      { status: error.message.includes('authenticated') ? 401 : 500 }
+      { error: error.message || "Failed to create registration" },
+      { status: error.message.includes("authenticated") ? 401 : 500 },
     );
   }
 }

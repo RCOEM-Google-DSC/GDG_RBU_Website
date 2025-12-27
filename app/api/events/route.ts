@@ -9,7 +9,7 @@ export async function GET() {
     console.error("Error fetching events:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch events" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     if (!title || !date) {
       return NextResponse.json(
         { error: "Title and date are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     console.error("Error creating event:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create event" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

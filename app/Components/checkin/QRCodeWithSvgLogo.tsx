@@ -40,7 +40,6 @@ export default function QRCodeWithSvgLogo({ value, size = 300 }: Props) {
       if (!ctx) return;
 
       try {
-        
         const qr = (window as any).qrcode(0, "H");
         qr.addData(value);
         qr.make();
@@ -111,7 +110,7 @@ export default function QRCodeWithSvgLogo({ value, size = 300 }: Props) {
                   y + cellSize / 2,
                   cellSize * 0.42,
                   0,
-                  Math.PI * 2
+                  Math.PI * 2,
                 );
                 ctx.fill();
               }

@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
 import Link from "next/link";
 
-
-
 interface LeaderCardProps {
   id: string;
   name: string;
@@ -17,14 +15,12 @@ interface LeaderCardProps {
   linkedinUrl: string;
 }
 
-
-
 const createPath = (
   w: number,
   h: number,
   r: number,
   nw: number,
-  nh: number
+  nh: number,
 ): string => {
   return `
     M ${r},0 
@@ -44,7 +40,6 @@ const createPath = (
   `;
 };
 
-
 function LeaderCard({
   id,
   name,
@@ -56,7 +51,6 @@ function LeaderCard({
   const router = useRouter();
   const [authUserId, setAuthUserId] = useState<string | null>(null);
 
-
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setAuthUserId(data.session?.user?.id ?? null);
@@ -64,7 +58,6 @@ function LeaderCard({
   }, []);
 
   const handleCardClick = () => {
-
     // SELF CARD CLICK → still go to /team/profile/:id
     if (authUserId && authUserId === id) {
       router.push(`/team/profile/${id}`);
@@ -87,19 +80,13 @@ function LeaderCard({
     height,
     cornerRadius,
     notchWidth,
-    notchHeight
+    notchHeight,
   );
 
   const innerW = width - borderWidth * 2;
   const innerH = height - borderWidth * 2;
   const innerR = Math.max(0, cornerRadius - borderWidth);
-  const innerPath = createPath(
-    innerW,
-    innerH,
-    innerR,
-    notchWidth,
-    notchHeight
-  );
+  const innerPath = createPath(innerW, innerH, innerR, notchWidth, notchHeight);
 
   const clipId = `clip-leader-${id}`;
 
@@ -148,7 +135,7 @@ function LeaderCard({
           style={{
             bottom: borderWidth + 15,
             left: (width - notchWidth) / 2 - 25,
-            transform: 'translateX(-50%)'
+            transform: "translateX(-50%)",
           }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -158,7 +145,10 @@ function LeaderCard({
             rel="noopener noreferrer"
             className="text-black hover:text-white transition-all duration-300 bg-white/30 hover:bg-black backdrop-blur-md p-1.5 rounded-full border border-black/10 hover:border-black shadow-sm group/icon"
           >
-            <Github className="w-5 h-5 group-hover/icon:scale-110 transition-transform" strokeWidth={2} />
+            <Github
+              className="w-5 h-5 group-hover/icon:scale-110 transition-transform"
+              strokeWidth={2}
+            />
           </Link>
 
           <Link
@@ -167,7 +157,10 @@ function LeaderCard({
             rel="noopener noreferrer"
             className="text-black hover:text-white transition-all duration-300 bg-white/30 hover:bg-[#0077b5] backdrop-blur-md p-1.5 rounded-full border border-black/10 hover:border-[#0077b5] shadow-sm group/icon"
           >
-            <Linkedin className="w-5 h-5 group-hover/icon:scale-110 transition-transform" strokeWidth={2} />
+            <Linkedin
+              className="w-5 h-5 group-hover/icon:scale-110 transition-transform"
+              strokeWidth={2}
+            />
           </Link>
         </div>
 
@@ -175,9 +168,9 @@ function LeaderCard({
         <div
           className="absolute bottom-0 right-0 bg-white border-[3px] border-black rounded-2xl md:rounded-[20px] flex flex-col overflow-hidden z-10"
           style={{
-            width: `${(notchWidth - borderWidth * 2) / width * 100}%`,
-            height: `${(notchHeight - borderWidth * 2) / height * 100}%`,
-            margin: `${borderWidth / width * 100}%`
+            width: `${((notchWidth - borderWidth * 2) / width) * 100}%`,
+            height: `${((notchHeight - borderWidth * 2) / height) * 100}%`,
+            margin: `${(borderWidth / width) * 100}%`,
           }}
         >
           <div className="w-full h-[40%] flex items-center justify-center border-b-[3px] border-black bg-linear-to-br from-yellow-50 to-yellow-100">

@@ -13,7 +13,7 @@ interface EventCardProps {
 export function EventCard({ event }: EventCardProps) {
   const [loading, setLoading] = useState(false);
   const [certificateUrl, setCertificateUrl] = useState<string | null>(
-    event.certificate_url ?? null
+    event.certificate_url ?? null,
   );
 
   /**
@@ -72,7 +72,7 @@ export function EventCard({ event }: EventCardProps) {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
           },
-        }
+        },
       );
 
       if (error) {
@@ -112,7 +112,7 @@ export function EventCard({ event }: EventCardProps) {
           className={cn(
             "absolute top-3 left-3 inline-flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide uppercase shadow-sm",
             "bg-black/60 text-white backdrop-blur",
-            event.tagColor
+            event.tagColor,
           )}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -148,7 +148,7 @@ export function EventCard({ event }: EventCardProps) {
                 "border-neutral-300 dark:border-neutral-700",
                 "bg-white/70 dark:bg-neutral-900/60",
                 "hover:bg-neutral-100 dark:hover:bg-neutral-800",
-                loading && "opacity-60 cursor-not-allowed"
+                loading && "opacity-60 cursor-not-allowed",
               )}
             >
               {loading ? (

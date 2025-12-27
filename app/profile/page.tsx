@@ -10,7 +10,6 @@ export default function ProfilePage() {
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-transparent font-sans">
-
       <div className="relative z-10 container mx-auto px-4 py-8 md:py-12 max-w-6xl">
         {loading && (
           <div className="text-center text-neutral-500 py-10">

@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     if (sessionError) {
       console.error("Error exchanging code for session:", sessionError);
       return NextResponse.redirect(
-        new URL("/login?error=auth_failed", requestUrl.origin)
+        new URL("/login?error=auth_failed", requestUrl.origin),
       );
     }
 
@@ -35,16 +35,20 @@ export async function GET(request: Request) {
         role = existingUser.role;
       } else if (fetchError?.code === "PGRST116") {
         // If user doesn't exist in users table, create them
-        const userName = sessionData.user.user_metadata?.full_name ||
-                        sessionData.user.user_metadata?.name ||
-                        sessionData.user.email?.split("@")[0] ||
-                        "User";
-        
+        const userName =
+          sessionData.user.user_metadata?.full_name ||
+          sessionData.user.user_metadata?.name ||
+          sessionData.user.email?.split("@")[0] ||
+          "User";
+
         // Use OAuth avatar if available, otherwise generate from initials
-        const oAuthAvatar = sessionData.user.user_metadata?.avatar_url ||
-                           sessionData.user.user_metadata?.picture;
-        const imageUrl = oAuthAvatar || generateProfileImageUrl(userName, sessionData.user.email || "");
-        
+        const oAuthAvatar =
+          sessionData.user.user_metadata?.avatar_url ||
+          sessionData.user.user_metadata?.picture;
+        const imageUrl =
+          oAuthAvatar ||
+          generateProfileImageUrl(userName, sessionData.user.email || "");
+
         const provider = sessionData.user.app_metadata?.provider || "email";
 
         const { error: insertError } = await supabase.from("users").insert({

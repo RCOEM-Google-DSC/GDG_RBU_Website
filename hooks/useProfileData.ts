@@ -75,7 +75,7 @@ export function useProfileData(): UseProfileDataReturn {
           if (eventsData) {
             uiEvents = buildUIEvents(
               eventsData as EventRow[],
-              registrations as Registration[]
+              registrations as Registration[],
             );
           }
         }

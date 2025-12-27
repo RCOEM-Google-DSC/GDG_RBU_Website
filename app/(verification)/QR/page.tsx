@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
 import QRCodeWithSvgLogo from "../../Components/checkin/QRCodeWithSvgLogo";
 
-
 interface RegistrationData {
   event_id: string;
   user_id: string;
@@ -36,7 +35,7 @@ export default function MyQRPage() {
     JSON.stringify({
       e: data.event_id,
       u: data.user_id,
-    })
+    }),
   )}`;
 
   return (

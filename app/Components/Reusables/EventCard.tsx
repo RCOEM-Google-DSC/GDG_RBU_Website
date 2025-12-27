@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import React from "react";
+import { ArrowRight } from "lucide-react";
 
 // Simplified version of a Shadcn UI Badge component
 // Usually this would be in components/ui/badge.tsx
@@ -7,17 +7,21 @@ interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "secondary" | "outline" | "destructive";
 }
 
-const Badge = ({ 
-  className = "", 
-  variant = "default", 
-  ...props 
+const Badge = ({
+  className = "",
+  variant = "default",
+  ...props
 }: BadgeProps) => {
-  const baseStyles = "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
-  
+  const baseStyles =
+    "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
+
   const variants = {
-    default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-    secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-    destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+    default:
+      "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+    secondary:
+      "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+    destructive:
+      "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
     outline: "text-foreground",
   };
 
@@ -36,7 +40,6 @@ const SpiderCraftCard = () => {
         Width is set to max-w-sm (approx 384px) to match the mobile card feel.
       */}
       <div className="relative w-full max-w-[340px] drop-shadow-sm filter">
-        
         {/* Background SVG Layer 
           Added vectorEffect="non-scaling-stroke" to the path and adjusted viewBox to prevent clipping.
           This ensures the border stays 1.5px thick evenly, even if the container stretches.
@@ -47,7 +50,7 @@ const SpiderCraftCard = () => {
           xmlns="http://www.w3.org/2000/svg"
           className="absolute inset-0 w-full h-full text-white"
           preserveAspectRatio="none"
-          style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.05))' }}
+          style={{ filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.05))" }}
         >
           {/* The Path Explanation:
             1. Start top-left corner (rounded)
@@ -92,11 +95,10 @@ const SpiderCraftCard = () => {
           Increased padding to pt-10 and pb-12 to add more breathing room top and bottom.
         */}
         <div className="relative z-10 px-6 pt-10 pb-12 h-full flex flex-col">
-          
           {/* Header Badge - Replaced with custom Shadcn-style Badge */}
           <div className="self-start">
-            <Badge 
-              variant="secondary" 
+            <Badge
+              variant="secondary"
               className="bg-[#dcdcdc] text-black hover:bg-[#dcdcdc]/80 border-transparent px-4 py-1.5 text-xs font-medium rounded-full"
             >
               Artificial Intelligence
@@ -108,7 +110,7 @@ const SpiderCraftCard = () => {
             <h2 className="text-2xl font-bold text-black tracking-tight">
               SpiderCraft
             </h2>
-            <button 
+            <button
               className="bg-[#fbbf24] hover:bg-[#f59e0b] transition-colors rounded-full p-2 flex items-center justify-center shrink-0"
               aria-label="Go to SpiderCraft"
             >
@@ -118,30 +120,30 @@ const SpiderCraftCard = () => {
 
           {/* Main Image */}
           <div className="w-full aspect-4/3 rounded-2xl overflow-hidden border border-gray-100 shadow-inner bg-gray-900 relative group">
-             {/* Using a placeholder image that closely mimics the vibrant/neon spider-verse aesthetic.
+            {/* Using a placeholder image that closely mimics the vibrant/neon spider-verse aesthetic.
                In a real app, this would be the specific asset.
              */}
-             <img 
-               src="https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1000&auto=format&fit=crop" 
-               alt="SpiderCraft Poster" 
-               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90"
-             />
-             {/* Overlay gradient to make it look more 'poster-like' and vibrant if image is dull */}
-             <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent mix-blend-overlay"></div>
-             
-             {/* Text overlay for the 'SPIDERCRAFT' logo effect in the image */}
-             <div className="absolute bottom-2 left-0 right-0 text-center">
-                {/* This mimics the logo text in the poster if the image doesn't have it */}
-             </div>
+            <img
+              src="https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1000&auto=format&fit=crop"
+              alt="SpiderCraft Poster"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90"
+            />
+            {/* Overlay gradient to make it look more 'poster-like' and vibrant if image is dull */}
+            <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent mix-blend-overlay"></div>
+
+            {/* Text overlay for the 'SPIDERCRAFT' logo effect in the image */}
+            <div className="absolute bottom-2 left-0 right-0 text-center">
+              {/* This mimics the logo text in the poster if the image doesn't have it */}
+            </div>
           </div>
 
           {/* Footer Text */}
           <div className="mt-4">
             <p className="text-black text-[15px] leading-snug font-medium">
-              SPIDER CRAFT 2025: WHERE TECH MET FUN! Still buzzing from the energy of Spider Craft 2025!
+              SPIDER CRAFT 2025: WHERE TECH MET FUN! Still buzzing from the
+              energy of Spider Craft 2025!
             </p>
           </div>
-
         </div>
       </div>
     </div>

@@ -91,7 +91,7 @@ export default function CheckInClient() {
 
   const verify = async (regId: string) => {
     // If it's already being verified or already verified, do nothing
-    const target = regs.find(r => r.id === regId);
+    const target = regs.find((r) => r.id === regId);
     if (!target) return;
 
     if (target.status === "verified") {
@@ -123,12 +123,16 @@ export default function CheckInClient() {
 
     toast.success("Verified");
 
-    setRegs(prev =>
-      prev.map(r =>
+    setRegs((prev) =>
+      prev.map((r) =>
         r.id === regId
-          ? { ...r, status: "verified", check_in_time: new Date().toISOString() }
-          : r
-      )
+          ? {
+              ...r,
+              status: "verified",
+              check_in_time: new Date().toISOString(),
+            }
+          : r,
+      ),
     );
   };
 
@@ -137,7 +141,7 @@ export default function CheckInClient() {
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">
-      {regs.map(reg => {
+      {regs.map((reg) => {
         const user = reg.users;
 
         // disabled when already verified OR when this reg is currently being verified
@@ -187,7 +191,11 @@ export default function CheckInClient() {
                   ? "bg-gray-200 text-gray-700 cursor-not-allowed"
                   : "bg-black text-white"
               }`}
-              title={isVerified ? "This registration is already verified" : "Verify registration"}
+              title={
+                isVerified
+                  ? "This registration is already verified"
+                  : "Verify registration"
+              }
             >
               {busy ? (
                 <>

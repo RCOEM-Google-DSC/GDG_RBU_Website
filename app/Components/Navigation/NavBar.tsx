@@ -16,9 +16,7 @@ const LINK_STYLES = [
   { color: "bg-indigo-400", hover: "hover:bg-indigo-500/90" },
 ];
 
-
 const NAV_ROUND = "rounded-md";
-
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -77,9 +75,7 @@ export default function NavBar() {
         className={`fixed  top-0 left-0 right-0 z-50 h-[70px] flex items-center justify-between px-6 md:px-10 bg-[#fffef8] border-b-2 border-black transition-transform duration-300 ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
       >
         {/* Logo */}
-        <Link
-          href="/"
-        >
+        <Link href="/">
           <Image
             src="/icons/gdg-logo.svg"
             width={72}

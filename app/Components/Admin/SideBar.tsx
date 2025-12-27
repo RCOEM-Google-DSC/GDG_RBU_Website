@@ -1,6 +1,6 @@
 import { BiCalendarEvent } from "react-icons/bi";
-import { Calendar, Handshake, Users2, UserCog } from "lucide-react"
-import Link from "next/link"
+import { Calendar, Handshake, Users2, UserCog } from "lucide-react";
+import Link from "next/link";
 
 import {
   Sidebar,
@@ -10,8 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-
+} from "@/components/ui/sidebar";
 
 // Menu items.
 const Buttons = [
@@ -40,7 +39,7 @@ const Buttons = [
     url: "/admin/partners",
     icon: Handshake,
   },
-]
+];
 
 export default function SideBar() {
   return (
@@ -59,11 +58,10 @@ export default function SideBar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

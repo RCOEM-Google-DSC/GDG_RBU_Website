@@ -1,12 +1,5 @@
 import { ReactNode } from "react";
-import {
-  Cloud,
-  Trophy,
-  UserCheck,
-  Award,
-  Code,
-  Share2,
-} from "lucide-react";
+import { Cloud, Trophy, UserCheck, Award, Code, Share2 } from "lucide-react";
 import {
   SupabaseUserRow,
   UIUser,
@@ -21,43 +14,44 @@ import {
 export const DEFAULT_EVENT_IMAGE =
   "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=1000";
 
-export const BADGE_CONFIG: Record<string, { icon: ReactNode; color: string }> = {
-  "AI Explorer": {
-    icon: <Cloud className="w-6 h-6 text-blue-500" />,
-    color: "bg-blue-100 dark:bg-blue-900/30",
-  },
-  "Hackathon Hero": {
-    icon: <Trophy className="w-6 h-6 text-red-500" />,
-    color: "bg-red-100 dark:bg-red-900/30",
-  },
-  "Community Lead": {
-    icon: <UserCheck className="w-6 h-6 text-yellow-600" />,
-    color: "bg-yellow-100 dark:bg-yellow-900/30",
-  },
-  "Cloud Certified": {
-    icon: <Award className="w-6 h-6 text-green-500" />,
-    color: "bg-green-100 dark:bg-green-900/30",
-  },
-  "Code Ninja": {
-    icon: <Code className="w-6 h-6 text-purple-500" />,
-    color: "bg-purple-100 dark:bg-purple-900/30",
-  },
-  Mentor: {
-    icon: <Share2 className="w-6 h-6 text-orange-500" />,
-    color: "bg-orange-100 dark:bg-orange-900/30",
-  },
-};
+export const BADGE_CONFIG: Record<string, { icon: ReactNode; color: string }> =
+  {
+    "AI Explorer": {
+      icon: <Cloud className="w-6 h-6 text-blue-500" />,
+      color: "bg-blue-100 dark:bg-blue-900/30",
+    },
+    "Hackathon Hero": {
+      icon: <Trophy className="w-6 h-6 text-red-500" />,
+      color: "bg-red-100 dark:bg-red-900/30",
+    },
+    "Community Lead": {
+      icon: <UserCheck className="w-6 h-6 text-yellow-600" />,
+      color: "bg-yellow-100 dark:bg-yellow-900/30",
+    },
+    "Cloud Certified": {
+      icon: <Award className="w-6 h-6 text-green-500" />,
+      color: "bg-green-100 dark:bg-green-900/30",
+    },
+    "Code Ninja": {
+      icon: <Code className="w-6 h-6 text-purple-500" />,
+      color: "bg-purple-100 dark:bg-purple-900/30",
+    },
+    Mentor: {
+      icon: <Share2 className="w-6 h-6 text-orange-500" />,
+      color: "bg-orange-100 dark:bg-orange-900/30",
+    },
+  };
 
 // ---------- BUILDER FUNCTIONS ----------
 
 export function buildUIUser(
   row: SupabaseUserRow,
   eventsCount: number,
-  badgesCount: number
+  badgesCount: number,
 ): UIUser {
   const name = row.name || "User";
   const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
-    name
+    name,
   )}&backgroundColor=b6e3f4`;
 
   return {
@@ -80,9 +74,12 @@ export function buildUIUser(
   };
 }
 
-export function buildUIEvents(events: EventRow[], registrations: Registration[]): UIEvent[] {
+export function buildUIEvents(
+  events: EventRow[],
+  registrations: Registration[],
+): UIEvent[] {
   const now = new Date();
-  const regMap = new Map(registrations.map(r => [r.event_id, r]));
+  const regMap = new Map(registrations.map((r) => [r.event_id, r]));
 
   return events.map((ev) => {
     const reg = regMap.get(ev.id);
@@ -94,8 +91,18 @@ export function buildUIEvents(events: EventRow[], registrations: Registration[])
       title: ev.title,
       date: evDate ? evDate.toLocaleString() : "Date TBA",
       image: ev.image_url || DEFAULT_EVENT_IMAGE,
-      tag: reg?.status === "checked_in" ? "Attended" : isPast ? "Completed" : "Registered",
-      tagColor: reg?.status === "checked_in" ? "bg-green-600" : isPast ? "bg-gray-600" : "bg-blue-600",
+      tag:
+        reg?.status === "checked_in"
+          ? "Attended"
+          : isPast
+            ? "Completed"
+            : "Registered",
+      tagColor:
+        reg?.status === "checked_in"
+          ? "bg-green-600"
+          : isPast
+            ? "bg-gray-600"
+            : "bg-blue-600",
       certificate_url: reg?.certificate_url || null,
       registration_status: reg?.status ?? "registered",
       certificate_generated_once: reg?.certificate_generated_once || false,

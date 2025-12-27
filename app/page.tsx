@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import UpcomingEvent from "./Components/Common/UpcomingEvent";
 import { upcomingEvents } from "@/db/mockdata";
 import EventTicket from "./Components/Common/UpcomingEvent";
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import Faq from "./Components/Landing/FAQ";
 import MeetOurTeam from "./Components/Landing/MeetOurTeam";
 import Footer from "./Components/Landing/Footer";
@@ -24,7 +24,9 @@ export default function Home() {
           viewport={{ amount: 0.3 }}
           transition={{ duration: 0.3, ease: "easeInOut", delay: 0.1 }}
         >
-          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 self-start">Upcoming Event</h2>
+          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 self-start">
+            Upcoming Event
+          </h2>
           {upcomingEvents.map((event) => (
             <EventTicket
               key={event.id}
@@ -57,4 +59,3 @@ export default function Home() {
     </div>
   );
 }
-

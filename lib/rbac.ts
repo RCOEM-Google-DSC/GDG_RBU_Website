@@ -13,7 +13,7 @@ export type UserRole = "admin" | "member" | "user";
  */
 export function hasPermission(
   userRole: UserRole | string,
-  requiredRole: UserRole
+  requiredRole: UserRole,
 ): boolean {
   if (isDevelopmentMode) return true;
 

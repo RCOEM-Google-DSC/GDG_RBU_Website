@@ -30,9 +30,9 @@ export function useTeamProfileData(userId: string) {
                 image_url,
                 profile_links
               )
-            `
+            `,
           )
-          .eq("userid", userId)   
+          .eq("userid", userId)
           .single();
 
         if (error) throw error;

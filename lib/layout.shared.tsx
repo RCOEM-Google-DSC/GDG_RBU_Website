@@ -1,15 +1,15 @@
-import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 
 export function baseOptions(): BaseLayoutProps {
-    return {
-        nav: {
-            title: 'GDG Documentation',
-        },
-        links: [
-            {
-                text: 'Home',
-                url: '/',
-            },
-        ],
-    };
+  return {
+    nav: {
+      title: "GDG Documentation",
+    },
+    links: [
+      {
+        text: "Home",
+        url: "/",
+      },
+    ],
+  };
 }

@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { getCurrentUserId, getSession } from '@/supabase/supabase';
+import { NextResponse } from "next/server";
+import { getCurrentUserId, getSession } from "@/supabase/supabase";
 
 export async function GET() {
   try {
@@ -7,10 +7,7 @@ export async function GET() {
     const session = await getSession();
 
     if (!userId || !session) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
     return NextResponse.json({
@@ -18,10 +15,10 @@ export async function GET() {
       userId,
     });
   } catch (error) {
-    console.error('Error fetching user:', error);
+    console.error("Error fetching user:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch user' },
-      { status: 500 }
+      { error: "Failed to fetch user" },
+      { status: 500 },
     );
   }
 }

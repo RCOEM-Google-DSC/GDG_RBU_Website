@@ -49,10 +49,13 @@ export async function POST(req: Request) {
     };
 
     const uploadResult: any = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(uploadOptions, (error, result) => {
-        if (error) return reject(error);
-        resolve(result);
-      });
+      const stream = cloudinary.uploader.upload_stream(
+        uploadOptions,
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        },
+      );
 
       stream.end(buffer);
     });
@@ -78,6 +81,9 @@ export async function POST(req: Request) {
     });
   } catch (error: any) {
     console.error("Cloudinary upload error:", error);
-    return NextResponse.json({ error: "Upload failed", details: error?.message ?? String(error) }, { status: 500 });
+    return NextResponse.json(
+      { error: "Upload failed", details: error?.message ?? String(error) },
+      { status: 500 },
+    );
   }
 }

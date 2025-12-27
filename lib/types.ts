@@ -9,10 +9,10 @@ export function isProfileComplete(user: {
 }) {
   return Boolean(
     user?.name &&
-      user?.email &&
-      user?.section &&
-      user?.branch &&
-      user?.phone_number
+    user?.email &&
+    user?.section &&
+    user?.branch &&
+    user?.phone_number,
   );
 }
 
@@ -196,6 +196,6 @@ export function isEventProfileComplete(user: {
     user?.email &&
     user?.phone_number &&
     user?.section &&
-    user?.branch
+    user?.branch,
   );
 }
