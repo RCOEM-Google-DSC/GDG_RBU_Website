@@ -17,7 +17,6 @@ const UpcomingEvent = ({
   description,
   registerUrl,
 }: UpcomingEventCardProps) => {
-  // use the image prop, fallback if missing
   const imageSrc = image || FALLBACK_IMAGE;
   const handleRegisterClick = () => {
     if (registerUrl) {
@@ -26,7 +25,6 @@ const UpcomingEvent = ({
   };
 
   return (
-    // Main Container
     <div className="w-full font-sans">
       {/* Card Wrapper */}
       <div className="relative w-full max-w-7xl mx-auto">
@@ -208,37 +206,33 @@ const UpcomingEvent = ({
           </div>
 
           {/* Bottom Ticket Section */}
-          <div className="relative bg-[#FFC20E] p-5 sm:p-6">
-            <div className="flex items-center justify-between gap-4">
-              {/* Date & Time */}
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-3">
-                  <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-black stroke-[1.5]" />
-                  <div>
-                    <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-black/60">
-                      Date & Time
-                    </p>
-                    <p className="text-base sm:text-lg font-bold text-black leading-tight">
-                      {date instanceof Date
-                        ? date.toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                          })
-                        : date}{" "}
-                      • {time}
-                    </p>
-                  </div>
-                </div>
+          <div className="relative bg-[#FFC20E] p-4 sm:p-6">
+            {/* Date & Time */}
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4">
+              <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-black stroke-[1.5] flex-shrink-0" />
+              <div className="text-center">
+                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-black/60">
+                  Date & Time
+                </p>
+                <p className="text-sm sm:text-base font-bold text-black leading-tight">
+                  {date instanceof Date
+                    ? date.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })
+                    : date}{" "}
+                  • {time}
+                </p>
               </div>
-
-              {/* Register Button */}
-              <Button
-                className="bg-black text-white px-6 sm:px-8 py-3 rounded-xl font-bold text-sm sm:text-base border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all whitespace-nowrap"
-                onClick={handleRegisterClick}
-              >
-                Register Now
-              </Button>
             </div>
+
+            {/* Register Button */}
+            <Button
+              className="w-full bg-black text-white py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+              onClick={handleRegisterClick}
+            >
+              Register Now
+            </Button>
           </div>
         </div>
       </div>
