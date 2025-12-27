@@ -32,6 +32,7 @@ export function CheckInModal({ reg }: { reg: Registration }) {
           <div className="flex gap-4 items-center">
             {user.image_url ? (
               <Image
+              alt="profile img"
                 height={80}
                 width={80}
                 src={user.image_url}

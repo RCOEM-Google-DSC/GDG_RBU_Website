@@ -34,11 +34,11 @@ const Buttons = [
     url: "/admin/team-members",
     icon: UserCog,
   },
-  {
-    title: "Partners",
-    url: "/admin/partners",
-    icon: Handshake,
-  },
+  // {
+  //   title: "Partners",
+  //   url: "/admin/partners",
+  //   icon: Handshake,
+  // },
 ];
 
 export default function SideBar() {
