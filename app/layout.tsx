@@ -1,4 +1,3 @@
-// app/layout.tsx
 import "./globals.css";
 import NavBar from "./Components/Navigation/NavBar";
 import { Toaster } from "sonner";
@@ -65,7 +64,7 @@ export default function RootLayout({
       >
         <RootProvider theme={{ enabled: false }}>
           <NavBar />
-          <main className="relative w-full pt-20">{children}</main>
+          <main className="relative w-full pt-[70px]">{children}</main>
           <Toaster position="top-right" richColors />
         </RootProvider>
       </body>

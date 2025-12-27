@@ -82,7 +82,7 @@ export default async function UpcomingEventDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-[#FDFCF8] text-gray-900 font-sans selection:bg-blue-500/30 text-sm md:text-base">
-      <main className="pt-28 pb-0">
+      <main className="pt-0 pb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             {/* Text Column */}

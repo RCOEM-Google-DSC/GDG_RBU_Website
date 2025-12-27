@@ -78,7 +78,7 @@ export default function EventPage({
       />
 
       {/* hero */}
-      <div className="relative max-w-6xl mx-auto p-4 md:p-6 pt-20 pb-12 md:pb-16">
+      <div className="relative max-w-6xl mx-auto p-4 md:p-6 pt-0 pb-12 md:pb-16">
         {/* TITLE CARD */}
         <div
           className={`absolute top-12 md:top-16 left-4 md:left-6 z-20 bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:-rotate-2 ${border} ${shadow} max-w-sm md:max-w-md`}
