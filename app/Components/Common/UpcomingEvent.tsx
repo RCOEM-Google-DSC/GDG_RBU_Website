@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UpcomingEventCardProps } from "@/lib/types";
-
+import Image from "next/image";
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop";
 
@@ -35,7 +35,9 @@ const UpcomingEvent = ({
           {/* LEFT SECTION: Event Image & Details */}
           <div className="relative w-[65%] h-full rounded-3xl overflow-hidden group border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all">
             {/* Background Image */}
-            <img
+            <Image
+              height={500}
+              width={800}
               src={imageSrc}
               alt={title || "Event image"}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -162,7 +164,9 @@ const UpcomingEvent = ({
         <div className="lg:hidden relative w-full h-auto rounded-3xl overflow-hidden border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           {/* Background Image Section */}
           <div className="relative w-full h-[400px] sm:h-[450px]">
-            <img
+            <Image
+              height={450}
+              width={800}
               src={imageSrc}
               alt={title || "Event image"}
               className="absolute inset-0 w-full h-full object-cover"

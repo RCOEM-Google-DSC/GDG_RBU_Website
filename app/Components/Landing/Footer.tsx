@@ -39,10 +39,9 @@ const Footer = () => {
   return (
     <footer
       className="w-full pt-8 pb-0"
-      style={{
-        backgroundColor: isDark ? "rgb(24 24 27)" : "#ffffff",
-        color: isDark ? "white" : "black",
-      }}
+      // style={{
+      //   backgroundColor: "#ffffff",
+      // }}
     >
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
         {/* Unified Footer Section - Neo-brutalism style */}

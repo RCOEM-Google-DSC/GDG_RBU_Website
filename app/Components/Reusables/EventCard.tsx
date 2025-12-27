@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowRight } from "lucide-react";
-
+import Image from "next/image";
 // Simplified version of a Shadcn UI Badge component
 // Usually this would be in components/ui/badge.tsx
 interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -123,7 +123,9 @@ const SpiderCraftCard = () => {
             {/* Using a placeholder image that closely mimics the vibrant/neon spider-verse aesthetic.
                In a real app, this would be the specific asset.
              */}
-            <img
+            <Image
+              height={240}
+              width={320}
               src="https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1000&auto=format&fit=crop"
               alt="SpiderCraft Poster"
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90"

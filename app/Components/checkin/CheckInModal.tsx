@@ -3,7 +3,7 @@
 import { supabase } from "@/supabase/supabase";
 import { useRBAC } from "@/hooks/useRBAC";
 import { Registration } from "@/lib/types";
-
+import Image from "next/image";
 export function CheckInModal({ reg }: { reg: Registration }) {
   const { canViewParticipants } = useRBAC();
 
@@ -31,7 +31,9 @@ export function CheckInModal({ reg }: { reg: Registration }) {
           {/* USER HEADER */}
           <div className="flex gap-4 items-center">
             {user.image_url ? (
-              <img
+              <Image
+                height={80}
+                width={80}
                 src={user.image_url}
                 className="w-20 h-20 rounded-full object-cover"
               />

@@ -3,16 +3,9 @@ import React from 'react';
 
 export default function Hero() {
   return (
-    <section className="relative w-full min-h-screen bg-[#FDFCF8]">
+    <section className="relative w-full min-h-screen ">
       {/* Grid background */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
-        }}
-      />
+      
 
       <div
         className="
@@ -37,9 +30,9 @@ export default function Hero() {
             "
           >
             <span className="block md:whitespace-nowrap">
-              GOOGLE DEVELOPERS
+              GOOGLE DEVELOPER
             </span>
-            <span className="block">GROUP, RBU</span>
+            <span className="block">GROUPS, RBU</span>
           </h1>
 
           <p

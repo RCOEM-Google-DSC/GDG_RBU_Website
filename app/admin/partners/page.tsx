@@ -63,7 +63,7 @@ export default function PartnersPage() {
           {partners.map((p) => (
             <div key={p.id} className="bg-white shadow p-4 rounded">
               {p.logo_url && (
-                <img src={p.logo_url} className="h-10 mb-2" alt={p.name} />
+                <Image src={p.logo_url} height={40} width={40} className="mb-2" alt={p.name} />
               )}
               <h3 className="font-semibold">{p.name}</h3>
               {p.website && (

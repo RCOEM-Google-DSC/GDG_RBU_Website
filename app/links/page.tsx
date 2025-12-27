@@ -4,7 +4,7 @@ import { CgMail } from "react-icons/cg";
 import { FaYoutube, FaLinkedinIn, FaDiscord } from "react-icons/fa";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { BsTwitterX } from "react-icons/bs";
-
+import Image from "next/image";
 type SocialButtonProps = {
   icon: React.ReactNode;
   label: string;
@@ -88,7 +88,9 @@ function Desktop10Helper1({
 function RightLogo() {
   return (
     <div className="absolute right-[50px] top-[200px] w-[121px] h-[143px]">
-      <img
+      <Image
+        height={143}
+        width={121}
         src="/assets/shapes/y-g.svg"
         alt="GDG Logo"
         className="w-full h-full"
@@ -100,7 +102,9 @@ function RightLogo() {
 function LeftLogo() {
   return (
     <div className="absolute left-[50px] top-[200px] w-[123px] h-36">
-      <img
+      <Image
+        height={144}
+        width={123}
         src="/assets/shapes/r-b.svg"
         alt="GDG Logo"
         className="w-full h-full"
@@ -112,9 +116,17 @@ function LeftLogo() {
 function Desktop10Component() {
   return (
     <div
-      className="bg-[#FDFCF8] relative w-[1440px] h-[1024px]"
+      className=" relative w-[1440px] h-[1024px]"
       data-name="Desktop - 10"
     >
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+        }}
+      />
       <div className="absolute h-24 left-[377px] top-[516px] w-[675px]">
         <div
           aria-hidden="true"
@@ -169,7 +181,7 @@ function Desktop10Component() {
             <SocialButton
               icon={<FaDiscord className="w-full h-full" />}
               label="Discord"
-              href="https://discord.gg/GV97TJJw5b"
+              href="https://discord.gg/WgJDe2e9aj"
             />
             <SocialButton
               icon={<BsTwitterX className="w-full h-full" />}

@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Calendar } from "@/components/ui/calendar";
+import Image from "next/image";
 import {
   Popover,
   PopoverContent,
@@ -422,8 +423,10 @@ export default function AddEventPage() {
                 </div>
                 {formData.qr_code && (
                   <div className="mt-2">
-                    <img
+                    <Image
                       src={formData.qr_code}
+                      height={128}
+                      width={128}
                       alt="QR Code Preview"
                       className="h-32 w-32 object-cover rounded border"
                     />

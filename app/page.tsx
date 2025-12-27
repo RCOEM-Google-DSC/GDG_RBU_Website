@@ -1,5 +1,4 @@
 "use client";
-import UpcomingEvent from "./Components/Common/UpcomingEvent";
 import { upcomingEvents } from "@/db/mockdata";
 import EventTicket from "./Components/Common/UpcomingEvent";
 import { motion } from "framer-motion";
@@ -9,14 +8,22 @@ import Footer from "./Components/Landing/Footer";
 import Hero from "./Components/Landing/Hero";
 export default function Home() {
   return (
-    <div className="w-full ">
+    <div className="w-full relative">
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+        }}
+      />
       {/* hero section */}
-      <section className="w-full">
+      <section className="w-full relative z-10">
         <Hero />
       </section>
 
       {/* upcoming events section */}
-      <section className="w-full px-6 md:px-10 lg:px-20 py-10">
+      <section className="w-full px-6 md:px-10 lg:px-20 py-10 relative z-10">
         <motion.div
           className="w-full flex flex-col items-center justify-center pt-0 pb-12 sm:pt-0 sm:pb-14 bg-background text-foreground px-4"
           initial={{ opacity: 0, y: 20 }}
@@ -44,12 +51,12 @@ export default function Home() {
       </section>
 
       {/* team section */}
-      <section className="w-full  sm:px-6 md:px-10 lg:px-20 py-8 max-h-screen/20 sm:py-10 md:py-12 lg:py-16">
+      <section className="w-full  sm:px-6 md:px-10 lg:px-20 py-8 max-h-screen/20 sm:py-10 md:py-12 lg:py-16 relative z-10">
         <MeetOurTeam />
       </section>
 
       {/* faq section */}
-      <section className="w-full">
+      <section className="w-full relative bg-none">
         <Faq />
       </section>
 

@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { PastEventCardProps } from "@/lib";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
+import Image from "next/image";
 const PastEvent = ({
   id,
   title,
@@ -88,7 +88,9 @@ const PastEvent = ({
 
           {/* Main Image - Fixed aspect ratio */}
           <div className="w-full aspect-4/3 rounded-xl sm:rounded-2xl overflow-hidden border border-gray-100 shadow-inner bg-gray-900 relative group mb-3">
-            <img
+            <Image
+              height={240}
+              width={320}
               src={image}
               alt={`${title} Poster`}
               loading="lazy"

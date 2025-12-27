@@ -99,6 +99,14 @@ export default function TeamPage() {
 
   return (
     <div className="min-h-screen bg-[#FDFCF8] text-black pt-8 ">
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+        }}
+      />
       {/* hero: group photo */}
       <section
         className="pt-5 pb-12 md:pb-20 px-8"
@@ -223,15 +231,6 @@ export default function TeamPage() {
               <div className="hidden md:block md:ml-4 lg:ml-10 w-px bg-black md:mt-16 md:mb-0" />
 
               <div className="flex-1 relative">
-                <div
-                  className="absolute inset-0 pointer-events-none opacity-[0.03]"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)",
-                    backgroundSize: "40px 40px",
-                  }}
-                />
-
                 <div className="p-4 sm:p-6 md:p-12 lg:p-16 xl:p-24 relative z-10">
                   <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12 justify-items-center">
                     {/* Render domain lead first if exists */}

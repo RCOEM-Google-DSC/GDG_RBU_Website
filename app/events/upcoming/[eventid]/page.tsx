@@ -1,6 +1,6 @@
 import React from "react";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import Image from "next/image";
 import {
   Calendar,
   MapPin,
@@ -82,7 +82,7 @@ export default async function UpcomingEventDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-[#FDFCF8] text-gray-900 font-sans selection:bg-blue-500/30 text-sm md:text-base">
-      <main className="pt-28 pb-0">
+      <main className="pt-0 pb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             {/* Text Column */}
@@ -122,7 +122,9 @@ export default async function UpcomingEventDetailPage({ params }: PageProps) {
             {/* Image Column */}
             <div className="relative isolate group hidden md:block">
               <div className="relative aspect-4/3 rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white bg-gray-100 z-10 transition-transform duration-500 group-hover:scale-[1.01]">
-                <img
+                <Image
+                  height={420}
+                  width={560}
                   src={eventImage}
                   alt={event.title}
                   className="w-full h-full object-cover"
@@ -223,7 +225,9 @@ export default async function UpcomingEventDetailPage({ params }: PageProps) {
               </div>
             </div>
             <div className="relative h-56 lg:h-80 min-h-[250px] rounded-3xl overflow-hidden border border-gray-200 group shadow-lg">
-              <img
+              <Image
+                height={320}
+                width={480}
                 src="https://images.unsplash.com/photo-1591115765373-5207764f72e7?q=80&w=2072&auto=format&fit=crop"
                 alt="About Visual"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

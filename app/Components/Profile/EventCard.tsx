@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Calendar, Download, Share2, Loader2 } from "lucide-react";
 import { UIEvent } from "../../../lib/types";
 import { supabase } from "@/supabase/supabase";
-
+import Image from "next/image";
 interface EventCardProps {
   event: UIEvent;
 }
@@ -105,7 +105,9 @@ export function EventCard({ event }: EventCardProps) {
       <div className="relative flex flex-col sm:flex-row overflow-hidden rounded-xl border-[3px] border-black bg-white">
         {/* Image section */}
         <div className="relative w-full sm:w-64 h-48 sm:h-auto shrink-0">
-          <img
+          <Image
+            height={192}
+            width={256}
             src={event.image}
             alt={event.title}
             className="w-full h-full object-cover"

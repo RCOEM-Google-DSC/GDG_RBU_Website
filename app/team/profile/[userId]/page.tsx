@@ -155,7 +155,15 @@ export default function TeamProfilePage() {
   const resumeUrl = profile.cv_url || u?.profile_links?.resume;
 
   return (
-    <div className="min-h-screen bg-[#FDFCF8] text-black relative overflow-hidden font-['Gesit','Gesit-Regular',sans-serif] selection:bg-yellow-300 selection:text-black">
+    <div className="min-h-screen  text-black relative overflow-hidden font-['Gesit','Gesit-Regular',sans-serif] selection:bg-yellow-300 selection:text-black">
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+        }}
+      />
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <DecoCross className="hidden md:block absolute top-20 right-20 w-12 h-12 text-black opacity-100 rotate-12" />
         <DecoCross className="hidden md:block absolute bottom-40 left-10 w-16 h-16 text-black opacity-100 -rotate-12" />

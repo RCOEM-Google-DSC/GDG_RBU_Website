@@ -4,15 +4,15 @@ import { motion } from "framer-motion";
 const MeetOurTeam = () => {
   return (
     <motion.div
-      className="w-full flex flex-col items-center justify-center pt-0 pb-12 sm:pt-0 sm:pb-14 bg-background text-foreground px-4"
+      className="w-full flex flex-col items-center justify-center  pt-0 pb-12 sm:pt-0 sm:pb-14 text-foreground px-4"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ amount: 0.3 }}
       transition={{ duration: 0.3, ease: "easeInOut", delay: 0.1 }}
     >
-      <div className="size-full flex items-center justify-center">
+      <div className="size-full flex items-center justify-center ">
         <div
-          className="max-w-7xl w-full overflow-hidden"
+          className="max-w-7xl w-full overflow-hidden bg-[#FDFCF8]"
           style={{
             border: "4px solid #000000",
             boxShadow: "8px 8px 0px #000000",

@@ -1,6 +1,6 @@
 // app/events/[eventid]/page.tsx  (or wherever you keep it)
 "use client";
-
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { Ticket, Users, ArrowDownRight, Sparkles } from "lucide-react";
@@ -67,18 +67,18 @@ export default function EventPage({
   const cardBase = `bg-white ${border} ${shadow}`;
 
   return (
-    <div className="min-h-screen bg-[#f0f0f0] font-mono text-black selection:bg-[#8338ec] selection:text-white pb-32 relative overflow-x-hidden">
-      {/* BACKGROUND DOTS */}
+    <div className="min-h-screen  font-mono text-black selection:bg-[#8338ec] selection:text-white pb-32 relative overflow-x-hidden">
       <div
-        className="fixed inset-0 opacity-10 pointer-events-none"
+        className="fixed inset-0 -z-10 pointer-events-none"
         style={{
-          backgroundImage: "radial-gradient(#000 2px, transparent 2px)",
-          backgroundSize: "24px 24px",
+          backgroundImage:
+            'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
         }}
       />
 
       {/* hero */}
-      <div className="relative max-w-6xl mx-auto p-4 md:p-6 pt-20 pb-12 md:pb-16">
+      <div className="relative max-w-6xl mx-auto p-4 md:p-6 pt-0 pb-12 md:pb-16">
         {/* TITLE CARD */}
         <div
           className={`absolute top-12 md:top-16 left-4 md:left-6 z-20 bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:-rotate-2 ${border} ${shadow} max-w-sm md:max-w-md`}
@@ -97,7 +97,9 @@ export default function EventPage({
           className={`relative z-10 w-full h-[300px] md:h-[420px] ${border}
           shadow-[6px_6px_0px_0px_#8338ec] md:shadow-[8px_8px_0px_0px_#8338ec] bg-white p-2 rotate-0 md:rotate-1 mt-24 md:mt-20`}
         >
-          <img
+          <Image
+            height={420}
+            width={800}
             src={event.image_url.replace("/upload/", "/upload/f_auto,q_auto/")}
             alt={event.title}
             className="w-full h-full object-cover border-2 border-black"
@@ -162,7 +164,9 @@ export default function EventPage({
             className={`${cardBase} p-3 md:p-4 bg-[#ffbe0b] rotate-0 md:rotate-1`}
           >
             <div className="bg-black p-2 border-4 border-black rotate-0 md:-rotate-1">
-              <img
+              <Image
+              height={340}
+              width={600}
                 src={event.crew_url.replace(
                   "/upload/",
                   "/upload/f_auto,q_auto/",
@@ -195,7 +199,9 @@ export default function EventPage({
                   hover:rotate-0 hover:scale-105 transition-transform duration-300`}
                   >
                     <div className="aspect-square border-2 border-black overflow-hidden bg-gray-200">
-                      <img
+                      <Image
+                        height={320}
+                        width={320}
                         src={src}
                         alt={`Gallery ${i + 1}`}
                         className="w-full h-full object-cover"
