@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Github, Linkedin } from "lucide-react";
+import { Github, Linkedin, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
 import Link from "next/link";
@@ -58,13 +58,6 @@ function TeamMemberCard({
   }, []);
 
   const handleCardClick = () => {
-    // SELF CARD CLICK → still go to /team/profile/:id
-    if (authUserId && authUserId === id) {
-      router.push(`/team/profile/${id}`);
-      return;
-    }
-
-    // OTHERS → also go to /team/profile/:id (view-only)
     router.push(`/team/profile/${id}`);
   };
 
@@ -95,8 +88,33 @@ function TeamMemberCard({
       className="relative inline-block cursor-pointer w-full max-w-[350px] aspect-3/4"
       onClick={handleCardClick}
     >
-      {/* Card container with hover effect */}
       <div className="relative w-full h-full group transition-transform duration-300 hover:-translate-y-2">
+
+        {/* 🔹 GLASS ARROW BUTTON (ONLY ADDITION) */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCardClick();
+          }}
+          className="
+            absolute top-3 right-3 z-30
+            w-9 h-9
+            flex items-center justify-center
+            rounded-full
+            backdrop-blur-md
+            bg-white/40
+            border border-black/20
+            shadow-[2px_2px_0px_#000]
+            transition-all duration-200
+            hover:bg-black
+            hover:text-white
+            hover:scale-110
+          "
+          aria-label="Open profile"
+        >
+          <ArrowUpRight className="w-4 h-4" strokeWidth={2.5} />
+        </button>
+
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="absolute inset-0 w-full h-full drop-shadow-xl"
@@ -108,13 +126,10 @@ function TeamMemberCard({
             </clipPath>
           </defs>
 
-          {/* Outer border */}
           <path d={outerPath} fill="black" />
 
-          {/* Inner image area */}
           <g transform={`translate(${borderWidth}, ${borderWidth})`}>
             <path d={innerPath} fill="white" />
-            {/* Image with stronger clipping */}
             <g clipPath={`url(#${clipId})`}>
               <image
                 href={imageUrl}
@@ -129,7 +144,7 @@ function TeamMemberCard({
           </g>
         </svg>
 
-        {/* Social icons - positioned in bottom left leg */}
+        {/* Social icons */}
         <div
           className="absolute flex items-center justify-center gap-1 z-20"
           style={{
@@ -143,28 +158,22 @@ function TeamMemberCard({
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-black hover:text-white transition-all duration-300 bg-white/30 hover:bg-black backdrop-blur-md p-1.5 rounded-full border border-black/10 hover:border-black shadow-sm group/icon"
+            className="text-black hover:text-white transition-all duration-300 bg-white/30 hover:bg-black backdrop-blur-md p-1.5 rounded-full border border-black/10 hover:border-black shadow-sm"
           >
-            <Github
-              className="w-5 h-5 group-hover/icon:scale-110 transition-transform"
-              strokeWidth={2}
-            />
+            <Github className="w-5 h-5" strokeWidth={2} />
           </Link>
 
           <Link
             href={linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-black hover:text-white transition-all duration-300 bg-white/30 hover:bg-[#0077b5] backdrop-blur-md p-1.5 rounded-full border border-black/10 hover:border-[#0077b5] shadow-sm group/icon"
+            className="text-black hover:text-white transition-all duration-300 bg-white/30 hover:bg-[#0077b5] backdrop-blur-md p-1.5 rounded-full border border-black/10 hover:border-[#0077b5] shadow-sm"
           >
-            <Linkedin
-              className="w-5 h-5 group-hover/icon:scale-110 transition-transform"
-              strokeWidth={2}
-            />
+            <Linkedin className="w-5 h-5" strokeWidth={2} />
           </Link>
         </div>
 
-        {/* Name section only (no role) */}
+        {/* Name */}
         <div
           className="absolute bottom-0 right-0 bg-white border-[3px] border-black rounded-2xl md:rounded-[20px] flex items-center justify-center overflow-hidden px-3 md:px-4 z-10"
           style={{
