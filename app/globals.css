@@ -199,3 +199,126 @@ Button {
 .animate-cell-ripple {
   animation: cell-ripple var(--duration) linear var(--delay) forwards;
 }
+
+html, body {
+  overflow-x: hidden;
+}
+
+
+:root {
+  --button-comp: 0px;
+}
+
+.decor-svg {
+  width: clamp(8rem, 12vw, 22rem);
+  max-width: 22rem;
+  display: block;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(0.6deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+.float-slow { animation: float 6s ease-in-out infinite; }
+.float-fast { animation: float 4.5s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .float-slow, .float-fast { animation: none !important; }
+}
+
+
+@media (max-width: 767px) {
+  .decor-svg,
+  .decor-svg * {
+    display: none !important;
+  }
+}
+
+@keyframes floatSlow {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes floatFast {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-14px); }
+  100% { transform: translateY(0px); }
+}
+
+.float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.float-fast {
+  animation: floatFast 4.6s ease-in-out infinite;
+}
+
+input:focus {
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  div[style] {
+    transition: none !important;
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}
+
+
+.floating-toggle {
+  left: 0;
+  will-change: transform, box-shadow;
+  transition: none; 
+  z-index: 30;
+  pointer-events: auto;
+}
+
+
+.floating-toggle.transition-on {
+  transition: transform 1100ms cubic-bezier(.18,.9,.24,1), box-shadow 900ms cubic-bezier(.18,.9,.24,1);
+}
+
+.floating-toggle.transition-on .relative > button {
+  transition: transform 420ms cubic-bezier(.22,.9,.26,1), box-shadow 420ms cubic-bezier(.22,.9,.26,1);
+}
+
+
+.floating-toggle.is-login.transition-on .relative > button {
+  transform: translateY(-4px) rotate(-0.6deg);
+  box-shadow: 10px 10px 0px #000;
+}
+
+
+.floating-toggle.is-signup.transition-on .relative > button {
+  transform: translateY(0) rotate(0deg);
+  box-shadow: 6px 6px 0px #000;
+}
+
+
+.floating-toggle > .relative > .absolute {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-toggle,
+  .floating-toggle .relative > button,
+  .floating-toggle > .relative > .absolute {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+        div[style]{transition:none!important;}
+      }
