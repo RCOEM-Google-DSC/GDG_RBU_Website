@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import TeamMemberCard from "../Components/Reusables/TeamMemberCard";
 import LeaderCard from "../Components/Reusables/LeaderCard";
+import ClubLeadCard from "../Components/team/ClubLeadCard";
 import { teamImg } from "@/db/mockdata";
-import { domainLeads, teamMembers } from "@/db/members";
 import Image from "next/image";
 import Footer from "../Components/Landing/Footer";
+import { supabase } from "@/supabase/supabase";
 
 type Member = {
   id: string;
@@ -17,23 +19,114 @@ type Member = {
   linkedin?: string;
 };
 
+type DomainLead = {
+  id: string;
+  userid: string;
+  domain: string;
+  name: string;
+  email: string;
+  image_url: string;
+  github?: string;
+  linkedin?: string;
+  role: string;
+};
+
 
 export default function TeamPage() {
-  // Use hardcoded team members data
-  const team = teamMembers;
+  const [teamMembers, setTeamMembers] = useState<Member[]>([]);
+  const [domainLeads, setDomainLeads] = useState<DomainLead[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTeamData = async () => {
+      try {
+        // Fetch all team members with user data
+        const { data: teamData, error: teamError } = await supabase
+          .from("team_members")
+          .select(`
+            id,
+            userid,
+            domain,
+            github,
+            linkedin,
+            "club role",
+            users (
+              name,
+              email,
+              image_url
+            )
+          `);
+
+        if (teamError) {
+          console.error("Error fetching team members:", teamError);
+          return;
+        }
+
+        // Separate domain leads from regular members
+        const leads: DomainLead[] = [];
+        const members: Member[] = [];
+
+        teamData?.forEach((member: any) => {
+          const userData = member.users;
+          const memberData = {
+            id: member.id,
+            userid: member.userid,
+            domain: member.domain || "",
+            name: userData?.name || "Unknown",
+            email: userData?.email || "",
+            image_url: userData?.image_url || "/placeholder.png",
+            github: member.github || "https://github.com",
+            linkedin: member.linkedin || "https://linkedin.com",
+          };
+
+          // Check if this member is a domain lead by checking club_role
+          // Note: using bracket notation because of space in column name
+          if (member["club role"] === "domain lead") {
+            leads.push({
+              ...memberData,
+              role: `${member.domain} Lead`,
+            });
+          } else if (!member["club role"] || member["club role"] !== "club lead") {
+            // Regular team member (not club lead or domain lead)
+            members.push(memberData);
+          }
+        });
+
+        setDomainLeads(leads);
+        setTeamMembers(members);
+      } catch (error) {
+        console.error("Error in fetchTeamData:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeamData();
+  }, []);
 
   // Group members by domain
-  const groupedDomains = team.reduce<Record<string, Member[]>>((acc, m) => {
+  const groupedDomains = teamMembers.reduce<Record<string, Member[]>>((acc, m) => {
     if (!m.domain) return acc; // Skip members without domain
     if (!acc[m.domain]) acc[m.domain] = [];
     acc[m.domain].push(m);
     return acc;
   }, {});
 
-  // Get all unique domains and sort them alphabetically
-  const domains = Object.keys(groupedDomains).sort((a, b) =>
+  // Get all unique domains from both leads and members, then sort them alphabetically
+  const domainsFromMembers = Object.keys(groupedDomains);
+  const domainsFromLeads = domainLeads.map(lead => lead.domain);
+  const allDomains = [...new Set([...domainsFromMembers, ...domainsFromLeads])];
+  const domains = allDomains.sort((a, b) =>
     a.toLowerCase().localeCompare(b.toLowerCase()),
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-2xl font-black animate-pulse">LOADING TEAM...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen  text-black pt-8 ">
@@ -114,6 +207,16 @@ export default function TeamPage() {
         </div>
       </section>
 
+      {/* Club Lead Section */}
+      <section
+        className="py-12 md:py-20 px-8 flex justify-center items-center"
+        style={{
+          borderBottom: "4px solid #000000",
+        }}
+      >
+        <ClubLeadCard/>
+      </section>
+
       {/* domains section */}
       <div
         className="px-8"
@@ -122,7 +225,7 @@ export default function TeamPage() {
         }}
       >
         {domains.map((domain) => {
-          const members = groupedDomains[domain];
+          const members = groupedDomains[domain] || [];
           // Find the domain lead for this domain
           const domainLead = domainLeads.find((lead) => lead.domain === domain);
 
@@ -154,12 +257,12 @@ export default function TeamPage() {
                     {domainLead && (
                       <LeaderCard
                         key={domainLead.id}
-                        id={domainLead.id}
+                        id={domainLead.userid}
                         name={domainLead.name}
                         role={domainLead.role}
                         imageUrl={domainLead.image_url}
-                        githubUrl={domainLead.profile_links.github ?? ""}
-                        linkedinUrl={domainLead.profile_links.linkedin ?? ""}
+                        githubUrl={domainLead.github ?? ""}
+                        linkedinUrl={domainLead.linkedin ?? ""}
                       />
                     )}
 

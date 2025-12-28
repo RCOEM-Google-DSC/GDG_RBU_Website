@@ -98,7 +98,7 @@ function LeaderCard({
       {/* Card container with hover effect */}
       <div className="relative w-full h-full group transition-transform duration-300 hover:-translate-y-2">
 
-        {/* 🔹 GLASS ARROW BUTTON */}
+        {/* Arrow button to indicate clickable */}
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -204,8 +204,8 @@ function LeaderCard({
               Lead
             </span>
           </div>
-          <div className="w-full h-[60%] flex items-center justify-center px-1">
-            <span className="text-sm md:text-[15px] font-black leading-4 text-center">
+          <div className="w-full h-[60%] flex items-center justify-center px-2 py-1">
+            <span className="text-xs md:text-sm font-black leading-tight text-center break-words line-clamp-2">
               {name}
             </span>
           </div>

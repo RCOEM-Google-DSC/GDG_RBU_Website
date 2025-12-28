@@ -107,7 +107,9 @@ export default function TeamProfilePage() {
 
   const loadProfile = async () => {
     if (!userId) return;
-    const { data } = await supabase
+    
+    // First, try to get team member data
+    const { data: teamMemberData } = await supabase
       .from("team_members")
       .select(
         `
@@ -128,13 +130,42 @@ export default function TeamProfilePage() {
           profile_links,
           branch,
           section,
-          phone_number
+          phone_number,
+          role
         )
       `,
       )
       .eq("userid", userId)
       .maybeSingle();
-    setProfile(data);
+    
+    // If team member exists, use that data
+    if (teamMemberData) {
+      setProfile(teamMemberData);
+      return;
+    }
+    
+    // Otherwise, try to get basic user data (for admins or non-team users)
+    const { data: userData } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", userId)
+      .single();
+    
+    if (userData) {
+      // Transform user data to match expected profile structure
+      setProfile({
+        userid: userData.id,
+        domain: userData.role === "admin" ? "Admin" : null,
+        bio: null,
+        thought: null,
+        leetcode: null,
+        twitter: null,
+        instagram: null,
+        club_email: null,
+        cv_url: userData.profile_links?.resume || null,
+        users: userData,
+      });
+    }
   };
 
   useEffect(() => {

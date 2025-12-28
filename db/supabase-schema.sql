@@ -79,6 +79,7 @@ CREATE TABLE public.team_members (
   linkedin text,
   github text,
   domain USER-DEFINED,
+  club role USER-DEFINED,
   CONSTRAINT team_members_pkey PRIMARY KEY (id),
   CONSTRAINT team_members_userid_fkey FOREIGN KEY (userid) REFERENCES public.users(id)
 );
