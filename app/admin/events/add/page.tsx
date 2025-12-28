@@ -37,9 +37,11 @@ export default function AddEventPage() {
     max_participants: "",
     is_team_event: false,
     max_team_size: "",
+    min_team_size: "",
     is_paid: false,
     fee: "",
     qr_code: "",
+    whatsapp_url: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -98,8 +100,29 @@ export default function AddEventPage() {
       newErrors.fee = "Fee is required for paid events";
     }
 
-    if (formData.is_team_event && !formData.max_team_size) {
-      newErrors.max_team_size = "Max team size is required for team events";
+    if (formData.is_team_event) {
+      if (!formData.max_team_size) {
+        newErrors.max_team_size = "Max team size is required for team events";
+      }
+      if (!formData.min_team_size) {
+        newErrors.min_team_size = "Min team size is required for team events";
+      }
+
+      // if both provided, validate numeric relationship
+      if (formData.min_team_size && formData.max_team_size) {
+        const min = parseInt(formData.min_team_size, 10);
+        const max = parseInt(formData.max_team_size, 10);
+        if (isNaN(min) || min <= 0) {
+          newErrors.min_team_size = "Min team size must be a positive number";
+        }
+        if (isNaN(max) || max <= 0) {
+          newErrors.max_team_size = "Max team size must be a positive number";
+        }
+        if (!newErrors.min_team_size && !newErrors.max_team_size && min > max) {
+          newErrors.min_team_size = "Min team size cannot be greater than max team size";
+          newErrors.max_team_size = "Max team size cannot be less than min team size";
+        }
+      }
     }
 
     setErrors(newErrors);
@@ -130,12 +153,17 @@ export default function AddEventPage() {
           formData.is_team_event && formData.max_team_size
             ? parseInt(formData.max_team_size)
             : undefined,
+        min_team_size:
+          formData.is_team_event && formData.min_team_size
+            ? parseInt(formData.min_team_size)
+            : undefined,
         is_paid: formData.is_paid,
         fee:
           formData.is_paid && formData.fee
             ? parseFloat(formData.fee)
             : undefined,
         qr_code: formData.is_paid ? formData.qr_code || undefined : undefined,
+        whatsapp_url: formData.whatsapp_url || undefined,
       };
 
       const response = await fetch("/api/events", {
@@ -310,6 +338,17 @@ export default function AddEventPage() {
               />
             </div>
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="whatsapp_url">WhatsApp Group / Contact URL</Label>
+            <Input
+              id="whatsapp_url"
+              name="whatsapp_url"
+              value={formData.whatsapp_url}
+              onChange={handleInputChange}
+              placeholder="https://chat.whatsapp.com/xxxx or https://wa.me/..."
+            />
+          </div>
         </div>
 
         {/* Participation */}
@@ -346,21 +385,43 @@ export default function AddEventPage() {
 
           {formData.is_team_event && (
             <div className="space-y-2 pl-4 border-l-2 border-blue-500">
-              <Label htmlFor="max_team_size">
-                Max Team Size <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="max_team_size"
-                name="max_team_size"
-                type="number"
-                value={formData.max_team_size}
-                onChange={handleInputChange}
-                placeholder="e.g., 4"
-                className={errors.max_team_size ? "border-red-500" : ""}
-              />
-              {errors.max_team_size && (
-                <p className="text-sm text-red-500">{errors.max_team_size}</p>
-              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="min_team_size">
+                    Min Team Size <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="min_team_size"
+                    name="min_team_size"
+                    type="number"
+                    value={formData.min_team_size}
+                    onChange={handleInputChange}
+                    placeholder="e.g., 2"
+                    className={errors.min_team_size ? "border-red-500" : ""}
+                  />
+                  {errors.min_team_size && (
+                    <p className="text-sm text-red-500">{errors.min_team_size}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="max_team_size">
+                    Max Team Size <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="max_team_size"
+                    name="max_team_size"
+                    type="number"
+                    value={formData.max_team_size}
+                    onChange={handleInputChange}
+                    placeholder="e.g., 4"
+                    className={errors.max_team_size ? "border-red-500" : ""}
+                  />
+                  {errors.max_team_size && (
+                    <p className="text-sm text-red-500">{errors.max_team_size}</p>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </div>
