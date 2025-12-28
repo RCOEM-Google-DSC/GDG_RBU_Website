@@ -17,9 +17,9 @@ function SocialButton({ icon, label, href }: SocialButtonProps) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-row justify-center items-center gap-3 px-6 py-3 rounded-lg border-2 border-black bg-white hover:bg-black hover:text-white transition-all duration-300 shadow-[3.519px_3.519px_0px_0px_black] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.5)] hover:-translate-y-0.2"
+      className="group flex flex-row justify-center items-center gap-3 px-6 py-3 rounded-lg border-2 border-black bg-white hover:bg-black hover:text-white transition-all duration-300 shadow-[3.519px_3.519px_0px_0px_black] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.5)]"
     >
-      <div className="w-10 h-10 flex items-center justify-center transition-transform duration-600 group-hover:scale-108">
+      <div className="w-10 h-10 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
         {icon}
       </div>
       <span className="font-['Open_Sans:Bold',sans-serif] font-bold text-lg whitespace-nowrap">
@@ -84,7 +84,6 @@ function Desktop10Helper1({
   );
 }
 
-// Logo Components using SVG files
 function RightLogo() {
   return (
     <div className="absolute right-[50px] top-[200px] w-[121px] h-[143px]">
@@ -150,7 +149,6 @@ function Desktop10Component() {
           </svg>
         </div>
       </div>
-      {/* Navbar section removed - starting from main content */}
       <RightLogo />
       <LeftLogo />
       <p className="absolute font-geist font-extrabold leading-tight left-[calc(50%-344px)] text-[64px] text-black text-nowrap top-[177px]">
@@ -163,10 +161,8 @@ function Desktop10Component() {
         Unlock Your Potential.
       </p>
 
-      {/* Social Links Section */}
       <div className="absolute left-[289px] top-[686px] w-[870px]">
         <div className="flex flex-col gap-4">
-          {/* Row 1 - 4 buttons */}
           <div className="grid grid-cols-4 gap-4">
             <SocialButton
               icon={<CgMail className="w-full h-full" />}
@@ -190,7 +186,6 @@ function Desktop10Component() {
             />
           </div>
 
-          {/* Row 2 - 2 centered buttons */}
           <div className="grid grid-cols-4 gap-4">
             <div className="col-start-2">
               <SocialButton
@@ -388,10 +383,115 @@ function Desktop10Component() {
   );
 }
 
+function MobileLinksView() {
+  return (
+    <div className="w-full min-h-screen bg-white flex flex-col items-center py-6 px-4">
+      <div className="w-full max-w-md">
+        <div className="flex justify-between items-center mb-4">
+          <div className="w-12 h-12">
+            <Image src="/assets/shapes/r-b.svg" alt="left" width={48} height={48} className="w-full h-full" />
+          </div>
+          <div className="w-12 h-12">
+            <Image src="/assets/shapes/y-g.svg" alt="right" width={48} height={48} className="w-full h-full" />
+          </div>
+        </div>
+
+        <h1 className="text-center font-geist font-extrabold text-2xl leading-tight mb-2">Join Our Community.</h1>
+        <h2 className="text-center font-geist font-extrabold text-2xl leading-tight mb-4">Connect and Grow with us.</h2>
+
+        <p className="text-center text-sm text-gray-700 mb-6">
+          Connect with like-minded individuals, share knowledge, and grow together across our platform
+        </p>
+
+        <div className="relative mb-6">
+          <div className="absolute left-0 right-0 top-2">
+            <div className="mx-auto w-[90%]">
+              <div className="border-4 border-black shadow-[8px_8px_0_#000] bg-[#E6E6E6] p-4 pl-6 pr-6 rounded-sm">
+                <h3 className="font-geist font-extrabold text-lg">Unlock Your Potential.</h3>
+              </div>
+            </div>
+          </div>
+          {/* spacer to keep height */}
+          <div className="h-20" />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 mb-6">
+          <a
+            href="mailto:gdsc@rknec.edu"
+            className="flex items-center gap-3 border-2 border-black rounded-lg px-4 py-4 shadow-[6px_6px_0px_0px_black] bg-white"
+          >
+            <div className="w-12 h-12 flex items-center justify-center border-2 border-black rounded-md">
+              <CgMail className="w-6 h-6" />
+            </div>
+            <span className="font-geist font-bold text-lg">Email</span>
+          </a>
+
+          <a
+            href="https://discord.gg/WgJDe2e9aj"
+            className="flex items-center gap-3 border-2 border-black rounded-lg px-4 py-4 shadow-[6px_6px_0px_0px_black] bg-white"
+          >
+            <div className="w-12 h-12 flex items-center justify-center border-2 border-black rounded-md">
+              <FaDiscord className="w-6 h-6" />
+            </div>
+            <span className="font-geist font-bold text-lg">Discord</span>
+          </a>
+
+          <a
+            href="https://youtube.com/@gdsc_rcoem"
+            className="flex items-center gap-3 border-2 border-black rounded-lg px-4 py-4 shadow-[6px_6px_0px_0px_black] bg-white"
+          >
+            <div className="w-12 h-12 flex items-center justify-center border-2 border-black rounded-md">
+              <FaYoutube className="w-6 h-6" />
+            </div>
+            <span className="font-geist font-bold text-lg">YouTube</span>
+          </a>
+
+          <a
+            href="https://twitter.com/gdsc_rcoem"
+            className="flex items-center gap-3 border-2 border-black rounded-lg px-4 py-4 shadow-[6px_6px_0px_0px_black] bg-white"
+          >
+            <div className="w-12 h-12 flex items-center justify-center border-2 border-black rounded-md">
+              <BsTwitterX className="w-6 h-6" />
+            </div>
+            <span className="font-geist font-bold text-lg">Twitter</span>
+          </a>
+
+          <a
+            href="https://www.linkedin.com/company/gdsc-rcoem/"
+            className="flex items-center gap-3 border-2 border-black rounded-lg px-4 py-4 shadow-[6px_6px_0px_0px_black] bg-white"
+          >
+            <div className="w-12 h-12 flex items-center justify-center border-2 border-black rounded-md">
+              <FaLinkedinIn className="w-6 h-6" />
+            </div>
+            <span className="font-geist font-bold text-lg">LinkedIn</span>
+          </a>
+
+          <a
+            href="https://www.instagram.com/gdg_rbu/"
+            className="flex items-center gap-3 border-2 border-black rounded-lg px-4 py-4 shadow-[6px_6px_0px_0px_black] bg-white"
+          >
+            <div className="w-12 h-12 flex items-center justify-center border-2 border-black rounded-md">
+              <AiOutlineInstagram className="w-6 h-6" />
+            </div>
+            <span className="font-geist font-bold text-lg">Instagram</span>
+          </a>
+        </div>
+
+        <p className="text-center text-sm text-[#6e6d6d] mt-4">Stay connected</p>
+      </div>
+    </div>
+  );
+}
+
 export default function Desktop() {
   return (
-    <div className="min-h-screen bg-white flex justify-center  pb-8">
-      <Desktop10Component />
+    <div className="min-h-screen bg-white flex justify-center pb-8">
+      <div className="hidden md:block">
+        <Desktop10Component />
+      </div>
+      <div className="block md:hidden w-full">
+        <MobileLinksView />
+      </div>
     </div>
   );
 }
