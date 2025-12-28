@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
-import { supabase } from "@/supabase/supabase";
+// ✅ Import the request-scoped browser client factory
+import { createClient } from "@/utils/supabase/client";
 import DataTable from "@/app/Components/Reusables/DataTable";
 import ConfirmDialog from "@/app/Components/Reusables/ConfirmDialog";
 import {
@@ -25,6 +26,8 @@ type TeamMember = {
 };
 
 export default function TeamMembersPage() {
+  // ✅ Initialize the client inside the component
+  const supabase = createClient();
   const { canManageUsers } = useRBAC();
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +42,7 @@ export default function TeamMembersPage() {
 
   useEffect(() => {
     fetchTeamMembers();
-  }, []);
+  }, [supabase]); // Added supabase to dependencies for safety
 
   const fetchTeamMembers = async () => {
     setLoading(true);
@@ -114,7 +117,7 @@ export default function TeamMembersPage() {
         .from("team_members")
         .select("id")
         .eq("userid", userId)
-        .single();
+        .maybeSingle(); // Changed .single() to .maybeSingle() to prevent unnecessary console errors
 
       if (existingRecord) {
         // Update existing record

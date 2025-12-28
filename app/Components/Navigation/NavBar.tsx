@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/utils/supabase/client";
+import { getCurrentUserId } from "@/supabase/supabase";
 import ProfileDropdown from "../Common/ProfileDropdown";
 import MobileProfileDropdown from "../Common/MobileProfileDropdown";
 import { Menu, X, Terminal, User as UserIcon } from "lucide-react";
 import Image from "next/image";
+
+const supabase = createClient();
 
 const LINK_STYLES = [
   { color: "bg-blue-400", hover: "hover:bg-blue-500/90" },

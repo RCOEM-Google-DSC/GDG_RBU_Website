@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/supabase/supabase";
+import { useEffect, useState, useMemo } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 export function useTeamProfileData(userId: string) {
+  const supabase = useMemo(() => createClient(), []);
+
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +17,7 @@ export function useTeamProfileData(userId: string) {
 
         setLoading(true);
 
-        const { data, error } = await supabase
+        const { data: profileData, error } = await supabase
           .from("team_members")
           .select(
             `
@@ -33,12 +35,13 @@ export function useTeamProfileData(userId: string) {
             `,
           )
           .eq("userid", userId)
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
 
-        setData(data);
+        setData(profileData);
       } catch (err: any) {
+        console.error("Hook Error:", err);
         setError(err.message || "Failed to load profile");
       } finally {
         setLoading(false);
@@ -46,7 +49,7 @@ export function useTeamProfileData(userId: string) {
     };
 
     load();
-  }, [userId]);
+  }, [userId, supabase]);
 
   return { data, loading, error };
 }

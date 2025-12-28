@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/supabase/supabase";
+// ✅ Import the server client factory
+import { createClient } from "@/utils/supabase/server";
 import { generateProfileImageUrl } from "@/lib/utils";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
+
+  // ✅ Initialize the Server Client (must be awaited)
+  const supabase = await createClient();
 
   let redirectUrl = "/profile";
 
@@ -29,11 +33,11 @@ export async function GET(request: Request) {
         .from("users")
         .select("id, role")
         .eq("id", userId)
-        .single();
+        .maybeSingle(); // ✅ Using maybeSingle to avoid 406 errors on missing users
 
       if (existingUser) {
         role = existingUser.role;
-      } else if (fetchError?.code === "PGRST116") {
+      } else {
         // If user doesn't exist in users table, create them
         const userName =
           sessionData.user.user_metadata?.full_name ||
@@ -64,7 +68,6 @@ export async function GET(request: Request) {
 
         if (insertError) {
           console.error("Error creating user record:", insertError);
-          // Don't fail the auth flow, but log the error
         }
       }
 

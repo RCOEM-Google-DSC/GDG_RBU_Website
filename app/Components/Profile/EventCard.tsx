@@ -4,13 +4,17 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Calendar, Download, Share2, Loader2 } from "lucide-react";
 import { UIEvent } from "../../../lib/types";
-import { supabase } from "@/supabase/supabase";
+// ✅ Import the request-scoped browser client factory instead of the static instance
+import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
+
 interface EventCardProps {
   event: UIEvent;
 }
 
 export function EventCard({ event }: EventCardProps) {
+  // ✅ Initialize the Supabase client inside the component
+  const supabase = createClient();
   const [loading, setLoading] = useState(false);
   const [certificateUrl, setCertificateUrl] = useState<string | null>(
     event.certificate_url ?? null,
@@ -53,7 +57,7 @@ export function EventCard({ event }: EventCardProps) {
     try {
       setLoading(true);
 
-      // 🔑 GET USER SESSION (CRITICAL FIX)
+      // 🔑 GET USER SESSION
       const {
         data: { session },
       } = await supabase.auth.getSession();

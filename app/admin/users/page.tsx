@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Trash2, AlertTriangle } from "lucide-react";
-import { supabase } from "@/supabase/supabase";
+// ✅ Import the request-scoped browser client factory
+import { createClient } from "@/utils/supabase/client";
 import DataTable from "@/app/Components/Reusables/DataTable";
 import ConfirmDialog from "@/app/Components/Reusables/ConfirmDialog";
 import {
@@ -25,6 +26,8 @@ type UserListItem = {
 };
 
 export default function UsersPage() {
+  // ✅ Initialize the client locally inside the component
+  const supabase = createClient();
   const { canManageUsers } = useRBAC();
   const [users, setUsers] = useState<UserListItem[]>([]);
   const [search, setSearch] = useState("");
@@ -45,7 +48,7 @@ export default function UsersPage() {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [supabase]); // Added supabase to dependency array for safety
 
   const fetchUsers = async () => {
     const { data, error } = await supabase
@@ -174,15 +177,7 @@ export default function UsersPage() {
           >
             <SelectTrigger className="w-[140px]">
               <SelectValue>
-                {user.role === "user" && (
-                  <span className="flex items-center gap-2">user</span>
-                )}
-                {user.role === "member" && (
-                  <span className="flex items-center gap-2">member</span>
-                )}
-                {user.role === "admin" && (
-                  <span className="flex items-center gap-2">admin</span>
-                )}
+                <span className="flex items-center gap-2">{user.role}</span>
               </SelectValue>
             </SelectTrigger>
             <SelectContent>

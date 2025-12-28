@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useRef } from "react";
 import Image from "next/image";
 import { UIUser } from "../../../lib/types";
@@ -22,7 +23,10 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { supabase, getCurrentUserId } from "../../../supabase/supabase";
+// ✅ Import the request-scoped browser client factory
+import { createClient } from "@/utils/supabase/client";
+// ✅ Import the server action for identity verification
+import { getCurrentUserId } from "@/supabase/supabase";
 import { Camera } from "lucide-react";
 
 interface CompleteProfileDialogProps {
@@ -30,7 +34,6 @@ interface CompleteProfileDialogProps {
   trigger?: React.ReactNode;
 }
 
-/* ✅ ONLY ADDITION (DOES NOT REMOVE ANYTHING) */
 const isValidImageUrl = (url?: string) =>
   typeof url === "string" && url.startsWith("http");
 
@@ -39,6 +42,9 @@ export function CompleteProfileDialog({
   trigger,
 }: CompleteProfileDialogProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  
+  // ✅ Initialize the client inside the component to ensure it's request-scoped
+  const supabase = createClient();
 
   // Form fields
   const [section, setSection] = useState(user.section || "");
@@ -60,6 +66,7 @@ export function CompleteProfileDialog({
 
   const branchs = ["CSE", "AIML", "AIDS", "ECE", "ECS", "Mechanical", "Civil", "Other"];
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   // Handle branch selection
   const handleBranchChange = (value: string) => {
     if (value === "Other") {
@@ -72,6 +79,7 @@ export function CompleteProfileDialog({
       setCustomBranch("");
     }
   };
+
   // Open file picker
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -119,6 +127,7 @@ export function CompleteProfileDialog({
     setStatus({ type: "idle" });
 
     try {
+      // ✅ Verify user ID using the secure server-side utility
       const userId = await getCurrentUserId();
       if (!userId) throw new Error("User not authenticated");
 
@@ -148,7 +157,9 @@ export function CompleteProfileDialog({
       // Close dialog after 1.5 seconds
       setTimeout(() => {
         setDialogOpen(false);
-        window.location.reload();
+        if (typeof window !== "undefined") {
+          window.location.reload();
+        }
       }, 1500);
     } catch (err: any) {
       setStatus({
@@ -176,7 +187,6 @@ export function CompleteProfileDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-5">
-              {/* Avatar with Neo-Brutalism */}
               <div className="relative shrink-0">
                 <div
                   className="size-20 overflow-hidden"
@@ -245,7 +255,6 @@ export function CompleteProfileDialog({
           </DialogHeader>
 
           <div className="grid gap-6 py-6">
-            {/* Name & Email (Read-only) */}
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="name" className="font-bold text-sm" style={{ color: "#000000" }}>NAME</Label>
@@ -277,7 +286,6 @@ export function CompleteProfileDialog({
               </div>
             </div>
 
-            {/* Academic Information */}
             <div className="grid grid-cols-3 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="section" className="font-bold text-sm" style={{ color: "#000000" }}>SECTION</Label>
@@ -371,7 +379,6 @@ export function CompleteProfileDialog({
               </div>
             </div>
 
-            {/* Social Links */}
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="github" className="font-bold text-sm" style={{ color: "#000000" }}>GITHUB URL</Label>
@@ -420,7 +427,6 @@ export function CompleteProfileDialog({
               </div>
             </div>
 
-            {/* Status Messages */}
             {status.type === "error" && (
               <div
                 className="text-sm font-bold px-4 py-2"

@@ -1,57 +1,33 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
-
-// Use lazy initialization to avoid errors during build/prerender
-let supabaseInstance: SupabaseClient | null = null;
-
-function getSupabaseClient(): SupabaseClient {
-  if (supabaseInstance) return supabaseInstance;
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error(
-      "Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file.",
-    );
-  }
-
-  supabaseInstance = createClient(supabaseUrl, supabaseAnonKey);
-  return supabaseInstance;
-}
-
-// Export a proxy that lazily initializes the client
-export const supabase = new Proxy({} as SupabaseClient, {
-  get(_, prop) {
-    const client = getSupabaseClient();
-    const value = (client as any)[prop];
-    if (typeof value === "function") {
-      return value.bind(client);
-    }
-    return value;
-  },
-});
-
+"use server";
+import { createClient } from "@/utils/supabase/server";
+import { createClient as createBrowserClient } from "@/utils/supabase/client";
 /**
- * Get the current authenticated user's ID from Supabase session.
- * Uses supabase.auth.getSession() to retrieve the JWT and user info.
- * @returns The user ID (auth.uid()) or null if not authenticated
+ * Get the current authenticated user's ID safely.
+ * Uses getUser() instead of getSession() for server-side security.
  */
 export async function getCurrentUserId(): Promise<string | null> {
+  const supabase = await createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  return session?.user?.id ?? null;
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error) return null;
+  return user?.id ?? null;
 }
 
 /**
- * Get the current session with JWT token.
- * Use this to access the access_token for API calls.
+ * Get the current session. 
+ * Note: getUser() is preferred for security, but getSession() is 
+ * useful for retrieving the access_token for external API calls.
  */
 export async function getSession() {
+  const supabase = await createClient();
   const {
     data: { session },
     error,
   } = await supabase.auth.getSession();
+  
   if (error) {
     console.error("Error getting session:", error);
     return null;
@@ -60,8 +36,7 @@ export async function getSession() {
 }
 
 /**
- * Register for an event. Sets user_id = auth.uid() from the client.
- * RLS will enforce that users can only create registrations for themselves.
+ * Register for an event.
  */
 export async function registerForEvent(
   eventId: string,
@@ -73,6 +48,7 @@ export async function registerForEvent(
     is_open_to_alliances?: boolean;
   },
 ) {
+  const supabase = await createClient();
   const userId = await getCurrentUserId();
 
   if (!userId) {
@@ -91,12 +67,7 @@ export async function registerForEvent(
     .single();
 
   if (error) {
-    console.error(
-      "Registration error:",
-      error.message,
-      error.code,
-      error.details,
-    );
+    console.error("Registration error:", error.message);
     throw new Error(error.message || "Failed to register for event");
   }
 
@@ -104,8 +75,7 @@ export async function registerForEvent(
 }
 
 /**
- * Create a new event. Sets organizer_id = auth.uid() from the client.
- * RLS will enforce that the organizer_id matches the authenticated user.
+ * Create a new event.
  */
 export async function createEvent(eventData: {
   title: string;
@@ -121,6 +91,7 @@ export async function createEvent(eventData: {
   max_team_size?: number;
   category?: string;
 }) {
+  const supabase = await createClient();
   const userId = await getCurrentUserId();
 
   if (!userId) {
@@ -131,19 +102,14 @@ export async function createEvent(eventData: {
     .from("events")
     .insert({
       ...eventData,
-      organizer_id: userId, // Set organizer_id = auth.uid() as required by RLS
+      organizer_id: userId,
       created_at: new Date().toISOString(),
     })
     .select()
     .single();
 
   if (error) {
-    console.error(
-      "Event creation error:",
-      error.message,
-      error.code,
-      error.details,
-    );
+    console.error("Event creation error:", error.message);
     throw new Error(error.message || "Failed to create event");
   }
 
@@ -151,7 +117,7 @@ export async function createEvent(eventData: {
 }
 
 /**
- * Update an existing event. Only allowed if the user is the organizer.
+ * Update an existing event.
  */
 export async function updateEvent(
   eventId: string,
@@ -169,6 +135,7 @@ export async function updateEvent(
     category: string;
   }>,
 ) {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("events")
     .update({
@@ -180,12 +147,7 @@ export async function updateEvent(
     .single();
 
   if (error) {
-    console.error(
-      "Event update error:",
-      error.message,
-      error.code,
-      error.details,
-    );
+    console.error("Event update error:", error.message);
     throw new Error(error.message || "Failed to update event");
   }
 
@@ -193,9 +155,10 @@ export async function updateEvent(
 }
 
 /**
- * Get event details by ID (public read access)
+ * Get event details by ID.
  */
 export async function getEvent(eventId: string) {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("events")
     .select("*")
@@ -203,12 +166,7 @@ export async function getEvent(eventId: string) {
     .single();
 
   if (error) {
-    console.error(
-      "Error fetching event:",
-      error.message,
-      error.code,
-      error.details,
-    );
+    console.error("Error fetching event:", error.message);
     throw new Error(error.message || "Failed to fetch event");
   }
 
@@ -216,21 +174,17 @@ export async function getEvent(eventId: string) {
 }
 
 /**
- * Get all events (public read access)
+ * Get all events.
  */
 export async function getEvents() {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("events")
     .select("*")
     .order("date", { ascending: true });
 
   if (error) {
-    console.error(
-      "Error fetching events:",
-      error.message,
-      error.code,
-      error.details,
-    );
+    console.error("Error fetching events:", error.message);
     throw new Error(error.message || "Failed to fetch events");
   }
 
@@ -238,9 +192,10 @@ export async function getEvents() {
 }
 
 /**
- * Get user's registrations
+ * Get user's registrations.
  */
 export async function getUserRegistrations() {
+  const supabase = await createClient();
   const userId = await getCurrentUserId();
 
   if (!userId) {
@@ -254,19 +209,18 @@ export async function getUserRegistrations() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error(
-      "Error fetching registrations:",
-      error.message,
-      error.code,
-      error.details,
-    );
+    console.error("Error fetching registrations:", error.message);
     throw new Error(error.message || "Failed to fetch registrations");
   }
 
   return data;
 }
 
+/**
+ * Handle event check-in.
+ */
 export async function verifyEventCheckin(eventId: string) {
+  const supabase = await createClient();
   const userId = await getCurrentUserId();
 
   if (!userId) {
@@ -304,9 +258,10 @@ export async function verifyEventCheckin(eventId: string) {
 }
 
 /**
- * Get upcoming events (status = 'upcoming')
+ * Get upcoming events.
  */
 export async function getUpcomingEvents() {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("events")
     .select("*")
@@ -322,9 +277,10 @@ export async function getUpcomingEvents() {
 }
 
 /**
- * Get past events (status = 'completed')
+ * Get past events.
  */
 export async function getPastEvents() {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("events")
     .select("*")
@@ -340,9 +296,10 @@ export async function getPastEvents() {
 }
 
 /**
- * Get gallery images for a specific event
+ * Get gallery images for a specific event.
  */
 export async function getGalleryImages(galleryUid: string) {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("gallery")
     .select("image_url")

@@ -1,10 +1,13 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/utils/supabase/client"; 
 import { AuthForm } from "@/app/Components/Auth/AuthForm";
+
 export default function RegisterPage() {
+  const supabase = createClient(); 
   const [isLogin, setIsLogin] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -86,7 +89,7 @@ export default function RegisterPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/api/auth/callback`,
         },
       });
 
@@ -99,7 +102,6 @@ export default function RegisterPage() {
 
   return (
     <div className="overflow-hidden min-h-screen">
-
       <AuthForm
         isLogin={isLogin}
         toggleForm={toggleForm}
