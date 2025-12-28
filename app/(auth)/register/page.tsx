@@ -169,7 +169,7 @@ export default function RegisterPage() {
               }`}
             >
               <h1 className="text-[28px] font-black text-black flex items-center gap-2">
-                <ClipboardList /> LOGIN
+                <BiLogIn /> LOGIN
               </h1>
               <p className="text-sm text-white mt-1">welcome back!</p>
               <div className="h-[2px] w-full bg-black my-6" />
