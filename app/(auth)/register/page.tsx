@@ -89,7 +89,6 @@ export default function RegisterPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          // ✅ Ensure the origin is used for clean redirects
           redirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/api/auth/callback`,
         },
       });
