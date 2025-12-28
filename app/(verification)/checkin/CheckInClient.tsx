@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { useRBAC } from "@/hooks/useRBAC";
 import { toast } from "sonner";
 import { Check, Loader2 } from "lucide-react";
@@ -21,6 +21,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 /* ---------------- Main Component ---------------- */
 
 export default function CheckInClient() {
+  const supabase = createClient();
   const params = useSearchParams();
   const encoded = params.get("d");
 

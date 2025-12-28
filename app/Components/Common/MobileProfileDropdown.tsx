@@ -14,8 +14,11 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CiLogout } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
-import { supabase, getCurrentUserId } from "@/supabase/supabase";
+import { createClient } from "@/utils/supabase/client";
+import { getCurrentUserId } from "@/supabase/supabase";
 import { toast } from "sonner";
+
+const supabase = createClient();
 
 const MobileProfileDropdown = ({
   onLogout,

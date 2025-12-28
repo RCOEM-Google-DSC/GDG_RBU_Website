@@ -1,5 +1,6 @@
+"use server";
 import { createClient } from "@/utils/supabase/server";
-
+import { createClient as createBrowserClient } from "@/utils/supabase/client";
 /**
  * Get the current authenticated user's ID safely.
  * Uses getUser() instead of getSession() for server-side security.

@@ -1,6 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
-import { supabase, getCurrentUserId } from "@/supabase/supabase";
+
+import { useState, useEffect, useMemo } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { getCurrentUserId } from "@/supabase/supabase";
 import {
   buildUIUser,
   buildUIEvents,
@@ -24,6 +26,8 @@ interface UseProfileDataReturn {
 }
 
 export function useProfileData(): UseProfileDataReturn {
+  const supabase = useMemo(() => createClient(), []);
+
   const [user, setUser] = useState<UIUser | null>(null);
   const [events, setEvents] = useState<UIEvent[]>([]);
   const [badges, setBadges] = useState<UIBadge[]>([]);
@@ -39,18 +43,21 @@ export function useProfileData(): UseProfileDataReturn {
         const userId = await getCurrentUserId();
         if (!userId) {
           setError("You must be logged in to view your profile.");
+          setLoading(false);
           return;
         }
 
-        // 1. Fetch user
+        // 1. Fetch user (Using explicit generic for SupabaseUserRow)
         const { data: userRow, error: userErr } = await supabase
           .from("users")
           .select("*")
           .eq("id", userId)
-          .maybeSingle<SupabaseUserRow>();
+          .maybeSingle();
 
         if (userErr) throw userErr;
         if (!userRow) throw new Error("User not found");
+
+        const typedUserRow = userRow as SupabaseUserRow;
 
         // 2. Fetch registrations
         const { data: registrations, error: regErr } = await supabase
@@ -59,11 +66,12 @@ export function useProfileData(): UseProfileDataReturn {
           .eq("user_id", userId);
 
         if (regErr) throw regErr;
+        const typedRegistrations = (registrations || []) as Registration[];
 
         // 3. Fetch events
         let uiEvents: UIEvent[] = [];
-        if (registrations && registrations.length > 0) {
-          const eventIds = registrations.map((r) => r.event_id);
+        if (typedRegistrations.length > 0) {
+          const eventIds = typedRegistrations.map((r) => r.event_id);
 
           const { data: eventsData, error: eventsErr } = await supabase
             .from("events")
@@ -75,21 +83,22 @@ export function useProfileData(): UseProfileDataReturn {
           if (eventsData) {
             uiEvents = buildUIEvents(
               eventsData as EventRow[],
-              registrations as Registration[],
+              typedRegistrations
             );
           }
         }
 
-        // 4. Badges
-        const uiBadges = buildUIBadges(userRow.badges);
+        // 4. Badges (Assuming userRow.badges exists in SupabaseUserRow)
+        const uiBadges = buildUIBadges(typedUserRow.badges || []);
 
-        // 5. User
-        const uiUser = buildUIUser(userRow, uiEvents.length, uiBadges.length);
+        // 5. User Summary
+        const uiUser = buildUIUser(typedUserRow, uiEvents.length, uiBadges.length);
 
         setUser(uiUser);
         setEvents(uiEvents);
         setBadges(uiBadges);
       } catch (err: any) {
+        console.error("Profile data load error:", err);
         setError(err.message ?? "Something went wrong");
       } finally {
         setLoading(false);
@@ -97,7 +106,7 @@ export function useProfileData(): UseProfileDataReturn {
     };
 
     load();
-  }, []);
+  }, [supabase]); 
 
   return { user, events, badges, loading, error };
 }

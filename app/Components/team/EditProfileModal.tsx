@@ -6,7 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
 import Link from "next/link";
-import { supabase } from "@/supabase/supabase";
+// ✅ Import the request-scoped browser client factory
+import { createClient } from "@/utils/supabase/client";
 import {
   Github,
   Linkedin,
@@ -103,6 +104,9 @@ export default function EditProfileModal({
   userId,
 }: EditProfileModalProps) {
   const u = profile?.users ?? {};
+  
+  // ✅ Initialize the client locally
+  const supabase = createClient();
 
   const [imagePreview, setImagePreview] = useState(u.image_url || "");
   const [uploading, setUploading] = useState(false);
@@ -167,8 +171,6 @@ export default function EditProfileModal({
     setError(null);
 
     try {
-      console.log("Form values:", values);
-
       const userUpdate = {
         branch: values.branch,
         section: values.section,
@@ -185,10 +187,7 @@ export default function EditProfileModal({
         .update(userUpdate)
         .eq("id", userId);
 
-      if (userError) {
-        console.error("User update error:", userError);
-        throw userError;
-      }
+      if (userError) throw userError;
 
       const memberUpdate = {
         domain: values.domain || null,
@@ -201,11 +200,6 @@ export default function EditProfileModal({
         cv_url: values.cv_url || null,
       };
 
-      console.log("Member update payload:", memberUpdate);
-      console.log("Bio value:", values.bio);
-      console.log("Thought value:", values.thought);
-      console.log("Updating for userId:", userId);
-
       // First, check if a team_members record exists for this user
       const { data: existingMember } = await supabase
         .from("team_members")
@@ -213,47 +207,30 @@ export default function EditProfileModal({
         .eq("userid", userId)
         .maybeSingle();
 
-      console.log("Existing team member record:", existingMember);
-
-      let updateData;
       let memberError;
 
       if (!existingMember) {
         // If no record exists, insert a new one
-        console.log("No team_members record found, creating one...");
         const insertResult = await supabase
           .from("team_members")
-          .insert({ userid: userId, ...memberUpdate })
-          .select();
+          .insert({ userid: userId, ...memberUpdate });
 
-        updateData = insertResult.data;
         memberError = insertResult.error;
       } else {
         // Update existing record
-        console.log("Updating existing team_members record...");
         const updateResult = await supabase
           .from("team_members")
           .update(memberUpdate)
-          .eq("userid", userId)
-          .select();
+          .eq("userid", userId);
 
-        updateData = updateResult.data;
         memberError = updateResult.error;
       }
 
-      if (memberError) {
-        console.error("Member update error:", memberError);
-        throw memberError;
-      }
+      if (memberError) throw memberError;
 
-      // Trigger data refresh in parent component
-      if (onSuccess) {
-        onSuccess();
-      }
-
+      if (onSuccess) onSuccess();
       onClose();
     } catch (err) {
-      console.error("Save error:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
     }
   };
@@ -283,14 +260,12 @@ export default function EditProfileModal({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* IMAGE + NAME & EMAIL DISPLAY */}
             <div
               className="flex items-start gap-6 pb-6"
               style={{
                 borderBottom: "3px solid #000000",
               }}
             >
-              {/* Profile Image with Pencil Icon */}
               <div className="relative group">
                 <div
                   className="w-28 h-28 overflow-hidden"
@@ -314,7 +289,6 @@ export default function EditProfileModal({
                   )}
                 </div>
 
-                {/* Pencil Icon Button */}
                 <Label
                   htmlFor="image-upload"
                   className="absolute bottom-1 right-1 text-white p-2 cursor-pointer transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
@@ -335,7 +309,6 @@ export default function EditProfileModal({
                   />
                 </Label>
 
-                {/* Upload Indicator */}
                 {uploading && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                     <Loader2 className="w-6 h-6 text-white animate-spin" />
@@ -343,7 +316,6 @@ export default function EditProfileModal({
                 )}
               </div>
 
-              {/* Name & Email Info */}
               <div className="flex flex-col items-start justify-center gap-2 flex-1">
                 <div className="flex items-center gap-2">
                   <UserIcon size={18} className="text-slate-400" />
@@ -361,7 +333,6 @@ export default function EditProfileModal({
               </div>
             </div>
 
-            {/* USER FIELDS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -480,7 +451,6 @@ export default function EditProfileModal({
               />
             </div>
 
-            {/* BIO */}
             <FormField
               control={form.control}
               name="bio"
@@ -510,7 +480,6 @@ export default function EditProfileModal({
               )}
             />
 
-            {/* THOUGHT */}
             <FormField
               control={form.control}
               name="thought"
@@ -540,7 +509,6 @@ export default function EditProfileModal({
               )}
             />
 
-            {/* SOCIAL LINKS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -711,7 +679,6 @@ export default function EditProfileModal({
               />
             </div>
 
-            {/* ERROR MESSAGE */}
             {error && (
               <div
                 className="text-sm font-bold p-3"
@@ -726,7 +693,6 @@ export default function EditProfileModal({
               </div>
             )}
 
-            {/* FOOTER BUTTONS */}
             <DialogFooter className="gap-2">
               <Button
                 type="button"
