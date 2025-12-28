@@ -86,7 +86,7 @@ export default function RegisterPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${window.location.origin}/api/auth/callback`,
         },
       });
 
@@ -99,7 +99,6 @@ export default function RegisterPage() {
 
   return (
     <div className="overflow-hidden min-h-screen">
-
       <AuthForm
         isLogin={isLogin}
         toggleForm={toggleForm}
