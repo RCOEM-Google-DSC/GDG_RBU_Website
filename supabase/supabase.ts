@@ -1,4 +1,5 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
 // Use lazy initialization to avoid errors during build/prerender
 let supabaseInstance: SupabaseClient | null = null;
@@ -11,11 +12,11 @@ function getSupabaseClient(): SupabaseClient {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error(
-      "Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file.",
+      "Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file."
     );
   }
 
-  supabaseInstance = createClient(supabaseUrl, supabaseAnonKey);
+  supabaseInstance = createBrowserClient(supabaseUrl, supabaseAnonKey);
   return supabaseInstance;
 }
 
@@ -71,7 +72,7 @@ export async function registerForEvent(
     is_team_registration?: boolean;
     wants_random_team?: boolean;
     is_open_to_alliances?: boolean;
-  },
+  }
 ) {
   const userId = await getCurrentUserId();
 
@@ -95,7 +96,7 @@ export async function registerForEvent(
       "Registration error:",
       error.message,
       error.code,
-      error.details,
+      error.details
     );
     throw new Error(error.message || "Failed to register for event");
   }
@@ -142,7 +143,7 @@ export async function createEvent(eventData: {
       "Event creation error:",
       error.message,
       error.code,
-      error.details,
+      error.details
     );
     throw new Error(error.message || "Failed to create event");
   }
@@ -167,7 +168,7 @@ export async function updateEvent(
     is_team_event: boolean;
     max_team_size: number;
     category: string;
-  }>,
+  }>
 ) {
   const { data, error } = await supabase
     .from("events")
@@ -184,7 +185,7 @@ export async function updateEvent(
       "Event update error:",
       error.message,
       error.code,
-      error.details,
+      error.details
     );
     throw new Error(error.message || "Failed to update event");
   }
@@ -207,7 +208,7 @@ export async function getEvent(eventId: string) {
       "Error fetching event:",
       error.message,
       error.code,
-      error.details,
+      error.details
     );
     throw new Error(error.message || "Failed to fetch event");
   }
@@ -229,7 +230,7 @@ export async function getEvents() {
       "Error fetching events:",
       error.message,
       error.code,
-      error.details,
+      error.details
     );
     throw new Error(error.message || "Failed to fetch events");
   }
@@ -258,7 +259,7 @@ export async function getUserRegistrations() {
       "Error fetching registrations:",
       error.message,
       error.code,
-      error.details,
+      error.details
     );
     throw new Error(error.message || "Failed to fetch registrations");
   }
@@ -352,7 +353,7 @@ export async function getGalleryImages(galleryUid: string) {
   if (error || !data?.image_url) return [];
 
   return data.image_url.map((url: string) =>
-    url.replace("/upload/", "/upload/f_auto,q_auto/"),
+    url.replace("/upload/", "/upload/f_auto,q_auto/")
   );
 }
 
