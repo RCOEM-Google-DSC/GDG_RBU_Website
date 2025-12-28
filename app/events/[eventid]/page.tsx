@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { Ticket, Users, ArrowDownRight, Sparkles } from "lucide-react";
-import { getEvent, getGalleryImages } from "@/supabase/supabase";
+import { getEvent, getGalleryImages, getEventWithPartner } from "@/supabase/supabase";
 
 export default function EventPage({
   params,
@@ -19,7 +19,16 @@ export default function EventPage({
   useEffect(() => {
     params.then(async ({ eventid }) => {
       try {
-        const eventData = await getEvent(eventid);
+        // Prefer the helper that returns partner data if available.
+        // If getEventWithPartner exists and works, use it; otherwise fallback to getEvent.
+        let eventData: any = null;
+        try {
+          eventData = await getEventWithPartner(eventid);
+        } catch (e) {
+          // fallback to original getEvent if partner helper fails for any reason
+          eventData = await getEvent(eventid);
+        }
+
         if (!eventData) notFound();
 
         setEvent(eventData);
@@ -66,6 +75,18 @@ export default function EventPage({
   const shadow = "shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]";
   const cardBase = `bg-white ${border} ${shadow}`;
 
+  // small helper to normalize partner data and image urls
+  const makeSafeUrl = (u: string | null | undefined) =>
+    u ? String(u).replace("/upload/", "/upload/f_auto,q_auto/") : "";
+
+  // partner may be returned as `partners` (object or array) depending on your supabase query
+  const rawPartners = event.partners ?? event.partner ?? null; // try multiple possible keys
+  const partnersArray = Array.isArray(rawPartners)
+    ? rawPartners
+    : rawPartners
+    ? [rawPartners]
+    : [];
+
   return (
     <div className="min-h-screen  font-mono text-black selection:bg-[#8338ec] selection:text-white pb-32 relative overflow-x-hidden">
       <div
@@ -100,7 +121,11 @@ export default function EventPage({
           <Image
             height={420}
             width={800}
-            src={event.image_url.replace("/upload/", "/upload/f_auto,q_auto/")}
+            src={
+              event.image_url
+                ? event.image_url.replace("/upload/", "/upload/f_auto,q_auto/")
+                : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop"
+            }
             alt={event.title}
             className="w-full h-full object-cover border-2 border-black"
           />
@@ -150,6 +175,65 @@ export default function EventPage({
           </div>
         </div>
       </section>
+
+      {/* ---------------- PARTNERS (ADDED) ---------------- */}
+      {partnersArray.length > 0 && (
+        <section className="max-w-6xl mx-auto p-4 md:p-6 relative z-10">
+          <div className="flex justify-center mb-6">
+            <h2 className="text-2xl md:text-3xl font-black bg-white px-6 py-2 border-4 border-black rotate-0 md:-rotate-2 shadow-[4px_4px_0px_0px_#000]">
+              PARTNER{partnersArray.length > 1 ? "S" : ""}
+            </h2>
+          </div>
+
+          <div className={`${cardBase} p-6 md:p-8 flex flex-col gap-6`}>
+            {partnersArray.map((p: any, idx: number) => (
+              <div key={idx} className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                <div className="w-full md:w-1/3 flex items-center justify-center">
+                  {p.logo_url ? (
+                    <Image
+                      src={makeSafeUrl(p.logo_url)}
+                      alt={p.name || `partner-${idx}`}
+                      width={320}
+                      height={140}
+                      className="object-contain"
+                    />
+                  ) : (
+                    <div className="w-40 h-20 bg-gray-100 border border-gray-300 flex items-center justify-center">
+                      <span className="text-sm text-gray-500">No logo</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="w-full md:w-2/3 flex flex-col items-start md:items-start gap-2">
+                  <div className="font-black text-lg">{p.name || "Partner"}</div>
+                  {p.website && (
+                    <div className="text-sm text-gray-600 break-all">{p.website}</div>
+                  )}
+                  <div className="mt-3">
+                    {p.website ? (
+                      <a
+                        href={String(p.website)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-[#ffbe0b] text-black px-6 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 active:translate-y-1 transition-all"
+                      >
+                        Visit partner website
+                      </a>
+                    ) : (
+                      <button
+                        disabled
+                        className="inline-flex items-center gap-2 bg-gray-200 text-black px-6 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_#000] opacity-60 cursor-not-allowed"
+                      >
+                        No website available
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ---------------- THE CREW ---------------- */}
       {event.crew_url && (
@@ -218,22 +302,7 @@ export default function EventPage({
         </section>
       )}
 
-      {/* ---------------- CTA ---------------- */}
-      {event.status === "upcoming" && (
-        <div className="fixed bottom-6 md:bottom-8 right-4 md:right-6 z-50">
-          <button
-            className={`bg-[#ffbe0b] text-black text-lg md:text-xl font-black
-            py-3 px-6 md:py-4 md:px-8 border-4 border-black
-            shadow-[6px_6px_0px_0px_#000] md:shadow-[8px_8px_0px_0px_#000]
-            hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#000] md:hover:shadow-[10px_10px_0px_0px_#000]
-            active:translate-y-1 active:shadow-[4px_4px_0px_0px_#000]
-            transition-all flex items-center gap-2 md:gap-3 rotate-0 md:rotate-1`}
-          >
-            <Ticket size={24} className="md:w-7 md:h-7" />
-            GRAB TICKET {price}
-          </button>
-        </div>
-      )}
+  
     </div>
   );
 }
