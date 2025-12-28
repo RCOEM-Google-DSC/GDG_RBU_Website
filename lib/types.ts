@@ -37,6 +37,8 @@ export type Event = {
   organizer_id?: string | null;
   partner_id?: string | null;
   partners?: Partner | null;
+  min_team_size?: number | null;
+  whatsapp_url?: string | null;
 };
 
 // ---------- Partner ----------

@@ -1,464 +1,343 @@
-import React from "react";
-import { notFound } from "next/navigation";
+// app/events/[eventid]/page.tsx
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
-  Calendar,
-  MapPin,
-  Clock,
-  ArrowLeft,
-  ArrowRight,
-  Share2,
-  Award,
-  Gift,
-  Target,
-  CheckCircle2,
-  Users,
-  Trophy,
-  Zap,
-  Download,
-  Star,
-  Info,
   Ticket,
-  CreditCard,
-  UserPlus,
-  Shirt,
-  Smile,
-  Coffee,
-  Book,
+  ArrowDownRight,
+  Sparkles,
+  Calendar,
+  Clock,
+  MapPin,
 } from "lucide-react";
-import { events, pastEvents, upcomingEvents } from "@/db/mockdata";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { getEventWithPartner } from "@/supabase/supabase";
 
-interface PageProps {
-  params: Promise<{
-    eventid: string;
-  }>;
-}
+type EventRecord = {
+  id: string;
+  title?: string;
+  description?: string;
+  venue?: string | null;
+  date?: string | null;
+  time?: string | null;
+  event_time?: string | null;
+  image_url?: string | null;
+  crew_url?: string | null;
+  is_paid?: boolean | null;
+  fee?: number | null;
+  status?: string | null;
+  whatsapp_url?: string | null;
+  gallery_uid?: string | null;
+  partner_id?: string | null;
+  partners?: any; // can be object or array
+  is_team_event?: boolean | null;
+  min_team_size?: number | null;
+  max_team_size?: number | null;
+  // other fields allowed
+  [k: string]: any;
+};
 
-export default async function UpcomingEventDetailPage({ params }: PageProps) {
-  const { eventid } = await params;
+export default function UpcomingEventPage({
+  params,
+}: {
+  params: Promise<{ eventid: string }> | { eventid: string };
+}) {
+  const router = useRouter();
+  const [event, setEvent] = useState<EventRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [notFoundState, setNotFoundState] = useState(false);
 
-  const allEvents = [...events, ...pastEvents, ...upcomingEvents];
-  const event = allEvents.find((e) => e.id === eventid);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const resolved =
+          typeof (params as any).then === "function"
+            ? await (params as any)
+            : (params as any);
+        const { eventid } = resolved;
 
-  if (!event) {
-    notFound();
+        // <-- fetch event WITH partner relation
+        const eventData = await getEventWithPartner(eventid);
+        if (!eventData) {
+          if (!mounted) return;
+          setNotFoundState(true);
+          setLoading(false);
+          return;
+        }
+
+        if (!mounted) return;
+        setEvent(eventData);
+        setLoading(false);
+      } catch (err) {
+        console.error("Event load error", err);
+        if (mounted) {
+          setNotFoundState(true);
+          setLoading(false);
+        }
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [params]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen grid place-items-center font-black text-2xl bg-[#FDFCF8]">
+        Loading event…
+      </div>
+    );
   }
 
-  // Fallback data if fields are missing in mockdata
-  const eventImage =
-    ("image" in event ? event.image : event.image_url) ||
-    "https://images.unsplash.com/photo-1540575467063-178a50c2df87";
+  if (notFoundState || !event) {
+    return (
+      <div className="min-h-screen grid place-items-center bg-[#FDFCF8]">
+        <div className="text-center">
+          <h2 className="text-3xl font-black">Event not found</h2>
+          <p className="text-gray-600 mt-2">This event doesn't exist or has been removed.</p>
+          <button
+            onClick={() => router.push("/events")}
+            className="mt-6 inline-block bg-black text-white px-5 py-3 font-bold border-4 border-black shadow-[6px_6px_0_0_#000]"
+          >
+            Back to events
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ---------------- helpers ----------------
+  const safeImg = (url?: string | null, fallback = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop") =>
+    url ? String(url).replace("/upload/", "/upload/f_auto,q_auto/") : fallback;
+  const resigerUrl = "https://vision.hack2skill.com/event/gdgoc-25-techsprint-rbu?utm_source=hack2skill&utm_medium=homepage" 
+
+  // partner may come as object or array depending on how the join returns
+  const partnerData = (() => {
+    if (!event.partners) return null;
+    if (Array.isArray(event.partners)) return event.partners[0] ?? null;
+    return event.partners;
+  })();
+
+  const eventImage = safeImg(event.image_url);
+  const crewImage = event.crew_url ? safeImg(event.crew_url) : null;
 
   const eventDate = (() => {
-    if ("date" in event && typeof event.date === "string" && event.date)
-      return event.date;
-    if ("event_time" in event && event.event_time) {
-      return new Date(event.event_time).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
+    if (event.date) return event.date;
+    if (event.event_time) {
+      try {
+        return new Date(String(event.event_time)).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      } catch {}
     }
     return "TBA";
   })();
 
   const eventTime = (() => {
-    if ("time" in event && typeof event.time === "string" && event.time)
-      return event.time;
-    if ("event_time" in event && event.event_time) {
-      return new Date(event.event_time).toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+    if (event.time) return event.time;
+    if (event.event_time) {
+      try {
+        return new Date(String(event.event_time)).toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      } catch {}
     }
     return "TBA";
   })();
 
-  const eventLocation = ("location" in event ? event.location : "") || "TBA";
-  const eventEntryFee =
-    "entry_fee" in event ? ((event as any).entry_fee as string) : "Free"; // Assuming entry_fee key exists or default to Free
+  const eventVenue = event.venue || event.location || "TBA";
+  const price = event.is_paid ? `₹${event.fee ?? 0}` : "FREE";
+
+  // styling tokens (keeps your look)
+  const border = "border-4 border-black";
+  const shadow = "shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]";
+  const cardBase = `bg-white ${border} ${shadow}`;
 
   return (
-    <div className="min-h-screen bg-[#FDFCF8] text-gray-900 font-sans selection:bg-blue-500/30 text-sm md:text-base">
-      <main className="pt-0 pb-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Text Column */}
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div className="flex flex-wrap items-center gap-3">
-                {event.tags?.map((tag, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 rounded-full bg-gray-100 text-gray-600 border border-gray-200 text-xs font-bold uppercase tracking-wide"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+    <div className="min-h-screen font-mono text-black selection:bg-[#8338ec] selection:text-white pb-32 relative overflow-x-hidden bg-[#FDFCF8]">
+      {/* background grid */}
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
+          backgroundSize: "80px 80px",
+        }}
+      />
 
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-[1.1] tracking-tight">
-                {event.title}
-              </h1>
-
-              <p className="text-lg text-gray-600 leading-relaxed max-w-xl font-medium">
-                {event.description}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <Button className="h-12 px-8 rounded-xl bg-gray-900 hover:bg-black text-white text-base font-semibold shadow-xl hover:shadow-2xl flex items-center gap-2">
-                  Register Now <ArrowRight size={20} />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="h-12 px-8 rounded-xl border-2 border-gray-200 bg-transparent text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center gap-2"
-                >
-                  <Share2 size={20} /> Share
-                </Button>
-              </div>
-            </div>
-
-            {/* Image Column */}
-            <div className="relative isolate group hidden md:block">
-              <div className="relative aspect-4/3 rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white bg-gray-100 z-10 transition-transform duration-500 group-hover:scale-[1.01]">
-                <Image
-                  height={420}
-                  width={560}
-                  src={eventImage}
-                  alt={event.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-[2.5rem]"></div>
-              </div>
-
-              {/* Decorative Background Blobs */}
-              <div className="absolute -z-10 top-12 -right-12 w-full h-full bg-gray-200/50 rounded-[2.5rem] rotate-6 transition-transform duration-500 group-hover:rotate-3"></div>
-              <div className="absolute -z-20 -top-12 -left-12 w-full h-full bg-blue-50 rounded-[2.5rem] -rotate-3 transition-transform duration-500 group-hover:-rotate-1"></div>
-            </div>
+      {/* HERO */}
+      <div className="relative max-w-6xl mx-auto p-4 md:p-6 pt-0 pb-12 md:pb-16">
+        <div className={`absolute top-12 md:top-16 left-4 md:left-6 z-20 bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:-rotate-2 ${border} ${shadow} max-w-sm md:max-w-md`}>
+          <h1 className="text-2xl md:text-4xl font-black leading-[0.9] tracking-tighter uppercase">{event.title}</h1>
+          <div className="mt-2 font-bold border-t-2 border-black pt-2 flex justify-between text-xs md:text-sm">
+            <span>{eventDate}</span>
+            <span>{eventVenue}</span>
           </div>
         </div>
 
-        {/* Key Info Bar */}
-        <section className="border-y border-gray-200 bg-white shadow-sm">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
-              <div className="p-4 md:p-6 flex items-center gap-3 group hover:bg-gray-50 transition-colors cursor-default">
-                <div className="p-2.5 rounded-full bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                  <Calendar size={20} />
-                </div>
-                <div>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">
-                    Date
-                  </p>
-                  <p className="text-gray-900 font-semibold text-sm">
-                    {eventDate}
-                  </p>
-                </div>
+        <div className={`relative z-10 w-full h-[300px] md:h-[420px] ${border} shadow-[6px_6px_0px_0px_#8338ec] md:shadow-[8px_8px_0px_0px_#8338ec] bg-white p-2 rotate-0 md:rotate-1 mt-24 md:mt-20`}>
+          <Image height={420} width={1200} src={eventImage} alt={event.title || "Event image"} className="w-full h-full object-cover border-2 border-black" />
+
+          <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 rounded-full border-4 border-black shadow-[4px_4px_0_0px_#000] z-30">
+            <ArrowDownRight size={24} className="md:w-8 md:h-8 text-[#8338ec]" />
+          </div>
+        </div>
+      </div>
+
+      {/* DESCRIPTION + KEY INFO */}
+      <section className="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-start relative z-10">
+        {/* DESCRIPTION */}
+        <div className="md:col-span-8">
+          <div className={`${cardBase} p-6 md:p-8 rotate-0 md:-rotate-1 relative`}>
+            <Sparkles className="absolute -top-4 -left-4 text-[#ffbe0b] fill-[#ffbe0b]" size={40} />
+            <h2 className="text-2xl md:text-3xl font-black bg-black text-white inline-block px-2 py-1 mb-4 -rotate-0 md:-rotate-1">THE BRIEF</h2>
+            <p className="text-base md:text-xl font-bold leading-relaxed">{event.description}</p>
+          </div>
+        </div>
+
+        {/* KEY INFO */}
+        <div className="md:col-span-4">
+          <div className={`p-6 md:p-8 ${border} shadow-[6px_6px_0_0px_#000] rotate-0 md:rotate-2 text-center bg-white flex flex-col gap-4`}>
+            <div className="flex items-center gap-3 justify-center">
+              <div className="p-2.5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                <Calendar size={18} />
               </div>
-              <div className="p-4 md:p-6 flex items-center gap-3 group hover:bg-gray-50 transition-colors cursor-default">
-                <div className="p-2.5 rounded-full bg-green-100 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
-                  <Clock size={20} />
-                </div>
-                <div>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">
-                    Time
-                  </p>
-                  <p className="text-gray-900 font-semibold text-sm">
-                    {eventTime}
-                  </p>
-                </div>
+              <div className="text-left">
+                <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Date</p>
+                <p className="text-gray-900 font-semibold text-sm">{eventDate}</p>
               </div>
-              <div className="p-4 md:p-6 flex items-center gap-3 group hover:bg-gray-50 transition-colors cursor-default">
-                <div className="p-2.5 rounded-full bg-red-100 text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors">
-                  <MapPin size={20} />
+            </div>
+
+            <div className="flex items-center gap-3 justify-center">
+              <div className="p-2.5 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+                <Clock size={18} />
+              </div>
+              <div className="text-left">
+                <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Time</p>
+                <p className="text-gray-900 font-semibold text-sm">{eventTime}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 justify-center">
+              <div className="p-2.5 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
+                <MapPin size={18} />
+              </div>
+              <div className="text-left">
+                <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Venue</p>
+                <p className="text-gray-900 font-semibold text-sm truncate max-w-[140px]" title={eventVenue}>{eventVenue}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 justify-center">
+              <div className="p-2.5 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center">
+                <Ticket size={18} />
+              </div>
+              <div className="text-left">
+                <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Entry Fee</p>
+                <p className="text-gray-900 font-semibold text-sm">{price}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CREW */}
+      {crewImage && (
+        <section className="max-w-6xl mx-auto p-4 md:p-6 relative z-10">
+          <div className="flex justify-center mb-6">
+            <h2 className="text-2xl md:text-3xl font-black bg-white px-6 py-2 border-4 border-black rotate-0 md:-rotate-2 shadow-[4px_4px_0_0px_#000]">THE CREW</h2>
+          </div>
+
+          <div className={`${cardBase} p-3 md:p-4 bg-[#ffbe0b] rotate-0 md:rotate-1`}>
+            <div className="bg-black p-2 border-4 border-black rotate-0 md:-rotate-1">
+              <Image height={340} width={600} src={crewImage} alt="The Crew" className="w-full h-[280px] md:h-[340px] object-cover border-2 border-white contrast-125" />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* PARTNER */}
+      {partnerData && (
+        <section className="max-w-6xl mx-auto p-4 md:p-6 relative z-10">
+          <div className="flex justify-center mb-6">
+            <h2 className="text-2xl md:text-3xl font-black bg-white px-6 py-2 border-4 border-black rotate-0 md:-rotate-2 shadow-[4px_4px_0_0px_#000]">PARTNER</h2>
+          </div>
+
+          <div className={`${cardBase} p-6 md:p-8 rotate-0 md:rotate-1`}>
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              {partnerData.logo_url && (
+                <div className="bg-white p-4 border-4 border-black shadow-[4px_4px_0_0px_#000]">
+                  <Image
+                    src={String(partnerData.logo_url).replace("/upload/", "/upload/f_auto,q_auto/")}
+                    alt={partnerData.name || "Partner logo"}
+                    width={160}
+                    height={160}
+                    className="object-contain"
+                  />
                 </div>
-                <div>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">
-                    Venue
-                  </p>
-                  <p
-                    className="text-gray-900 font-semibold text-sm truncate max-w-[120px]"
-                    title={eventLocation}
+              )}
+
+              <div className="text-center md:text-left">
+                <h3 className="text-2xl font-black mb-2">{partnerData.name}</h3>
+                {partnerData.website && (
+                  <a
+                    href={partnerData.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block mt-2 bg-[#ffbe0b] text-black font-black px-4 py-2 border-4 border-black shadow-[4px_4px_0_0px_#000] hover:-translate-y-0.5 transition-transform"
                   >
-                    {eventLocation}
-                  </p>
-                </div>
-              </div>
-              <div className="p-4 md:p-6 flex items-center gap-3 group hover:bg-gray-50 transition-colors cursor-default">
-                <div className="p-2.5 rounded-full bg-yellow-100 text-yellow-600 group-hover:bg-yellow-600 group-hover:text-white transition-colors">
-                  <Ticket size={20} />
-                </div>
-                <div>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">
-                    Entry Fee
-                  </p>
-                  <p className="text-gray-900 font-semibold text-sm">
-                    {eventEntryFee}
-                  </p>
-                </div>
+                    Visit partner
+                  </a>
+                )}
               </div>
             </div>
           </div>
         </section>
+      )}
 
-        {/* Main Content Area */}
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
-          {/* About Section */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-4 flex items-center gap-3 text-gray-900">
-                About The Event
-              </h2>
-              <div className="prose prose-gray max-w-none text-gray-600 text-base leading-relaxed space-y-3">
-                <p>{event.description}</p>
-                <p>
-                  Whether you're a beginner exploring cloud concepts or an
-                  advanced developer looking to master Kubernetes, this event
-                  has something for everyone. We will cover topics ranging from{" "}
-                  <span className="text-gray-900 font-semibold">
-                    Generative AI, Serverless Architectures, to Big Data
-                    Analytics
-                  </span>
-                  .
-                </p>
+      {/* TEAM DETAILS (if applicable) */}
+      {event.is_team_event && (
+        <section className="max-w-6xl mx-auto p-4 md:p-6 relative z-10">
+          <div className="flex justify-center mb-6">
+            <h2 className="text-2xl md:text-3xl font-black bg-white px-6 py-2 border-4 border-black rotate-0 md:-rotate-2 shadow-[4px_4px_0_0px_#000]">TEAM INFO</h2>
+          </div>
+
+          <div className={`${cardBase} p-6 md:p-8 rotate-0 md:rotate-1`}>
+            <p className="font-bold mb-2">This is a team event.</p>
+            <div className="flex gap-4 items-center">
+              <div className="bg-white p-3 border-4 border-black shadow-[4px_4px_0_0px_#000]">
+                <div className="text-sm text-gray-500">Min team size</div>
+                <div className="text-xl font-black">{event.min_team_size ?? "N/A"}</div>
+              </div>
+              <div className="bg-white p-3 border-4 border-black shadow-[4px_4px_0_0px_#000]">
+                <div className="text-sm text-gray-500">Max team size</div>
+                <div className="text-xl font-black">{event.max_team_size ?? "N/A"}</div>
               </div>
             </div>
-            <div className="relative h-56 lg:h-80 min-h-[250px] rounded-3xl overflow-hidden border border-gray-200 group shadow-lg">
-              <Image
-                height={320}
-                width={480}
-                src="https://images.unsplash.com/photo-1591115765373-5207764f72e7?q=80&w=2072&auto=format&fit=crop"
-                alt="About Visual"
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              {/* Lighter overlay for light theme */}
-              <div className="absolute inset-0 bg-blue-900/10 mix-blend-overlay"></div>
-            </div>
-          </section>
+          </div>
+        </section>
+      )}
 
-          {/* Registration Timeline */}
-          <section className="py-4">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold mb-10 text-center text-gray-900">
-                Registration Process
-              </h2>
-
-              <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center px-4 md:px-0">
-                {/* Connecting Line (Desktop) */}
-                <div className="hidden md:block absolute top-5 left-12 right-12 h-0.5 bg-linear-to-r from-blue-200 via-blue-400/50 to-blue-200 z-0"></div>
-
-                {/* Connecting Line (Mobile) */}
-                <div className="md:hidden absolute left-5 top-6 bottom-6 w-0.5 bg-linear-to-b from-blue-200 via-blue-400/50 to-blue-200 z-0"></div>
-
-                {[
-                  {
-                    title: "Enter Details",
-                    desc: "Fill personal info",
-                    step: "1",
-                  },
-                  {
-                    title: "Make Payment",
-                    desc: "Secure transaction",
-                    step: "2",
-                  },
-                  {
-                    title: "Get Ticket",
-                    desc: "Receive QR via email",
-                    step: "3",
-                  },
-                  { title: "Check-in", desc: "Show QR at venue", step: "4" },
-                ].map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-row md:flex-col items-center gap-5 w-full md:w-auto mb-6 md:mb-0 bg-[#FDFCF8] md:bg-transparent p-2 md:p-0 rounded-xl relative z-10 group cursor-default"
-                  >
-                    {/* Circle */}
-                    <div className="w-10 h-10 rounded-full bg-white border border-gray-200 text-gray-900 font-bold flex items-center justify-center shrink-0 shadow-md group-hover:border-blue-500 group-hover:text-blue-500 transition-all duration-300 group-hover:scale-110 text-sm">
-                      {item.step}
-                    </div>
-                    {/* Text */}
-                    <div className="text-left md:text-center">
-                      <h3 className="text-sm font-bold text-gray-900 mb-0.5 group-hover:text-blue-600 transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-xs text-gray-500 font-medium">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Mission & Tasks */}
-          <section>
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-3">
-              <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-3 text-gray-900"></h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:border-blue-500/30 hover:shadow-md transition-all">
-                <div className="text-3xl font-bold text-blue-500 mb-3">01</div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1.5">
-                  Team Up
-                </h3>
-                <p className="text-gray-500 text-sm leading-relaxed">
-                  Form teams of up to 4 members. Join our Discord to find
-                  teammates.
-                </p>
-              </div>
-              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:border-green-500/30 hover:shadow-md transition-all">
-                <div className="text-3xl font-bold text-green-500 mb-3">02</div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1.5">
-                  Learn
-                </h3>
-                <p className="text-gray-500 text-sm leading-relaxed">
-                  Attend at least 3 technical sessions to unlock the "Learner"
-                  badge.
-                </p>
-              </div>
-              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:border-yellow-500/30 hover:shadow-md transition-all">
-                <div className="text-3xl font-bold text-yellow-500 mb-3">
-                  03
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1.5">
-                  Conquer
-                </h3>
-                <p className="text-gray-500 text-sm leading-relaxed">
-                  Complete 5 hands-on labs to earn certification & win prizes.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* Rewards & Perks */}
-          <section>
-            <h2 className="text-2xl md:text-3xl font-bold mb-8 flex items-center gap-3 text-gray-900">
-              Rewards & Perks
-            </h2>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Certificate Card */}
-              <div className="lg:col-span-2 bg-linear-to-br from-white to-gray-50 border border-gray-200 rounded-3xl p-8 relative overflow-hidden group hover:shadow-lg transition-all duration-500">
-                <div className="relative z-10 flex flex-col h-full justify-between">
-                  <div>
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
-                        <Award size={24} />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900">
-                        Official Certification
-                      </h3>
-                    </div>
-                    <p className="text-gray-600 text-sm max-w-md leading-relaxed mb-8">
-                      Earn a verifiable certificate of completion from Google
-                      Developer Groups. Perfect for your LinkedIn profile and
-                      professional portfolio.
-                    </p>
-                  </div>
-
-                  {/* Visual Certificate */}
-                  <div className="w-full h-48 md:h-64 bg-white rounded-xl border border-gray-200 relative overflow-hidden shadow-sm group-hover:shadow-md transition-all duration-500">
-                    <div className="absolute inset-0 bg-gray-50/50"></div>
-                    <div className="absolute inset-4 border-2 border-double border-gray-200 rounded-lg flex flex-col items-center justify-center p-6 text-center">
-                      {/* Google G Logo Placeholder */}
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-3">
-                        <span className="text-blue-600 font-bold text-lg">
-                          G
-                        </span>
-                      </div>
-                      <h4 className="text-gray-900 font-serif text-lg tracking-wide mb-1">
-                        Certificate of Completion
-                      </h4>
-                      <p className="text-gray-400 text-[10px] uppercase tracking-widest mb-4">
-                        Presented to
-                      </p>
-                      <span className="text-2xl font-serif text-blue-600 font-bold italic">
-                        John Doe
-                      </span>
-                      <div className="mt-auto w-full flex justify-between items-end opacity-50">
-                        <div className="flex flex-col gap-1">
-                          <div className="h-0.5 w-16 bg-gray-300"></div>
-                          <span className="text-[8px] text-gray-400">
-                            Organizer
-                          </span>
-                        </div>
-                        <div className="h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center">
-                          <Award size={12} className="text-gray-400" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Swag List */}
-              <div className="lg:col-span-1 flex flex-col h-full">
-                <div className="bg-white border border-gray-200 rounded-3xl p-6 relative overflow-hidden h-full flex flex-col shadow-sm">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2 bg-red-100 rounded-lg text-red-500">
-                      <Gift size={24} />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">
-                        Exclusive Swag
-                      </h3>
-                      <p className="text-xs text-gray-500">
-                        For top performers & quiz winners
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-4 grow justify-center">
-                    {[
-                      {
-                        name: "Diary",
-                        icon: Book,
-                        color: "text-blue-600",
-                        bg: "bg-blue-100",
-                      },
-                      {
-                        name: "T-Shirt",
-                        icon: Shirt,
-                        color: "text-blue-600",
-                        bg: "bg-blue-100",
-                      },
-                      {
-                        name: "Stickers",
-                        icon: Smile,
-                        color: "text-yellow-600",
-                        bg: "bg-yellow-100",
-                      },
-                      {
-                        name: "Badge",
-                        icon: Award,
-                        color: "text-purple-600",
-                        bg: "bg-purple-100",
-                      },
-                    ].map((item, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors group/item cursor-default border border-transparent hover:border-gray-100"
-                      >
-                        <div
-                          className={`w-10 h-10 rounded-lg ${item.bg} flex items-center justify-center ${item.color} group-hover/item:scale-110 transition-transform`}
-                        >
-                          <item.icon size={20} />
-                        </div>
-                        <span className="text-sm font-medium text-gray-700 group-hover/item:text-gray-900 transition-colors">
-                          {item.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+      {/* CTA: Register */}
+      {event.status === "upcoming" && (
+        <div className="fixed bottom-6 md:bottom-8 right-4 md:right-6 z-50">
+          <button
+            onClick={() => {
+              router.push(resigerUrl);
+            }}
+            className={`bg-[#ffbe0b] text-black text-lg md:text-xl font-black py-3 px-6 md:py-4 md:px-8 border-4 border-black shadow-[6px_6px_0_0px_#000] md:shadow-[8px_8px_0_0px_#000] hover:-translate-y-1 active:translate-y-1 transition-all flex items-center gap-2 md:gap-3 rotate-0 md:rotate-1`}
+          >
+            <Ticket size={20} className="md:w-7 md:h-7" />
+            Register
+          </button>
         </div>
-      </main>
+      )}
     </div>
   );
 }

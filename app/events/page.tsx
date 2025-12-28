@@ -51,10 +51,7 @@ const EventsPage = () => {
         getPastEvents(),
       ]);
 
-      // --- LOGS: inspect raw data from supabase
-      console.log("✅ RAW UPCOMING FROM getUpcomingEvents():", upcoming);
-      console.log("✅ RAW PAST FROM getPastEvents():", past);
-
+      
       setUpcomingEvents((upcoming || []) as Event[]);
       setPastEvents((past || []) as Event[]);
     } catch (err) {

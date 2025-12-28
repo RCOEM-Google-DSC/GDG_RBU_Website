@@ -355,3 +355,33 @@ export async function getGalleryImages(galleryUid: string) {
     url.replace("/upload/", "/upload/f_auto,q_auto/"),
   );
 }
+
+
+export async function getEventWithPartner(eventId: string) {
+  const { data, error } = await supabase
+    .from("events")
+    .select(`
+      *,
+      partners (
+        id,
+        name,
+        website,
+        logo_url,
+        created_at
+      )
+    `)
+    .eq("id", eventId)
+    .single();
+
+  if (error) {
+    console.error(
+      "Error fetching event with partner:",
+      error.message,
+      error.code,
+      error.details
+    );
+    throw new Error(error.message || "Failed to fetch event with partner");
+  }
+
+  return data;
+}
