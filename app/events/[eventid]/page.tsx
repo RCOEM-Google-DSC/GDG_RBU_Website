@@ -105,41 +105,44 @@ export default function EventPage({
 
       {/* hero */}
       <div className="relative max-w-6xl mx-auto p-4 md:p-6 pt-0 pb-12 md:pb-16">
-        {/* TITLE CARD */}
-        <div
-          className={`absolute top-12 md:top-16 left-4 md:left-6 z-20 bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:-rotate-2 ${border} ${shadow} max-w-sm md:max-w-md`}
-        >
-          <h1 className="text-2xl md:text-4xl font-black leading-[0.9] tracking-tighter uppercase">
-            {event.title}
-          </h1>
-          <div className="mt-2 font-bold border-t-2 border-black pt-2 flex justify-between text-xs md:text-sm">
-            <span>{eventDate}</span>
-            <span>{event.venue || "TBA"}</span>
-          </div>
-        </div>
-
-        {/* HERO IMAGE */}
-        <div
-          className={`relative z-10 w-full h-[300px] md:h-[420px] ${border}
-          shadow-[6px_6px_0px_0px_#8338ec] md:shadow-[8px_8px_0px_0px_#8338ec] bg-white p-2 rotate-0 md:rotate-1 mt-24 md:mt-20`}
-        >
-          <Image
-            height={420}
-            width={800}
-            src={
-              event.image_url
-                ? event.image_url.replace("/upload/", "/upload/f_auto,q_auto/")
-                : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop"
-            }
-            alt={event.title}
-            className="w-full h-full object-cover border-2 border-black"
-          />
-
-          <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] z-30">
-            <ArrowDownRight
-              size={24}
-              className="md:w-8 md:h-8 text-[#8338ec]"
+        {/* NOTE: changed structure so the yellow tag is positioned relative to the image box wrapper */}
+        <div className="relative">
+          {/* HERO IMAGE (the bordered box) */}
+          <div
+            className={`relative z-10 w-full h-[300px] md:h-[420px] ${border}
+            shadow-[6px_6px_0px_0px_#8338ec] md:shadow-[8px_8px_0px_0px_#8338ec] bg-white p-2 rotate-0 md:rotate-1 mt-36 sm:mt-32 md:mt-20`}
+          >
+            <Image
+              height={420}
+              width={800}
+              src={
+                event.image_url
+                  ? event.image_url.replace("/upload/", "/upload/f_auto,q_auto/")
+                  : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop"
+              }
+              alt={event.title}
+              className="w-full h-full object-cover border-2 border-black"
             />
+
+            <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] z-30">
+              <ArrowDownRight
+                size={24}
+                className="md:w-8 md:h-8 text-[#8338ec]"
+              />
+            </div>
+          </div>
+
+          {/* TITLE CARD: positioned relative to the image box wrapper and pulled ABOVE it */}
+          <div
+            className={`absolute left-4 -top-10 md:-top-14 z-20 bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:-rotate-2 ${border} ${shadow} max-w-sm md:max-w-md`}
+          >
+            <h1 className="text-2xl md:text-4xl font-black leading-[0.9] tracking-tighter uppercase">
+              {event.title}
+            </h1>
+            <div className="mt-2 font-bold border-t-2 border-black pt-2 flex justify-between text-xs md:text-sm">
+              <span>{eventDate}</span>
+              <span>{event.venue || "TBA"}</span>
+            </div>
           </div>
         </div>
       </div>
