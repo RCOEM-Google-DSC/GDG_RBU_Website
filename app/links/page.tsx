@@ -86,7 +86,7 @@ function Desktop10Helper1({
 
 function RightLogo() {
   return (
-    <div className="absolute right-[50px] top-[200px] w-[121px] h-[143px]">
+    <div className="absolute right-[50px] top-[100px] w-[121px] h-[143px]">
       <Image
         height={143}
         width={121}
@@ -100,7 +100,7 @@ function RightLogo() {
 
 function LeftLogo() {
   return (
-    <div className="absolute left-[50px] top-[200px] w-[123px] h-36">
+    <div className="absolute left-[50px] top-[100px] w-[123px] h-36">
       <Image
         height={144}
         width={123}
@@ -119,20 +119,22 @@ function Desktop10Component() {
       data-name="Desktop - 10"
     >
       <div
-        className="fixed inset-0 -z-10 pointer-events-none"
+        className="fixed inset-0 pointer-events-none z-0 "
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
+            'linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)',
           backgroundSize: '80px 80px',
         }}
       />
-      <div className="absolute h-24 left-[377px] top-[516px] w-[675px]">
+      {/* neo brutalism box */}
+      <div className="absolute h-24 left-[377px] top-[410px] w-[675px] z-10 bg-white">
         <div
           aria-hidden="true"
           className="absolute border-[5px] border-black border-solid inset-[-2.5px] pointer-events-none shadow-[9px_7px_0px_0px_black]"
         />
       </div>
-      <div className="absolute h-[146px] left-[759.5px] top-[495px] w-[335px]">
+      {/* right outer box */}
+      <div className="absolute h-[146px] left-[759.5px] top-[390px] w-[335px] z-10">
         <div className="absolute inset-[-0.34%_-0.15%_-0.34%_-0.44%]">
           <svg
             className="block size-full"
@@ -151,17 +153,17 @@ function Desktop10Component() {
       </div>
       <RightLogo />
       <LeftLogo />
-      <p className="absolute font-geist font-extrabold leading-tight left-[calc(50%-344px)] text-[64px] text-black text-nowrap top-[177px]">
+      <p className="absolute font-geist font-extrabold leading-tight left-[calc(50%-344px)] text-[64px] text-black text-nowrap top-20 z-10">
         Join Our Community.
       </p>
-      <p className="absolute font-geist font-extrabold leading-tight left-[calc(50%-424px)] text-[64px] text-black text-nowrap top-[268px]">
+      <p className="absolute font-geist font-extrabold leading-tight left-[calc(50%-424px)] text-[64px] text-black text-nowrap top-[165px] z-10">
         Connect and Grow with us.
       </p>
-      <p className="absolute font-geist font-extrabold leading-tight left-[714.5px] -translate-x-1/2 text-[55px] text-black text-nowrap top-[536px]">
+      <p className="absolute font-geist font-extrabold leading-tight left-[714.5px] -translate-x-1/2 text-[55px] text-black text-nowrap top-[430px] z-10">
         Unlock Your Potential.
       </p>
 
-      <div className="absolute left-[289px] top-[686px] w-[870px]">
+      <div className="absolute left-[289px] top-[565px] w-[870px] z-10">
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-4 gap-4">
             <SocialButton
@@ -203,14 +205,14 @@ function Desktop10Component() {
         </div>
       </div>
 
-      <p className="absolute font-geist-mono font-medium leading-[normal] left-[calc(50%-11px)] text-[24px] text-black text-center top-[372px] translate-x-[-50%] w-[612px] ">
+      <p className="absolute font-geist-mono font-medium leading-[normal] left-[calc(50%-11px)] text-[24px] text-black text-center top-[270px] translate-x-[-50%] w-[612px] z-10">
         Connect with like-minded individuals, share knowledge, and grow together
         across our platform
       </p>
-      <p className="absolute font-geist-mono font-semibold leading-[normal] left-1/2 -translate-x-1/2 text-[#6e6d6d] text-[24px] text-nowrap top-[870px]">
+      <p className="absolute font-geist-mono font-semibold leading-[normal] left-1/2 -translate-x-1/2 text-[#6e6d6d] text-[24px] text-nowrap top-[750px] z-10">
         Stay connected
       </p>
-      <div className="absolute h-8 left-[348.5px] top-[489px] w-[87px]">
+      <div className="absolute h-8 left-[348.5px] top-[385px] w-[87px]">
         <div className="absolute inset-[-3.13%_0_0_-1.15%]">
           <svg
             className="block size-full"
@@ -228,7 +230,7 @@ function Desktop10Component() {
         </div>
       </div>
       <div
-        className="absolute flex h-[58.5px] items-center justify-center left-[901px] top-[827px] w-[80.5px]"
+        className="absolute flex h-[58.5px] items-center justify-center left-[901px] top-[710px] w-[80.5px]"
         style={
           {
             "--transform-inner-width": "0",
@@ -257,7 +259,7 @@ function Desktop10Component() {
         </div>
       </div>
       <div
-        className="absolute flex h-[67px] items-center justify-center left-[258px] top-[659px] w-[39.5px]"
+        className="absolute flex h-[67px] items-center justify-center left-[258px] top-[540px] w-[39.5px]"
         style={
           {
             "--transform-inner-width": "0",
@@ -285,7 +287,7 @@ function Desktop10Component() {
           </div>
         </div>
       </div>
-      <div className="absolute h-[94px] left-[347.5px] top-[550.5px] w-[17px]">
+      <div className="absolute h-[94px] left-[347.5px] top-[445px] w-[17px]">
         <div className="absolute inset-[0_0_-1.06%_-5.88%]">
           <svg
             className="block size-full"
@@ -302,7 +304,7 @@ function Desktop10Component() {
           </svg>
         </div>
       </div>
-      <div className="absolute h-[54px] left-[450px] top-[831px] w-[124px]">
+      <div className="absolute h-[54px] left-[450px] top-[715px] w-[124px]">
         <div className="absolute inset-[0_0_-1.85%_-0.81%]">
           <svg
             className="block size-full"
@@ -319,7 +321,7 @@ function Desktop10Component() {
           </svg>
         </div>
       </div>
-      <div className="absolute h-0 left-[400px] top-[643.5px] w-[98px]">
+      <div className="absolute h-0 left-[400px] top-[538px] w-[98px]">
         <div className="absolute inset-[-7.36px_-1.02%_-7.36px_0]">
           <svg
             className="block size-full"
@@ -335,7 +337,7 @@ function Desktop10Component() {
           </svg>
         </div>
       </div>
-      <div className="absolute left-[252px] size-14 top-[564px]">
+      <div className="absolute left-[252px] size-14 top-[450px]">
         <div className="absolute bottom-1/4 left-[6.7%] right-[6.7%] top-0">
           <svg
             className="block size-full"
@@ -352,7 +354,7 @@ function Desktop10Component() {
           </svg>
         </div>
       </div>
-      <div className="absolute left-[1207px] size-[34px] top-[726px]">
+      <div className="absolute left-[1207px] size-[34px] top-[610px]">
         <div className="absolute bottom-1/4 left-[15.29%] right-[15.29%] top-[11.76%]">
           <svg
             className="block size-full"
@@ -369,16 +371,16 @@ function Desktop10Component() {
           </svg>
         </div>
       </div>
-      <div className="absolute h-6 left-[1002px] rounded-[2px] top-[785px] w-[38px]">
+      <div className="absolute h-6 left-[1002px] rounded-[2px] top-[670px] w-[38px]">
         <div
           aria-hidden="true"
           className="absolute border-2 border-black border-solid -inset-px pointer-events-none rounded-[3px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
         />
       </div>
-      <Desktop10Helper1 additionalClassNames="left-[374px] top-[820px]" />
-      <Desktop10Helper1 additionalClassNames="left-[1130px] top-[631px]" />
-      <Desktop10Helper2 additionalClassNames="left-[316.27px] top-[791.56px]" />
-      <Desktop10Helper2 additionalClassNames="left-[871px] top-[659px]" />
+      <Desktop10Helper1 additionalClassNames="left-[374px] top-[705px]" />
+      <Desktop10Helper1 additionalClassNames="left-[1130px] top-[518px]" />
+      <Desktop10Helper2 additionalClassNames="left-[316.27px] top-[677px]" />
+      <Desktop10Helper2 additionalClassNames="left-[871px] top-[545px]" />
     </div>
   );
 }
@@ -403,16 +405,13 @@ function MobileLinksView() {
           Connect with like-minded individuals, share knowledge, and grow together across our platform
         </p>
 
-        <div className="relative mb-6">
-          <div className="absolute left-0 right-0 top-2">
-            <div className="mx-auto w-[90%]">
-              <div className="border-4 border-black shadow-[8px_8px_0_#000] bg-[#E6E6E6] p-4 pl-6 pr-6 rounded-sm">
-                <h3 className="font-geist font-extrabold text-lg">Unlock Your Potential.</h3>
-              </div>
+        <div className="relative mb-8 flex justify-center">
+          <div className="relative inline-block">
+            <div className="border-[3px] border-black bg-white shadow-[6px_5px_0px_0px_black] px-6 py-3">
+              <h3 className="font-geist font-extrabold text-base whitespace-nowrap">Unlock Your Potential.</h3>
             </div>
+            <div className="absolute top-0 right-0 w-full h-full -z-10 translate-x-[6px] translate-y-[5px] bg-[#D9D9D9] border-[3px] border-black border-l-0 border-t-0" />
           </div>
-          {/* spacer to keep height */}
-          <div className="h-20" />
         </div>
 
         <div className="grid grid-cols-1 gap-4 mb-6">
@@ -485,7 +484,7 @@ function MobileLinksView() {
 
 export default function Desktop() {
   return (
-    <div className="min-h-screen bg-white flex justify-center pb-8">
+    <div className="min-h-screen bg-white flex justify-center">
       <div className="hidden md:block">
         <Desktop10Component />
       </div>
