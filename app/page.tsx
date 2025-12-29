@@ -1,12 +1,57 @@
 "use client";
-import { upcomingEvents } from "@/db/mockdata";
+import React, { useEffect, useState } from "react";
 import EventTicket from "./Components/Common/UpcomingEvent";
 import { motion } from "framer-motion";
 import Faq from "./Components/Landing/FAQ";
 import MeetOurTeam from "./Components/Landing/MeetOurTeam";
 import Footer from "./Components/Landing/Footer";
 import Hero from "./Components/Landing/Hero";
+import { getUpcomingEvents } from "@/supabase/supabase";
+
+type Event = {
+  id: string;
+  title: string;
+  description: string;
+  event_time: string;
+  image_url?: string | null;
+  venue?: string | null;
+  date?: string | null;
+  time?: string | null;
+  status: string;
+  register_url?: string | null;
+};
+
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop";
+
+const REGISTER_URL =
+  "https://vision.hack2skill.com/event/gdgoc-25-techsprint-rbu?utm_source=hack2skill&utm_medium=homepage";
+
+const cloudinarySafe = (url?: string | null) => {
+  if (!url) return FALLBACK_IMAGE;
+  return url.includes("/upload/")
+    ? url.replace("/upload/", "/upload/f_auto,q_auto/")
+    : url;
+};
+
 export default function Home() {
+  const [events, setEvents] = useState<Event[]>([]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const upcoming = await getUpcomingEvents();
+        if (upcoming) {
+          setEvents(upcoming as Event[]);
+        }
+      } catch (err) {
+        console.error("Error fetching upcoming events:", err);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   return (
     <div className="w-full relative">
       <div
@@ -34,19 +79,42 @@ export default function Home() {
           <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 self-start">
             Upcoming Event
           </h2>
-          {upcomingEvents.map((event) => (
-            <EventTicket
-              key={event.id}
-              id={event.id}
-              title={event.title}
-              date={new Date(event.date)}
-              time={event.time}
-              image={event.image}
-              tags={event.tags}
-              tagColor={event.tagColor}
-              description={event.description}
-            />
-          ))}
+          {events.length > 0 ? (
+            events.map((event) => {
+              const registerUrl = event.register_url ?? REGISTER_URL;
+              const imageSrc = cloudinarySafe(
+                event.image_url ?? FALLBACK_IMAGE
+              );
+              return (
+                <EventTicket
+                  key={event.id}
+                  id={event.id}
+                  title={event.title}
+                  date={
+                    event.date
+                      ? new Date(event.date)
+                      : new Date(event.event_time)
+                  }
+                  time={
+                    event.time ||
+                    new Date(event.event_time).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  }
+                  image={imageSrc}
+                  tags={[event.status]}
+                  tagColor="#FBBC04"
+                  description={event.description}
+                  registerUrl={registerUrl}
+                />
+              );
+            })
+          ) : (
+            <div className="text-gray-500 text-center py-12">
+              No upcoming events at the moment.
+            </div>
+          )}
         </motion.div>
       </section>
 
