@@ -1,7 +1,6 @@
 // app/layout.tsx
 import "./globals.css";
 import NavBar from "./Components/Navigation/NavBar";
-import { Toaster } from "sonner";
 import { RootProvider } from "fumadocs-ui/provider/next";
 
 import { GeistSans } from "geist/font/sans";
@@ -79,7 +78,6 @@ export default function RootLayout({
               The preloader is mounted only on the Home page (app/page.tsx). */}
           <NavBar />
           <main className="relative w-full pt-[70px]">{children}</main>
-          <Toaster position="top-right" richColors />
         </RootProvider>
       </body>
     </html>

@@ -226,8 +226,8 @@ export default function TeamPage() {
       >
         {domains.map((domain) => {
           const members = groupedDomains[domain] || [];
-          // Find the domain lead for this domain
-          const domainLead = domainLeads.find((lead) => lead.domain === domain);
+          // Find ALL domain leads for this domain
+          const currentDomainLeads = domainLeads.filter((lead) => lead.domain === domain);
 
           return (
             <section
@@ -253,18 +253,18 @@ export default function TeamPage() {
               <div className="flex-1 relative">
                 <div className="p-4 sm:p-6 md:p-12 lg:p-16 xl:p-24 relative z-10">
                   <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12 justify-items-center">
-                    {/* Render domain lead first if exists */}
-                    {domainLead && (
+                    {/* Render ALL domain leads first */}
+                    {currentDomainLeads.map((lead) => (
                       <LeaderCard
-                        key={domainLead.id}
-                        id={domainLead.userid}
-                        name={domainLead.name}
-                        role={domainLead.role}
-                        imageUrl={domainLead.image_url}
-                        githubUrl={domainLead.github ?? ""}
-                        linkedinUrl={domainLead.linkedin ?? ""}
+                        key={lead.id}
+                        id={lead.userid}
+                        name={lead.name}
+                        role={lead.role}
+                        imageUrl={lead.image_url}
+                        githubUrl={lead.github ?? ""}
+                        linkedinUrl={lead.linkedin ?? ""}
                       />
-                    )}
+                    ))}
 
                     {/* Render regular team members */}
                     {members.map((m) => (

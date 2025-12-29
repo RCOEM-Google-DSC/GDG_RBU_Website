@@ -6,7 +6,7 @@ import { Mail, Lock, User, ArrowRight, ClipboardList } from "lucide-react";
 import { BiLogIn } from "react-icons/bi";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   const [mode, setMode] = useState("login");
@@ -74,6 +74,8 @@ export default function RegisterPage() {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       toast.success("You are logged in");
+      // Redirect to profile page after successful login
+      window.location.href = "/profile";
     } catch (err) {
       console.error(err);
       toast.error((err as Error)?.message || "Login error");
@@ -112,7 +114,6 @@ export default function RegisterPage() {
 
   return (
     <section className="relative h-[calc(100vh-70px)] overflow-hidden">
-      <Toaster />
       <div
         className="fixed inset-0 -z-10"
         style={{
