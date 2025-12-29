@@ -74,7 +74,7 @@ export default function TeamPage() {
             domain: member.domain || "",
             name: userData?.name || "Unknown",
             email: userData?.email || "",
-            image_url: userData?.image_url || "/placeholder.png",
+            image_url: userData?.image_url || "https://placehold.co/400x500/png",
             github: member.github || "https://github.com",
             linkedin: member.linkedin || "https://linkedin.com",
           };
@@ -164,7 +164,7 @@ export default function TeamPage() {
                       .getElementById(`domain-${domain}`)
                       ?.scrollIntoView({ behavior: "smooth", block: "start" })
                   }
-                  className="px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-bold uppercase tracking-wide transition-all duration-200 hover:translate-x-1 hover:translate-y-1 font-retron"
+                  className="px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-bold uppercase tracking-wide transition-all duration-200 hover:translate-x-1 hover:translate-y-1 "
                   style={{
                     border: "3px solid #000000",
                     boxShadow: "3px 3px 0px #000000",
@@ -242,7 +242,7 @@ export default function TeamPage() {
               <div className="w-full md:w-[35%] xl:w-[30%] p-4 sm:p-6 md:p-8 lg:p-12">
                 <div className="md:sticky md:top-24">
 
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9]">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] font-retron">
                     {domain}
                   </h1>
                 </div>

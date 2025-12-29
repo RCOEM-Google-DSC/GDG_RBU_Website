@@ -62,7 +62,7 @@ const Footer = () => {
               className=""
             />
             <h1
-              className="font-black text-2xl sm:text-3xl text-center"
+              className="font-black text-2xl sm:text-3xl text-center font-retron"
               style={{ color: isDark ? "#ffffff" : "#000000" }}
             >
               Google Developer Groups

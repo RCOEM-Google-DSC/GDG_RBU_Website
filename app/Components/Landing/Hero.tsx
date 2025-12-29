@@ -26,8 +26,9 @@ export default function Hero() {
             className="
               uppercase font-extrabold tracking-tight
               mb-4
-              text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl
+              text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl
               leading-[0.95]
+              font-retron
             "
           >
             <span className="block md:whitespace-nowrap font-retron">

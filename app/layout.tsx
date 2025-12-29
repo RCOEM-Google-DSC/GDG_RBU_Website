@@ -6,7 +6,12 @@ import GDGPreloader from "./Components/Common/GDGPreloader";
 
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import localFont from "next/font/local";
 
+const retron = localFont({
+  src: "../lib/Retron2000.ttf",
+  variable: "--font-retron",
+});
 export const metadata = {
   title: "GDG RBU | Google Developer Group at RBU",
   description:
@@ -61,6 +66,7 @@ export default function RootLayout({
         className={`
           ${GeistSans.variable}
           ${GeistMono.variable}
+          ${retron.variable}
           font-sans antialiased flex flex-col min-h-screen
         `}
       >

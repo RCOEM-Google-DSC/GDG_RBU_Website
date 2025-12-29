@@ -51,7 +51,7 @@ const MeetOurTeam = () => {
 
                     <div>
                       <h3
-                        className="text-base sm:text-lg md:text-base lg:text-lg mb-1 sm:mb-2 font-black"
+                        className="text-base sm:text-lg md:text-base lg:text-lg mb-1 sm:mb-2 font-black font-retron"
                         style={{ color: "#000000" }}
                       >
                         Passionate Community Leaders
@@ -75,7 +75,7 @@ const MeetOurTeam = () => {
 
                     <div>
                       <h3
-                        className="text-base sm:text-lg md:text-base lg:text-lg mb-1 sm:mb-2 font-black"
+                        className="text-base sm:text-lg md:text-base lg:text-lg mb-1 sm:mb-2 font-black font-retron"
                         style={{ color: "#000000" }}
                       >
                         Empowering Developers

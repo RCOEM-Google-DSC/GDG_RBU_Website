@@ -74,13 +74,13 @@ export default function Home() {
       {/* upcoming events section */}
       <section className="w-full px-6 md:px-10 lg:px-20 py-10 relative z-10">
         <motion.div
-          className="w-full flex flex-col items-center justify-center pt-0 pb-12 sm:pt-0 sm:pb-14 bg-background text-foreground px-4"
+          className="w-full flex flex-col items-center justify-center pt-0 pb-12 sm:pt-0 sm:pb-14 bg-background text-foreground px-4 font-retron"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ amount: 0.3 }}
           transition={{ duration: 0.3, ease: "easeInOut", delay: 0.1 }}
         >
-          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 self-start">
+          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 self-start font-retron">
             Upcoming Event
           </h2>
 

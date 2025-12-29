@@ -59,7 +59,7 @@ const UpcomingEvent = ({
               {/* Bottom Info */}
               <div>
                 <div className="mb-3">
-                  <h2 className="text-3xl font-bold text-white leading-tight mb-3">
+                  <h2 className="text-3xl font-bold text-white leading-tight mb-3 font-retron">
                     {title}
                   </h2>
                   <p className="text-base text-white/80 line-clamp-3">
@@ -118,7 +118,7 @@ const UpcomingEvent = ({
                 {/* Ticket Top */}
                 <div>
                   <Zap className="w-12 h-12 text-black mb-4 stroke-[1.5]" />
-                  <h3 className="text-6xl font-black text-black leading-[0.9] mb-4">
+                  <h3 className="text-6xl font-black text-black leading-[0.9] mb-4 font-retron">
                     New
                     <br />
                     Event
@@ -187,7 +187,7 @@ const UpcomingEvent = ({
 
               {/* Bottom Section with Title */}
               <div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-2">
+                <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-2 font-retron">
                   {title}
                 </h2>
                 <p className="text-sm text-white/80 line-clamp-2 mb-4">
