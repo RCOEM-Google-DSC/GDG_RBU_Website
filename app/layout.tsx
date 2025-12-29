@@ -1,17 +1,20 @@
+// app/layout.tsx
 import "./globals.css";
 import NavBar from "./Components/Navigation/NavBar";
 import { Toaster } from "sonner";
 import { RootProvider } from "fumadocs-ui/provider/next";
-import GDGPreloader from "./Components/Common/GDGPreloader";
 
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import localFont from "next/font/local";
 
+/* Local Retron font (from project root /lib/Retron2000.ttf) */
 const retron = localFont({
   src: "../lib/Retron2000.ttf",
   variable: "--font-retron",
+  display: "swap",
 });
+
 export const metadata = {
   title: "GDG RBU | Google Developer Group at RBU",
   description:
@@ -45,7 +48,8 @@ export const metadata = {
   authors: [{ name: "GDG RBU" }],
   openGraph: {
     title: "GDG RBU | Google Developer Group at RBU",
-    description: "Join the official Google Developer Group at RBU for tech events, workshops, and community learning.",
+    description:
+      "Join the official Google Developer Group at RBU for tech events, workshops, and community learning.",
     type: "website",
   },
 };
@@ -71,54 +75,8 @@ export default function RootLayout({
         `}
       >
         <RootProvider theme={{ enabled: false }}>
-          {/* PRELOADER MOUNTS ONCE */}
-          <GDGPreloader />
-
-          {/* Inline CSS to hide nav / toasts while preloader-active and to hide the preloader wrapper when not active */}
-          <style>{`
-            /* Show the preloader wrapper only while html.preloader-active is present */
-            html.preloader-active .gdg-preloader-wrapper {
-              display: grid !important;
-            }
-
-            /* IMPORTANT: hide the wrapper once preloader-active is removed */
-            html:not(.preloader-active) .gdg-preloader-wrapper {
-              display: none !important;
-              visibility: hidden !important;
-              pointer-events: none !important;
-              opacity: 0 !important;
-            }
-
-            /* hide the site nav while preloader-active is present */
-            html.preloader-active nav,
-            html.preloader-active .navbar,
-            html.preloader-active #navbar,
-            html.preloader-active .site-nav,
-            html.preloader-active .nav-wrapper {
-              display: none !important;
-            }
-
-            /* hide sonner toasts during preloader so nothing overlaps */
-            html.preloader-active .sonner-toast,
-            html.preloader-active .toaster,
-            html.preloader-active .toaster-root {
-              display: none !important;
-            }
-
-            /* prevent scroll while preloader-active */
-            html.preloader-active,
-            html.preloader-active body {
-              overflow: hidden !important;
-              touch-action: none !important;
-              overscroll-behavior: none !important;
-            }
-
-            /* optionally hide focus outlines during preload to avoid tiny flicker */
-            html.preloader-active *:focus {
-              outline: none !important;
-            }
-          `}</style>
-
+          {/* NOTE: preloader is intentionally NOT mounted here.
+              The preloader is mounted only on the Home page (app/page.tsx). */}
           <NavBar />
           <main className="relative w-full pt-[70px]">{children}</main>
           <Toaster position="top-right" richColors />

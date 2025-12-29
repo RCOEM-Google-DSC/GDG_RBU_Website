@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import GDGPreloader from "./Components/Common/GDGPreloader";
 import EventTicket from "./Components/Common/UpcomingEvent";
 import { motion } from "framer-motion";
 import Faq from "./Components/Landing/FAQ";
@@ -57,6 +58,10 @@ export default function Home() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.45, ease: "easeInOut" }}
     >
+      {/* Mount preloader here — it contains the session guard so it shows only once per tab,
+          and GDGPreloader itself checks the pathname so it only runs on Home ("/"). */}
+      <GDGPreloader />
+
       <div
         className="fixed inset-0 -z-10 pointer-events-none"
         style={{
@@ -74,13 +79,13 @@ export default function Home() {
       {/* upcoming events section */}
       <section className="w-full px-6 md:px-10 lg:px-20 py-10 relative z-10">
         <motion.div
-          className="w-full flex flex-col items-center justify-center pt-0 pb-12 sm:pt-0 sm:pb-14 bg-background text-foreground px-4 font-retron"
+          className="w-full flex flex-col items-center justify-center pt-0 pb-12 sm:pt-0 sm:pb-14 bg-background text-foreground px-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ amount: 0.3 }}
           transition={{ duration: 0.3, ease: "easeInOut", delay: 0.1 }}
         >
-          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 self-start font-retron">
+          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 self-start">
             Upcoming Event
           </h2>
 
