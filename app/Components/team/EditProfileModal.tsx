@@ -1,7 +1,6 @@
-// app/Components/team/EditProfileModal.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -97,20 +96,6 @@ interface EditProfileModalProps {
   userId: string;
 }
 
-/**
- * Helper: determine whether it's safe to pass `src` to next/image.
- * next/image expects either an absolute URL (http/https) OR a local path starting with "/".
- * For everything else (blob:, data:, empty, not a string) we'll use plain <img>.
- */
-function isNextImageSafe(src?: string | null) {
-  if (!src) return false;
-  const s = String(src).trim();
-  if (!s) return false;
-  if (s.startsWith("/")) return true;
-  if (s.startsWith("http://") || s.startsWith("https://")) return true;
-  return false;
-}
-
 export default function EditProfileModal({
   open,
   onClose,
@@ -120,26 +105,9 @@ export default function EditProfileModal({
 }: EditProfileModalProps) {
   const u = profile?.users ?? {};
 
-  // imagePreview can be:
-  // - a blob URL (created from selected file)
-  // - or a remote/uploaded url (https://... or /...)
-  const [imagePreview, setImagePreview] = useState<string>(u.image_url || "");
+  const [imagePreview, setImagePreview] = useState(u.image_url || "");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Keep reference to last created object URL to revoke it on cleanup
-  useEffect(() => {
-    return () => {
-      if (imagePreview && imagePreview.startsWith("blob:")) {
-        try {
-          URL.revokeObjectURL(imagePreview);
-        } catch {
-          /* noop */
-        }
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Initialize form with react-hook-form and zod
   const form = useForm<ProfileFormValues>({
@@ -163,80 +131,34 @@ export default function EditProfileModal({
     },
   });
 
-  /* -------- IMAGE UPLOAD --------
-     - shows immediate local preview using URL.createObjectURL
-     - uploads the file to the server endpoint (/api/upload)
-     - expects server to return either { transformed_url, url, secure_url, public_id }.
-     - prefers transformed_url (Cloudinary eager f_auto,q_auto), falls back to url/secure_url.
-  */
+  /* -------- IMAGE UPLOAD -------- */
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    setUploading(true);
     setError(null);
 
-    // Show immediate local preview (so user sees something fast)
-    const localUrl = URL.createObjectURL(file);
-    // revoke previous blob if any
-    if (imagePreview && imagePreview.startsWith("blob:")) {
-      try {
-        URL.revokeObjectURL(imagePreview);
-      } catch {}
-    }
-    setImagePreview(localUrl);
-
-    setUploading(true);
     try {
       const body = new FormData();
       body.append("file", file);
 
-      // NOTE: your server route may be /api/upload or /api/upload-cloudinary
-      // Keep using /api/upload (matches your existing usage). Adjust if your route is different.
       const res = await fetch("/api/upload", { method: "POST", body });
-      if (!res.ok) {
-        const text = await res.text().catch(() => null);
-        throw new Error(
-          `Upload endpoint returned ${res.status}${text ? `: ${text}` : ""}`,
-        );
-      }
+      const data = await res.json();
 
-      const data = await res.json().catch(() => ({}));
+      if (!data?.url) throw new Error("Upload failed");
 
-      // Accept multiple possible response shapes
-      // prefer transformed_url (eager), then url, then secure_url
-      const uploadedUrl =
-        data?.transformed_url ?? data?.url ?? data?.secure_url ?? null;
+      setImagePreview(data.url);
+      form.setValue("image_url", data.url);
 
-      if (!uploadedUrl) {
-        // If server didn't return a usable url, surface the server response for debugging
-        throw new Error(
-          `Upload failed: unexpected server response (${JSON.stringify(data)})`,
-        );
-      }
-
-      // Update preview + form value
-      setImagePreview(uploadedUrl);
-      form.setValue("image_url", uploadedUrl);
-
-      // Persist image_url to users table (same as your previous code)
-      const { error: supaErr } = await supabase
+      await supabase
         .from("users")
-        .update({ image_url: uploadedUrl })
+        .update({ image_url: data.url })
         .eq("id", userId);
-
-      if (supaErr) {
-        console.error("Supabase update error:", supaErr);
-        // don't throw — allow user to still see uploaded image; but show error message
-        setError("Uploaded but failed to save image URL to database.");
-      }
-    } catch (err: any) {
-      console.error("Image upload error:", err);
-      setError(err?.message ?? "An error occurred during upload.");
-      // If upload failed, keep the local preview but do not set form.image_url to it
-      // (local blob can't be saved). Optionally you could clear the local preview:
-      // setImagePreview(u.image_url || "");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setUploading(false);
     }
@@ -247,6 +169,8 @@ export default function EditProfileModal({
     setError(null);
 
     try {
+      console.log("Form values:", values);
+
       const userUpdate = {
         name: values.name,
         branch: values.branch,
@@ -280,6 +204,11 @@ export default function EditProfileModal({
         cv_url: values.cv_url || null,
       };
 
+      console.log("Member update payload:", memberUpdate);
+      console.log("Bio value:", values.bio);
+      console.log("Thought value:", values.thought);
+      console.log("Updating for userId:", userId);
+
       // First, check if a team_members record exists for this user
       const { data: existingMember } = await supabase
         .from("team_members")
@@ -287,10 +216,14 @@ export default function EditProfileModal({
         .eq("userid", userId)
         .maybeSingle();
 
+      console.log("Existing team member record:", existingMember);
+
       let updateData;
       let memberError;
 
       if (!existingMember) {
+        // If no record exists, insert a new one
+        console.log("No team_members record found, creating one...");
         const insertResult = await supabase
           .from("team_members")
           .insert({ userid: userId, ...memberUpdate })
@@ -299,6 +232,8 @@ export default function EditProfileModal({
         updateData = insertResult.data;
         memberError = insertResult.error;
       } else {
+        // Update existing record
+        console.log("Updating existing team_members record...");
         const updateResult = await supabase
           .from("team_members")
           .update(memberUpdate)
@@ -314,6 +249,7 @@ export default function EditProfileModal({
         throw memberError;
       }
 
+      // Trigger data refresh in parent component
       if (onSuccess) {
         onSuccess();
       }
@@ -324,9 +260,6 @@ export default function EditProfileModal({
       setError(err instanceof Error ? err.message : "An error occurred");
     }
   };
-
-  // Decide whether to render Next/Image or <img>
-  const showNextImage = isNextImageSafe(imagePreview);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -340,7 +273,10 @@ export default function EditProfileModal({
         }}
       >
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black" style={{ color: "#000000" }}>
+          <DialogTitle
+            className="text-2xl font-black"
+            style={{ color: "#000000" }}
+          >
             Edit Profile
           </DialogTitle>
           <DialogDescription className="font-bold" style={{ color: "#000000" }}>
@@ -367,24 +303,13 @@ export default function EditProfileModal({
                   }}
                 >
                   {imagePreview ? (
-                    showNextImage ? (
-                      <Image
-                        src={imagePreview}
-                        alt="Profile"
-                        width={112}
-                        height={112}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      // plain img fallback for blob:, data:, or otherwise unsafe URLs
-                      <img
-                        src={imagePreview}
-                        alt="Profile"
-                        width={112}
-                        height={112}
-                        className="w-full h-full object-cover"
-                      />
-                    )
+                    <Image
+                      src={imagePreview}
+                      alt="Profile"
+                      width={112}
+                      height={112}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <div className="w-full h-full bg-slate-100 flex items-center justify-center">
                       <UserIcon className="w-12 h-12 text-slate-400" />
@@ -409,8 +334,7 @@ export default function EditProfileModal({
                     type="file"
                     className="hidden"
                     onChange={handleImageUpload}
-                    // accept common image formats; let server handle the rest
-                    accept="image/*,image/heic,image/heif"
+                    accept="image/*"
                   />
                 </Label>
 
