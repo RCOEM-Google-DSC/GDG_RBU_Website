@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
 import {
   buildUIUser,
@@ -24,11 +25,25 @@ interface UseProfileDataReturn {
 }
 
 export function useProfileData(): UseProfileDataReturn {
+  const router = useRouter();
   const [user, setUser] = useState<UIUser | null>(null);
   const [events, setEvents] = useState<UIEvent[]>([]);
   const [badges, setBadges] = useState<UIBadge[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        router.push("/");
+        router.refresh();
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [router]);
 
   useEffect(() => {
     const load = async () => {

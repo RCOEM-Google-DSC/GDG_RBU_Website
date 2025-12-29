@@ -203,40 +203,6 @@ export default function TeamMembersPage() {
         return;
       }
 
-      // If role is changed to member or admin, ensure they are in team_members with correct club role
-      if (role === "member" || role === "admin") {
-        const clubRole = role === "admin" ? "domain lead" : "member";
-        const { data: existingMember } = await supabase
-          .from("team_members")
-          .select("id")
-          .eq("userid", userId)
-          .single();
-
-        if (!existingMember) {
-          // Insert
-          const { error: insertError } = await supabase
-            .from("team_members")
-            .insert({
-              userid: userId,
-              "club role": clubRole,
-            });
-          if (insertError) {
-            console.error("Error adding to team_members", insertError);
-            toast.warning("Role updated, but failed to set club role.");
-          }
-        } else {
-          // Update club role
-          const { error: updateError } = await supabase
-            .from("team_members")
-            .update({ "club role": clubRole })
-            .eq("userid", userId);
-          if (updateError) {
-            console.error("Error updating club role", updateError);
-            toast.warning("Role updated, but failed to update club role.");
-          }
-        }
-      }
-
       // Update local state
       setTeamMembers((prev) =>
         prev.map((m) => (m.userid === userId ? { ...m, role } : m)),

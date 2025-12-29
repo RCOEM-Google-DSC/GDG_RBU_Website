@@ -17,7 +17,7 @@ import {
   X,
   Info,
 } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
 
 import Image from "next/image";
@@ -84,6 +84,7 @@ export default function TeamProfilePage({
 }: {
   params: Promise<{ userId: string }>;
 }) {
+  const router = useRouter();
   const params = React.use(paramsPromise);
   const userId = (params?.userId as string) ?? null;
 
@@ -91,6 +92,19 @@ export default function TeamProfilePage({
   const [authUserId, setAuthUserId] = useState<string | null>(null);
   const [authRole, setAuthRole] = useState<string | null>(null);
   const [showEdit, setShowEdit] = useState(false);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        router.push("/");
+        router.refresh();
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [router]);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
