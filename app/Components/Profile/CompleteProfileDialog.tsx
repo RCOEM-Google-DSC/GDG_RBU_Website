@@ -23,9 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-// ✅ Import the request-scoped browser client factory
 import { createClient } from "@/utils/supabase/client";
-// ✅ Import the server action for identity verification
 import { getCurrentUserId } from "@/supabase/supabase";
 import { Camera } from "lucide-react";
 
@@ -43,7 +41,6 @@ export function CompleteProfileDialog({
 }: CompleteProfileDialogProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   
-  // ✅ Initialize the client inside the component to ensure it's request-scoped
   const supabase = createClient();
 
   // Form fields
@@ -127,7 +124,6 @@ export function CompleteProfileDialog({
     setStatus({ type: "idle" });
 
     try {
-      // ✅ Verify user ID using the secure server-side utility
       const userId = await getCurrentUserId();
       if (!userId) throw new Error("User not authenticated");
 

@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Github, Linkedin, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-// ✅ Use the browser-specific client factory
 import { createClient } from "@/utils/supabase/client"; 
 import Link from "next/link";
 
@@ -50,12 +49,10 @@ function TeamMemberCard({
   linkedinUrl,
 }: TeamMemberCardProps) {
   const router = useRouter();
-  // ✅ Initialize the Supabase client locally
   const supabase = createClient(); 
   const [authUserId, setAuthUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    // ✅ Fetch the session using the request-scoped client
     supabase.auth.getSession().then(({ data }) => {
       setAuthUserId(data.session?.user?.id ?? null);
     });

@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-// ✅ Import the server client factory
 import { createClient } from "@/utils/supabase/server";
 import { generateProfileImageUrl } from "@/lib/utils";
 
@@ -7,7 +6,6 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
 
-  // ✅ Initialize the Server Client (must be awaited)
   const supabase = await createClient();
 
   let redirectUrl = "/profile";
@@ -33,7 +31,7 @@ export async function GET(request: Request) {
         .from("users")
         .select("id, role")
         .eq("id", userId)
-        .maybeSingle(); // ✅ Using maybeSingle to avoid 406 errors on missing users
+        .maybeSingle();
 
       if (existingUser) {
         role = existingUser.role;

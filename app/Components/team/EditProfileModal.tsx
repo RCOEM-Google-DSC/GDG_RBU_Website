@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
 import Link from "next/link";
-// ✅ Import the request-scoped browser client factory
 import { createClient } from "@/utils/supabase/client";
 import {
   Github,
@@ -105,7 +104,6 @@ export default function EditProfileModal({
 }: EditProfileModalProps) {
   const u = profile?.users ?? {};
   
-  // ✅ Initialize the client locally
   const supabase = createClient();
 
   const [imagePreview, setImagePreview] = useState(u.image_url || "");

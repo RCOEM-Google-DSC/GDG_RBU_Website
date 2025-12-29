@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Github, Linkedin, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-// ✅ Import the request-scoped browser client factory
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 
@@ -50,12 +49,10 @@ function LeaderCard({
   linkedinUrl,
 }: LeaderCardProps) {
   const router = useRouter();
-  // ✅ Initialize the Supabase client inside the component
   const supabase = createClient();
   const [authUserId, setAuthUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    // ✅ Use the localized client instance to fetch the session
     supabase.auth.getSession().then(({ data }) => {
       setAuthUserId(data.session?.user?.id ?? null);
     });

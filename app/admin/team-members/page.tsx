@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
-// ✅ Import the request-scoped browser client factory
 import { createClient } from "@/utils/supabase/client";
 import DataTable from "@/app/Components/Reusables/DataTable";
 import ConfirmDialog from "@/app/Components/Reusables/ConfirmDialog";
@@ -26,7 +25,6 @@ type TeamMember = {
 };
 
 export default function TeamMembersPage() {
-  // ✅ Initialize the client inside the component
   const supabase = createClient();
   const { canManageUsers } = useRBAC();
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);

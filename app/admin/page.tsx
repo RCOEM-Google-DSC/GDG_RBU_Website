@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Users } from "lucide-react";
 import InfoCard from "../Components/Admin/InfoCard";
-// ✅ Import the request-scoped browser client factory
 import { createClient } from "@/utils/supabase/client";
 
 const staticData = [
@@ -13,7 +12,6 @@ const staticData = [
 ];
 
 export default function AdminPage() {
-  // ✅ Initialize the Supabase client inside the component
   const supabase = createClient();
   const [stats, setStats] = useState(staticData);
 

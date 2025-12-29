@@ -4,7 +4,6 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Calendar, Download, Share2, Loader2 } from "lucide-react";
 import { UIEvent } from "../../../lib/types";
-// ✅ Import the request-scoped browser client factory instead of the static instance
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 
@@ -13,7 +12,6 @@ interface EventCardProps {
 }
 
 export function EventCard({ event }: EventCardProps) {
-  // ✅ Initialize the Supabase client inside the component
   const supabase = createClient();
   const [loading, setLoading] = useState(false);
   const [certificateUrl, setCertificateUrl] = useState<string | null>(
