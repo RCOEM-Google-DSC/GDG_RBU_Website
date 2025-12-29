@@ -203,8 +203,9 @@ export default function TeamMembersPage() {
         return;
       }
 
-      // If role is changed to member, ensure they are in team_members with correct club role
-      if (role === "member") {
+      // If role is changed to member or admin, ensure they are in team_members with correct club role
+      if (role === "member" || role === "admin") {
+        const clubRole = role === "admin" ? "domain lead" : "member";
         const { data: existingMember } = await supabase
           .from("team_members")
           .select("id")
@@ -217,7 +218,7 @@ export default function TeamMembersPage() {
             .from("team_members")
             .insert({
               userid: userId,
-              "club role": "member",
+              "club role": clubRole,
             });
           if (insertError) {
             console.error("Error adding to team_members", insertError);
@@ -227,7 +228,7 @@ export default function TeamMembersPage() {
           // Update club role
           const { error: updateError } = await supabase
             .from("team_members")
-            .update({ "club role": "member" })
+            .update({ "club role": clubRole })
             .eq("userid", userId);
           if (updateError) {
             console.error("Error updating club role", updateError);
