@@ -1,8 +1,8 @@
-// app/api/upload-cloudinary/route.ts (or wherever your route is)
+// app/api/upload/route.ts
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 
-// configure cloudinary from env (unchanged)
+// Configure Cloudinary using env variables (make sure these are set)
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
   api_key: process.env.CLOUDINARY_API_KEY!,
@@ -10,10 +10,11 @@ cloudinary.config({
 });
 
 /**
- * Upload a file sent as formData field "file" to Cloudinary.
- * - Keeps using upload_stream
- * - Adds an eager transformation to produce a browser-friendly variant (f_auto,q_auto)
- * - Returns both original secure_url and transformed_url (if available)
+ * Upload handler that:
+ *  - accepts a form field "file"
+ *  - performs basic server-side validation (size + mime whitelist)
+ *  - uploads via upload_stream with resource_type: "auto"
+ *  - requests an eager transformed (f_auto,q_auto) derivative and returns that if available
  */
 export async function POST(req: Request) {
   try {
@@ -24,21 +25,50 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Read file into buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const filename = (file as any).name || "upload";
+    const size = (file as any).size ?? (await file.arrayBuffer()).byteLength;
+    const mime = file.type || "";
 
-    // Upload options:
-    // - folder: keep your folder
-    // - resource_type: "image" (makes intent explicit)
-    // - eager: create a "safe" browser-friendly derived image using Cloudinary on upload
-    //   fetch_format: "auto" chooses webp/jpg depending on client support
-    //   quality: "auto" optimizes quality
-    // - eager_async: false (create eagerly synchronously)
+    // Server-side validation
+    const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+    const allowedMime = new Set([
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "image/webp",
+      "image/avif",
+      "image/gif",
+      "image/svg+xml",
+      // HEIC/HEIF may be reported differently across browsers. We accept the common ones:
+      "image/heic",
+      "image/heif",
+      // some browsers may report generic 'image/*' or unknown; allow empty type but be cautious
+    ]);
+
+    if (size > MAX_BYTES) {
+      return NextResponse.json(
+        { error: "File too large", details: `Max ${MAX_BYTES / 1024 / 1024} MB` },
+        { status: 413 }
+      );
+    }
+
+    // If mime exists and not in whitelist -> reject
+    if (mime && !allowedMime.has(mime) && !mime.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "Unsupported file type", details: mime },
+        { status: 415 }
+      );
+    }
+
+    // Read file into a buffer (works for both File and Blob)
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Upload options: resource_type=auto so images (including heic/heif) and supported types accepted
     const uploadOptions: Record<string, any> = {
       folder: "GDG_PFP",
-      resource_type: "image",
-      // Create a transformed derivative at upload time (browser friendly)
+      resource_type: "auto",
+      // create a transformed derivative (browser-friendly)
       eager: [
         {
           fetch_format: "auto",
@@ -46,44 +76,42 @@ export async function POST(req: Request) {
         },
       ],
       eager_async: false,
+      use_filename: true,
+      unique_filename: true,
+      overwrite: false,
     };
 
     const uploadResult: any = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        uploadOptions,
-        (error, result) => {
-          if (error) return reject(error);
-          resolve(result);
-        },
-      );
-
+      const stream = cloudinary.uploader.upload_stream(uploadOptions, (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      });
       stream.end(buffer);
     });
 
-    // uploadResult shape (example):
-    // {
-    //   public_id: 'GDG_PFP/abcd123',
-    //   secure_url: 'https://res.cloudinary.com/.../abcd123.heic',
-    //   eager: [{ secure_url: 'https://res.cloudinary.com/.../abcd123.f_auto.jpg', ... }],
-    //   ...
-    // }
-
-    // Prefer the transformed eager URL if Cloudinary produced one; fall back to original secure_url.
+    // Inspect result and prefer the eager transformed URL if present
     const transformedUrl =
-      uploadResult?.eager && uploadResult.eager.length > 0
+      uploadResult?.eager && Array.isArray(uploadResult.eager) && uploadResult.eager.length > 0
         ? uploadResult.eager[0].secure_url
         : null;
 
-    return NextResponse.json({
-      url: uploadResult.secure_url,
-      public_id: uploadResult.public_id,
-      transformed_url: transformedUrl, // may be null if eager wasn't produced for some reason
-    });
-  } catch (error: any) {
-    console.error("Cloudinary upload error:", error);
     return NextResponse.json(
-      { error: "Upload failed", details: error?.message ?? String(error) },
-      { status: 500 },
+      {
+        url: uploadResult.secure_url,
+        public_id: uploadResult.public_id,
+        transformed_url: transformedUrl,
+        raw: {
+          bytes: uploadResult.bytes,
+          format: uploadResult.format,
+          resource_type: uploadResult.resource_type,
+        },
+      },
+      { status: 200 }
     );
+  } catch (err: any) {
+    console.error("Cloudinary upload error:", err);
+    // Return more details so client can show them (but avoid leaking secrets)
+    const message = err?.message ?? String(err);
+    return NextResponse.json({ error: "Upload failed", details: message }, { status: 500 });
   }
 }
