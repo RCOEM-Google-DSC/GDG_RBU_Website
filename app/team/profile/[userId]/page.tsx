@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   X,
   Info,
+  User as UserIcon,
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
@@ -24,7 +25,7 @@ import Image from "next/image";
 import Link from "next/link";
 import EditProfileModal from "@/app/Components/team/EditProfileModal";
 
-/* Decorations */
+/* Decorations (unchanged) */
 const DecoCross = ({ className }: { className?: string }) => (
   <svg
     viewBox="0 0 24 24"
@@ -78,7 +79,24 @@ const SocialLinkNeo = ({
     </a>
   );
 
-/* Main */
+/**
+ * Helper: decide whether it's safe to pass `src` to next/image.
+ * next/image loader expects either:
+ *  - an absolute URL with http(s) OR
+ *  - a local path that begins with "/"
+ *
+ * For all other values (blob:, data:, empty, unknown) we will use <img> fallback.
+ */
+function isNextImageSafe(src?: string | null) {
+  if (!src) return false;
+  const s = String(src).trim();
+  if (!s) return false;
+  if (s.startsWith("/")) return true;
+  if (s.startsWith("http://") || s.startsWith("https://")) return true;
+  return false;
+}
+
+/* Main component */
 export default function TeamProfilePage({
   params: paramsPromise,
 }: {
@@ -112,8 +130,8 @@ export default function TeamProfilePage({
 
   const loadProfile = async () => {
     if (!userId) return;
-    
-    // First, try to get team member data
+
+    // Try team_members join users first
     const { data: teamMemberData } = await supabase
       .from("team_members")
       .select(
@@ -138,26 +156,24 @@ export default function TeamProfilePage({
           phone_number,
           role
         )
-      `,
+      `
       )
       .eq("userid", userId)
       .maybeSingle();
-    
-    // If team member exists, use that data
+
     if (teamMemberData) {
       setProfile(teamMemberData);
       return;
     }
-    
-    // Otherwise, try to get basic user data (for admins or non-team users)
+
+    // Fallback: load user row if no team_members
     const { data: userData } = await supabase
       .from("users")
       .select("*")
       .eq("id", userId)
       .single();
-    
+
     if (userData) {
-      // Transform user data to match expected profile structure
       setProfile({
         userid: userData.id,
         domain: userData.role === "admin" ? "Admin" : null,
@@ -181,14 +197,16 @@ export default function TeamProfilePage({
   if (!profile)
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-2xl font-black animate-pulse">
-          LOADING PROFILE...
-        </div>
+        <div className="text-2xl font-black animate-pulse">LOADING PROFILE...</div>
       </div>
     );
 
   const u = profile.users ?? {};
   const resumeUrl = profile.cv_url || u?.profile_links?.resume;
+
+  // compute image src and whether to render via next/image or plain img
+  const avatarSrc = u?.image_url ?? "/placeholder.png";
+  const useNextImage = isNextImageSafe(avatarSrc);
 
   return (
     <div className="min-h-screen  text-black relative overflow-hidden font-['Gesit','Gesit-Regular',sans-serif] selection:bg-yellow-300 selection:text-black">
@@ -197,7 +215,7 @@ export default function TeamProfilePage({
         style={{
           backgroundImage:
             'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
+          backgroundSize: "80px 80px",
         }}
       />
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -213,13 +231,27 @@ export default function TeamProfilePage({
               <div className="absolute top-4 left-4 w-full h-full bg-black rounded-xl transition-transform duration-200 group-hover:translate-x-2 group-hover:translate-y-2"></div>
 
               <div className="relative w-80 h-80 md:w-96 md:h-96 bg-white border-4 border-black rounded-xl overflow-hidden p-0 transition-transform duration-200 group-hover:-translate-y-1 group-hover:-translate-x-1">
-                <Image
-                  height={800}
-                  width={800}
-                  alt={u?.name ?? "profile"}
-                  src={u?.image_url ?? "/placeholder.png"}
-                  className="w-full h-full object-cover transition-all duration-300"
-                />
+                {/* SAFE IMAGE RENDERING:
+                    - If next/image is safe to use (absolute http(s) or local path starting with '/'),
+                      we use it. Otherwise we fallback to plain <img>.
+                    - Using a plain <img> prevents Next's image loader from throwing on invalid urls
+                */}
+                {useNextImage ? (
+                  <Image
+                    height={800}
+                    width={800}
+                    alt={u?.name ?? "profile"}
+                    src={avatarSrc}
+                    className="w-full h-full object-cover transition-all duration-300"
+                  />
+                ) : (
+                  // fallback: plain img tag. This avoids next/image loader URL parsing.
+                  <img
+                    alt={u?.name ?? "profile"}
+                    src={avatarSrc || "/placeholder.png"}
+                    className="w-full h-full object-cover transition-all duration-300"
+                  />
+                )}
               </div>
 
               <div className="absolute -top-6 -right-6 bg-yellow-300 border-2 border-black px-3 py-1 font-black transform rotate-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
@@ -331,7 +363,6 @@ export default function TeamProfilePage({
           <div className="md:col-span-2 bg-white border-2 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div className="space-y-3">
-                {/* NOTE: on mobile we remove the tilt by using rotate-0 and apply tilt only on md+ */}
                 <h3 className="flex w-60 items-center gap-2 text-lg font-black uppercase bg-black text-white px-2 py-1">
                   <Info size={18} /> Campus Info
                 </h3>
@@ -343,7 +374,6 @@ export default function TeamProfilePage({
               </div>
 
               <div className="space-y-3">
-                {/* NOTE: on mobile we remove the tilt by using rotate-0 and apply tilt only on md+ */}
                 <h3 className="flex w-45 items-center gap-2 text-lg font-black uppercase bg-black text-white px-2 py-1  ">
                   <Mail size={18} /> Contacts
                 </h3>
@@ -355,9 +385,7 @@ export default function TeamProfilePage({
 
             <div className="border-t-4 border-black pt-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <span className="font-black text-xl uppercase">
-                  Find me on:
-                </span>
+                <span className="font-black text-xl uppercase">Find me on:</span>
 
                 <div className="flex gap-4 flex-wrap">
                   <SocialLinkNeo
@@ -372,18 +400,8 @@ export default function TeamProfilePage({
                     label="LinkedIn"
                     colorClass="hover:bg-blue-300"
                   />
-                  <SocialLinkNeo
-                    icon={Twitter}
-                    href={profile.twitter}
-                    label="Twitter"
-                    colorClass="hover:bg-sky-300"
-                  />
-                  <SocialLinkNeo
-                    icon={Instagram}
-                    href={profile.instagram}
-                    label="Instagram"
-                    colorClass="hover:bg-pink-300"
-                  />
+                  <SocialLinkNeo icon={Twitter} href={profile.twitter} label="Twitter" colorClass="hover:bg-sky-300" />
+                  <SocialLinkNeo icon={Instagram} href={profile.instagram} label="Instagram" colorClass="hover:bg-pink-300" />
 
                   {profile.leetcode && (
                     <a
@@ -403,13 +421,7 @@ export default function TeamProfilePage({
       </div>
 
       {showEdit && authUserId && (
-        <EditProfileModal
-          open={showEdit}
-          onClose={() => setShowEdit(false)}
-          onSuccess={loadProfile}
-          profile={profile}
-          userId={authUserId}
-        />
+        <EditProfileModal open={showEdit} onClose={() => setShowEdit(false)} onSuccess={loadProfile} profile={profile} userId={authUserId} />
       )}
     </div>
   );
