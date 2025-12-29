@@ -17,7 +17,7 @@ import { CiLogout } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
 import { toast } from "sonner";
-
+import Router from "next/router";
 const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [fullName, setFullName] = useState<string | null>(null);
@@ -74,6 +74,7 @@ const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
       });
     } else {
       toast.success("Signed out", { position: "bottom-right" });
+      Router.push("/");
       if (onLogout) onLogout();
     }
   };
