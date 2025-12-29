@@ -1,6 +1,7 @@
 "use client";
 
 import { Mail, Phone, MapPin, Github, Linkedin } from "lucide-react";
+import { FaXTwitter } from "react-icons/fa6";
 import { UIUser } from "../../../lib/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -55,10 +56,10 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
             {/* Social Icons - Fixed */}
             <div className="flex gap-2 justify-center mb-6">
               {[
-                { Icon: Github, key: "github", href: user.profileLinks?.github, color: "bg-black", isImage: false },
-                { Icon: Linkedin, key: "linkedin", href: user.profileLinks?.linkedin, color: "bg-[#4284ff]", isImage: false },
-                { Icon: null, key: "twitter", href: user.profileLinks?.twitter, color: "bg-black", isImage: true, imageSrc: "/icons/x-logo.png" },
-              ].map(({ Icon, key, href, color, isImage, imageSrc }) =>
+                { Icon: Github, key: "github", href: user.profileLinks?.github, color: "bg-black" },
+                { Icon: Linkedin, key: "linkedin", href: user.profileLinks?.linkedin, color: "bg-[#4284ff]" },
+                { Icon: FaXTwitter, key: "twitter", href: user.profileLinks?.twitter, color: "bg-black" },
+              ].map(({ Icon, key, href, color }) =>
                 href ? (
                   <div key={key} className="relative">
                     <div className="absolute bg-black size-11 rounded-lg top-1 left-1" />
@@ -69,22 +70,14 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
                       aria-label={`Visit ${key} profile`}
                       className={`relative flex items-center justify-center size-11 ${color} border-2 border-black rounded-lg text-white hover:translate-y-0.5 transition-transform`}
                     >
-                      {isImage && imageSrc ? (
-                        <Image src={imageSrc} alt={key} width={20} height={20} className="w-5 h-5" />
-                      ) : (
-                        Icon && <Icon className="w-5 h-5" />
-                      )}
+                      <Icon className="w-5 h-5" />
                     </Link>
                   </div>
                 ) : (
                   <div key={key} className="relative opacity-40">
                     <div className="absolute bg-neutral-400 size-11 rounded-lg top-1 left-1" />
                     <div className="relative flex items-center justify-center size-11 bg-neutral-300 border-2 border-black rounded-lg text-neutral-500 cursor-not-allowed">
-                      {isImage && imageSrc ? (
-                        <Image src={imageSrc} alt={key} width={20} height={20} className="w-5 h-5 opacity-50" />
-                      ) : (
-                        Icon && <Icon className="w-5 h-5" />
-                      )}
+                      <Icon className="w-5 h-5" />
                     </div>
                   </div>
                 ),
