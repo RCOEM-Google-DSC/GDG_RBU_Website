@@ -92,6 +92,7 @@ export default function TeamProfilePage({
   const [authUserId, setAuthUserId] = useState<string | null>(null);
   const [authRole, setAuthRole] = useState<string | null>(null);
   const [showEdit, setShowEdit] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
@@ -107,7 +108,10 @@ export default function TeamProfilePage({
   }, [router]);
 
   useEffect(() => {
+    let isMounted = true;
+
     supabase.auth.getSession().then(async ({ data }) => {
+      if (!isMounted) return;
       const uid = data.session?.user?.id ?? null;
       setAuthUserId(uid);
 
@@ -117,80 +121,99 @@ export default function TeamProfilePage({
           .select("role")
           .eq("id", uid)
           .single();
-        setAuthRole((row as any)?.role ?? null);
+        if (isMounted) {
+          setAuthRole((row as any)?.role ?? null);
+        }
       }
     });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const isSelf = Boolean(authUserId && userId && authUserId === userId);
 
-  const loadProfile = async () => {
-    if (!userId) return;
-    
-    // First, try to get team member data
-    const { data: teamMemberData } = await supabase
-      .from("team_members")
-      .select(
-        `
-        userid,
-        domain,
-        bio,
-        thought,
-        leetcode,
-        twitter,
-        instagram,
-        club_email,
-        cv_url,
-        users (
-          id,
-          name,
-          email,
-          image_url,
-          profile_links,
-          branch,
-          section,
-          phone_number,
-          role
-        )
-      `,
-      )
-      .eq("userid", userId)
-      .maybeSingle();
-    
-    // If team member exists, use that data
-    if (teamMemberData) {
-      setProfile(teamMemberData);
-      return;
-    }
-    
-    // Otherwise, try to get basic user data (for admins or non-team users)
-    const { data: userData } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    
-    if (userData) {
-      // Transform user data to match expected profile structure
-      setProfile({
-        userid: userData.id,
-        domain: userData.role === "admin" ? "Admin" : null,
-        bio: null,
-        thought: null,
-        leetcode: null,
-        twitter: null,
-        instagram: null,
-        club_email: null,
-        cv_url: userData.profile_links?.resume || null,
-        users: userData,
-      });
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+
+    const loadProfile = async () => {
+      if (!userId) return;
+      
+      // First, try to get team member data
+      const { data: teamMemberData } = await supabase
+        .from("team_members")
+        .select(
+          `
+          userid,
+          domain,
+          bio,
+          thought,
+          leetcode,
+          twitter,
+          instagram,
+          club_email,
+          cv_url,
+          users (
+            id,
+            name,
+            email,
+            image_url,
+            profile_links,
+            branch,
+            section,
+            phone_number,
+            role
+          )
+        `,
+        )
+        .eq("userid", userId)
+        .maybeSingle();
+      
+      if (!isMounted) return;
+
+      // If team member exists, use that data
+      if (teamMemberData) {
+        setProfile(teamMemberData);
+        return;
+      }
+      
+      // Otherwise, try to get basic user data (for admins or non-team users)
+      const { data: userData } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", userId)
+        .single();
+      
+      if (!isMounted) return;
+
+      if (userData) {
+        // Transform user data to match expected profile structure
+        setProfile({
+          userid: userData.id,
+          domain: userData.role === "admin" ? "Admin" : null,
+          bio: null,
+          thought: null,
+          leetcode: null,
+          twitter: null,
+          instagram: null,
+          club_email: null,
+          cv_url: userData.profile_links?.resume || null,
+          users: userData,
+        });
+      }
+    };
+
     loadProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [userId, refreshKey]);
+
+  const handleProfileUpdate = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
 
   if (!profile)
     return (
@@ -420,7 +443,7 @@ export default function TeamProfilePage({
         <EditProfileModal
           open={showEdit}
           onClose={() => setShowEdit(false)}
-          onSuccess={loadProfile}
+          onSuccess={handleProfileUpdate}
           profile={profile}
           userId={authUserId}
         />

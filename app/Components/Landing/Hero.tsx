@@ -5,7 +5,8 @@ import { supabase } from '@/supabase/supabase';
 
 export default function Hero() {
   const [user, setUser] = useState<any>(null);
-
+  const [role, setRole] = useState<string | null>(null);
+  const [teamId, setTeamId] = useState<string | null>(null);
   useEffect(() => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -14,10 +15,14 @@ export default function Hero() {
     fetchUser();
   }, []);
 
+  const profileLink =
+    role === "admin" || role === "member"
+      ? `/team/profile/${teamId ?? ""}`
+      : "/profile";
   return (
     <section className="relative w-full min-h-screen ">
       {/* Grid background */}
-      
+
 
       <div
         className="
@@ -68,34 +73,34 @@ export default function Hero() {
             {['Learn more', user ? 'Profile' : 'Join'].map((label, i) => {
               let href = '/events';
               if (label === 'Join') href = '/register';
-              else if (label === 'Profile') href = '/profile';
+              else if (label === 'Profile') href = user ? `/team/profile/${user.id}` : '/profile';
 
               const ButtonContent = (
                 <div key={label} className="relative group">
                   <div
                     className="
-                      absolute -right-2 -bottom-2
-                      bg-black w-full h-full
-                      transition-all duration-200
-                      group-hover:bg-white
-                      group-hover:translate-x-1
-                      group-hover:translate-y-1
-                    "
+                  absolute -right-2 -bottom-2p
+                  bg-black w-full h-full
+                  transition-all duration-200
+                  group-hover:bg-white
+                  group-hover:translate-x-1
+                  group-hover:translate-y-1
+                "
                   />
                   <button
                     className={`
-                      relative
-                      border-2 border-black
-                      bg-white text-black
-                      h-12 px-7
-                      text-sm font-bold uppercase
-                      transition-all duration-200
-                      group-hover:bg-black
-                      group-hover:text-white
-                      ${i === 0 ? 'group-hover:-rotate-2' : 'group-hover:rotate-2'}
-                      group-hover:scale-105
-                      active:scale-95
-                    `}
+                  relative
+                  border-2 border-black
+                  bg-white text-black
+                  h-12 px-7
+                  text-sm font-bold uppercase
+                  transition-all duration-200
+                  group-hover:bg-black
+                  group-hover:text-white
+                  ${i === 0 ? 'group-hover:-rotate-2' : 'group-hover:rotate-2'}
+                  group-hover:scale-105
+                  active:scale-95
+                `}
                   >
                     {label}
                   </button>

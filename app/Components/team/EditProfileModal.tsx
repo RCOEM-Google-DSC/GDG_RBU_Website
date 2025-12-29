@@ -1,4 +1,5 @@
 "use client";
+import { SiLeetcode } from "react-icons/si"; 
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -362,6 +363,7 @@ export default function EditProfileModal({
                             border: "2px solid #000000",
                             boxShadow: "2px 2px 0px #000000",
                           }}
+                          autoFocus={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -477,7 +479,7 @@ export default function EditProfileModal({
                     >
                       <Mail size={16} />
                       Club Email
-                      <span className="text-red-500">*</span>
+                      {/* <span className="text-red-500">*</span> */}
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -652,7 +654,7 @@ export default function EditProfileModal({
                       className="flex items-center gap-2 font-bold"
                       style={{ color: "#000000" }}
                     >
-                      <Code size={16} />
+                      <Image src="/public/icons/x-logo.png" alt="Twitter" width={16} height={16} />
                       Twitter
                     </FormLabel>
                     <FormControl>
@@ -680,7 +682,7 @@ export default function EditProfileModal({
                       className="flex items-center gap-2 font-bold"
                       style={{ color: "#000000" }}
                     >
-                      <Code size={16} />
+                      <SiLeetcode size={16}/>
                       LeetCode URL
                     </FormLabel>
                     <FormControl>
