@@ -57,6 +57,21 @@ export async function GET(request: Request) {
 
       if (existingUser) {
         role = existingUser.role;
+        
+        // Update existing user's image if OAuth provider has one
+        const oAuthAvatar =
+          sessionData.user.user_metadata?.avatar_url ||
+          sessionData.user.user_metadata?.picture;
+        
+        if (oAuthAvatar) {
+          await supabase
+            .from("users")
+            .update({ 
+              image_url: oAuthAvatar,
+              updated_at: new Date().toISOString()
+            })
+            .eq("id", userId);
+        }
       } else if (fetchError?.code === "PGRST116") {
         // If user doesn't exist in users table, create them
         const userName =

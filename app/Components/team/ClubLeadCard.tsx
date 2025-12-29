@@ -1,13 +1,15 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
-import { Github, Instagram, Linkedin } from "lucide-react";
+import { Github, Instagram, Linkedin, ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/supabase/supabase";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function ClubLeadCard() {
   const [clubLead, setClubLead] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchClubLead = async () => {
@@ -43,6 +45,7 @@ export default function ClubLeadCard() {
             github: data.github || "https://github.com/",
             linkedin: data.linkedin || "https://linkedin.com/",
             instagram: data.instagram || "https://instagram.com/",
+            userid: data.userid,
           });
         }
       } catch (error) {
@@ -69,6 +72,14 @@ export default function ClubLeadCard() {
     return null;
   }
 
+  const handleCardClick = () => {
+    router.push(`/team/profile/${clubLead.userid}`);
+  };
+
+  const handleSocialClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
     <div className="relative w-full max-w-5xl mx-auto">
       {/* Shadow */}
@@ -81,42 +92,44 @@ export default function ClubLeadCard() {
         }}
       />
 
-      {/* Main Card */}
+      {/* Main Card - Clickable Div */}
       <div
-        className="relative bg-white p-8 sm:p-12 flex flex-col md:flex-row items-start gap-10 sm:gap-16 w-full"
+        onClick={handleCardClick}
+        className="relative bg-white p-6 sm:p-8 md:p-12 flex flex-col md:flex-row items-center md:items-start gap-8 sm:gap-10 md:gap-16 w-full group cursor-pointer"
         style={{
           border: "4px solid #000000",
         }}
       >
+        {/* Arrow indicator - Top Right */}
+        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white rounded-full p-1.5 sm:p-2 shadow-md opacity-90 group-hover:opacity-100 transition-opacity z-20">
+          <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800" strokeWidth={2.5} />
+        </div>
+
         {/* Photo Section */}
-        <div className="relative shrink-0">
+        <div className="relative shrink-0 flex justify-center w-full md:w-auto">
           {/* CLUB LEAD Label */}
           <div
-            className="absolute -top-4 -left-4 px-4 py-2 z-10 -rotate-6"
+            className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 px-3 py-1.5 sm:px-4 sm:py-2 z-10 -rotate-6"
             style={{
               backgroundColor: "#FFD23D",
               border: "3px solid #000000",
               boxShadow: "4px 4px 0px #000000",
             }}
           >
-            <span className="text-sm font-black tracking-tight uppercase">
+            <span className="text-xs sm:text-sm font-black tracking-tight uppercase">
               CLUB LEAD
             </span>
           </div>
 
           {/* Photo */}
           <div
-            className="w-[220px] h-[280px] sm:w-[260px] sm:h-80 bg-white relative"
-            style={{
-              border: "4px solid #000000",
-              boxShadow: "8px 8px 0px #000000",
-            }}
+            className="drop-shadow-2xl w-[200px] h-[260px] sm:w-[220px] sm:h-[280px] md:w-[260px] md:h-80 bg-white relative rounded-lg overflow-hidden border-2 border-gray-200"
           >
             <Image
               src={clubLead.imageUrl}
               alt={clubLead.name}
               fill
-              className="object-cover grayscale hover:grayscale-0 transition-all duration-300"
+              className="object-cover "
             />
           </div>
         </div>
@@ -144,6 +157,7 @@ export default function ClubLeadCard() {
                 href={clubLead.github}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={handleSocialClick}
                 className="text-black hover:text-white transition-all duration-300 bg-gray-100 hover:bg-black p-2 rounded-full border border-black/10 hover:border-black shadow-sm"
               >
                 <Github className="w-5 h-5" strokeWidth={2} />
@@ -153,6 +167,7 @@ export default function ClubLeadCard() {
                 href={clubLead.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={handleSocialClick}
                 className="text-black hover:text-white transition-all duration-300 bg-gray-100 hover:bg-[#0077b5] p-2 rounded-full border border-black/10 hover:border-[#0077b5] shadow-sm"
               >
                 <Linkedin className="w-5 h-5" strokeWidth={2} />
@@ -161,7 +176,8 @@ export default function ClubLeadCard() {
                 href={clubLead.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-black hover:text-white transition-all duration-300 bg-gray-100 hover:bg-pink-500 p-2 rounded-full border border-black/10 hover:border-pink-500 shadow-sm"
+                onClick={handleSocialClick}
+                className="text-black hover:text-white transition-all duration-300 bg-gray-100 hover:bg-linear-to-tr hover:from-[#feda75] hover:via-[#fa7e1e] hover:to-[#d62976] p-2 rounded-full border border-black/10 hover:border-[#d62976] shadow-sm"
               >
                 <Instagram className="w-5 h-5" strokeWidth={2} />
               </Link>

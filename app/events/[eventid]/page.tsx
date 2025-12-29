@@ -1,23 +1,26 @@
 // app/events/[eventid]/page.tsx  (or wherever you keep it)
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { Ticket, Users, ArrowDownRight, Sparkles } from "lucide-react";
 import { getEvent, getGalleryImages, getEventWithPartner } from "@/supabase/supabase";
 
 export default function EventPage({
-  params,
+  params: paramsPromise,
 }: {
   params: Promise<{ eventid: string }>;
 }) {
+  const params = React.use(paramsPromise);
+  const { eventid } = params;
+
   const [event, setEvent] = useState<any>(null);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   /* ---------------- FETCH DATA ---------------- */
   useEffect(() => {
-    params.then(async ({ eventid }) => {
+    const fetchData = async () => {
       try {
         // Prefer the helper that returns partner data if available.
         // If getEventWithPartner exists and works, use it; otherwise fallback to getEvent.
@@ -43,8 +46,10 @@ export default function EventPage({
         console.error(err);
         notFound();
       }
-    });
-  }, [params]);
+    };
+
+    fetchData();
+  }, [eventid]);
 
   if (loading || !event) {
     return (

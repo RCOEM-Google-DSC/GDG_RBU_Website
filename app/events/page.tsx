@@ -64,8 +64,8 @@ const EventsPage = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#FDFCF8]">
-        <div className="text-lg text-gray-600">Loading events...</div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-2xl font-black animate-pulse">LOADING TEAM...</div>
       </div>
     );
   }

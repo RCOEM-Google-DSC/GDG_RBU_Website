@@ -5,6 +5,7 @@ import { Github, Linkedin, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
 import Link from "next/link";
+import Image from "next/image";
 
 interface LeaderCardProps {
   id: string;
@@ -92,6 +93,7 @@ function LeaderCard({
 
   return (
     <div
+    
       className="relative inline-block cursor-pointer w-full max-w-[350px] aspect-3/4"
       onClick={handleCardClick}
     >
@@ -142,13 +144,11 @@ function LeaderCard({
             <path d={innerPath} fill="white" />
             {/* Image with stronger clipping */}
             <g clipPath={`url(#${clipId})`}>
-              <image
-                href={imageUrl}
-                x="0"
-                y="0"
+              <Image
+                src={imageUrl}
+                alt={name}
                 width={innerW}
                 height={innerH}
-                preserveAspectRatio="xMidYMid slice"
                 className="transition-transform duration-500 group-hover:scale-105"
               />
             </g>

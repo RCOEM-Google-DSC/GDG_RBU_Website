@@ -15,6 +15,7 @@ import {
   Pencil,
   LayoutDashboard,
   X,
+  Info,
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
@@ -78,9 +79,13 @@ const SocialLinkNeo = ({
   );
 
 /* Main */
-export default function TeamProfilePage() {
-  const params = useParams();
-  const userId = (params?.userId as string) ?? params?.id ?? null;
+export default function TeamProfilePage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ userId: string }>;
+}) {
+  const params = React.use(paramsPromise);
+  const userId = (params?.userId as string) ?? null;
 
   const [profile, setProfile] = useState<any>(null);
   const [authUserId, setAuthUserId] = useState<string | null>(null);
@@ -327,8 +332,8 @@ export default function TeamProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div className="space-y-3">
                 {/* NOTE: on mobile we remove the tilt by using rotate-0 and apply tilt only on md+ */}
-                <h3 className="flex items-center gap-2 text-lg font-black uppercase bg-black text-white px-2 py-1 inline-block rotate-0 md:-rotate-1">
-                  <MapPin size={18} /> Campus Info
+                <h3 className="flex w-60 items-center gap-2 text-lg font-black uppercase bg-black text-white px-2 py-1">
+                  <Info size={18} /> Campus Info
                 </h3>
                 <ul className="text-black font-bold text-lg space-y-1 pl-2 border-l-4 border-gray-200">
                   <li>{u?.branch || "—"}</li>
@@ -339,11 +344,11 @@ export default function TeamProfilePage() {
 
               <div className="space-y-3">
                 {/* NOTE: on mobile we remove the tilt by using rotate-0 and apply tilt only on md+ */}
-                <h3 className="flex items-center gap-2 text-lg font-black uppercase bg-black text-white px-2 py-1 inline-block rotate-0 md:rotate-1">
+                <h3 className="flex w-45 items-center gap-2 text-lg font-black uppercase bg-black text-white px-2 py-1  ">
                   <Mail size={18} /> Contacts
                 </h3>
-                <ul className="text-black font-bold text-lg pl-2 border-l-4 border-gray-200 break-all">
-                  <li>{u?.email}</li>
+                <ul className="text-black font-bold text-lg pl-2 border-l-4 border-gray-200">
+                  <li className="break-all max-w-full overflow-x-auto">{u?.email}</li>
                 </ul>
               </div>
             </div>
