@@ -91,7 +91,7 @@ const EventsPage = () => {
       {/* upcoming event */}
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 lg:mb-8">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 lg:mb-8 font-retron">
             Upcoming Event
           </h1>
 
@@ -148,7 +148,7 @@ const EventsPage = () => {
       {/* past events */}
       <section className=" py-8 lg:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 lg:mb-8">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 lg:mb-8 font-retron">
             Past Events
           </h1>
           {pastEvents.length === 0 ? (

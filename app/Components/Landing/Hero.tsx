@@ -26,14 +26,14 @@ export default function Hero() {
             className="
               uppercase font-extrabold tracking-tight
               mb-4
-              text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl
+              text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl
               leading-[0.95]
             "
           >
-            <span className="block md:whitespace-nowrap">
+            <span className="block md:whitespace-nowrap font-retron">
               GOOGLE DEVELOPER
             </span>
-            <span className="block">GROUPS, RBU</span>
+            <span className="block font-retron">GROUPS, RBU</span>
           </h1>
 
           <p
