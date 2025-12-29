@@ -153,11 +153,11 @@ function Desktop10Component() {
       </div>
       <RightLogo />
       <LeftLogo />
-      <p className="absolute font-geist font-extrabold leading-tight left-[calc(50%-344px)] text-[64px] text-black text-nowrap top-20 z-10">
-        Join Our Community.
+      <p className="absolute font-geist font-extrabold leading-tight left-[calc(50%-344px)] text-[64px] text-black text-nowrap top-20 z-10 font-retron">
+        Join Our Community
       </p>
-      <p className="absolute font-geist font-extrabold leading-tight left-[calc(50%-424px)] text-[64px] text-black text-nowrap top-[165px] z-10">
-        Connect and Grow with us.
+      <p className="absolute font-geist font-extrabold leading-tight left-[calc(50%-424px)] text-[64px] text-black text-nowrap top-[165px] z-10 font-retron">
+        Connect and Grow with us
       </p>
       <p className="absolute font-geist font-extrabold leading-tight left-[714.5px] -translate-x-1/2 text-[55px] text-black text-nowrap top-[430px] z-10">
         Unlock Your Potential.

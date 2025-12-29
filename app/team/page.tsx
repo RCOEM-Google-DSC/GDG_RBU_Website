@@ -148,7 +148,7 @@ export default function TeamPage() {
         <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-8">
           {/* left: title and domain buttons */}
           <div className="flex-1">
-            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] lg:mt-10">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] lg:mt-10 font-retron">
               Meet our
               <br />
               team.
@@ -164,7 +164,7 @@ export default function TeamPage() {
                       .getElementById(`domain-${domain}`)
                       ?.scrollIntoView({ behavior: "smooth", block: "start" })
                   }
-                  className="px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-bold uppercase tracking-wide transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
+                  className="px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-bold uppercase tracking-wide transition-all duration-200 hover:translate-x-1 hover:translate-y-1 font-retron"
                   style={{
                     border: "3px solid #000000",
                     boxShadow: "3px 3px 0px #000000",

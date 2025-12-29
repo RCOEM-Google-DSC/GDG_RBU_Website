@@ -45,6 +45,7 @@ import { Label } from "@/components/ui/label";
 
 // Zod Schema for Profile Form
 const profileFormSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
   image_url: z.string().url().optional().or(z.literal("")),
   branch: z.string().optional(),
   section: z.string().optional(),
@@ -112,6 +113,7 @@ export default function EditProfileModal({
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
+      name: u.name || "",
       image_url: u.image_url || "",
       branch: u.branch || "",
       section: u.section || "",
@@ -170,6 +172,7 @@ export default function EditProfileModal({
       console.log("Form values:", values);
 
       const userUpdate = {
+        name: values.name,
         branch: values.branch,
         section: values.section,
         phone_number: values.phone_number,
@@ -344,15 +347,29 @@ export default function EditProfileModal({
               </div>
 
               {/* Name & Email Info */}
-              <div className="flex flex-col items-start justify-center gap-2 flex-1">
-                <div className="flex items-center gap-2">
-                  <UserIcon size={18} className="text-slate-400" />
-                  <span className="text-lg font-semibold text-slate-800">
-                    {u.name || "Name not set"}
-                  </span>
-                </div>
+              <div className="flex flex-col items-start justify-center gap-2 flex-1 w-full">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormControl>
+                        <Input
+                          placeholder="Your Name"
+                          {...field}
+                          className="text-lg font-semibold text-slate-800 h-auto py-1 px-2"
+                          style={{
+                            border: "2px solid #000000",
+                            boxShadow: "2px 2px 0px #000000",
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 pl-2">
                   <Mail size={18} className="text-slate-400" />
                   <span className="text-sm text-slate-600">
                     {u.email || "Email not set"}

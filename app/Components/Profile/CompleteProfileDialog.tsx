@@ -42,6 +42,7 @@ export function CompleteProfileDialog({
 
   // Form fields
   const [section, setSection] = useState(user.section || "");
+  const [name, setName] = useState(user.name || "");
   const [branch, setBranch] = useState("");
   const [isOtherBranch, setIsOtherBranch] = useState(false);
   const [customBranch, setCustomBranch] = useState("");
@@ -125,6 +126,7 @@ export function CompleteProfileDialog({
       const { error } = await supabase
         .from("users")
         .update({
+          name,
           section,
           branch: isOtherBranch ? customBranch : branch,
           phone_number: phone,
@@ -251,9 +253,9 @@ export function CompleteProfileDialog({
                 <Label htmlFor="name" className="font-bold text-sm" style={{ color: "#000000" }}>NAME</Label>
                 <Input
                   id="name"
-                  value={user.name}
-                  readOnly
-                  className="bg-neutral-100 cursor-not-allowed font-medium"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="bg-white font-medium"
                   style={{
                     border: "3px solid #000000",
                     boxShadow: "3px 3px 0px #000000",

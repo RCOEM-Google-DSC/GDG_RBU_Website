@@ -68,52 +68,52 @@ export default function Home() {
       </section>
 
       {/* upcoming events section */}
-      <section className="w-full px-6 md:px-10 lg:px-20 py-10 relative z-10">
+      <section className="w-full px-6 md:px-10 lg:px-20 py-10 relative z-10 bg-transparent">
         <motion.div
-          className="w-full flex flex-col items-center justify-center pt-0 pb-12 sm:pt-0 sm:pb-14 bg-background text-foreground px-4"
+          className="w-full flex flex-col items-center justify-center pt-0 pb-12 sm:pt-0 sm:pb-14 bg-transparent text-foreground px-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ amount: 0.3 }}
           transition={{ duration: 0.3, ease: "easeInOut", delay: 0.1 }}
         >
-          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 self-start">
-            Upcoming Event
+          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 self-start font-retron">
+        Upcoming Event
           </h2>
           {events.length > 0 ? (
-            events.map((event) => {
-              const registerUrl = event.register_url ?? REGISTER_URL;
-              const imageSrc = cloudinarySafe(
-                event.image_url ?? FALLBACK_IMAGE
-              );
-              return (
-                <EventTicket
-                  key={event.id}
-                  id={event.id}
-                  title={event.title}
-                  date={
-                    event.date
-                      ? new Date(event.date)
-                      : new Date(event.event_time)
-                  }
-                  time={
-                    event.time ||
-                    new Date(event.event_time).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  }
-                  image={imageSrc}
-                  tags={[event.status]}
-                  tagColor="#FBBC04"
-                  description={event.description}
-                  registerUrl={registerUrl}
-                />
-              );
+        events.map((event) => {
+          const registerUrl = event.register_url ?? REGISTER_URL;
+          const imageSrc = cloudinarySafe(
+            event.image_url ?? FALLBACK_IMAGE
+          );
+          return (
+            <EventTicket
+          key={event.id}
+          id={event.id}
+          title={event.title}
+          date={
+            event.date
+              ? new Date(event.date)
+              : new Date(event.event_time)
+          }
+          time={
+            event.time ||
+            new Date(event.event_time).toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
             })
+          }
+          image={imageSrc}
+          tags={[event.status]}
+          tagColor="#FBBC04"
+          description={event.description}
+          registerUrl={registerUrl}
+            />
+          );
+        })
           ) : (
-            <div className="text-gray-500 text-center py-12">
-              No upcoming events at the moment.
-            </div>
+        <div className="text-gray-500 text-center py-12">
+          No upcoming events at the moment.
+        </div>
           )}
         </motion.div>
       </section>

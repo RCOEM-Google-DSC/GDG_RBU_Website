@@ -24,7 +24,7 @@ const MeetOurTeam = () => {
               <div className="space-y-4 sm:space-y-5 md:space-y-6">
                 {/* Heading */}
                 <h1
-                  className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight"
+                  className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight font-retron"
                   style={{ color: "#000000" }}
                 >
                   Meet the Google Developer Group Team
