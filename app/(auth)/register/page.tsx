@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
 import { Mail, Lock, User, ArrowRight, ClipboardList } from "lucide-react";
 import { BiLogIn } from "react-icons/bi";
@@ -10,6 +11,7 @@ import { toast } from "sonner";
 
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [mode, setMode] = useState("login");
   const [hasInteracted, setHasInteracted] = useState(false);
   const cardStageRef = useRef<HTMLDivElement | null>(null);
@@ -76,7 +78,7 @@ export default function RegisterPage() {
       if (error) throw error;
       toast.success("You are logged in");
       // Redirect to profile page after successful login
-      window.location.href = "/profile";
+      router.push("/profile");
     } catch (err) {
       console.error(err);
       toast.error((err as Error)?.message || "Login error");
@@ -92,6 +94,7 @@ export default function RegisterPage() {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
       toast.success("Sign-up successful. You can complete your profile in the profile section.");
+      router.push("/profile");
     } catch (err) {
       console.error(err);
       toast.error((err as Error)?.message || "Sign-up error");

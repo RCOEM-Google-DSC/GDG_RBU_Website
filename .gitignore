@@ -46,3 +46,5 @@ gha-creds-*.json
 TODO.md
 
 db/*
+
+conductor/*
