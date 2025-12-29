@@ -323,3 +323,25 @@ input:focus {
 @media (prefers-reduced-motion: reduce){
         div[style]{transition:none!important;}
       }
+
+
+
+html.preloader-active nav,
+html.preloader-active .navbar,
+html.preloader-active #navbar,
+html.preloader-active .site-nav,
+html.preloader-active .nav-wrapper {
+  display: none !important;
+}
+
+/* hide sonner toasts during preloader so nothing overlaps */
+html.preloader-active .sonner-toast,
+html.preloader-active .toaster,
+html.preloader-active .toaster-root {
+  display: none !important;
+}
+
+/* optionally hide focus outlines during preload to avoid tiny flicker */
+html.preloader-active *:focus {
+  outline: none !important;
+}
