@@ -1,5 +1,4 @@
 "use client";
-import { BsTwitter } from "react-icons/bs";
 
 import { IoLocationOutline } from "react-icons/io5";
 import { CgMail } from "react-icons/cg";
@@ -105,7 +104,7 @@ const Footer = () => {
 
               {/* Email */}
               <Link
-                href="#"
+                href="mailto:gdsc@rknec.edu"
                 className="p-5 text-sm sm:text-base font-black transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
                 style={{
                   backgroundColor: "#FFC20E",
@@ -116,7 +115,7 @@ const Footer = () => {
               >
                 <span className="flex items-center gap-3">
                   <CgMail size={28} />
-                  <p>dsc.rknec@gmail.com</p>
+                  <p>gdsc@rknec.edu</p>
                 </span>
               </Link>
             </div>
@@ -135,7 +134,7 @@ const Footer = () => {
               </p>
               <div className="flex gap-4 items-center">
                 <Link
-                  href="#"
+                  href="https://www.instagram.com/gdg_rbu/"
                   target="_blank"
                   className="p-4 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
                   style={{
@@ -148,7 +147,7 @@ const Footer = () => {
                   <AiOutlineInstagram size={24} style={{ color: "#000000" }} />
                 </Link>
                 <Link
-                  href="#"
+                  href="https://www.linkedin.com/company/gdg-rbu/"
                   target="_blank"
                   className="p-4 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
                   style={{
@@ -161,7 +160,7 @@ const Footer = () => {
                   <FaLinkedinIn size={24} style={{ color: "#000000" }} />
                 </Link>
                 <Link
-                  href="#"
+                  href="https://x.com/gdsc_rcoem"
                   target="_blank"
                   className="p-4 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
                   style={{

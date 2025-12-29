@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import Link from 'next/link';
 
 export default function Hero() {
   return (
@@ -52,37 +53,46 @@ export default function Hero() {
 
           {/* Buttons */}
           <div className="mt-8 flex gap-5">
-            {['Learn more', 'Join'].map((label, i) => (
-              <div key={label} className="relative group">
-                <div
-                  className="
-                    absolute -right-2 -bottom-2
-                    bg-black w-full h-full
-                    transition-all duration-200
-                    group-hover:bg-white
-                    group-hover:translate-x-1
-                    group-hover:translate-y-1
-                  "
-                />
-                <button
-                  className={`
-                    relative
-                    border-2 border-black
-                    bg-white text-black
-                    h-12 px-7
-                    text-sm font-bold uppercase
-                    transition-all duration-200
-                    group-hover:bg-black
-                    group-hover:text-white
-                    ${i === 0 ? 'group-hover:-rotate-2' : 'group-hover:rotate-2'}
-                    group-hover:scale-105
-                    active:scale-95
-                  `}
-                >
-                  {label}
-                </button>
-              </div>
-            ))}
+            {['Learn more', 'Join'].map((label, i) => {
+              const href = label === 'Join' ? '/register' : '/events';
+              const ButtonContent = (
+                <div key={label} className="relative group">
+                  <div
+                    className="
+                      absolute -right-2 -bottom-2
+                      bg-black w-full h-full
+                      transition-all duration-200
+                      group-hover:bg-white
+                      group-hover:translate-x-1
+                      group-hover:translate-y-1
+                    "
+                  />
+                  <button
+                    className={`
+                      relative
+                      border-2 border-black
+                      bg-white text-black
+                      h-12 px-7
+                      text-sm font-bold uppercase
+                      transition-all duration-200
+                      group-hover:bg-black
+                      group-hover:text-white
+                      ${i === 0 ? 'group-hover:-rotate-2' : 'group-hover:rotate-2'}
+                      group-hover:scale-105
+                      active:scale-95
+                    `}
+                  >
+                    {label}
+                  </button>
+                </div>
+              );
+
+              return (
+                <Link key={label} href={href}>
+                  {ButtonContent}
+                </Link>
+              );
+            })}
           </div>
 
           <div className="mt-6">
