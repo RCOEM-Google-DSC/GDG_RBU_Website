@@ -29,7 +29,8 @@ CREATE TABLE public.events (
   gallery_uid uuid,
   CONSTRAINT events_pkey PRIMARY KEY (id),
   CONSTRAINT events_organizer_id_fkey FOREIGN KEY (organizer_id) REFERENCES public.users(id),
-  CONSTRAINT events_partner_id_fkey FOREIGN KEY (partner_id) REFERENCES public.partners(id)
+  CONSTRAINT events_partner_id_fkey FOREIGN KEY (partner_id) REFERENCES public.partners(id),
+  CONSTRAINT events_gallery_uid_fkey FOREIGN KEY (gallery_uid) REFERENCES public.gallery(id)
 );
 CREATE TABLE public.gallery (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
