@@ -1,8 +1,19 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { supabase } from '@/supabase/supabase';
 
 export default function Hero() {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+    };
+    fetchUser();
+  }, []);
+
   return (
     <section className="relative w-full min-h-screen ">
       {/* Grid background */}
@@ -54,8 +65,11 @@ export default function Hero() {
 
           {/* Buttons */}
           <div className="mt-8 flex gap-5">
-            {['Learn more', 'Join'].map((label, i) => {
-              const href = label === 'Join' ? '/register' : '/events';
+            {['Learn more', user ? 'Profile' : 'Join'].map((label, i) => {
+              let href = '/events';
+              if (label === 'Join') href = '/register';
+              else if (label === 'Profile') href = '/profile';
+
               const ButtonContent = (
                 <div key={label} className="relative group">
                   <div
