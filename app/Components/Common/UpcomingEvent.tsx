@@ -140,7 +140,13 @@ const UpcomingEvent = ({
                       Date & Time
                     </p>
                     <p className="text-xl font-bold text-black">
-                      {date instanceof Date ? date.toLocaleDateString() : date}{" "}
+                      {date instanceof Date
+                        ? date.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })
+                        : date}
                       <br />
                       {time}
                     </p>
@@ -213,7 +219,7 @@ const UpcomingEvent = ({
           <div className="relative bg-[#FFC20E] p-4 sm:p-6">
             {/* Date & Time */}
             <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4">
-              <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-black stroke-[1.5] flex-shrink-0" />
+              <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-black stroke-[1.5] shrink-0" />
               <div className="text-center">
                 <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-black/60">
                   Date & Time
@@ -223,6 +229,7 @@ const UpcomingEvent = ({
                     ? date.toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
+                        year: "numeric",
                       })
                     : date}{" "}
                   • {time}
