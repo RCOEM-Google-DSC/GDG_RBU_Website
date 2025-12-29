@@ -19,6 +19,7 @@ type TeamMember = {
   id: string;
   name: string | null;
   email: string | null;
+  role: string;
   domain: string | null;
   created_at: string;
   userid: string;
@@ -37,6 +38,14 @@ export default function TeamMembersPage() {
     oldDomain: string | null;
   } | null>(null);
 
+  // Role change warning dialog state
+  const [roleChangeDialogOpen, setRoleChangeDialogOpen] = useState(false);
+  const [pendingRoleChange, setPendingRoleChange] = useState<{
+    userId: string;
+    newRole: string;
+    oldRole: string;
+  } | null>(null);
+
   useEffect(() => {
     fetchTeamMembers();
   }, []);
@@ -44,11 +53,11 @@ export default function TeamMembersPage() {
   const fetchTeamMembers = async () => {
     setLoading(true);
     try {
-      // Fetch users with role 'member' and join with team_members table
+      // Fetch users with role 'member' or 'admin' and join with team_members table
       const { data: usersData, error: usersError } = await supabase
         .from("users")
-        .select("id, name, email, created_at")
-        .eq("role", "member")
+        .select("id, name, email, role, created_at")
+        .in("role", ["member", "admin"])
         .order("created_at", { ascending: false });
 
       if (usersError) {
@@ -77,6 +86,7 @@ export default function TeamMembersPage() {
           id: user.id,
           name: user.name,
           email: user.email,
+          role: user.role,
           domain: teamMemberData?.domain || null,
           created_at: user.created_at,
           userid: user.id,
@@ -167,6 +177,89 @@ export default function TeamMembersPage() {
     setDomainChangeDialogOpen(false);
   };
 
+  const handleRoleChange = (userId: string, newRole: string) => {
+    const member = teamMembers.find((m) => m.userid === userId);
+    if (!member) return;
+
+    setPendingRoleChange({
+      userId,
+      newRole,
+      oldRole: member.role,
+    });
+    setRoleChangeDialogOpen(true);
+  };
+
+  const updateRole = async (userId: string, role: string) => {
+    try {
+      // Update user role in users table
+      const { error: userError } = await supabase
+        .from("users")
+        .update({ role })
+        .eq("id", userId);
+
+      if (userError) {
+        toast.error("Failed to update role");
+        console.error(userError);
+        return;
+      }
+
+      // If role is changed to member, ensure they are in team_members with correct club role
+      if (role === "member") {
+        const { data: existingMember } = await supabase
+          .from("team_members")
+          .select("id")
+          .eq("userid", userId)
+          .single();
+
+        if (!existingMember) {
+          // Insert
+          const { error: insertError } = await supabase
+            .from("team_members")
+            .insert({
+              userid: userId,
+              "club role": "member",
+            });
+          if (insertError) {
+            console.error("Error adding to team_members", insertError);
+            toast.warning("Role updated, but failed to set club role.");
+          }
+        } else {
+          // Update club role
+          const { error: updateError } = await supabase
+            .from("team_members")
+            .update({ "club role": "member" })
+            .eq("userid", userId);
+          if (updateError) {
+            console.error("Error updating club role", updateError);
+            toast.warning("Role updated, but failed to update club role.");
+          }
+        }
+      }
+
+      // Update local state
+      setTeamMembers((prev) =>
+        prev.map((m) => (m.userid === userId ? { ...m, role } : m)),
+      );
+      toast.success("Role updated successfully");
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+      console.error(error);
+    }
+  };
+
+  const confirmRoleChange = () => {
+    if (pendingRoleChange) {
+      updateRole(pendingRoleChange.userId, pendingRoleChange.newRole);
+      setPendingRoleChange(null);
+      setRoleChangeDialogOpen(false);
+    }
+  };
+
+  const cancelRoleChange = () => {
+    setPendingRoleChange(null);
+    setRoleChangeDialogOpen(false);
+  };
+
   const columns = [
     {
       header: "Name",
@@ -175,6 +268,37 @@ export default function TeamMembersPage() {
     {
       header: "Email",
       accessorKey: "email",
+    },
+    {
+      header: "Role",
+      accessorKey: "role",
+      cell: ({ row }: any) => {
+        const member = row.original;
+        return (
+          <Select
+            value={member.role}
+            onValueChange={(value) => handleRoleChange(member.userid, value)}
+            disabled={!canManageUsers}
+          >
+            <SelectTrigger className="w-[120px]">
+              <SelectValue>
+                <span className="capitalize">{member.role}</span>
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="user" className="cursor-pointer">
+                User
+              </SelectItem>
+              <SelectItem value="member" className="cursor-pointer">
+                Member
+              </SelectItem>
+              <SelectItem value="admin" className="cursor-pointer">
+                Admin
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        );
+      },
     },
     {
       header: "Domain",
@@ -214,6 +338,9 @@ export default function TeamMembersPage() {
               </SelectItem>
               <SelectItem value="socials" className="cursor-pointer">
                 <span className="capitalize">Socials</span>
+              </SelectItem>
+              <SelectItem value="cp" className="cursor-pointer">
+                <span className="capitalize">CP</span>
               </SelectItem>
             </SelectContent>
           </Select>
@@ -287,6 +414,34 @@ export default function TeamMembersPage() {
         confirmText="Confirm Change"
         confirmClassName="bg-blue-600 hover:bg-blue-700 focus:ring-blue-600"
         icon={<AlertTriangle className="w-5 h-5 text-blue-500" />}
+      />
+
+      {/* Role Change Warning Dialog */}
+      <ConfirmDialog
+        open={roleChangeDialogOpen}
+        onOpenChange={setRoleChangeDialogOpen}
+        title="Confirm Role Change"
+        description={
+          <>
+            You are about to change the user&apos;s role from{" "}
+            <span className="font-semibold text-foreground capitalize">
+              {pendingRoleChange?.oldRole}
+            </span>{" "}
+            to{" "}
+            <span className="font-semibold text-foreground capitalize">
+              {pendingRoleChange?.newRole}
+            </span>
+            .
+            <br />
+            <br />
+            Are you sure you want to proceed with this change?
+          </>
+        }
+        onConfirm={confirmRoleChange}
+        onCancel={cancelRoleChange}
+        confirmText="Confirm Change"
+        confirmClassName="bg-amber-600 hover:bg-amber-700 focus:ring-amber-600"
+        icon={<AlertTriangle className="w-5 h-5 text-amber-500" />}
       />
     </div>
   );
