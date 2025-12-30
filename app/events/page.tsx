@@ -18,6 +18,8 @@ type Event = {
   time?: string | null;
   status: string;
   register_url?: string | null;
+  website_url?: string | null;
+
 };
 
 const FALLBACK_IMAGE =
@@ -25,6 +27,8 @@ const FALLBACK_IMAGE =
 
 const REGISTER_URL =
   "https://vision.hack2skill.com/event/gdgoc-25-techsprint-rbu?utm_source=hack2skill&utm_medium=homepage";
+
+
 
 const cloudinarySafe = (url?: string | null) => {
   if (!url) return FALLBACK_IMAGE;
@@ -61,6 +65,8 @@ const EventsPage = () => {
       setLoading(false);
     }
   };
+
+
 
   if (loading) {
     return (
@@ -180,6 +186,7 @@ const EventsPage = () => {
                     tags={[event.status]}
                     tagColor="#4285F4"
                     description={event.description}
+                    website_url={event.website_url == null ? `/events/${event.id}` : event.website_url}
                   />
                 );
               })}
