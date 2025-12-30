@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { Ticket, Users, ArrowDownRight, Sparkles } from "lucide-react";
 import { getEvent, getGalleryImages, getEventWithPartner } from "@/supabase/supabase";
+import ImageViewerModal from "@/app/Components/events/ImageViewerModal";
 
 export default function EventPage({
   params: paramsPromise,
@@ -17,6 +18,8 @@ export default function EventPage({
   const [event, setEvent] = useState<any>(null);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerImage, setViewerImage] = useState({ src: "", alt: "" });
 
   /* ---------------- FETCH DATA ---------------- */
   useEffect(() => {
@@ -89,8 +92,13 @@ export default function EventPage({
   const partnersArray = Array.isArray(rawPartners)
     ? rawPartners
     : rawPartners
-    ? [rawPartners]
-    : [];
+      ? [rawPartners]
+      : [];
+
+  const openImageViewer = (src: string, alt: string) => {
+    setViewerImage({ src, alt });
+    setViewerOpen(true);
+  };
 
   return (
     <div className="min-h-screen  font-mono text-black selection:bg-[#8338ec] selection:text-white pb-32 relative overflow-x-hidden">
@@ -110,7 +118,13 @@ export default function EventPage({
           {/* HERO IMAGE (the bordered box) */}
           <div
             className={`relative z-10 w-full h-[300px] md:h-[420px] ${border}
-            shadow-[6px_6px_0px_0px_#8338ec] md:shadow-[8px_8px_0px_0px_#8338ec] bg-white p-2 rotate-0 md:rotate-1 mt-36 sm:mt-32 md:mt-20`}
+            shadow-[6px_6px_0px_0px_#8338ec] md:shadow-[8px_8px_0px_0px_#8338ec] bg-white p-2 rotate-0 md:rotate-1 mt-36 sm:mt-32 md:mt-20 cursor-pointer group`}
+            onClick={() => openImageViewer(
+              event.image_url
+                ? event.image_url.replace("/upload/", "/upload/f_auto,q_auto/")
+                : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop",
+              event.title
+            )}
           >
             <Image
               height={420}
@@ -121,7 +135,7 @@ export default function EventPage({
                   : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop"
               }
               alt={event.title}
-              className="w-full h-full object-cover border-2 border-black"
+              className="w-full h-full object-cover border-2 border-black group-hover:scale-105 transition-transform duration-300"
             />
 
             <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] z-30">
@@ -253,18 +267,22 @@ export default function EventPage({
           </div>
 
           <div
-            className={`${cardBase} p-3 md:p-4 bg-[#ffbe0b] rotate-0 md:rotate-1`}
+            className={`${cardBase} p-3 md:p-4 bg-[#ffbe0b] rotate-0 md:rotate-1 h-150 cursor-pointer group`}
+            onClick={() => openImageViewer(
+              event.crew_url.replace("/upload/", "/upload/f_auto,q_auto/"),
+              "The Crew"
+            )}
           >
             <div className="bg-black p-2 border-4 border-black rotate-0 md:-rotate-1">
               <Image
-              height={340}
-              width={600}
+                height={600}
+                width={600}
                 src={event.crew_url.replace(
                   "/upload/",
                   "/upload/f_auto,q_auto/",
                 )}
                 alt="The Crew"
-                className="w-full h-[280px] md:h-[340px] object-cover border-2 border-white contrast-125"
+                className="w-full h-[530px] object-cover border-2 border-white contrast-125 group-hover:scale-105 transition-transform duration-300"
               />
             </div>
           </div>
@@ -288,7 +306,8 @@ export default function EventPage({
                     className={`bg-white p-4 pb-12 ${border}
                   shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)]
                   rotate-0 ${rotationClass}
-                  hover:rotate-0 hover:scale-105 transition-transform duration-300`}
+                  hover:rotate-0 hover:scale-105 transition-transform duration-300 cursor-pointer`}
+                    onClick={() => openImageViewer(src, `Gallery ${i + 1}`)}
                   >
                     <div className="aspect-square border-2 border-black overflow-hidden bg-gray-200">
                       <Image
@@ -296,7 +315,7 @@ export default function EventPage({
                         width={320}
                         src={src}
                         alt={`Gallery ${i + 1}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
                     </div>
                     <div className="mt-4 font-black text-center text-gray-400 uppercase tracking-widest">
@@ -310,7 +329,14 @@ export default function EventPage({
         </section>
       )}
 
-  
+      {/* Image Viewer Modal */}
+      <ImageViewerModal
+        isOpen={viewerOpen}
+        imageSrc={viewerImage.src}
+        imageAlt={viewerImage.alt}
+        onClose={() => setViewerOpen(false)}
+      />
+
     </div>
   );
 }

@@ -136,7 +136,7 @@ const UpcomingEvent = ({
                 {/* Ticket Bottom */}
                 <div>
                   <div className="mb-6">
-                    <p className="text-sm font-bold uppercase tracking-widest text-black/60 mb-1">
+                    <p className="text-[17px] font-bold uppercase tracking-widest text-black/60 mb-1">
                       Date & Time
                     </p>
                     <p className="text-xl font-bold text-black">
@@ -221,7 +221,7 @@ const UpcomingEvent = ({
             <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4">
               <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-black stroke-[1.5] shrink-0" />
               <div className="text-center">
-                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-black/60">
+                <p className="text-[17px] sm:text-xs font-bold uppercase tracking-widest text-black/60">
                   Date & Time
                 </p>
                 <p className="text-sm sm:text-base font-bold text-black leading-tight">
