@@ -31,7 +31,6 @@ type DomainLead = {
   role: string;
 };
 
-
 export default function TeamPage() {
   const [teamMembers, setTeamMembers] = useState<Member[]>([]);
   const [domainLeads, setDomainLeads] = useState<DomainLead[]>([]);
@@ -40,7 +39,7 @@ export default function TeamPage() {
   useEffect(() => {
     const fetchTeamData = async () => {
       try {
-        // Fetch all team members with user data
+        // 1) fetch team_members rows (we keep github/linkedin from team_members as fallback)
         const { data: teamData, error: teamError } = await supabase
           .from("team_members")
           .select(`
@@ -49,12 +48,7 @@ export default function TeamPage() {
             domain,
             github,
             linkedin,
-            "club role",
-            users (
-              name,
-              email,
-              image_url
-            )
+            "club role"
           `);
 
         if (teamError) {
@@ -62,33 +56,97 @@ export default function TeamPage() {
           return;
         }
 
-        // Separate domain leads from regular members
+        if (!teamData || teamData.length === 0) {
+          setDomainLeads([]);
+          setTeamMembers([]);
+          return;
+        }
+
+        // 2) collect unique user ids (userid is the UUID referencing users.id)
+        const userIds = Array.from(
+          new Set(
+            teamData
+              .map((m: any) => m.userid)
+              .filter(Boolean)
+          )
+        );
+
+        // 3) fetch users by id to get profile_links, name, email, image_url
+        let usersData: any[] = [];
+        if (userIds.length > 0) {
+          const { data: uData, error: uError } = await supabase
+            .from("users")
+            .select("id, name, email, image_url, profile_links")
+            .in("id", userIds);
+
+          if (uError) {
+            console.error("Error fetching users:", uError);
+          } else if (uData) {
+            usersData = uData;
+          }
+        }
+
+        // create a map of users keyed by id for quick lookup
+        const userMap: Record<string, any> = {};
+        usersData.forEach((u: any) => {
+          userMap[String(u.id)] = u;
+        });
+
+        // 4) Build leads and members arrays, preferring users.profile_links for github/linkedin
         const leads: DomainLead[] = [];
         const members: Member[] = [];
 
-        teamData?.forEach((member: any) => {
-          const userData = member.users;
-          const memberData = {
-            id: member.id,
-            userid: member.userid,
-            domain: member.domain || "",
-            name: userData?.name || "Unknown",
-            email: userData?.email || "",
-            image_url: userData?.image_url || "https://placehold.co/400x500/png",
-            github: member.github || "https://github.com",
-            linkedin: member.linkedin || "https://linkedin.com",
+        teamData.forEach((memberRow: any) => {
+          // find corresponding user row (if any)
+          const userRow = userMap[String(memberRow.userid)];
+
+          // profile_links may be stored as an object or a JSON string depending on how it was inserted
+          let profileLinks: any = {};
+          if (userRow && userRow.profile_links) {
+            try {
+              profileLinks =
+                typeof userRow.profile_links === "string"
+                  ? JSON.parse(userRow.profile_links)
+                  : userRow.profile_links;
+            } catch (e) {
+              // parsing failed — treat as empty object
+              profileLinks = {};
+            }
+          }
+
+          // prefer profile_links from users table, otherwise fallback to columns on team_members row, otherwise generic defaults
+          const githubUrl =
+            (profileLinks && profileLinks.github) ||
+            memberRow.github ||
+            "https://github.com";
+          const linkedinUrl =
+            (profileLinks && profileLinks.linkedin) ||
+            memberRow.linkedin ||
+            "https://linkedin.com";
+
+          const memberDataBase = {
+            id: memberRow.id,
+            userid: memberRow.userid,
+            domain: memberRow.domain || "",
+            name: (userRow && userRow.name) || "Unknown",
+            email: (userRow && userRow.email) || "",
+            image_url: (userRow && userRow.image_url) || "https://placehold.co/400x500/png",
+            github: githubUrl,
+            linkedin: linkedinUrl,
           };
 
-          // Check if this member is a domain lead by checking club_role
-          // Note: using bracket notation because of space in column name
-          if (member["club role"] === "domain lead") {
+          // club role handling: if club role is domain lead, push to leads
+          if (memberRow["club role"] === "domain lead") {
             leads.push({
-              ...memberData,
-              role: `${member.domain} Lead`,
+              ...memberDataBase,
+              role: `${memberRow.domain} Lead`,
             });
-          } else if (!member["club role"] || member["club role"] !== "club lead") {
-            // Regular team member (not club lead or domain lead)
-            members.push(memberData);
+          } else if (!memberRow["club role"] || memberRow["club role"] !== "club lead") {
+            // regular member
+            members.push(memberDataBase);
+          } else {
+            // If there are other club roles (e.g., "club lead") we treat them as members (preserving original behaviour)
+            members.push(memberDataBase);
           }
         });
 
