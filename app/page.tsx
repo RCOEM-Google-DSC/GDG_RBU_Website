@@ -79,7 +79,7 @@ export default function Home() {
       {/* upcoming events section */}
       <section className="w-full px-6 md:px-10 lg:px-20 py-10 relative z-10">
         <motion.div
-          className="w-full flex flex-col items-center justify-center pt-0 pb-12 sm:pt-0 sm:pb-14 bg-background text-foreground px-4"
+          className="w-full flex flex-col items-center justify-center pt-0 pb-12 sm:pt-0 sm:pb-14 text-foreground px-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ amount: 0.3 }}

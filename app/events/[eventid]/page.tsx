@@ -267,7 +267,7 @@ export default function EventPage({
           </div>
 
           <div
-            className={`${cardBase} p-3 md:p-4 bg-[#ffbe0b] rotate-0 md:rotate-1 h-150 cursor-pointer group`}
+            className={`${cardBase} p-3 md:p-4 bg-[#ffbe0b] rotate-0 md:rotate-1 cursor-pointer group`}
             onClick={() => openImageViewer(
               event.crew_url.replace("/upload/", "/upload/f_auto,q_auto/"),
               "The Crew"
@@ -282,7 +282,7 @@ export default function EventPage({
                   "/upload/f_auto,q_auto/",
                 )}
                 alt="The Crew"
-                className="w-full h-[530px] object-cover border-2 border-white contrast-125 group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-auto md:h-[530px] object-contain md:object-cover border-2 border-white contrast-125 group-hover:scale-101 transition-transform duration-300"
               />
             </div>
           </div>
