@@ -141,7 +141,7 @@ export default function EventPage({
             </h1>
             <div className="mt-2 font-bold border-t-2 border-black pt-2 flex justify-between text-xs md:text-sm">
               <span>{eventDate}</span>
-              <span>{event.venue || "TBA"}</span>
+              <span className="ml-5 lg:ml-8">{event.venue || "TBA"}</span>
             </div>
           </div>
         </div>
