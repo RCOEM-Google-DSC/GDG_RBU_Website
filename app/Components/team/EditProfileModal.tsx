@@ -1,5 +1,5 @@
 "use client";
-import { SiLeetcode } from "react-icons/si"; 
+import { SiLeetcode } from "react-icons/si";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -74,10 +74,10 @@ interface EditProfileModalProps {
   onSuccess?: () => void;
   profile: {
     users?: {
-      image_url?: string;
-      branch?: string;
-      section?: string;
-      phone_number?: string;
+      image_url?: string | null;
+      branch?: string | null;
+      section?: string | null;
+      phone_number?: string | null;
       profile_links?: {
         github?: string;
         linkedin?: string;
@@ -85,14 +85,14 @@ interface EditProfileModalProps {
       name?: string;
       email?: string;
     };
-    domain?: string;
-    bio?: string;
-    thought?: string;
-    leetcode?: string;
-    twitter?: string;
-    instagram?: string;
-    club_email?: string;
-    cv_url?: string;
+    domain?: string | null;
+    bio?: string | null;
+    thought?: string | null;
+    leetcode?: string | null;
+    twitter?: string | null;
+    instagram?: string | null;
+    club_email?: string | null;
+    cv_url?: string | null;
   };
   userId: string;
 }
@@ -682,7 +682,7 @@ export default function EditProfileModal({
                       className="flex items-center gap-2 font-bold"
                       style={{ color: "#000000" }}
                     >
-                      <SiLeetcode size={16}/>
+                      <SiLeetcode size={16} />
                       LeetCode URL
                     </FormLabel>
                     <FormControl>
