@@ -76,6 +76,7 @@ export interface PastEventCardProps {
   image: string;
   tags?: Array<string>;
   tagColor?: string;
+  website_url?: string;
 }
 export interface UpcomingEventCardProps {
   id: string;

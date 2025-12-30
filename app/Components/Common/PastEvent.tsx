@@ -4,6 +4,7 @@ import { PastEventCardProps } from "@/lib";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+
 const PastEvent = ({
   id,
   title,
@@ -12,7 +13,33 @@ const PastEvent = ({
   tags,
   tagColor,
   description,
+  website_url,
 }: PastEventCardProps) => {
+  // --- Minimal URL normalization / detection logic (no other changes) ---
+  // We want to treat values like "/events/xyz" as internal,
+  // values starting with "http" as external, and values like "www.google.com"
+  // as external (we will prefix https://).
+  let normalizedWebsite: string | undefined = undefined;
+  let isExternal = false;
+
+  if (website_url) {
+    if (website_url.startsWith("http")) {
+      normalizedWebsite = website_url;
+      isExternal = true;
+    } else if (website_url.startsWith("/")) {
+      normalizedWebsite = website_url; // internal route
+      isExternal = false;
+    } else if (website_url.includes(".")) {
+      // likely an external host like "www.google.com" or "example.com"
+      normalizedWebsite = `https://${website_url}`;
+      isExternal = true;
+    } else {
+      // fallback — treat as internal route
+      normalizedWebsite = website_url;
+      isExternal = false;
+    }
+  }
+
   return (
     <div className="w-full flex items-center justify-center">
       {/* Container for the card with fixed dimensions */}
@@ -73,17 +100,36 @@ const PastEvent = ({
             <h2 className="text-xl sm:text-2xl font-bold text-black tracking-tight leading-tight flex-1 pr-2 line-clamp-2">
               {title}
             </h2>
-            <Link
-              href={`/events/${id}`}
-              aria-label={`View details for ${title}`}
-            >
-              <Button
-                className="bg-[#fbbf24] hover:bg-[#f59e0b] transition-colors rounded-full p-2 flex items-center justify-center shrink-0"
-                aria-label={`Go to ${title}`}
+
+            {/* ---------- Minimal change: handle external vs internal links ---------- */}
+            {isExternal ? (
+              <a
+                href={normalizedWebsite}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Open ${title} website`}
               >
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-black stroke-[2.5]" />
-              </Button>
-            </Link>
+                <Button
+                  className="bg-[#fbbf24] hover:bg-[#f59e0b] transition-colors rounded-full p-2 flex items-center justify-center shrink-0"
+                  aria-label={`Go to ${title}`}
+                >
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-black stroke-[2.5]" />
+                </Button>
+              </a>
+            ) : (
+              <Link
+                href={normalizedWebsite ?? `/events/${id}`}
+                aria-label={`View details for ${title}`}
+              >
+                <Button
+                  className="bg-[#fbbf24] hover:bg-[#f59e0b] transition-colors rounded-full p-2 flex items-center justify-center shrink-0"
+                  aria-label={`Go to ${title}`}
+                >
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-black stroke-[2.5]" />
+                </Button>
+              </Link>
+            )}
+            {/* ----------------------------------------------------------------------- */}
           </div>
 
           {/* Main Image - Fixed aspect ratio */}
