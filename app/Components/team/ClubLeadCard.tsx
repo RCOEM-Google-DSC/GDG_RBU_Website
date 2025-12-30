@@ -18,13 +18,13 @@ export default function ClubLeadCard() {
           .from("team_members")
           .select(`
             userid,
-            github,
-            linkedin,
+           
             instagram,
             bio,
             thought,
             users (
               name,
+              profile_links,
               image_url
             )
           `)
@@ -42,8 +42,8 @@ export default function ClubLeadCard() {
             name: user?.name || "Club Lead",
             quote: data.thought || "Building communities, one event at a time",
             imageUrl: user?.image_url || "/placeholder.png",
-            github: data.github || "https://github.com/",
-            linkedin: data.linkedin || "https://linkedin.com/",
+            github: user?.profile_links?.github || "https://github.com/",
+            linkedin: user?.profile_links?.linkedin || "https://linkedin.com/",
             instagram: data.instagram || "https://instagram.com/",
             userid: data.userid,
           });
