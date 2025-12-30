@@ -92,7 +92,7 @@ function LeaderCard({
 
   return (
     <div
-    
+
       className="relative inline-block cursor-pointer w-full max-w-[350px] aspect-3/4"
       onClick={handleCardClick}
     >
@@ -200,13 +200,13 @@ function LeaderCard({
             margin: `${(borderWidth / width) * 100}%`,
           }}
         >
-          <div className="w-full h-[40%] flex items-center justify-center border-b-[3px] border-black bg-gradient-to-br from-yellow-50 to-yellow-100">
-            <span className="text-[10px] md:text-[11px] tracking-wider font-extrabold uppercase px-1 text-center leading-none">
+          <div className="w-full h-[60%] flex items-center justify-center border-b-[3px] border-black bg-linear-to-br from-yellow-50 to-yellow-100">
+            <span className="text-[15px] md:text-[16px] tracking-wider font-extrabold uppercase px-1 text-center leading-none">
               Lead
             </span>
           </div>
           <div className="w-full h-[60%] flex items-center justify-center px-2 py-1">
-            <span className="text-xs md:text-sm font-black leading-tight text-center break-words line-clamp-2">
+            <span className="text-xs md:text-[15px] font-black leading-tight text-center line-clamp-2">
               {name}
             </span>
           </div>
