@@ -47,13 +47,14 @@ export default function TeamPage() {
             id,
             userid,
             domain,
-            github,
-            linkedin,
+           
             "club role",
             users (
               name,
               email,
-              image_url
+              image_url,
+              profile_links
+
             )
           `);
 
@@ -75,8 +76,8 @@ export default function TeamPage() {
             name: userData?.name || "Unknown",
             email: userData?.email || "",
             image_url: userData?.image_url || "https://placehold.co/400x500/png",
-            github: member.github || "https://github.com",
-            linkedin: member.linkedin || "https://linkedin.com",
+            github: userData?.profile_links?.github || "https://github.com",
+            linkedin: userData?.profile_links?.linkedin || "https://linkedin.com",
           };
 
           // Check if this member is a domain lead by checking club_role
