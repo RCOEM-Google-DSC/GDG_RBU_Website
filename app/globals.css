@@ -79,6 +79,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --fd-sidebar-width: 280px;
 }
 
 .dark {
@@ -127,41 +128,75 @@
 }
 
 /* Custom sidebar positioning to account for navbar */
-[data-slot="sidebar-container"] {
-  top: 70px !important;
+[data-slot="sidebar-container"],
+#fd-sidebar,
+aside[data-fd-sidebar="true"],
+#gdg-docs-wrapper aside {
+  top: 15px !important;
   height: calc(100vh - 70px) !important;
+  max-height: calc(100vh - 70px) !important;
+  overflow-y: auto !important;
+  width: var(--fd-sidebar-width) !important;
+  min-width: var(--fd-sidebar-width) !important;
+  flex-shrink: 0 !important; /* Prevent stretching */
   transition:
     top 0.3s ease,
     height 0.3s ease;
 }
 
+/* Prevent sidebar content from stretching */
+[data-slot="sidebar-container"] > *,
+#fd-sidebar > *,
+#gdg-docs-wrapper aside > * {
+  max-height: 100% !important;
+  overflow-y: auto !important;
+}
+
+/* Fix sidebar inner content height */
+[data-slot="sidebar-container"] [data-slot="sidebar"] {
+  height: 100% !important;
+  max-height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
 /* Adjust sidebar when navbar is hidden */
-body:has(nav.-translate-y-full) [data-slot="sidebar-container"] {
+body:has(nav.-translate-y-full) [data-slot="sidebar-container"],
+body:has(nav.-translate-y-full) #fd-sidebar,
+body:has(nav.-translate-y-full) aside[data-fd-sidebar="true"],
+body:has(nav.-translate-y-full) #gdg-docs-wrapper aside {
   top: 0 !important;
   height: 100vh !important;
+  max-height: 100vh !important;
 }
 
 /* Fumadocs navigation positioning - below navbar */
-[data-fumadocs-nav] {
+[data-fumadocs-nav],
+nav[data-fd-nav="true"],
+#gdg-docs-wrapper header {
   top: 70px !important;
   z-index: 40 !important;
   transition: top 0.3s ease !important;
 }
 
 /* When navbar is hidden, move nav to top */
-body:has(nav.-translate-y-full) [data-fumadocs-nav] {
+body:has(nav.-translate-y-full) [data-fumadocs-nav],
+body:has(nav.-translate-y-full) nav[data-fd-nav="true"],
+body:has(nav.-translate-y-full) #gdg-docs-wrapper header {
   top: 0 !important;
 }
 
 /* Fumadocs sidebar toggle buttons - positioned below navbar with spacing */
-[data-fumadocs-sidebar-toggle] {
+[data-fumadocs-sidebar-toggle],
+button[data-fd-sidebar-toggle="true"] {
   top: calc(70px + 0.75rem) !important;
   z-index: 50 !important;
   transition: top 0.3s ease !important;
 }
 
 /* When navbar is hidden, move toggle buttons to top with small margin */
-body:has(nav.-translate-y-full) [data-fumadocs-sidebar-toggle] {
+body:has(nav.-translate-y-full) [data-fumadocs-sidebar-toggle],
+body:has(nav.-translate-y-full) button[data-fd-sidebar-toggle="true"] {
   top: 0.75rem !important;
 }
 
@@ -174,8 +209,16 @@ button[aria-label*="Toggle theme" i] {
 
 /* Search button positioning */
 .docs-search-button,
-[data-search-toggle] {
+[data-search-toggle],
+button[aria-label="Search"] {
+  top: 500px !important; /* Adjust if it's floating */
   transition: top 0.3s ease !important;
+}
+
+body:has(nav.-translate-y-full) .docs-search-button,
+body:has(nav.-translate-y-full) [data-search-toggle],
+body:has(nav.-translate-y-full) button[aria-label="Search"] {
+  top: 1rem !important;
 }
 
 Button {
@@ -201,10 +244,10 @@ Button {
   animation: cell-ripple var(--duration) linear var(--delay) forwards;
 }
 
-html, body {
+html,
+body {
   overflow-x: hidden;
 }
-
 
 :root {
   --button-comp: 0px;
@@ -217,17 +260,29 @@ html, body {
 }
 
 @keyframes float {
-  0% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(0.6deg); }
-  100% { transform: translateY(0px) rotate(0deg); }
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(0.6deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
 }
-.float-slow { animation: float 6s ease-in-out infinite; }
-.float-fast { animation: float 4.5s ease-in-out infinite; }
+.float-slow {
+  animation: float 6s ease-in-out infinite;
+}
+.float-fast {
+  animation: float 4.5s ease-in-out infinite;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .float-slow, .float-fast { animation: none !important; }
+  .float-slow,
+  .float-fast {
+    animation: none !important;
+  }
 }
-
 
 @media (max-width: 767px) {
   .decor-svg,
@@ -237,15 +292,27 @@ html, body {
 }
 
 @keyframes floatSlow {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 @keyframes floatFast {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-14px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .float-slow {
@@ -257,16 +324,14 @@ html, body {
 }
 
 input:focus {
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
 }
-
 
 @media (prefers-reduced-motion: reduce) {
   div[style] {
     transition: none !important;
   }
 }
-
 
 @media (prefers-reduced-motion: reduce) {
   * {
@@ -275,36 +340,35 @@ input:focus {
   }
 }
 
-
 .floating-toggle {
   left: 0;
   will-change: transform, box-shadow;
-  transition: none; 
+  transition: none;
   z-index: 30;
   pointer-events: auto;
 }
 
-
 .floating-toggle.transition-on {
-  transition: transform 1100ms cubic-bezier(.18,.9,.24,1), box-shadow 900ms cubic-bezier(.18,.9,.24,1);
+  transition:
+    transform 1100ms cubic-bezier(0.18, 0.9, 0.24, 1),
+    box-shadow 900ms cubic-bezier(0.18, 0.9, 0.24, 1);
 }
 
 .floating-toggle.transition-on .relative > button {
-  transition: transform 420ms cubic-bezier(.22,.9,.26,1), box-shadow 420ms cubic-bezier(.22,.9,.26,1);
+  transition:
+    transform 420ms cubic-bezier(0.22, 0.9, 0.26, 1),
+    box-shadow 420ms cubic-bezier(0.22, 0.9, 0.26, 1);
 }
-
 
 .floating-toggle.is-login.transition-on .relative > button {
   transform: translateY(-4px) rotate(-0.6deg);
   box-shadow: 10px 10px 0px #000;
 }
 
-
 .floating-toggle.is-signup.transition-on .relative > button {
   transform: translateY(0) rotate(0deg);
   box-shadow: 6px 6px 0px #000;
 }
-
 
 .floating-toggle > .relative > .absolute {
   will-change: transform;
@@ -320,11 +384,11 @@ input:focus {
   }
 }
 
-@media (prefers-reduced-motion: reduce){
-        div[style]{transition:none!important;}
-      }
-
-
+@media (prefers-reduced-motion: reduce) {
+  div[style] {
+    transition: none !important;
+  }
+}
 
 html.preloader-active nav,
 html.preloader-active .navbar,
