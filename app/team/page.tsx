@@ -31,10 +31,31 @@ type DomainLead = {
   role: string;
 };
 
+type Mentor = {
+  id: string;
+  userid: string;
+  name: string;
+  image_url: string;
+  github?: string;
+  linkedin?: string;
+};
+
+type Senior = {
+  id: string;
+  userid: string;
+  domain: string;
+  name: string;
+  image_url: string;
+  github?: string;
+  linkedin?: string;
+};
+
 
 export default function TeamPage() {
   const [teamMembers, setTeamMembers] = useState<Member[]>([]);
   const [domainLeads, setDomainLeads] = useState<DomainLead[]>([]);
+  const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [seniors, setSeniors] = useState<Senior[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -63,9 +84,11 @@ export default function TeamPage() {
           return;
         }
 
-        // Separate domain leads from regular members
+        // Separate members by club role
         const leads: DomainLead[] = [];
         const members: Member[] = [];
+        const mentorsList: Mentor[] = [];
+        const seniorsList: Senior[] = [];
 
         teamData?.forEach((member: any) => {
           const userData = member.users;
@@ -80,21 +103,42 @@ export default function TeamPage() {
             linkedin: userData?.profile_links?.linkedin || "https://linkedin.com",
           };
 
-          // Check if this member is a domain lead by checking club_role
-          // Note: using bracket notation because of space in column name
-          if (member["club role"] === "domain lead") {
+          const clubRole = member["club role"];
+
+          if (clubRole === "mentor") {
+            mentorsList.push({
+              id: memberData.id,
+              userid: memberData.userid,
+              name: memberData.name,
+              image_url: memberData.image_url,
+              github: memberData.github,
+              linkedin: memberData.linkedin,
+            });
+          } else if (clubRole === "domain lead") {
             leads.push({
               ...memberData,
               role: `${member.domain} Lead`,
             });
-          } else if (!member["club role"] || member["club role"] !== "club lead") {
-            // Regular team member (not club lead or domain lead)
+          } else if (clubRole === "senior") {
+            seniorsList.push({
+              id: memberData.id,
+              userid: memberData.userid,
+              domain: memberData.domain,
+              name: memberData.name,
+              image_url: memberData.image_url,
+              github: memberData.github,
+              linkedin: memberData.linkedin,
+            });
+          } else if (!clubRole || clubRole !== "club lead") {
+            // Regular team member
             members.push(memberData);
           }
         });
 
         setDomainLeads(leads);
         setTeamMembers(members);
+        setMentors(mentorsList);
+        setSeniors(seniorsList);
       } catch (error) {
         console.error("Error in fetchTeamData:", error);
       } finally {
@@ -218,6 +262,47 @@ export default function TeamPage() {
         <ClubLeadCard />
       </section>
 
+      {/* Mentors Section */}
+      {mentors.length > 0 && (
+        <section
+          className="flex flex-col md:flex-row relative min-h-screen px-8"
+          style={{
+            borderBottom: "3px solid #000000",
+          }}
+        >
+          {/* left: Mentors title */}
+          <div className="w-full md:w-[35%] xl:w-[30%] p-4 sm:p-6 md:p-8 lg:p-12">
+            <div className="md:sticky md:top-24">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] font-retron">
+                Mentors
+              </h1>
+            </div>
+          </div>
+
+          <div className="hidden md:block md:ml-4 lg:ml-10 w-px bg-black md:mt-16 md:mb-0" />
+
+          {/* right: Mentor cards */}
+          <div className="flex-1 relative">
+            <div className="p-4 sm:p-6 md:p-12 lg:p-16 xl:p-24 relative z-10">
+              <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12 justify-items-center">
+                {mentors.map((mentor) => (
+                  <TeamMemberCard
+                    key={mentor.id}
+                    id={mentor.userid}
+                    name={mentor.name}
+                    role="MENTOR"
+                    imageUrl={mentor.image_url}
+                    githubUrl={mentor.github ?? ""}
+                    linkedinUrl={mentor.linkedin ?? ""}
+                  />
+                ))}
+              </div>
+              <div className="h-16 md:h-32" />
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* domains section */}
       <div
         className="px-8"
@@ -229,6 +314,8 @@ export default function TeamPage() {
           const members = groupedDomains[domain] || [];
           // Find ALL domain leads for this domain
           const currentDomainLeads = domainLeads.filter((lead) => lead.domain === domain);
+          // Find seniors for this domain
+          const currentSeniors = seniors.filter((senior) => senior.domain === domain);
 
           return (
             <section
@@ -265,6 +352,19 @@ export default function TeamPage() {
                         githubUrl={lead.github ?? ""}
                         linkedinUrl={lead.linkedin ?? ""}
                         leadTitle={currentDomainLeads.length > 1 ? "Co Lead" : "Lead"}
+                      />
+                    ))}
+
+                    {/* Render seniors after domain leads */}
+                    {currentSeniors.map((senior) => (
+                      <TeamMemberCard
+                        key={senior.id}
+                        id={senior.userid}
+                        name={senior.name}
+                        role="SENIOR"
+                        imageUrl={senior.image_url}
+                        githubUrl={senior.github ?? ""}
+                        linkedinUrl={senior.linkedin ?? ""}
                       />
                     ))}
 
