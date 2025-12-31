@@ -7,7 +7,7 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import localFont from "next/font/local";
 
-/* Local Retron font (from project root /lib/Retron2000.ttf) */
+
 const retron = localFont({
   src: "../lib/Retron2000.ttf",
   variable: "--font-retron",
@@ -73,9 +73,29 @@ export default function RootLayout({
           font-sans antialiased flex flex-col min-h-screen
         `}
       >
+      
+        <script
+        
+          dangerouslySetInnerHTML={{
+            __html: `(function () {
+              try {
+                if (typeof window === 'undefined') return;
+                var path = window.location.pathname || '/';
+                path = (path === '/') ? '/' : path.replace(/\\/+$/, '');
+                // Allow forcing with ?showPreloader in URL — keep parity with GDGPreloader
+                var force = (new URLSearchParams(window.location.search).has('showPreloader'));
+                if (path !== '/' && !force) return;
+                if (sessionStorage.getItem('gdgPreloaderShown') === '1' && !force) return;
+                document.documentElement.classList.add('preloader-active');
+              } catch (e) {
+                // swallow errors
+              }
+            })();`,
+          }}
+        />
+
         <RootProvider theme={{ enabled: false }}>
-          {/* NOTE: preloader is intentionally NOT mounted here.
-              The preloader is mounted only on the Home page (app/page.tsx). */}
+       
           <NavBar />
           <main className="relative w-full pt-[70px]">{children}</main>
         </RootProvider>
