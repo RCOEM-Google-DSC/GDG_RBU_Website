@@ -9,10 +9,16 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { toast } from "sonner";
 
-
 export default function RegisterPage() {
   const router = useRouter();
-  const [mode, setMode] = useState("login");
+
+  // --- IMPORTANT: mounted guard avoids React hydration mismatch when DOM/window is read on mount.
+  // We render nothing on the *very first* render pass and only render the full UI after mount.
+  // This preserves all styles, svg paths and logic exactly while preventing SSR/client mismatches.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const [mode, setMode] = useState<"login" | "signup">("login");
   const [hasInteracted, setHasInteracted] = useState(false);
   const cardStageRef = useRef<HTMLDivElement | null>(null);
   const containerWidthRef = useRef(0);
@@ -22,6 +28,9 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // NEW: dynamic card height for short viewports
+  const [cardHeight, setCardHeight] = useState<number>(520);
 
   const readButtonComp = () => {
     const raw = getComputedStyle(document.documentElement).getPropertyValue("--button-comp") || "0px";
@@ -45,6 +54,7 @@ export default function RegisterPage() {
       containerWidthRef.current = fallback;
       setTranslateX(mode === "login" ? computeMaxTranslate(fallback) : 0);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -65,6 +75,24 @@ export default function RegisterPage() {
     return () => window.removeEventListener("resize", onResize);
   }, [mode]);
 
+  // NEW: update cardHeight based on viewport height so floating toggle remains visible
+  useLayoutEffect(() => {
+    const updateCardHeight = () => {
+      const vh = window.innerHeight;
+      if (vh < 795) {
+        // keep sensible minimum so inputs/buttons aren't cramped
+        const safe = Math.max(420, Math.round(vh - 270)); // tweak these numbers to taste
+        setCardHeight(safe);
+      } else {
+        setCardHeight(520);
+      }
+    };
+
+    updateCardHeight();
+    window.addEventListener("resize", updateCardHeight);
+    return () => window.removeEventListener("resize", updateCardHeight);
+  }, []);
+
   const handleToggle = () => {
     if (!hasInteracted) setHasInteracted(true);
     setMode((m) => (m === "login" ? "signup" : "login"));
@@ -77,7 +105,6 @@ export default function RegisterPage() {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       toast.success("You are logged in");
-      // Redirect to profile page after successful login
       router.push("/profile");
     } catch (err) {
       console.error(err);
@@ -116,8 +143,12 @@ export default function RegisterPage() {
     }
   }
 
+  // Don't render the UI until we've mounted on the client to avoid hydration mismatches
+  if (!mounted) return null;
+
   return (
     <section className="relative h-[calc(100vh-70px)] overflow-hidden">
+      {/* GLOBAL STYLE OVERRIDES: stronger float animations (no size/position changes) */}
       <div
         className="fixed inset-0 -z-10"
         style={{
@@ -133,6 +164,7 @@ export default function RegisterPage() {
         aria-hidden="true"
       >
         <svg viewBox="0 0 268 498" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+          {/* All original SVG paths preserved */}
           <path d="M57.5 100.5H19C14.3056 100.5 10.5 104.306 10.5 109V143.5C10.5 150.404 16.0964 156 23 156C29.9036 156 35.5 161.596 35.5 168.5V196C35.5 204.284 42.2157 211 50.5 211H200C208.284 211 215 204.284 215 196V166.25C215 160.589 219.589 156 225.25 156C230.911 156 235.5 151.411 235.5 145.75V117.5C235.5 109.216 228.784 102.5 220.5 102.5H184.5C176.216 102.5 169.5 109.216 169.5 117.5V141C169.5 149.284 162.784 156 154.5 156H87.5C79.2157 156 72.5 149.284 72.5 141V115.5C72.5 107.216 65.7843 100.5 57.5 100.5Z" fill="black" />
           <path d="M52.5 96.5H14C9.30558 96.5 5.5 100.306 5.5 105V139.5C5.5 146.404 11.0964 152 18 152C24.9036 152 30.5 157.596 30.5 164.5V192C30.5 200.284 37.2157 207 45.5 207H195C203.284 207 210 200.284 210 192V162.25C210 156.589 214.589 152 220.25 152C225.911 152 230.5 147.411 230.5 141.75V113.5C230.5 105.216 223.784 98.5 215.5 98.5H179.5C171.216 98.5 164.5 105.216 164.5 113.5V137C164.5 145.284 157.784 152 149.5 152H82.5C74.2157 152 67.5 145.284 67.5 137V111.5C67.5 103.216 60.7843 96.5 52.5 96.5Z" fill="#34A853" stroke="black" />
           <path d="M92.5 95V74C92.5 65.7157 99.2157 59 107.5 59H111C119.284 59 126 52.2843 126 44V19.5C126 11.2157 132.716 4.5 141 4.5H175C183.284 4.5 190 11.2157 190 19.5V45.5C190 52.9558 183.956 59 176.5 59C169.044 59 163 65.0442 163 72.5V95C163 103.284 156.284 110 148 110H107.5C99.2157 110 92.5 103.284 92.5 95Z" fill="black" />
@@ -150,6 +182,7 @@ export default function RegisterPage() {
         aria-hidden="true"
       >
         <svg viewBox="0 0 270 499" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+          {/* All original right-side SVG paths preserved */}
           <path d="M210.831 398.196L249.331 398.323C254.025 398.339 257.844 394.546 257.859 389.852L257.974 355.352C257.996 348.448 252.419 342.833 245.515 342.811C238.611 342.788 233.034 337.173 233.057 330.269L233.148 302.769C233.175 294.485 226.482 287.747 218.197 287.72L68.6983 287.224C60.4141 287.197 53.6761 293.89 53.6487 302.174L53.55 331.924C53.5313 337.585 48.927 342.159 43.2661 342.14C37.6052 342.121 33.001 346.695 32.9822 352.356L32.8885 380.606C32.8611 388.89 39.5545 395.628 47.8387 395.656L83.8385 395.775C92.1228 395.802 98.8607 389.109 98.8882 380.825L98.9661 357.325C98.9936 349.041 105.732 342.347 114.016 342.375L181.015 342.597C189.3 342.624 195.993 349.362 195.966 357.646L195.881 383.146C195.854 391.43 202.547 398.168 210.831 398.196Z" fill="black" />
           <path d="M215.816 402.212L254.315 402.34C259.01 402.355 262.828 398.562 262.844 393.868L262.958 359.368C262.981 352.465 257.403 346.85 250.499 346.827C243.596 346.804 238.018 341.189 238.041 334.286L238.132 306.786C238.16 298.501 231.466 291.763 223.182 291.736L73.6827 291.24C65.3985 291.213 58.6605 297.906 58.633 306.191L58.5344 335.94C58.5157 341.601 53.9114 346.175 48.2505 346.156C42.5896 346.138 37.9853 350.711 37.9666 356.372L37.8729 384.622C37.8455 392.906 44.5389 399.644 52.8231 399.672L88.8229 399.791C97.1071 399.819 103.845 393.125 103.873 384.841L103.95 361.341C103.978 353.057 110.716 346.363 119 346.391L186 346.613C194.284 346.641 200.977 353.378 200.95 361.663L200.865 387.163C200.838 395.447 207.531 402.185 215.816 402.212Z" fill="#34A853" stroke="black" />
           <path d="M175.811 403.58L175.741 424.58C175.714 432.864 168.976 439.557 160.691 439.53L157.191 439.518C148.907 439.491 142.169 446.184 142.142 454.468L142.061 478.968C142.033 487.252 135.295 493.946 127.011 493.918L93.0111 493.806C84.7269 493.778 78.0334 487.04 78.0609 478.756L78.1471 452.756C78.1718 445.3 84.236 439.276 91.6918 439.301C99.1476 439.326 105.212 433.302 105.236 425.846L105.311 403.346C105.339 395.062 112.076 388.368 120.361 388.396L160.86 388.53C169.145 388.558 175.838 395.295 175.811 403.58Z" fill="black" />
@@ -163,14 +196,16 @@ export default function RegisterPage() {
 
       <div className="flex items-center justify-center h-full">
         <div className="relative">
-          <div ref={cardStageRef} className="relative w-[92vw] max-w-[380px] h-[520px]">
+          {/* APPLY dynamic height here */}
+          <div ref={cardStageRef} className="relative w-[92vw] max-w-[380px]" style={{ height: `${cardHeight}px` }}>
             <div
               aria-hidden={mode !== "login"}
               style={{
                 transition: "opacity 420ms ease, transform 700ms cubic-bezier(.22,.9,.26,1)",
               }}
-              className={`absolute inset-0 z-10 rounded-sm border-4 border-black shadow-[10px_10px_0_#000] p-8 bg-[#6F6EF6] ${mode === "login" ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6 pointer-events-none"
-                }`}
+              className={`absolute inset-0 z-10 rounded-sm border-4 border-black shadow-[10px_10px_0_#000] p-8 bg-[#6F6EF6] ${
+                mode === "login" ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6 pointer-events-none"
+              }`}
             >
               <h1 className="text-[28px] font-black text-black flex items-center gap-2">
                 <BiLogIn /> LOGIN
@@ -206,9 +241,7 @@ export default function RegisterPage() {
                   type="button"
                   className="flex items-center justify-between w-[170px] px-5 py-3 bg-black text-white border-[3px] border-black shadow-[4px_4px_0_red] font-bold"
                 >
-                  <span className="flex items-center gap-2">
-                    Login
-                  </span>
+                  <span className="flex items-center gap-2">Login</span>
                   <span className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center">
                     <ArrowRight size={14} />
                   </span>
@@ -223,7 +256,7 @@ export default function RegisterPage() {
                     className="size-12 rounded-full bg-black text-white flex items-center justify-center border-2 border-black text-lg"
                     title="Sign in with GitHub"
                   >
-                    <FaGithub  size={30} color="white" />
+                    <FaGithub size={30} color="white" />
                   </button>
                   <button
                     onClick={() => handleOAuth("google")}
@@ -242,8 +275,9 @@ export default function RegisterPage() {
               style={{
                 transition: "opacity 420ms ease, transform 700ms cubic-bezier(.22,.9,.26,1)",
               }}
-              className={`absolute inset-0 z-20 rounded-sm border-4 border-black shadow-[10px_10px_0_#000] p-8 bg-[#FFC20E] ${mode === "signup" ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6 pointer-events-none"
-                }`}
+              className={`absolute inset-0 z-20 rounded-sm border-4 border-black shadow-[10px_10px_0_#000] p-8 bg-[#FFC20E] ${
+                mode === "signup" ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6 pointer-events-none"
+              }`}
             >
               <h1 className="text-[28px] font-black text-black flex items-center gap-2">
                 <ClipboardList /> SIGN UP
@@ -319,7 +353,9 @@ export default function RegisterPage() {
           </div>
 
           <div
-            className={`absolute bottom-[-72px] sm:bottom-[-88px] floating-toggle ${hasInteracted ? "transition-on" : ""} ${mode === "login" ? "is-login" : "is-signup"}`}
+            className={`absolute bottom-[-72px] sm:bottom-[-88px] floating-toggle ${hasInteracted ? "transition-on" : ""} ${
+              mode === "login" ? "is-login" : "is-signup"
+            }`}
             style={{
               left: 0,
               transform: `translateX(${translateX}px)`,

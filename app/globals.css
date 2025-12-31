@@ -409,3 +409,39 @@ html.preloader-active .toaster-root {
 html.preloader-active *:focus {
   outline: none !important;
 }
+
+/* Boost float amplitude & rotation, keep all other layout untouched */
+.float-slow {
+  animation: floatSlowBoost 6s ease-in-out infinite !important;
+}
+.float-fast {
+  animation: floatFastBoost 4.6s ease-in-out infinite !important;
+}
+@keyframes floatSlowBoost {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(0.6deg); /* increased from -12 */
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+@keyframes floatFastBoost {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-24px) rotate(0.8deg); /* increased from -14 */
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+/* Make sure the decor SVGs remain visible above background but still non-interactive */
+.decor-svg {
+  z-index: 0 !important;
+  opacity: 1 !important;
+}
