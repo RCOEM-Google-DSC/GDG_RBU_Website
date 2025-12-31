@@ -215,7 +215,7 @@ export default function TeamPage() {
           borderBottom: "4px solid #000000",
         }}
       >
-        <ClubLeadCard/>
+        <ClubLeadCard />
       </section>
 
       {/* domains section */}
@@ -264,6 +264,7 @@ export default function TeamPage() {
                         imageUrl={lead.image_url}
                         githubUrl={lead.github ?? ""}
                         linkedinUrl={lead.linkedin ?? ""}
+                        leadTitle={currentDomainLeads.length > 1 ? "Co Lead" : "Lead"}
                       />
                     ))}
 
