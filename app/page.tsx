@@ -58,8 +58,6 @@ export default function Home() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.45, ease: "easeInOut" }}
     >
-      {/* Mount preloader here — it contains the session guard so it shows only once per tab,
-          and GDGPreloader itself checks the pathname so it only runs on Home ("/"). */}
       <GDGPreloader />
 
       <div

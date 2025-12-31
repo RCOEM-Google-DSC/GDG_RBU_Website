@@ -94,12 +94,12 @@ const MeetOurTeam = () => {
             </div>
 
             {/* Right Image Section */}
-            <div className="relative h-64 sm:h-80 md:h-full md:min-h-[400px] lg:min-h-[500px]">
+            <div className="relative h-80 sm:h-96 md:h-full md:min-h-[500px] lg:min-h-[600px] xl:min-h-[700px]">
               <Image
-                src="https://res.cloudinary.com/dlvkywzol/image/upload/v1765395573/WhatsApp_Image_2025-12-11_at_01.06.41_ee2575d7_xtjiwx.jpg"
+                src="https://res.cloudinary.com/dlvkywzol/image/upload/v1767200855/IMG-20251014-WA0066_zwzfw3.jpg"
                 alt="Our Team"
                 fill
-                sizes="(max-width: 768px) 100vw, 50vw"
+                sizes="(max-width: 788px) 100vw, 50vw"
                 className="object-cover"
               />
             </div>

@@ -13,6 +13,7 @@ interface LeaderCardProps {
   imageUrl: string;
   githubUrl: string;
   linkedinUrl: string;
+  domain?: string; 
 }
 
 const createPath = (
@@ -47,7 +48,8 @@ function LeaderCard({
   imageUrl,
   githubUrl,
   linkedinUrl,
-  leadTitle = "Lead", 
+  leadTitle = "Lead",
+  domain,
 }: LeaderCardProps & { leadTitle?: string }) {
   const router = useRouter();
   const [authUserId, setAuthUserId] = useState<string | null>(null);
@@ -203,7 +205,7 @@ function LeaderCard({
         >
           <div className="w-full h-[60%] flex items-center justify-center border-b-[3px] border-black bg-linear-to-br from-yellow-50 to-yellow-100">
             <span className="text-[15px] md:text-[16px] tracking-wider font-extrabold uppercase px-1 text-center leading-none">
-              {leadTitle}
+              {domain || leadTitle}
             </span>
           </div>
           <div className="w-full h-[60%] flex items-center justify-center px-2 py-1">

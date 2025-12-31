@@ -48,6 +48,7 @@ const DecoCircle = ({ className }: { className?: string }) => (
 export interface ProfileData {
   userid: string;
   domain?: string | null;
+  club_role?: string | null;
   bio?: string | null;
   thought?: string | null;
   leetcode?: string | null;
@@ -138,7 +139,7 @@ export default function ProfileClientView({
                 {u?.name}
               </h1>
               <div className="inline-block bg-black text-white px-4 py-1 text-xl font-bold transform -rotate-1">
-                {(profile.domain || "Member").toUpperCase()}
+                {(profile.club_role === "mentor" ? "MENTOR" : (profile.domain || "Member")).toUpperCase()}
               </div>
             </div>
 
@@ -264,29 +265,29 @@ export default function ProfileClientView({
                 </span>
 
                 <div className="flex gap-4 flex-wrap">
-                  <SocialButton 
-                    platform="github" 
-                    href={u?.profile_links?.github} 
+                  <SocialButton
+                    platform="github"
+                    href={u?.profile_links?.github}
                     label="GitHub"
                   />
-                  <SocialButton 
-                    platform="linkedin" 
-                    href={u?.profile_links?.linkedin} 
+                  <SocialButton
+                    platform="linkedin"
+                    href={u?.profile_links?.linkedin}
                     label="LinkedIn"
                   />
-                  <SocialButton 
-                    platform="twitter" 
-                    href={profile.twitter} 
+                  <SocialButton
+                    platform="twitter"
+                    href={profile.twitter}
                     label="Twitter"
                   />
-                  <SocialButton 
-                    platform="instagram" 
-                    href={profile.instagram} 
+                  <SocialButton
+                    platform="instagram"
+                    href={profile.instagram}
                     label="Instagram"
                   />
-                  <SocialButton 
-                    platform="leetcode" 
-                    href={profile.leetcode} 
+                  <SocialButton
+                    platform="leetcode"
+                    href={profile.leetcode}
                     label="LeetCode"
                   />
                 </div>

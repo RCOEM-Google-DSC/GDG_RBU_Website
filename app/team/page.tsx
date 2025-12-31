@@ -29,12 +29,14 @@ type DomainLead = {
   github?: string;
   linkedin?: string;
   role: string;
+  club_role?: string;
 };
 
 type Mentor = {
   id: string;
   userid: string;
   name: string;
+  domain?: string; // Optional domain for mentors
   image_url: string;
   github?: string;
   linkedin?: string;
@@ -101,6 +103,7 @@ export default function TeamPage() {
             image_url: userData?.image_url || "https://placehold.co/400x500/png",
             github: userData?.profile_links?.github || "https://github.com",
             linkedin: userData?.profile_links?.linkedin || "https://linkedin.com",
+            club_role: member["club role"],
           };
 
           const clubRole = member["club role"];
@@ -110,14 +113,16 @@ export default function TeamPage() {
               id: memberData.id,
               userid: memberData.userid,
               name: memberData.name,
+              domain: memberData.domain || undefined,
               image_url: memberData.image_url,
               github: memberData.github,
               linkedin: memberData.linkedin,
             });
-          } else if (clubRole === "domain lead") {
+          } else if (clubRole === "domain lead" || clubRole === "core") {
             leads.push({
               ...memberData,
               role: `${member.domain} Lead`,
+              club_role: clubRole,
             });
           } else if (clubRole === "senior") {
             seniorsList.push({
@@ -201,6 +206,32 @@ export default function TeamPage() {
 
             {/* domain jump buttons */}
             <div className="mt-8 md:mt-12 flex flex-wrap gap-2 md:gap-3 ">
+              {mentors.length > 0 && (
+                <button
+                  onClick={() =>
+                    document
+                      .getElementById("mentors-section")
+                      ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                  }
+                  className="px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-bold uppercase tracking-wide transition-all duration-200 hover:translate-x-1 hover:translate-y-1 "
+                  style={{
+                    border: "3px solid #000000",
+                    boxShadow: "3px 3px 0px #000000",
+
+                    color: "#000000",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#000000";
+                    e.currentTarget.style.color = "#ffffff";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                    e.currentTarget.style.color = "#000000";
+                  }}
+                >
+                  Mentors
+                </button>
+              )}
               {domains.map((domain) => (
                 <button
                   key={domain}
@@ -241,7 +272,7 @@ export default function TeamPage() {
               }}
             >
               <Image
-                src={teamImg}
+                src="https://res.cloudinary.com/dlvkywzol/image/upload/v1767200855/IMG-20251014-WA0066_zwzfw3.jpg"
                 alt="Our Team"
                 width={720}
                 height={480}
@@ -265,6 +296,7 @@ export default function TeamPage() {
       {/* Mentors Section */}
       {mentors.length > 0 && (
         <section
+          id="mentors-section"
           className="flex flex-col md:flex-row relative min-h-screen px-8"
           style={{
             borderBottom: "3px solid #000000",
@@ -286,15 +318,28 @@ export default function TeamPage() {
             <div className="p-4 sm:p-6 md:p-12 lg:p-16 xl:p-24 relative z-10">
               <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12 justify-items-center">
                 {mentors.map((mentor) => (
-                  <TeamMemberCard
-                    key={mentor.id}
-                    id={mentor.userid}
-                    name={mentor.name}
-                    role="MENTOR"
-                    imageUrl={mentor.image_url}
-                    githubUrl={mentor.github ?? ""}
-                    linkedinUrl={mentor.linkedin ?? ""}
-                  />
+                  mentor.domain ? (
+                    <LeaderCard
+                      key={mentor.id}
+                      id={mentor.userid}
+                      name={mentor.name}
+                      role="MENTOR"
+                      imageUrl={mentor.image_url}
+                      githubUrl={mentor.github ?? ""}
+                      linkedinUrl={mentor.linkedin ?? ""}
+                      domain={mentor.domain}
+                    />
+                  ) : (
+                    <TeamMemberCard
+                      key={mentor.id}
+                      id={mentor.userid}
+                      name={mentor.name}
+                      role="MENTOR"
+                      imageUrl={mentor.image_url}
+                      githubUrl={mentor.github ?? ""}
+                      linkedinUrl={mentor.linkedin ?? ""}
+                    />
+                  )
                 ))}
               </div>
               <div className="h-16 md:h-32" />
@@ -316,6 +361,10 @@ export default function TeamPage() {
           const currentDomainLeads = domainLeads.filter((lead) => lead.domain === domain);
           // Find seniors for this domain
           const currentSeniors = seniors.filter((senior) => senior.domain === domain);
+          // Count only "domain lead" club roles (exclude "core") for Co Lead logic
+          const actualDomainLeadsCount = currentDomainLeads.filter(
+            (lead) => lead.club_role === "domain lead"
+          ).length;
 
           return (
             <section
@@ -351,7 +400,13 @@ export default function TeamPage() {
                         imageUrl={lead.image_url}
                         githubUrl={lead.github ?? ""}
                         linkedinUrl={lead.linkedin ?? ""}
-                        leadTitle={currentDomainLeads.length > 1 ? "Co Lead" : "Lead"}
+                        leadTitle={
+                          lead.club_role === "core"
+                            ? "Core"
+                            : actualDomainLeadsCount > 1
+                              ? "Co Lead"
+                              : "Lead"
+                        }
                       />
                     ))}
 

@@ -34,6 +34,7 @@ export default async function TeamProfilePage({
       `
       userid,
       domain,
+      "club role",
       bio,
       thought,
       leetcode,
@@ -58,7 +59,11 @@ export default async function TeamProfilePage({
     .maybeSingle();
 
   if (teamMemberData) {
-    profile = teamMemberData as unknown as ProfileData;
+    // Map "club role" (with space) to club_role for easier access
+    profile = {
+      ...teamMemberData,
+      club_role: (teamMemberData as any)["club role"],
+    } as unknown as ProfileData;
   } else {
     // try to get basic user data
     const { data: userData } = await supabase

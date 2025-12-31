@@ -167,7 +167,7 @@ export default function Hero() {
                   className="w-full h-full object-cover"
                 >
                   <source
-                    src="https://devfest.gdgpune.in/_nuxt/hero-video-new.CpPeEJWA.webm"
+                    src="/assets/vid/hero_edit.MOV"
                     type="video/webm"
                   />
                 </video>
