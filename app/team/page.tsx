@@ -140,7 +140,17 @@ export default function TeamPage() {
           }
         });
 
-        setDomainLeads(leads);
+        // Sort leads so that "domain lead" items come first, then "core", then others (stable)
+        const sortedLeads = leads.sort((a, b) => {
+          const order = (role?: string) => {
+            if (role === "domain lead") return 0;
+            if (role === "core") return 1;
+            return 2;
+          };
+          return order(a.club_role) - order(b.club_role);
+        });
+
+        setDomainLeads(sortedLeads);
         setTeamMembers(members);
         setMentors(mentorsList);
         setSeniors(seniorsList);
@@ -358,7 +368,18 @@ export default function TeamPage() {
         {domains.map((domain) => {
           const members = groupedDomains[domain] || [];
           // Find ALL domain leads for this domain
-          const currentDomainLeads = domainLeads.filter((lead) => lead.domain === domain);
+          const currentDomainLeads = domainLeads
+            .filter((lead) => lead.domain === domain)
+            // ensure domain leads appear first, then core, then others
+            .sort((a, b) => {
+              const order = (role?: string) => {
+                if (role === "domain lead") return 0;
+                if (role === "core") return 1;
+                return 2;
+              };
+              return order(a.club_role) - order(b.club_role);
+            });
+
           // Find seniors for this domain
           const currentSeniors = seniors.filter((senior) => senior.domain === domain);
           // Count only "domain lead" club roles (exclude "core") for Co Lead logic
@@ -390,7 +411,7 @@ export default function TeamPage() {
               <div className="flex-1 relative">
                 <div className="p-4 sm:p-6 md:p-12 lg:p-16 xl:p-24 relative z-10">
                   <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12 justify-items-center">
-                    {/* Render ALL domain leads first */}
+                    {/* Render ALL domain leads first (sorted: domain lead -> core -> others) */}
                     {currentDomainLeads.map((lead) => (
                       <LeaderCard
                         key={lead.id}

@@ -14,6 +14,7 @@ interface LeaderCardProps {
   githubUrl: string;
   linkedinUrl: string;
   domain?: string; 
+  leadTitle?: string;
 }
 
 const createPath = (
@@ -50,7 +51,7 @@ function LeaderCard({
   linkedinUrl,
   leadTitle = "Lead",
   domain,
-}: LeaderCardProps & { leadTitle?: string }) {
+}: LeaderCardProps) {
   const router = useRouter();
   const [authUserId, setAuthUserId] = useState<string | null>(null);
 
@@ -95,7 +96,6 @@ function LeaderCard({
 
   return (
     <div
-
       className="relative inline-block cursor-pointer w-full max-w-[350px] aspect-3/4"
       onClick={handleCardClick}
     >
