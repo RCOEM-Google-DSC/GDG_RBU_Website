@@ -126,22 +126,21 @@ export default function Hero() {
         <div
           className="
             lg:col-span-6
-            ml-10
-            sm:ml-10
-            md:mt-18 mr-15 lg:mt-10
-            scale-107
+            ml-0 lg:ml-10
+            md:mt-18 mr-0 lg:mr-15 lg:mt-10
+            scale-110 md:scale-107
             flex justify-center lg:justify-end
           "
         >
           <div
             className="
-            md:mt-10
+            mt-6 md:mt-10
               w-full
-              max-w-[520px]      /* mobile */
-              sm:max-w-[620px]
-              md:max-w-[680px]   /* medium */
-              lg:max-w-[720px]   /* large */
-              xl:max-w-[780px]   /* xl */
+              max-w-full sm:max-w-[750px]
+              md:max-w-[850px]   /* medium */
+              lg:max-w-[900px]   /* large */
+              xl:max-w-[950px]   /* xl */
+              px-4 sm:px-0
             "
           >
             <svg
