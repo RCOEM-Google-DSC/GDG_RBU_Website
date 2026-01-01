@@ -23,12 +23,13 @@ export default function Hero() {
     <section className="relative w-full min-h-screen ">
       {/* Grid background */}
 
+
       <div
         className="
           relative z-10
           max-w-[1600px] mx-auto
-          px-5 sm:px-8 lg:px-12 sm:pb-0 mt-15
-          pt-10 sm:pt-16 lg:pt-24
+          px-5 sm:px-8 lg:px-12
+          pt-10 sm:pt-5 lg:pt-24
           pb-12 lg:pb-24
           grid grid-cols-1 lg:grid-cols-12
           gap-8
@@ -36,20 +37,20 @@ export default function Hero() {
         "
       >
         {/* LEFT CONTENT */}
-        <div className="lg:col-span-6 relative z-30 md:ml-22 sm:-ml-5 sm:p-0">
+        <div className="lg:col-span-6 relative z-30 mt-10 md:ml-18">
           <h1
             className="
               uppercase font-extrabold tracking-tight
               mb-4
               text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl
               leading-[0.95]
-              font-retron
+              font-retron 
             "
           >
-            <span className="block md:whitespace-nowrap font-retron fade-in-20 delay-1000">
+            <span className="block md:whitespace-nowrap font-retron ">
               GOOGLE DEVELOPER
             </span>
-            <span className="block font-retron fade-in-20 delay-1500">GROUPS, RBU</span>
+            <span className="block font-retron">GROUPS, RBU</span>
           </h1>
 
           <p
@@ -58,7 +59,6 @@ export default function Hero() {
               text-xl sm:text-2xl lg:text-3xl
               leading-[1.8]
               text-black
-              opacity-80
               max-w-[520px]
             "
           >
@@ -126,20 +126,22 @@ export default function Hero() {
         <div
           className="
             lg:col-span-6
-            ml-5 mr-29
-            mt-6 lg:mt-10
+            ml-10
+            sm:ml-10
+            md:mt-18 mr-15 lg:mt-10
+            scale-107
             flex justify-center lg:justify-end
           "
         >
           <div
             className="
+            md:mt-10
               w-full
               max-w-[520px]      /* mobile */
               sm:max-w-[620px]
               md:max-w-[680px]   /* medium */
               lg:max-w-[720px]   /* large */
               xl:max-w-[780px]   /* xl */
-              scale-115
             "
           >
             <svg
