@@ -125,7 +125,12 @@ const MobileProfileDropdown = ({
 
         <DropdownMenuItem className="cursor-pointer px-4 py-3 rounded-lg">
           <CgProfile className="h-4 w-4 mr-3 text-black" />
-          <Link href={profileLink} className="flex items-center w-full">
+          {/* <-- ADDED onClick to close mobile sidebar when navigating */}
+          <Link
+            href={profileLink}
+            onClick={() => onLogout?.()}
+            className="flex items-center w-full"
+          >
             Profile
           </Link>
         </DropdownMenuItem>
