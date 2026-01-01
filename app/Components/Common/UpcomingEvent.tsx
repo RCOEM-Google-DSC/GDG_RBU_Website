@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Zap } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UpcomingEventCardProps } from "@/lib/types";
 import Image from "next/image";
@@ -13,7 +13,6 @@ const UpcomingEvent = ({
   time,
   image,
   tags,
-  tagColor,
   description,
   registerUrl,
 }: UpcomingEventCardProps) => {
@@ -117,8 +116,7 @@ const UpcomingEvent = ({
               >
                 {/* Ticket Top */}
                 <div>
-                  <Zap className="w-12 h-12 text-black mb-4 stroke-[1.5]" />
-                  <h3 className="text-6xl font-black text-black leading-[0.9] mb-4 font-retron">
+                  <h3 className="text-6xl font-black text-black leading-[0.9] mb-6 mt-12 font-retron">
                     New
                     <br />
                     Event
@@ -142,10 +140,10 @@ const UpcomingEvent = ({
                     <p className="text-xl font-bold text-black">
                       {date instanceof Date
                         ? date.toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })
                         : date}
                       <br />
                       {time}
@@ -219,7 +217,6 @@ const UpcomingEvent = ({
           <div className="relative bg-[#FFC20E] p-4 sm:p-6">
             {/* Date & Time */}
             <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4">
-              <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-black stroke-[1.5] shrink-0" />
               <div className="text-center">
                 <p className="text-[17px] sm:text-xs font-bold uppercase tracking-widest text-black/60">
                   Date & Time
@@ -227,10 +224,10 @@ const UpcomingEvent = ({
                 <p className="text-sm sm:text-base font-bold text-black leading-tight">
                   {date instanceof Date
                     ? date.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })
                     : date}{" "}
                   • {time}
                 </p>

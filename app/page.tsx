@@ -83,7 +83,7 @@ export default function Home() {
           viewport={{ amount: 0.3 }}
           transition={{ duration: 0.3, ease: "easeInOut", delay: 0.1 }}
         >
-          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-6 sm:my-10 self-start font-retron">
+          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-8 sm:my-10 font-retron ">
             Upcoming Event
           </h2>
 

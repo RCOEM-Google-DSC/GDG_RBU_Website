@@ -208,7 +208,7 @@ export default function TeamPage() {
         <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-8">
           {/* left: title and domain buttons */}
           <div className="flex-1">
-            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] lg:mt-10 font-retron">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] lg:mt-10 font-retron fade-in-20 delay-500">
               Meet our
               <br />
               team.
@@ -315,7 +315,7 @@ export default function TeamPage() {
           {/* left: Mentors title */}
           <div className="w-full md:w-[35%] xl:w-[30%] p-4 sm:p-6 md:p-8 lg:p-12">
             <div className="md:sticky md:top-24">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] font-retron">
+              <h1 className="text-3xl sm:text-5xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] font-retron">
                 Mentors
               </h1>
             </div>
@@ -400,7 +400,7 @@ export default function TeamPage() {
               <div className="w-full md:w-[35%] xl:w-[30%] p-4 sm:p-6 md:p-8 lg:p-12">
                 <div className="md:sticky md:top-24">
 
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] font-retron">
+                  <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] font-retron">
                     {domain}
                   </h1>
                 </div>

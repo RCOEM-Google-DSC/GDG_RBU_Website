@@ -47,10 +47,10 @@ export default function Hero() {
               font-retron
             "
           >
-            <span className="block md:whitespace-nowrap font-retron">
+            <span className="block md:whitespace-nowrap font-retron fade-in-20 delay-1000">
               GOOGLE DEVELOPER
             </span>
-            <span className="block font-retron">GROUPS, RBU</span>
+            <span className="block font-retron fade-in-20 delay-1500">GROUPS, RBU</span>
           </h1>
 
           <p
@@ -59,6 +59,7 @@ export default function Hero() {
               text-xl sm:text-2xl lg:text-3xl
               leading-[1.8]
               text-black
+              opacity-80
               max-w-[520px]
             "
           >
