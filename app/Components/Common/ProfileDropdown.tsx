@@ -17,7 +17,7 @@ import { CiLogout } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
 import { toast } from "sonner";
-import Router from "next/router";
+import Router from "next/navigation";
 const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [fullName, setFullName] = useState<string | null>(null);
@@ -32,11 +32,10 @@ const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
         const userId = await getCurrentUserId();
         if (!userId) return;
 
-        // 1️⃣ Fetch auth session (for email)
         const { data: sessionData } = await supabase.auth.getSession();
         setUserEmail(sessionData.session?.user?.email ?? null);
 
-        // 2️⃣ Fetch profile fields from users table
+
         const { data: profileData, error: pErr } = await supabase
           .from("users")
           .select("name, image_url, role")
@@ -49,7 +48,7 @@ const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
         setImageUrl(profileData?.image_url ?? null);
         setRole(profileData?.role ?? null);
 
-        // 3️⃣ Check team membership (if any)
+
         const { data: team } = await supabase
           .from("team_members")
           .select("userid")
