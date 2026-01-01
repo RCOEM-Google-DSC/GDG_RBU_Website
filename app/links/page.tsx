@@ -388,18 +388,19 @@ function Desktop10Component() {
 function MobileLinksView() {
   return (
     <div className="w-full min-h-screen bg-white flex flex-col items-center py-6 px-4">
-      <div className="w-full max-w-md">
-        <div className="flex justify-between items-center mb-4">
-          <div className="w-12 h-12">
-            <Image src="/assets/shapes/r-b.svg" alt="left" width={48} height={48} className="w-full h-full" />
-          </div>
-          <div className="w-12 h-12">
-            <Image src="/assets/shapes/y-g.svg" alt="right" width={48} height={48} className="w-full h-full" />
-          </div>
+      <div className="w-full max-w-md relative">
+        {/* Left Logo - positioned at heading height */}
+        <div className="absolute left-0 top-9 w-12 h-12">
+          <Image src="/assets/shapes/r-b.svg" alt="left" width={48} height={48} className="w-full h-full" />
         </div>
 
-        <h1 className="text-center font-geist font-extrabold text-2xl leading-tight mb-2">Join Our Community.</h1>
-        <h2 className="text-center font-geist font-extrabold text-2xl leading-tight mb-4">Connect and Grow with us.</h2>
+        {/* Right Logo - positioned at heading height */}
+        <div className="absolute right-0 top-9 w-12 h-12">
+          <Image src="/assets/shapes/y-g.svg" alt="right" width={48} height={48} className="w-full h-full" />
+        </div>
+
+        <h1 className="text-center font-geist font-extrabold text-2xl leading-tight mb-2 px-14 mt-5">Join Our Community.</h1>
+        <h2 className="text-center font-geist font-extrabold text-2xl leading-tight mb-4 px-14">Connect and Grow with us.</h2>
 
         <p className="text-center text-sm text-gray-700 mb-6">
           Connect with like-minded individuals, share knowledge, and grow together across our platform

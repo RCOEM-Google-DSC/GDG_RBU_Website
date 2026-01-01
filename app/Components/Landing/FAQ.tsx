@@ -10,7 +10,7 @@ const questions = [
   },
   {
     q: "How to join GDG?",
-    a: "We conduct an annual recruitment process for 2nd and 3rd year students. An orientation is held beforehand to brief students about the club. The process includes task submission and a personal interview.",
+    a: "We conduct an annual recruitment process for 2nd year students. An orientation is held beforehand to brief students about the club. The process includes task submission and a personal interview.",
     color: "green",
   },
   {
