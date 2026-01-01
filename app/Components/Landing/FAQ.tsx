@@ -5,17 +5,17 @@ import { motion } from "framer-motion";
 const questions = [
   {
     q: "What is GDG RBU?",
-    a: "GDG RBU is the official Google Developer Group of RBU, focused on empowering students through hands-on workshops, tech talks, hackathons, and real-world project collaboration.",
+    a: "GDG RBU is focused on empowering students through hands-on workshops, tech talks, hackathons, and real-world project collaboration.",
     color: "purple",
   },
   {
     q: "How to join GDG?",
-    a: "We conduct an annual team recruitment process. The details of recruitment are posted online a few weeks prior. It’s a two step process involving task submission and personal interview. Students acing both rounds are selected to be the part of the core team.",
+    a: "We conduct an annual recruitment process for 2nd and 3rd year students. An orientation is held beforehand to brief students about the club. The process includes task submission and a personal interview.",
     color: "green",
   },
   {
     q: "What does a GDG Lead do?",
-    a: "A GDG Lead works with the university to build the community, recruit the core team, organize events and workshops, and collaborate with industry and local partners.",
+    a: "A GDG Lead works with the university to build the community, organize events and workshops, and collaborate with industry and local partners.",
     color: "blue",
   },
   {
