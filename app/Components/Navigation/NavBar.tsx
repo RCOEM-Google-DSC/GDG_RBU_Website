@@ -152,7 +152,7 @@ export default function NavBar() {
         />
       )}
 
-      {/* Mobile sidebar */}
+      
       <div
         className={`fixed top-0 right-0 h-full w-[300px] bg-white z-40
         border-l-2 border-black
