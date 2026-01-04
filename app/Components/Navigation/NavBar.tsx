@@ -199,6 +199,15 @@ export default function NavBar() {
         transition-transform duration-300
         ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}
       >
+        {/* Close X button added at top-right inside the sidebar */}
+        <button
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="absolute top-4 right-4 md:hidden p-2 bg-white border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+          aria-label="Close menu"
+        >
+          <X size={20} />
+        </button>
+
         <div className="pt-28 px-6 flex flex-col h-full">
           <h2 className="mb-6 pb-4 border-b-2 border-black font-black text-2xl uppercase">
             Menu
