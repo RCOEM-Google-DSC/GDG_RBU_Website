@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { supabase } from "@/supabase/supabase";
 import ProfileDropdown from "../Common/ProfileDropdown";
@@ -31,6 +31,9 @@ export default function NavBar() {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // keep scroll position when locking body
+  const scrollRef = useRef<number>(0);
 
   // load user data
   useEffect(() => {
@@ -64,9 +67,45 @@ export default function NavBar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  // lock body while mobile menu open
+  // lock body while mobile menu open (robust)
   useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
+    // keep the old simple overflow toggle (intentionally left conceptually the same)
+    // but add a robust scroll freeze so mobile browsers don't allow background scroll.
+    if (isMobileMenuOpen) {
+      // store current scroll
+      scrollRef.current = window.scrollY || window.pageYOffset || 0;
+      // hide overflow on documentElement too (helps some browsers)
+      document.documentElement.style.overflow = "hidden";
+      // freeze body in place
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollRef.current}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+    } else {
+      // restore
+      document.documentElement.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
+      // restore scroll to where it was
+      window.scrollTo(0, scrollRef.current);
+    }
+
+    // cleanup in case component unmounts while open
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
+    };
   }, [isMobileMenuOpen]);
 
   return (
@@ -152,9 +191,9 @@ export default function NavBar() {
         />
       )}
 
-      
+      {/* Mobile sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-[300px] bg-white z-40
+        className={`fixed top-0 right-0 h-full w-[300px] bg-white z-50
         border-l-2 border-black
         shadow-[-4px_0px_0px_0px_rgba(0,0,0,0.1)]
         transition-transform duration-300

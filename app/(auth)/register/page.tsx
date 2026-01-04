@@ -105,7 +105,7 @@ export default function RegisterPage() {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       toast.success("You are logged in");
-      router.push("/profile");
+      router.push("/");
     } catch (err) {
       console.error(err);
       toast.error((err as Error)?.message || "Login error");
@@ -121,7 +121,7 @@ export default function RegisterPage() {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
       toast.success("Sign-up successful. You can complete your profile in the profile section.");
-      router.push("/profile");
+      router.push("/");
     } catch (err) {
       console.error(err);
       toast.error((err as Error)?.message || "Sign-up error");
