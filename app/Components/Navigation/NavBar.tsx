@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/supabase/supabase";
 import ProfileDropdown from "../Common/ProfileDropdown";
 import MobileProfileDropdown from "../Common/MobileProfileDropdown";
-import { Menu, X, Terminal, User as UserIcon } from "lucide-react";
+import { Menu, X, Terminal } from "lucide-react";
 import Image from "next/image";
 
 const LINK_STYLES = [
@@ -26,13 +26,17 @@ const NAV_LINKS = [
   { href: "/docs", label: "Docs" },
 ];
 
+const NAV_HEIGHT = 70;
+
 export default function NavBar() {
   const [user, setUser] = useState<any | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // load user data
+  // store the page scroll when menu opens so we can restore it later
+  const lockedScrollY = useRef<number | null>(null);
+
   useEffect(() => {
     let mounted = true;
     const fetchUser = async () => {
@@ -52,7 +56,7 @@ export default function NavBar() {
     };
   }, []);
 
-  // handle scroll
+  // handle scroll show/hide for navbar
   useEffect(() => {
     const handleScroll = () => {
       const curr = window.scrollY;
@@ -64,27 +68,64 @@ export default function NavBar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  // lock body while mobile menu open
+  // LOCK page scroll in a robust cross-browser way on mobile:
   useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
+    if (isMobileMenuOpen) {
+      // save scroll position
+      lockedScrollY.current = window.scrollY || 0;
+      // apply fixed positioning to body to lock scroll (works on iOS)
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${lockedScrollY.current}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+      // optional: prevent overscroll chaining on some browsers
+      document.documentElement.style.overscrollBehavior = "none";
+    } else {
+      // restore
+      const prev = lockedScrollY.current ?? 0;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      document.documentElement.style.overscrollBehavior = "";
+      // jump back to previous scroll
+      window.scrollTo(0, prev);
+      lockedScrollY.current = null;
+    }
+
+    // cleanup if component unmounts while menu is open
+    return () => {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      document.documentElement.style.overscrollBehavior = "";
+      if (lockedScrollY.current !== null) {
+        window.scrollTo(0, lockedScrollY.current);
+        lockedScrollY.current = null;
+      }
+    };
   }, [isMobileMenuOpen]);
 
   return (
     <>
       <nav
-        className={`fixed  top-0 left-0 right-0 z-50 h-[70px] py-11 flex items-center justify-between px-6 md:px-10 bg-[#FCFDF8] shadow-md transition-transform duration-300 ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
+        className={`fixed top-0 left-0 right-0 z-[110] h-[70px] flex items-center justify-between px-6 md:px-10 bg-[#FCFDF8] shadow-md transition-transform duration-300 ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
       >
-        {/* Logo */}
-        <Link href="/">
+        <Link href="/" className="flex items-center gap-2">
           <Image
             src="/icons/gdg-logo.svg"
             width={72}
             height={52}
             alt="GDG Logo"
-            className=" object-contain"
+            className="object-contain"
             onError={(e: any) => {
               e.target.style.display = "none";
-              e.target.nextSibling.style.display = "flex";
+              const next = (e.target as HTMLElement).nextElementSibling;
+              if (next) (next as HTMLElement).style.display = "flex";
             }}
           />
           <div className="hidden w-[72px] h-[52px] items-center justify-center border-2 border-black bg-white">
@@ -100,13 +141,7 @@ export default function NavBar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-5 py-2 font-black text-black ${style.color}
-                border-2 border-black
-                shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-                hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
-                hover:scale-110 ${style.hover}
-                active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
-                transition-all duration-200 ${NAV_ROUND}`}
+                className={`px-5 py-2 font-black text-black ${style.color} border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:scale-110 ${style.hover} active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all duration-200 ${NAV_ROUND}`}
               >
                 {link.label}
               </Link>
@@ -121,12 +156,7 @@ export default function NavBar() {
           ) : (
             <Link
               href="/register"
-              className={`px-6 py-3 font-bold text-white bg-black border-2 border-black
-              shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-              hover:bg-gray-300 hover:text-black
-              hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
-              active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
-              transition-all ${NAV_ROUND}`}
+              className={`px-6 py-3 font-bold text-white bg-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-300 hover:text-black hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all ${NAV_ROUND}`}
             >
               Join Us
             </Link>
@@ -135,10 +165,10 @@ export default function NavBar() {
 
         {/* Mobile hamburger */}
         <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="md:hidden p-2 bg-white border-2 border-black
-          shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]
-          active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+          onClick={() => setIsMobileMenuOpen((s) => !s)}
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isMobileMenuOpen}
+          className="md:hidden p-2 bg-white border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -147,20 +177,27 @@ export default function NavBar() {
       {/* Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/20 z-40"
+          className="fixed left-0 right-0 bg-black/20"
+          style={{ top: `${NAV_HEIGHT}px`, bottom: 0, zIndex: 90 }}
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* Mobile sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-[300px] bg-white z-40
-        border-l-2 border-black
-        shadow-[-4px_0px_0px_0px_rgba(0,0,0,0.1)]
-        transition-transform duration-300
-        ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed right-0 bg-white`}
+        style={{
+          top: `${NAV_HEIGHT}px`,
+          height: `calc(100vh - ${NAV_HEIGHT}px)`,
+          width: "300px",
+          zIndex: 100,
+          borderLeft: "2px solid black",
+          boxShadow: "-4px 0 0 0 rgba(0,0,0,0.1)",
+          transition: "transform 300ms",
+          transform: isMobileMenuOpen ? "translateX(0%)" : "translateX(100%)",
+        }}
       >
-        <div className="pt-28 px-6 flex flex-col h-full">
+        <div className="pt-6 px-6 flex flex-col h-full">
           <h2 className="mb-6 pb-4 border-b-2 border-black font-black text-2xl uppercase">
             Menu
           </h2>
@@ -173,11 +210,7 @@ export default function NavBar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`px-4 py-3 font-black text-black ${style.color}
-                  border-2 border-black
-                  shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-                  active:translate-x-1 active:translate-y-1 active:shadow-none
-                  transition-all ${NAV_ROUND}`}
+                  className={`px-4 py-3 font-black text-black ${style.color} border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all ${NAV_ROUND}`}
                 >
                   {link.label}
                 </Link>
@@ -185,21 +218,14 @@ export default function NavBar() {
             })}
           </div>
 
-          <div className="mt-auto mb-10 pt-6 border-t-2 border-black">
+          <div className="mt-auto mb-6 pt-6 border-t-2 border-black">
             {user ? (
-              <MobileProfileDropdown
-                onLogout={() => setIsMobileMenuOpen(false)}
-              />
+              <MobileProfileDropdown onLogout={() => setIsMobileMenuOpen(false)} />
             ) : (
               <Link
                 href="/register"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={` block px-6 py-3 font-bold text-white bg-black border-2 border-black
-              shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-              hover:bg-gray-300 hover:text-black
-              hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
-              active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
-              transition-all ${NAV_ROUND}`}
+                className={`block px-6 py-3 font-bold text-white bg-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-300 hover:text-black hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all ${NAV_ROUND}`}
               >
                 JOIN US
               </Link>
