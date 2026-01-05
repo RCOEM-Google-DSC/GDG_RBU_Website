@@ -1,0 +1,672 @@
+---
+title: GitHub Setup Guide for Beginners
+description: Complete step-by-step guide to install Git, GitHub CLI, and learn basic commands
+index: 2
+---
+
+## Welcome to GitHub!
+
+This guide will help you set up Git and GitHub from scratch, even if you've never used them before. By the end, you'll be able to clone projects, make changes, and push your code to GitHub.
+
+---
+
+## What is Git and GitHub?
+
+**Git** is a tool that helps you track changes in your code. Think of it like a "save game" feature for your projects.
+
+**GitHub** is a website where you can store your Git projects online and share them with others.
+
+**GitHub CLI** is a command-line tool that makes it super easy to work with GitHub directly from your terminal.
+
+---
+
+## Step 1: Create a GitHub Account
+
+If you don't have a GitHub account yet:
+
+1. Go to [github.com](https://github.com)
+2. Click **Sign up**
+3. Choose to sign up with an OAuth provider for ease, or fill in your email, password, username, and country
+4. Verify your email address
+5. Complete the setup
+
+![GitHub Signup Page](/docs/github-signup.png)
+
+**Done!** You now have a GitHub account.
+
+---
+
+## Step 2: Install Git on Your Computer
+
+### For Windows Users
+
+![Download Git for Windows](/docs/download-git-win.png)
+
+1. **Download Git**
+   - Go to [git-scm.com/download/win](https://git-scm.com/download/win)
+   - Click the link shown in the above image
+
+2. **Install Git**
+   - Run the downloaded `.exe` file and follow the installation wizard
+   - You can keep all default settings (recommended for beginners)
+
+3. **Verify Installation**
+   - Open **Command Prompt** or **PowerShell**
+   - Type this command and press Enter:
+
+   ```bash
+   git --version
+   ```
+
+   - You should see something like: `git version 2.43.0`
+   - If you see this, Git is installed successfully! ✅
+
+### For Mac Users
+
+1. **Open Terminal**
+   - Press `Cmd + Space` and type "Terminal"
+   - Press Enter
+
+2. **Install Git using Homebrew** (recommended)
+
+   First, install Homebrew if you don't have it:
+
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+
+   Then install Git:
+
+   ```bash
+   brew install git
+   ```
+
+3. **Alternative: Install Xcode Command Line Tools**
+
+   ```bash
+   xcode-select --install
+   ```
+
+4. **Verify Installation**
+
+   ```bash
+   git --version
+   ```
+
+   - You should see something like: `git version 2.43.0`
+
+### For Linux Users (Ubuntu/Debian)
+
+1. **Open Terminal**
+
+2. **Update package list**
+
+   ```bash
+   sudo apt update
+   ```
+
+3. **Install Git**
+
+   ```bash
+   sudo apt install git
+   ```
+
+4. **Verify Installation**
+
+   ```bash
+   git --version
+   ```
+
+---
+
+## Step 3: Install GitHub CLI
+
+GitHub CLI (`gh`) makes working with GitHub much easier! It handles authentication automatically and simplifies many tasks.
+
+### For Windows Users
+
+**Using winget (Windows 11 or Windows 10 with App Installer):**
+
+```bash
+winget install --id GitHub.cli
+```
+
+**Manual Installation:**
+
+1. Go to [cli.github.com](https://cli.github.com)
+2. Download the Windows installer
+3. Run the `.msi` file and follow the installation wizard
+
+### For Mac Users
+
+**Using Homebrew (recommended):**
+
+```bash
+brew install gh
+```
+
+### For Linux Users (Ubuntu/Debian)
+
+```bash
+sudo apt install gh
+```
+
+**For other Linux distributions**, check the [official installation guide](https://github.com/cli/cli/blob/trunk/docs/install_linux.md).
+
+### Verify GitHub CLI Installation
+
+Open your terminal and run:
+
+```bash
+gh --version
+```
+
+You should see something like: `gh version 2.40.0`
+
+![GitHub CLI Version Check](/docs/gh-version.png)
+
+---
+
+## Step 4: Configure Git with Your Information
+
+Now that Git is installed, you need to tell it who you are. This information will be attached to your commits.
+
+1. **Open your terminal** (Command Prompt, PowerShell, or Terminal)
+
+2. **Set your name** (replace with your actual name):
+
+   ```bash
+   git config --global user.name "Your Name"
+   ```
+
+   Example:
+
+   ```bash
+   git config --global user.name "John Doe"
+   ```
+
+3. **Set your email** (use the same email as your GitHub account):
+
+   ```bash
+   git config --global user.email "your.email@example.com"
+   ```
+
+   Example:
+
+   ```bash
+   git config --global user.email "john.doe@gmail.com"
+   ```
+
+4. **Verify your configuration**:
+
+   ```bash
+   git config --list
+   ```
+
+   You should see your name and email in the output.
+
+---
+
+## Step 5: Authenticate with GitHub using GitHub CLI
+
+This is the easiest way to connect to GitHub! GitHub CLI will handle all the authentication for you.
+
+### Login to GitHub
+
+1. **Run the authentication command:**
+
+   ```bash
+   gh auth login
+   ```
+
+2. **Follow the interactive prompts:**
+
+   ![GitHub CLI Authentication](/docs/gh-auth-login.png)
+   - **What account do you want to log into?**
+     - Select `GitHub.com` (use arrow keys and press Enter)
+
+   - **What is your preferred protocol for Git operations?**
+     - Select `HTTPS` (recommended for beginners)
+
+   - **Authenticate Git with your GitHub credentials?**
+     - Select `Yes`
+
+   - **How would you like to authenticate GitHub CLI?**
+     - Select `Login with a web browser` (easiest option)
+
+3. **Complete the browser authentication:**
+   - A code will appear in your terminal (e.g., `ABCD-1234`)
+   - Press Enter to open your browser
+   - If it doesn't open automatically, go to [github.com/login/device](https://github.com/login/device)
+   - Enter the code shown in your terminal
+   - Click **Authorize GitHub CLI**
+   - You'll see a success message!
+
+4. **Verify you're logged in:**
+
+   ```bash
+   gh auth status
+   ```
+
+   ![GitHub CLI Authentication Success](/docs/gh-auth-success.png)
+
+   You should see: `✓ Logged in as your-username`
+
+**That's it!** You're now authenticated and ready to use Git and GitHub. No need to remember passwords or create tokens! 
+
+---
+
+## Step 6: Basic Git Commands
+
+Now you're ready to use Git! Here are the essential commands you'll use every day.
+
+### Clone a Repository (Download a Project)
+
+**Cloning** means downloading a project from GitHub to your computer.
+
+#### Using GitHub CLI (Easiest!)
+
+```bash
+gh repo clone username/repository-name
+```
+
+Example:
+
+```bash
+gh repo clone github-repository-link
+```
+
+#### Using Git (Traditional Method)
+
+1. **Find the repository on GitHub**
+2. **Click the green "Code" button**
+3. **Copy the HTTPS URL**
+
+4. **In your terminal, navigate to where you want the project:**
+
+   ```bash
+   cd Desktop
+   ```
+
+5. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/username/repository-name.git
+   ```
+
+   Example:
+
+   ```bash
+   git clone https://github.com/username/repository-name.git
+   ```
+
+6. **Navigate into the project:**
+
+   ```bash
+   cd repository-name
+   ```
+
+   Example:
+
+   ```bash
+   cd GDG_RBU_Website
+   ```
+
+### Check Status (See What Changed)
+
+See which files you've modified:
+
+```bash
+git status
+```
+
+This shows:
+
+-  Files that are ready to commit (green)
+-  Files that are modified but not staged (red)
+-  New files that aren't tracked yet
+
+### Add Files (Stage Changes)
+
+Before you can save (commit) your changes, you need to **stage** them.
+
+**Add a specific file:**
+
+```bash
+git add filename.txt
+```
+
+**Add all changed files:**
+
+```bash
+git add .
+```
+
+Example:
+
+```bash
+git add index.html
+```
+
+Or add everything:
+
+```bash
+git add .
+```
+
+### Commit Changes (Save Your Work)
+
+A **commit** is like saving a checkpoint in your project.
+
+```bash
+git commit -m "Your message describing what you changed"
+```
+
+Example:
+
+```bash
+git commit -m "Added navigation bar to homepage"
+```
+
+**Tips for good commit messages:**
+
+- Be clear and specific
+- Use present tense ("Add feature" not "Added feature")
+- Keep it short (under 50 characters if possible)
+
+### Push Changes (Upload to GitHub)
+
+**Pushing** sends your commits from your computer to GitHub.
+
+```bash
+git push
+```
+
+Or if it's your first push on a new branch:
+
+```bash
+git push -u origin main
+```
+
+**Note:** The default branch might be called `main` or `master` depending on the repository.
+
+### Pull Changes (Download Updates)
+
+If someone else made changes to the project on GitHub, you can download them:
+
+```bash
+git pull
+```
+
+This updates your local copy with the latest changes from GitHub.
+
+---
+
+## Step 7: Complete Workflow Example
+
+Here's a typical workflow when working on a project:
+
+### Starting a New Project
+
+1. **Clone the repository:**
+
+   ```bash
+   gh repo clone username/my-project
+   cd my-project
+   ```
+
+2. **Make your changes** (edit files, add new files, etc.)
+
+3. **Check what changed:**
+
+   ```bash
+   git status
+   ```
+
+4. **Stage your changes:**
+
+   ```bash
+   git add .
+   ```
+
+5. **Commit your changes:**
+
+   ```bash
+   git commit -m "Describe what you did"
+   ```
+
+6. **Push to GitHub:**
+   ```bash
+   git push
+   ```
+
+### Daily Workflow
+
+```bash
+# 1. Get the latest changes from GitHub
+git pull
+
+# 2. Make your changes to files
+
+# 3. Check what you changed
+git status
+
+# 4. Stage all changes
+git add .
+
+# 5. Commit with a message
+git commit -m "Fixed bug in login form"
+
+# 6. Push to GitHub
+git push
+```
+
+---
+
+## Bonus: Useful GitHub CLI Commands
+
+GitHub CLI makes many tasks easier! Here are some helpful commands:
+
+### View Repository Information
+
+```bash
+gh repo view
+```
+
+### Create a New Repository (interactive mode)
+
+```bash
+gh repo create
+```
+
+
+
+
+---
+
+## Common Scenarios
+
+### Scenario 1: Starting Fresh with a New Repository
+
+**Create a new repository using GitHub CLI:**
+
+```bash
+# Create a new repository on GitHub
+gh repo create my-project --public --clone
+
+# This creates the repo AND clones it to your computer!
+cd my-project
+
+# Add your files
+git add .
+
+# Make your first commit
+git commit -m "Initial commit"
+
+# Push to GitHub
+git push
+```
+
+### Scenario 2: You Made a Mistake in Your Commit Message
+
+If you just committed and want to change the message:
+
+```bash
+git commit --amend -m "New commit message"
+```
+
+### Scenario 3: You Want to Undo Changes
+
+**Undo changes to a file (before staging):**
+
+```bash
+git checkout -- filename.txt
+```
+
+**Unstage a file (after `git add`):**
+
+```bash
+git reset filename.txt
+```
+
+**Undo the last commit (keep changes):**
+
+```bash
+git reset --soft HEAD~1
+```
+
+---
+
+## Troubleshooting
+
+### Problem: "gh: command not found"
+
+**Solution:** GitHub CLI isn't installed or not in your PATH.
+
+- Reinstall GitHub CLI following Step 3
+- Close and reopen your terminal
+- On Windows, restart your computer if needed
+
+### Problem: "Authentication failed"
+
+**Solution:** You need to login again.
+
+```bash
+gh auth login
+```
+
+### Problem: "fatal: not a git repository"
+
+**Solution:** You're not in a Git project folder.
+
+- Make sure you're in the correct directory
+- Or initialize Git with: `git init`
+
+### Problem: "Your branch is behind 'origin/main'"
+
+**Solution:** Someone else pushed changes. Pull them first:
+
+```bash
+git pull
+```
+
+### Problem: Merge Conflicts
+
+**Solution:** When two people edit the same file:
+
+1. Git will mark the conflicts in your files
+2. Open the file and look for `<<<<<<<`, `=======`, `>>>>>>>`
+3. Edit the file to keep what you want
+4. Remove the conflict markers
+5. Stage and commit:
+   ```bash
+   git add .
+   git commit -m "Resolved merge conflict"
+   git push
+   ```
+
+---
+
+## Quick Reference Cheat Sheet
+
+### Essential Git Commands
+
+| Command                   | What it does                      |
+| ------------------------- | --------------------------------- |
+| `git clone <url>`         | Download a repository from GitHub |
+| `git status`              | See what files have changed       |
+| `git add .`               | Stage all changes                 |
+| `git add <file>`          | Stage a specific file             |
+| `git commit -m "message"` | Save your changes with a message  |
+| `git push`                | Upload commits to GitHub          |
+| `git pull`                | Download updates from GitHub      |
+| `git log`                 | See commit history                |
+
+### Essential GitHub CLI Commands
+
+| Command                 | What it does            |
+| ----------------------- | ----------------------- |
+| `gh auth login`         | Login to GitHub         |
+| `gh auth status`        | Check login status      |
+| `gh repo clone <repo>`  | Clone a repository      |
+| `gh repo create <name>` | Create a new repository |
+| `gh repo view`          | View repository info    |
+| `gh pr create`          | Create a pull request   |
+| `gh pr list`            | List pull requests      |
+| `gh issue list`         | List issues             |
+
+### Configuration Commands
+
+| Command                                  | What it does      |
+| ---------------------------------------- | ----------------- |
+| `git config --global user.name "Name"`   | Set your name     |
+| `git config --global user.email "email"` | Set your email    |
+| `git config --list`                      | View all settings |
+
+---
+
+## Why GitHub CLI is Better for Beginners
+
+ **No complex authentication setup** - Just `gh auth login` and you're done!
+
+ **Fewer commands to remember** - `gh repo clone` instead of copying URLs
+
+ **Built-in help** - Type `gh` to see all available commands
+
+ **Works seamlessly with Git** - Automatically configures everything
+
+ **Interactive prompts** - Guides you through each step
+
+ **No need for Personal Access Tokens** - Authentication is handled for you
+
+---
+
+## Next Steps
+
+Now that you have Git and GitHub CLI set up, you can:
+
+1.  Clone the Ideathon starter repository
+2.  Make changes to your project
+3.  Commit and push your work
+4.  Collaborate with your team
+
+**Ready to start building?** Head over to the [Getting Started Guide](/docs/getting-started) to begin your Ideathon project!
+
+---
+
+## Additional Resources
+
+- **GitHub CLI Documentation:** [cli.github.com/manual](https://cli.github.com/manual)
+- **Official Git Documentation:** [git-scm.com/doc](https://git-scm.com/doc)
+- **GitHub Guides:** [guides.github.com](https://guides.github.com)
+- **Interactive Git Tutorial:** [learngitbranching.js.org](https://learngitbranching.js.org)
+
+---
+
+## Need Help?
+
+- **Discord** - Ask in the GDG Discord server
+- **Mentors** - Talk to your assigned mentors
+- **Email** - Contact the organizing team
+
+Happy coding! 
