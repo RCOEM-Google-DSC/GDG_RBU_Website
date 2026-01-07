@@ -24,6 +24,7 @@ const NAV_LINKS = [
   { href: "/events", label: "Events" },
   { href: "/links", label: "Links" },
   { href: "/docs", label: "Docs" },
+  { href: "/badge", label: "Badge" },
 ];
 
 export default function NavBar() {
@@ -69,8 +70,6 @@ export default function NavBar() {
 
   // lock body while mobile menu open (robust)
   useEffect(() => {
-    // keep the old simple overflow toggle (intentionally left conceptually the same)
-    // but add a robust scroll freeze so mobile browsers don't allow background scroll.
     if (isMobileMenuOpen) {
       // store current scroll
       scrollRef.current = window.scrollY || window.pageYOffset || 0;
