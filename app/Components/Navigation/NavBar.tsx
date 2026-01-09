@@ -24,7 +24,6 @@ const NAV_LINKS = [
   { href: "/events", label: "Events" },
   { href: "/links", label: "Links" },
   { href: "/docs", label: "Docs" },
-  { href: "/badge", label: "Badge" },
 ];
 
 export default function NavBar() {
