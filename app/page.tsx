@@ -8,6 +8,7 @@ import MeetOurTeam from "./Components/Landing/MeetOurTeam";
 import Footer from "./Components/Landing/Footer";
 import Hero from "./Components/Landing/Hero";
 import { getUpcomingEvents } from "@/supabase/supabase";
+import Link from "next/link";
 
 type Event = {
   id: string;
@@ -156,8 +157,8 @@ export default function Home() {
                     </p>
 
                     {/* CTA Button */}
-                    <a
-                      href="/events/past"
+                    <Link
+                      href="/events"
                       className="inline-flex items-center gap-2 px-8 py-4 bg-black text-white font-bold text-lg rounded-xl border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 active:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
                     >
                       View Past Events
@@ -174,7 +175,7 @@ export default function Home() {
                           d="M13 7l5 5m0 0l-5 5m5-5H6"
                         />
                       </svg>
-                    </a>
+                    </Link>
                   </div>
 
                   {/* Bottom decorative elements */}
