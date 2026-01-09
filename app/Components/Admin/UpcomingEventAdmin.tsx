@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -11,8 +12,9 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { DataTable, FilterOption } from "@/app/Components/Reusables/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
-import { users, registrations } from "@/db/mockdata";
 import { CalendarDays, MapPin, Users } from "lucide-react";
+import { supabase } from "@/supabase/supabase";
+import { toast } from "sonner";
 
 // Participant type for the table
 interface Participant {
@@ -38,32 +40,6 @@ interface UpcomingEventAdminProps {
   registered_count?: number;
   capacity?: number;
 }
-
-// Get participants for an event by joining registrations and users
-const getEventParticipants = (eventId: string): Participant[] => {
-  const eventRegistrations = registrations.filter(
-    (r) => r.event_id === eventId,
-  );
-  return eventRegistrations.map((reg) => {
-    const user = users.find((u) => u.id === reg.user_id);
-    return {
-      id: reg.id,
-      name: user?.name || "Unknown",
-      email: user?.email || "",
-      branch: user?.branch || "",
-      section: user?.section || "",
-      phone_number: user?.phone_number || "",
-      status: reg.status,
-      registered_at: reg.created_at,
-    };
-  });
-};
-
-// Get unique branches from users for filter
-const getUniqueBranches = (): { value: string; label: string }[] => {
-  const branches = [...new Set(users.map((u) => u.branch).filter(Boolean))];
-  return branches.map((b) => ({ value: b, label: b }));
-};
 
 // Columns for participants table
 const participantColumns: ColumnDef<Participant>[] = [
@@ -137,7 +113,73 @@ const UpcomingEventAdmin = ({
   registered_count,
   capacity,
 }: UpcomingEventAdminProps) => {
-  const participants = getEventParticipants(id);
+  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [branches, setBranches] = useState<{ value: string; label: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchParticipants();
+  }, [id]);
+
+  const fetchParticipants = async () => {
+    setLoading(true);
+    try {
+      // Fetch registrations with user data
+      const { data: registrationsData, error: registrationsError } =
+        await supabase
+          .from("registrations")
+          .select(
+            `
+            id,
+            status,
+            created_at,
+            user_id,
+            users (
+              id,
+              name,
+              email,
+              branch,
+              section,
+              phone_number
+            )
+          `
+          )
+          .eq("event_id", id);
+
+      if (registrationsError) throw registrationsError;
+
+      // Map the data to Participant format
+      const participantsData: Participant[] = (registrationsData || []).map(
+        (reg: any) => ({
+          id: reg.id,
+          name: reg.users?.name || "Unknown",
+          email: reg.users?.email || "",
+          branch: reg.users?.branch || "",
+          section: reg.users?.section || "",
+          phone_number: reg.users?.phone_number || "",
+          status: reg.status,
+          registered_at: reg.created_at,
+        })
+      );
+
+      setParticipants(participantsData);
+
+      // Extract unique branches for filter
+      const uniqueBranches = [
+        ...new Set(
+          participantsData
+            .map((p) => p.branch)
+            .filter((b): b is string => Boolean(b))
+        ),
+      ];
+      setBranches(uniqueBranches.map((b) => ({ value: b, label: b })));
+    } catch (error) {
+      console.error("Error fetching participants:", error);
+      toast.error("Failed to fetch participants");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filters for the DataTable
   const filters: FilterOption[] = [
@@ -153,7 +195,7 @@ const UpcomingEventAdmin = ({
       id: "branch",
       label: "Branch",
       multiSelect: true,
-      options: getUniqueBranches(),
+      options: branches,
     },
   ];
 

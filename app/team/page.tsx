@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import TeamMemberCard from "../Components/Reusables/TeamMemberCard";
 import LeaderCard from "../Components/Reusables/LeaderCard";
 import ClubLeadCard from "../Components/team/ClubLeadCard";
-import { teamImg } from "@/db/mockdata";
 import Image from "next/image";
 import Footer from "../Components/Landing/Footer";
 import { supabase } from "@/supabase/supabase";
