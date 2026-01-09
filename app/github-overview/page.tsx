@@ -577,7 +577,7 @@ export default function GithubGuide() {
                   </div>
                 </div>
 
-                <h3 className="font-black uppercase text-lg">Repo {i + 1}</h3>
+                <h3 className="font-black uppercase text-lg">Fig {i + 1}</h3>
                 <p className="text-sm font-bold text-gray-600">
                   Click image to open full view.
                 </p>
