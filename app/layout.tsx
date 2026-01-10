@@ -2,6 +2,8 @@
 import "./globals.css";
 import NavBar from "./Components/Navigation/NavBar";
 import { RootProvider } from "fumadocs-ui/provider/next";
+import { Toaster } from "sonner";
+
 
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
@@ -98,6 +100,7 @@ export default function RootLayout({
        
           <NavBar />
           <main className="relative w-full pt-[70px]">{children}</main>
+          <Toaster position="top-right" richColors closeButton={true} />
         </RootProvider>
       </body>
     </html>
