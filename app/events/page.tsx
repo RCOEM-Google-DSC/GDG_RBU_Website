@@ -6,6 +6,7 @@ import EventTicket from "../Components/Common/UpcomingEvent";
 import PastEvent from "../Components/Common/PastEvent";
 import { getUpcomingEvents, getPastEvents } from "@/supabase/supabase";
 import Footer from "../Components/Landing/Footer";
+import Link from "next/link";
 
 type Event = {
   id: string;
@@ -102,8 +103,48 @@ const EventsPage = () => {
           </h1>
 
           {upcomingEvents.length === 0 ? (
-            <div className="text-gray-500 text-center py-12">
-              No upcoming events at the moment.
+              <div className="w-full max-w-4xl mx-auto">
+              <div className="relative w-full">
+                {/* Shadow layer */}
+                <div className="absolute top-3 left-3 right-0 bottom-0 bg-black rounded-3xl" />
+
+                {/* Main card */}
+                <div className="relative bg-white border-4 border-black rounded-3xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+                  {/* Top accent bar */}
+                  <div className="h-3 bg-[#FFC20E]" />
+
+                  {/* Content */}
+                  <div className="p-8 sm:p-12 text-center">
+                    {/* Icon */}
+                    <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-[#FFC20E] rounded-2xl border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mb-6">
+                      <svg
+                        className="w-10 h-10 sm:w-12 sm:h-12 text-black"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2.5}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+
+                    {/* Heading */}
+                    <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4 font-product-sans">
+                      No Events Right Now
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-base sm:text-lg text-gray-700 mb-8 max-w-xl mx-auto leading-relaxed">
+                      We're cooking up something amazing! Stay tuned for our next event announcement.
+                      In the meantime, check out below what we've done before.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="space-y-6">

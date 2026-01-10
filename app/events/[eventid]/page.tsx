@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { Ticket, Users, ArrowDownRight, Sparkles } from "lucide-react";
 import { getEvent, getGalleryImages, getEventWithPartner } from "@/supabase/supabase";
-import ImageViewerModal from "@/app/Components/events/ImageViewerModal";
+import { Lightbox } from "@/app/Components/session-docs/Lightbox";
 
 export default function EventPage({
   params: paramsPromise,
@@ -18,8 +18,10 @@ export default function EventPage({
   const [event, setEvent] = useState<any>(null);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [viewerOpen, setViewerOpen] = useState(false);
-  const [viewerImage, setViewerImage] = useState({ src: "", alt: "" });
+  const [lightbox, setLightbox] = useState<{ open: boolean; src: string }>({
+    open: false,
+    src: "",
+  });
 
   /* ---------------- FETCH DATA ---------------- */
   useEffect(() => {
@@ -95,9 +97,8 @@ export default function EventPage({
       ? [rawPartners]
       : [];
 
-  const openImageViewer = (src: string, alt: string) => {
-    setViewerImage({ src, alt });
-    setViewerOpen(true);
+  const openImageViewer = (src: string) => {
+    setLightbox({ open: true, src });
   };
 
   return (
@@ -122,8 +123,7 @@ export default function EventPage({
             onClick={() => openImageViewer(
               event.image_url
                 ? event.image_url.replace("/upload/", "/upload/f_auto,q_auto/")
-                : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop",
-              event.title
+                : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop"
             )}
           >
             <Image
@@ -135,7 +135,7 @@ export default function EventPage({
                   : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop"
               }
               alt={event.title}
-              className="w-full h-full object-cover border-2 border-black group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-cover border-2 border-black  transition-transform duration-300"
             />
 
             <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] z-30">
@@ -198,9 +198,9 @@ export default function EventPage({
         </div>
       </section>
 
-      {/* ---------------- PARTNERS (ADDED) ---------------- */}
+      {/* ---------------- PARTNERS ---------------- */}
       {partnersArray.length > 0 && (
-        <section className="max-w-6xl mx-auto p-4 md:p-6 relative z-10">
+        <section className="max-w-6xl my-20 mx-auto p-4 md:p-6 relative z-10">
           <div className="flex justify-center mb-6">
             <h2 className="text-2xl md:text-3xl font-black bg-white px-6 py-2 border-4 border-black rotate-0 md:-rotate-2 shadow-[4px_4px_0px_0px_#000]">
               PARTNER{partnersArray.length > 1 ? "S" : ""}
@@ -210,6 +210,7 @@ export default function EventPage({
           <div className={`${cardBase} p-6 md:p-8 flex flex-col gap-6`}>
             {partnersArray.map((p: any, idx: number) => (
               <div key={idx} className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                {/* left: partner image  */}
                 <div className="w-full md:w-1/3 flex items-center justify-center">
                   {p.logo_url ? (
                     <Image
@@ -226,11 +227,9 @@ export default function EventPage({
                   )}
                 </div>
 
+                {/* right: partner details */}
                 <div className="w-full md:w-2/3 flex flex-col items-start md:items-start gap-2">
-                  <div className="font-black text-lg">{p.name || "Partner"}</div>
-                  {p.website && (
-                    <div className="text-sm text-gray-600 break-all">{p.website}</div>
-                  )}
+                  <h3 className="font-black text-3xl">{p.name || "Partner"}</h3>
                   <div className="mt-3">
                     {p.website ? (
                       <a
@@ -259,7 +258,7 @@ export default function EventPage({
 
       {/* ---------------- THE CREW ---------------- */}
       {event.crew_url && (
-        <section className="max-w-6xl mx-auto p-4 md:p-6 relative z-10">
+        <section className="max-w-6xl my-20 mx-auto p-4 md:p-6 relative z-10">
           <div className="flex justify-center mb-6">
             <h2 className="text-2xl md:text-3xl font-black bg-white px-6 py-2 border-4 border-black rotate-0 md:-rotate-2 shadow-[4px_4px_0px_0px_#000]">
               THE CREW
@@ -269,8 +268,7 @@ export default function EventPage({
           <div
             className={`${cardBase} p-3 md:p-4 bg-[#ffbe0b] rotate-0 md:rotate-1 cursor-pointer group`}
             onClick={() => openImageViewer(
-              event.crew_url.replace("/upload/", "/upload/f_auto,q_auto/"),
-              "The Crew"
+              event.crew_url.replace("/upload/", "/upload/f_auto,q_auto/")
             )}
           >
             <div className="bg-black p-2 border-4 border-black rotate-0 md:-rotate-1">
@@ -296,7 +294,7 @@ export default function EventPage({
             Evidence
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {galleryImages.map((src, i) => {
               const rotationClass =
                 i % 2 === 0 ? "md:-rotate-2" : "md:rotate-2";
@@ -307,7 +305,7 @@ export default function EventPage({
                   shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)]
                   rotate-0 ${rotationClass}
                   hover:rotate-0 hover:scale-105 transition-transform duration-300 cursor-pointer`}
-                    onClick={() => openImageViewer(src, `Gallery ${i + 1}`)}
+                    onClick={() => openImageViewer(src)}
                   >
                     <div className="aspect-square border-2 border-black overflow-hidden bg-gray-200">
                       <Image
@@ -329,12 +327,11 @@ export default function EventPage({
         </section>
       )}
 
-      {/* Image Viewer Modal */}
-      <ImageViewerModal
-        isOpen={viewerOpen}
-        imageSrc={viewerImage.src}
-        imageAlt={viewerImage.alt}
-        onClose={() => setViewerOpen(false)}
+      {/* Lightbox */}
+      <Lightbox
+        open={lightbox.open}
+        src={lightbox.src}
+        onClose={() => setLightbox({ open: false, src: "" })}
       />
 
     </div>

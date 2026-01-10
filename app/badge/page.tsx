@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-
+import Image from 'next/image';
 const BadgeGenerator = () => {
     const [uploadedImage, setUploadedImage] = useState<string | null>(null);
     const [compositeImage, setCompositeImage] = useState<string | null>(null);
@@ -178,7 +178,9 @@ const BadgeGenerator = () => {
                                 >
                                     {uploadedImage ? (
                                         <div className="relative w-full h-full p-4">
-                                            <img
+                                            <Image
+                                                width={200}
+                                                height={200}
                                                 src={uploadedImage}
                                                 alt="Uploaded"
                                                 className="w-full h-full object-cover"
@@ -239,7 +241,9 @@ const BadgeGenerator = () => {
                                             boxShadow: '6px 6px 0px #000000',
                                         }}
                                     >
-                                        <img
+                                        <Image
+                                            width={200}
+                                            height={200}
                                             src={compositeImage}
                                             alt="Badge Preview"
                                             className="w-full h-full object-cover"
