@@ -63,19 +63,53 @@ const DecoCircle: React.FC<ClassNameProp> = ({ className }) => (
   />
 );
 
+// Fixed CopyButton: use async clipboard API with a robust fallback and removed active animation classes
 const CopyButton: React.FC<{ text: string }> = ({ text }) => {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // fallback for older browsers
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      // final fallback attempt
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (e) {
+        // fail silently but log for debugging
+        // console.error("Copy failed", e);
+      }
+    }
   };
 
   return (
     <button
+      type="button"
       onClick={handleCopy}
-      className="absolute top-1/2 -translate-y-1/2 right-2 p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none"
+      className="absolute top-1/2 -translate-y-1/2 right-2 p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
       title="Copy command"
       aria-label="Copy command"
     >
@@ -441,15 +475,11 @@ export default function GithubGuide() {
                   <div className="flex-1 w-full">
                     <p className="text-xl font-bold mb-4">You have a file named <code className="text-[#f89820]">Main.java</code>.</p>
                     <div className="bg-gray-800 rounded-lg border-2 border-gray-600 p-6 font-mono text-sm leading-relaxed overflow-x-auto shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]">
-                      <span className="text-pink-400">public class</span> <span className="text-yellow-300">Main</span> {"{"}
-                      <br />
-                      &nbsp;&nbsp;<span className="text-pink-400">public static void</span> <span className="text-blue-300">main</span>(String[] args) {"{"}
-                      <br />
-                      &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span className="text-green-300">"Hello GitHub!"</span>);
-                      <br />
-                      &nbsp;&nbsp;{"}"}
-                      <br />
-                      {"}"}
+{`public class Main {
+  public static void main(String[] args) {
+    System.out.println("Hello GitHub!");
+  }
+}`}
                     </div>
                   </div>
                 </div>
