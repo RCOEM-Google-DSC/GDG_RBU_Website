@@ -4,7 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Calendar, Download, Share2, Loader2 } from "lucide-react";
 import { UIEvent } from "../../../lib/types";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import Image from "next/image";
 interface EventCardProps {
   event: UIEvent;
@@ -20,6 +20,7 @@ export function EventCard({ event }: EventCardProps) {
    * DOWNLOAD EXISTING CERTIFICATE
    */
   const downloadCertificate = async (path: string) => {
+    const supabase = createClient();
     const { data, error } = await supabase.storage
       .from("certificates")
       .download(path);
@@ -53,7 +54,7 @@ export function EventCard({ event }: EventCardProps) {
     try {
       setLoading(true);
 
-      // 🔑 GET USER SESSION (CRITICAL FIX)
+      const supabase = createClient();
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -100,7 +101,7 @@ export function EventCard({ event }: EventCardProps) {
     <div className="relative">
       {/* Shadow */}
       <div className="absolute bg-black h-full w-full rounded-xl top-1.5 left-1.5" />
-      
+
       {/* Main Card */}
       <div className="relative flex flex-col sm:flex-row overflow-hidden rounded-xl border-[3px] border-black bg-white">
         {/* Image section */}
@@ -157,8 +158,8 @@ export function EventCard({ event }: EventCardProps) {
                     loading
                       ? "bg-neutral-300 cursor-not-allowed"
                       : certificateUrl
-                      ? "bg-[#4284ff] text-white"
-                      : "bg-white text-black",
+                        ? "bg-[#4284ff] text-white"
+                        : "bg-white text-black",
                   )}
                 >
                   {loading ? (

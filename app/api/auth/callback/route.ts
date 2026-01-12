@@ -40,7 +40,7 @@ export async function GET(request: Request) {
     if (sessionError) {
       console.error("Error exchanging code for session:", sessionError);
       return NextResponse.redirect(
-        new URL("/login?error=auth_failed", requestUrl.origin)
+        new URL("/register?error=auth_failed", requestUrl.origin)
       );
     }
 

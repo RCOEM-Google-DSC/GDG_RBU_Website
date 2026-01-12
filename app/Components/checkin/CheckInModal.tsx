@@ -1,6 +1,6 @@
 "use client";
 
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { useRBAC } from "@/hooks/useRBAC";
 import { Registration } from "@/lib/types";
 import Image from "next/image";
@@ -8,6 +8,7 @@ export function CheckInModal({ reg }: { reg: Registration }) {
   const { canViewParticipants } = useRBAC();
 
   const verify = async () => {
+    const supabase = createClient();
     await supabase
       .from("registrations")
       .update({
@@ -32,7 +33,7 @@ export function CheckInModal({ reg }: { reg: Registration }) {
           <div className="flex gap-4 items-center">
             {user.image_url ? (
               <Image
-              alt="profile img"
+                alt="profile img"
                 height={80}
                 width={80}
                 src={user.image_url}

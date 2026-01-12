@@ -5,7 +5,7 @@ import PastEvents from "@/app/Components/Admin/PastEvents";
 import UpcomingEventAdmin from "@/app/Components/Admin/UpcomingEventAdmin";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRBAC } from "@/hooks/useRBAC";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
 
 type Event = {
@@ -33,6 +33,7 @@ export default function EventsPage() {
   const fetchEvents = async () => {
     setLoading(true);
     try {
+      const supabase = createClient();
       const now = new Date().toISOString();
 
       // Fetch upcoming events

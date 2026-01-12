@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { Github, Instagram, Linkedin, ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -14,6 +14,7 @@ export default function ClubLeadCard() {
   useEffect(() => {
     const fetchClubLead = async () => {
       try {
+        const supabase = createClient();
         const { data, error } = await supabase
           .from("team_members")
           .select(`

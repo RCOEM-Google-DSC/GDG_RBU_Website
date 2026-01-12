@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase, getCurrentUserId } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import QRCodeWithSvgLogo from "@/app/Components/checkin/QRCodeWithSvgLogo";
 import { toast } from "sonner";
 import {
@@ -86,8 +86,7 @@ const InputField = ({
           ${THEME.colors.surface} text-black
           ${THEME.borders} ${THEME.shadow}
           outline-none transition-all duration-200
-          focus:bg-[#E8F0FE] focus:border-[#4285F4] placeholder:text-gray-400 ${
-            THEME.fonts.body
+          focus:bg-[#E8F0FE] focus:border-[#4285F4] placeholder:text-gray-400 ${THEME.fonts.body
           }
         `}
         required={required}
@@ -202,7 +201,9 @@ export default function EventRegisterPage() {
 
   useEffect(() => {
     const load = async () => {
-      const uid = await getCurrentUserId();
+      const supabase = createClient();
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      const uid = authUser?.id;
 
       // if not logged in -> show toast + redirect to /register
       if (!uid) {
@@ -316,9 +317,8 @@ export default function EventRegisterPage() {
       {
         id: nextId,
         type: "member" as const,
-        title: `Team Member ${
-          cards.filter((c) => c.type === "member").length + 1
-        }`,
+        title: `Team Member ${cards.filter((c) => c.type === "member").length + 1
+          }`,
         expanded: true,
         validated: false,
         email: "",
@@ -340,6 +340,7 @@ export default function EventRegisterPage() {
       return;
     }
 
+    const supabase = createClient();
     // find account
     const { data: member, error: findErr } = await supabase
       .from("users")
@@ -417,6 +418,7 @@ export default function EventRegisterPage() {
 
     // update users table (exclude email)
     setLoading(true);
+    const supabase = createClient();
     const { error } = await supabase
       .from("users")
       .update({
@@ -474,6 +476,7 @@ export default function EventRegisterPage() {
     }
 
     // check unique team name for this event
+    const supabase = createClient();
     const { data: existingTeam } = await supabase
       .from("registrations")
       .select("id")
@@ -556,6 +559,7 @@ export default function EventRegisterPage() {
     }
 
     setLoading(true);
+    const supabase = createClient();
     const { error } = await supabase.from("registrations").insert([
       {
         event_id: eventid,
@@ -777,7 +781,7 @@ export default function EventRegisterPage() {
                                   <InputField
                                     label="EMAIL"
                                     value={user.email || ""}
-                                    onChange={() => {}}
+                                    onChange={() => { }}
                                     icon={Mail}
                                     disabled
                                   />
@@ -924,7 +928,7 @@ export default function EventRegisterPage() {
                         <InputField
                           label="EMAIL"
                           value={user.email || ""}
-                          onChange={() => {}}
+                          onChange={() => { }}
                           icon={Mail}
                           disabled
                         />
@@ -1000,6 +1004,7 @@ export default function EventRegisterPage() {
       return;
     }
     setLoading(true);
+    const supabase = createClient();
     const { error } = await supabase
       .from("users")
       .update({

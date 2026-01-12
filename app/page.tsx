@@ -7,7 +7,7 @@ import Faq from "./Components/Landing/FAQ";
 import MeetOurTeam from "./Components/Landing/MeetOurTeam";
 import Footer from "./Components/Landing/Footer";
 import Hero from "./Components/Landing/Hero";
-import { getUpcomingEvents } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import Link from "next/link";
 
 type Event = {
@@ -43,7 +43,12 @@ export default function Home() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const upcoming = await getUpcomingEvents();
+        const supabase = createClient();
+        const { data: upcoming } = await supabase
+          .from("events")
+          .select("*")
+          .eq("status", "upcoming")
+          .order("event_time", { ascending: true });
         if (upcoming) setEvents(upcoming as Event[]);
       } catch (err) {
         console.error("Error fetching upcoming events:", err);

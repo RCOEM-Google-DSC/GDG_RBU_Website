@@ -4,7 +4,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { Ticket, Users, ArrowDownRight, Sparkles } from "lucide-react";
-import { getEvent, getGalleryImages, getEventWithPartner } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { Lightbox } from "@/app/Components/session-docs/Lightbox";
 
 export default function EventPage({
@@ -27,14 +27,38 @@ export default function EventPage({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Prefer the helper that returns partner data if available.
-        // If getEventWithPartner exists and works, use it; otherwise fallback to getEvent.
+        const supabase = createClient();
+
+        // Fetch event with partner data
         let eventData: any = null;
         try {
-          eventData = await getEventWithPartner(eventid);
+          const { data, error } = await supabase
+            .from("events")
+            .select(`
+              *,
+              partners (
+                id,
+                name,
+                website,
+                logo_url,
+                created_at
+              )
+            `)
+            .eq("id", eventid)
+            .single();
+
+          if (error) throw error;
+          eventData = data;
         } catch (e) {
-          // fallback to original getEvent if partner helper fails for any reason
-          eventData = await getEvent(eventid);
+          // fallback to basic event fetch
+          const { data, error } = await supabase
+            .from("events")
+            .select("*")
+            .eq("id", eventid)
+            .single();
+
+          if (error) throw error;
+          eventData = data;
         }
 
         if (!eventData) notFound();
@@ -42,8 +66,18 @@ export default function EventPage({
         setEvent(eventData);
 
         if (eventData.gallery_uid) {
-          const images = await getGalleryImages(eventData.gallery_uid);
-          setGalleryImages(images);
+          const { data: galleryData } = await supabase
+            .from("gallery")
+            .select("image_url")
+            .eq("id", eventData.gallery_uid)
+            .single();
+
+          if (galleryData?.image_url) {
+            const images = galleryData.image_url.map((url: string) =>
+              url.replace("/upload/", "/upload/f_auto,q_auto/")
+            );
+            setGalleryImages(images);
+          }
         }
 
         setLoading(false);
@@ -89,8 +123,8 @@ export default function EventPage({
   const makeSafeUrl = (u: string | null | undefined) =>
     u ? String(u).replace("/upload/", "/upload/f_auto,q_auto/") : "";
 
-  // partner may be returned as `partners` (object or array) depending on your supabase query
-  const rawPartners = event.partners ?? event.partner ?? null; // try multiple possible keys
+
+  const rawPartners = event.partners ?? event.partner ?? null;
   const partnersArray = Array.isArray(rawPartners)
     ? rawPartners
     : rawPartners
@@ -114,7 +148,6 @@ export default function EventPage({
 
       {/* hero */}
       <div className="relative max-w-6xl mx-auto p-4 md:p-6 pt-0 pb-12 md:pb-16">
-        {/* NOTE: changed structure so the yellow tag is positioned relative to the image box wrapper */}
         <div className="relative">
           {/* HERO IMAGE (the bordered box) */}
           <div
@@ -146,7 +179,7 @@ export default function EventPage({
             </div>
           </div>
 
-          {/* TITLE CARD: positioned relative to the image box wrapper and pulled ABOVE it */}
+          {/* TITLE CARD */}
           <div
             className={`absolute left-4 -top-10 md:-top-14 z-20 bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:-rotate-2 ${border} ${shadow} max-w-sm md:max-w-md`}
           >

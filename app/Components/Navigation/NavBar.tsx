@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import ProfileDropdown from "../Common/ProfileDropdown";
 import MobileProfileDropdown from "../Common/MobileProfileDropdown";
 import { Menu, X, Terminal, User as UserIcon } from "lucide-react";
@@ -38,6 +38,8 @@ export default function NavBar() {
   // load user data
   useEffect(() => {
     let mounted = true;
+    const supabase = createClient();
+
     const fetchUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (mounted) setUser(data.user ?? null);

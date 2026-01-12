@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Github, Linkedin, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import Link from "next/link";
 
 interface LeaderCardProps {
@@ -13,7 +13,7 @@ interface LeaderCardProps {
   imageUrl: string;
   githubUrl: string;
   linkedinUrl: string;
-  domain?: string; 
+  domain?: string;
   leadTitle?: string;
 }
 
@@ -56,6 +56,7 @@ function LeaderCard({
   const [authUserId, setAuthUserId] = useState<string | null>(null);
 
   useEffect(() => {
+    const supabase = createClient();
     supabase.auth.getSession().then(({ data }) => {
       setAuthUserId(data.session?.user?.id ?? null);
     });

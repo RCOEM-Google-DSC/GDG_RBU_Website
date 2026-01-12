@@ -1,21 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createEvent, getEvents } from "@/supabase/supabase";
+import { createClient } from "@/supabase/server";
 
 export async function GET() {
   try {
-    const events = await getEvents();
+    const supabase = await createClient();
+    const { data: events, error } = await supabase
+      .from("events")
+      .select("*")
+      .order("date", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
     return NextResponse.json({ events });
   } catch (error: any) {
     console.error("Error fetching events:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch events" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User must be authenticated to create an event" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
     const {
@@ -36,31 +57,41 @@ export async function POST(request: NextRequest) {
     if (!title || !date) {
       return NextResponse.json(
         { error: "Title and date are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
-    const event = await createEvent({
-      title,
-      description,
-      date,
-      time,
-      venue,
-      is_paid,
-      fee,
-      qr_code,
-      max_participants,
-      is_team_event,
-      max_team_size,
-      category,
-    });
+    const { data: event, error } = await supabase
+      .from("events")
+      .insert({
+        title,
+        description,
+        date,
+        time,
+        venue,
+        is_paid,
+        fee,
+        qr_code,
+        max_participants,
+        is_team_event,
+        max_team_size,
+        category,
+        organizer_id: user.id,
+        created_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json({ event }, { status: 201 });
   } catch (error: any) {
     console.error("Error creating event:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create event" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

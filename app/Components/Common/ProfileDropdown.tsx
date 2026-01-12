@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CiLogout } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
-import { supabase, getCurrentUserId } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
@@ -30,17 +30,16 @@ const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
   useEffect(() => {
     const load = async () => {
       try {
-        const userId = await getCurrentUserId();
-        if (!userId) return;
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-        const { data: sessionData } = await supabase.auth.getSession();
-        setUserEmail(sessionData.session?.user?.email ?? null);
-
+        setUserEmail(user.email ?? null);
 
         const { data: profileData, error: pErr } = await supabase
           .from("users")
           .select("name, image_url, role")
-          .eq("id", userId)
+          .eq("id", user.id)
           .single();
         if (pErr) {
           console.warn("profile fetch error", pErr);
@@ -49,11 +48,10 @@ const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
         setImageUrl(profileData?.image_url ?? null);
         setRole(profileData?.role ?? null);
 
-
         const { data: team } = await supabase
           .from("team_members")
           .select("userid")
-          .eq("userid", userId)
+          .eq("userid", user.id)
           .maybeSingle();
 
         if (team) setTeamId(team.userid);
@@ -66,6 +64,7 @@ const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
   }, []);
 
   const handleSignOut = async () => {
+    const supabase = createClient();
     const { error } = await supabase.auth.signOut();
     if (error) {
       toast.error("Error signing out", {

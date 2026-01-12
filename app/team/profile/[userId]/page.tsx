@@ -1,5 +1,5 @@
 import React from "react";
-import { createClient } from "@/supabase/server";
+import { createClient } from "@/supabase/client";
 import { notFound } from "next/navigation";
 import ProfileClientView, { ProfileData } from "./ProfileClientView";
 

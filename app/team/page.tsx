@@ -6,7 +6,7 @@ import LeaderCard from "../Components/Reusables/LeaderCard";
 import ClubLeadCard from "../Components/team/ClubLeadCard";
 import Image from "next/image";
 import Footer from "../Components/Landing/Footer";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 
 type Member = {
   id: string;
@@ -62,6 +62,7 @@ export default function TeamPage() {
   useEffect(() => {
     const fetchTeamData = async () => {
       try {
+        const supabase = createClient();
         // Fetch all team members with user data
         const { data: teamData, error: teamError } = await supabase
           .from("team_members")

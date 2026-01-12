@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { supabase } from '@/supabase/supabase';
+import { createClient } from '@/supabase/client';
 
 export default function Hero() {
   const [user, setUser] = useState<any>(null);
@@ -9,6 +9,7 @@ export default function Hero() {
   const [teamId, setTeamId] = useState<string | null>(null);
   useEffect(() => {
     const fetchUser = async () => {
+      const supabase = createClient();
       const { data } = await supabase.auth.getUser();
       setUser(data.user);
     };

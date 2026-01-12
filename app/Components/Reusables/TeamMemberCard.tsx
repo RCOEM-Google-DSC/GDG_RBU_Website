@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Github, Linkedin, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import Link from "next/link";
 
 interface TeamMemberCardProps {
@@ -52,6 +52,7 @@ function TeamMemberCard({
   const [authUserId, setAuthUserId] = useState<string | null>(null);
 
   useEffect(() => {
+    const supabase = createClient();
     supabase.auth.getSession().then(({ data }) => {
       setAuthUserId(data.session?.user?.id ?? null);
     });

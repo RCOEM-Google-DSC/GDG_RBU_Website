@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { useRBAC } from "@/hooks/useRBAC";
 import { toast } from "sonner";
 import { Check, Loader2 } from "lucide-react";
@@ -44,6 +44,7 @@ export default function CheckInClient() {
     const load = async () => {
       try {
         const payload = JSON.parse(atob(encoded));
+        const supabase = createClient();
 
         /* ---------- SOLO ---------- */
         if (payload.u) {
@@ -106,6 +107,7 @@ export default function CheckInClient() {
 
     setVerifyingId(regId);
 
+    const supabase = createClient();
     const { error } = await supabase
       .from("registrations")
       .update({
@@ -127,10 +129,10 @@ export default function CheckInClient() {
       prev.map((r) =>
         r.id === regId
           ? {
-              ...r,
-              status: "verified",
-              check_in_time: new Date().toISOString(),
-            }
+            ...r,
+            status: "verified",
+            check_in_time: new Date().toISOString(),
+          }
           : r,
       ),
     );
@@ -186,11 +188,10 @@ export default function CheckInClient() {
               onClick={() => verify(reg.id)}
               disabled={isVerified || busy}
               aria-disabled={isVerified || busy}
-              className={`w-full py-3 font-mono flex items-center justify-center gap-2 ${
-                isVerified
-                  ? "bg-gray-200 text-gray-700 cursor-not-allowed"
-                  : "bg-black text-white"
-              }`}
+              className={`w-full py-3 font-mono flex items-center justify-center gap-2 ${isVerified
+                ? "bg-gray-200 text-gray-700 cursor-not-allowed"
+                : "bg-black text-white"
+                }`}
               title={
                 isVerified
                   ? "This registration is already verified"

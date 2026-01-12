@@ -125,7 +125,7 @@ const Footer = () => {
                 <Link
                   href="https://www.instagram.com/gdg_rbu/"
                   target="_blank"
-                  className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1 flex-shrink-0"
+                  className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1 shrink-0"
                   style={{
                     backgroundColor: "#f87171",
                     border: "3px solid #000000",
@@ -140,7 +140,7 @@ const Footer = () => {
                 <Link
                   href="https://www.linkedin.com/company/gdg-rbu/"
                   target="_blank"
-                  className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1 flex-shrink-0"
+                  className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1 shrink-0"
                   style={{
                     backgroundColor: "#60a5fa",
                     border: "3px solid #000000",
@@ -155,7 +155,7 @@ const Footer = () => {
                 <Link
                   href="https://x.com/gdsc_rcoem"
                   target="_blank"
-                  className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1 flex-shrink-0"
+                  className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1 shrink-0"
                   style={{
                     backgroundColor: "#4ade80",
                     border: "3px solid #000000",

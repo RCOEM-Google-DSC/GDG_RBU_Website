@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Trash2, AlertTriangle } from "lucide-react";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import DataTable from "@/app/Components/Reusables/DataTable";
 import ConfirmDialog from "@/app/Components/Reusables/ConfirmDialog";
 import {
@@ -48,6 +48,7 @@ export default function UsersPage() {
   }, []);
 
   const fetchUsers = async () => {
+    const supabase = createClient();
     const { data, error } = await supabase
       .from("users")
       .select("id,name,email,role,created_at")
@@ -88,6 +89,7 @@ export default function UsersPage() {
   };
 
   const updateRole = async (id: string, role: string) => {
+    const supabase = createClient();
     const { error } = await supabase
       .from("users")
       .update({ role })
@@ -126,6 +128,7 @@ export default function UsersPage() {
     if (!userToDelete) return;
 
     try {
+      const supabase = createClient();
       const { error } = await supabase
         .from("users")
         .delete()

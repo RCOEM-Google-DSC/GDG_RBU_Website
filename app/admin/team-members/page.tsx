@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import DataTable from "@/app/Components/Reusables/DataTable";
 import ConfirmDialog from "@/app/Components/Reusables/ConfirmDialog";
 import {
@@ -53,6 +53,7 @@ export default function TeamMembersPage() {
   const fetchTeamMembers = async () => {
     setLoading(true);
     try {
+      const supabase = createClient();
       // Fetch users with role 'member' or 'admin' and join with team_members table
       const { data: usersData, error: usersError } = await supabase
         .from("users")
@@ -116,6 +117,7 @@ export default function TeamMembersPage() {
 
   const updateDomain = async (userId: string, domain: string) => {
     try {
+      const supabase = createClient();
       // Handle 'unassigned' by setting domain to null
       const domainValue = domain === "unassigned" ? null : domain;
 
@@ -191,6 +193,7 @@ export default function TeamMembersPage() {
 
   const updateRole = async (userId: string, role: string) => {
     try {
+      const supabase = createClient();
       // Update user role in users table
       const { error: userError } = await supabase
         .from("users")

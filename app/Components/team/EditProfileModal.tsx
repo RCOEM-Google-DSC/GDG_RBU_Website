@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
 import Link from "next/link";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import {
   Github,
   Linkedin,
@@ -171,6 +171,7 @@ export default function EditProfileModal({
       setImagePreview(data.url);
       form.setValue("image_url", data.url);
 
+      const supabase = createClient();
       await supabase
         .from("users")
         .update({ image_url: data.url })
@@ -189,6 +190,7 @@ export default function EditProfileModal({
     setError(null);
 
     try {
+      const supabase = createClient();
       console.log("Form values:", values);
 
       const userUpdate = {

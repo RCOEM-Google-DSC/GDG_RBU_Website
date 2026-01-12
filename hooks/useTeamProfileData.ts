@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 
 export function useTeamProfileData(userId: string) {
   const [data, setData] = useState<any>(null);
@@ -14,6 +14,7 @@ export function useTeamProfileData(userId: string) {
         if (!userId) return;
 
         setLoading(true);
+        const supabase = createClient();
 
         const { data, error } = await supabase
           .from("team_members")
@@ -30,7 +31,7 @@ export function useTeamProfileData(userId: string) {
                 image_url,
                 profile_links
               )
-            `,
+            `
           )
           .eq("userid", userId)
           .single();

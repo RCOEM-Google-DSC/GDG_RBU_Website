@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { supabase, getCurrentUserId } from "../../../supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { Camera } from "lucide-react";
 import ImageCropModal from "../team/ImageCropModal";
 
@@ -138,8 +138,9 @@ export function CompleteProfileDialog({
     setStatus({ type: "idle" });
 
     try {
-      const userId = await getCurrentUserId();
-      if (!userId) throw new Error("User not authenticated");
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
 
       const { error } = await supabase
         .from("users")
@@ -156,7 +157,7 @@ export function CompleteProfileDialog({
           },
           updated_at: new Date().toISOString(),
         })
-        .eq("id", userId);
+        .eq("id", user.id);
 
       if (error) throw error;
 

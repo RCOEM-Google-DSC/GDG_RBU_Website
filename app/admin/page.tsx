@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Users } from "lucide-react";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
 import InfoCard from "../Components/Admin/InfoCard";
 
@@ -27,6 +27,7 @@ export default function AdminPage() {
   const fetchStats = async () => {
     setLoading(true);
     try {
+      const supabase = createClient();
       // Fetch total users count
       const { count: usersCount, error: usersError } = await supabase
         .from("users")

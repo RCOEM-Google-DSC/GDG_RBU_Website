@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase, getCurrentUserId } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import {
   buildUIUser,
   buildUIEvents,
@@ -33,7 +33,10 @@ export function useProfileData(): UseProfileDataReturn {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const supabase = createClient();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") {
         router.push("/");
         router.refresh();
@@ -51,7 +54,11 @@ export function useProfileData(): UseProfileDataReturn {
         setLoading(true);
         setError(null);
 
-        const userId = await getCurrentUserId();
+        const supabase = createClient();
+        const {
+          data: { user: authUser },
+        } = await supabase.auth.getUser();
+        const userId = authUser?.id;
         if (!userId) {
           setError("You must be logged in to view your profile.");
           return;
@@ -90,7 +97,7 @@ export function useProfileData(): UseProfileDataReturn {
           if (eventsData) {
             uiEvents = buildUIEvents(
               eventsData as EventRow[],
-              registrations as Registration[],
+              registrations as Registration[]
             );
           }
         }

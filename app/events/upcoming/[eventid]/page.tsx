@@ -12,7 +12,7 @@ import {
   Clock,
   MapPin,
 } from "lucide-react";
-import { getEventWithPartner } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 
 type EventRecord = {
   id: string;
@@ -58,8 +58,13 @@ export default function UpcomingEventPage({
             : (params as any);
         const { eventid } = resolved;
 
-        // <-- fetch event WITH partner relation
-        const eventData = await getEventWithPartner(eventid);
+        // fetch event WITH partner relation
+        const supabase = createClient();
+        const { data: eventData } = await supabase
+          .from("events")
+          .select(`*, partners(*)`)
+          .eq("id", eventid)
+          .single();
         if (!eventData) {
           if (!mounted) return;
           setNotFoundState(true);
@@ -112,7 +117,7 @@ export default function UpcomingEventPage({
   // ---------------- helpers ----------------
   const safeImg = (url?: string | null, fallback = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop") =>
     url ? String(url).replace("/upload/", "/upload/f_auto,q_auto/") : fallback;
-  const resigerUrl = "https://vision.hack2skill.com/event/gdgoc-25-techsprint-rbu?utm_source=hack2skill&utm_medium=homepage" 
+  const resigerUrl = "https://vision.hack2skill.com/event/gdgoc-25-techsprint-rbu?utm_source=hack2skill&utm_medium=homepage"
 
   // partner may come as object or array depending on how the join returns
   const partnerData = (() => {
@@ -133,7 +138,7 @@ export default function UpcomingEventPage({
           month: "short",
           day: "numeric",
         });
-      } catch {}
+      } catch { }
     }
     return "TBA";
   })();
@@ -146,7 +151,7 @@ export default function UpcomingEventPage({
           hour: "2-digit",
           minute: "2-digit",
         });
-      } catch {}
+      } catch { }
     }
     return "TBA";
   })();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase, getCurrentUserId } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import QRCodeWithSvgLogo from "../../Components/checkin/QRCodeWithSvgLogo";
 
 interface RegistrationData {
@@ -14,7 +14,9 @@ export default function MyQRPage() {
 
   useEffect(() => {
     const load = async () => {
-      const userId = await getCurrentUserId();
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      const userId = user?.id;
       if (!userId) return;
 
       const { data } = await supabase

@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 import EventTicket from "../Components/Common/UpcomingEvent";
 import PastEvent from "../Components/Common/PastEvent";
-import { getUpcomingEvents, getPastEvents } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import Footer from "../Components/Landing/Footer";
 import Link from "next/link";
 
@@ -51,14 +51,24 @@ const EventsPage = () => {
   const fetchEvents = async () => {
     try {
       setLoading(true);
+      const supabase = createClient();
+
       const [upcoming, past] = await Promise.all([
-        getUpcomingEvents(),
-        getPastEvents(),
+        supabase
+          .from("events")
+          .select("*")
+          .eq("status", "upcoming")
+          .order("event_time", { ascending: true }),
+        supabase
+          .from("events")
+          .select("*")
+          .eq("status", "completed")
+          .order("event_time", { ascending: false }),
       ]);
 
-      
-      setUpcomingEvents((upcoming || []) as Event[]);
-      setPastEvents((past || []) as Event[]);
+
+      setUpcomingEvents((upcoming.data || []) as Event[]);
+      setPastEvents((past.data || []) as Event[]);
     } catch (err) {
       console.error("Error fetching events:", err);
       setError("Failed to load events. Please try again later.");
@@ -103,7 +113,7 @@ const EventsPage = () => {
           </h1>
 
           {upcomingEvents.length === 0 ? (
-              <div className="w-full max-w-4xl mx-auto">
+            <div className="w-full max-w-4xl mx-auto">
               <div className="relative w-full">
                 {/* Shadow layer */}
                 <div className="absolute top-3 left-3 right-0 bottom-0 bg-black rounded-3xl" />

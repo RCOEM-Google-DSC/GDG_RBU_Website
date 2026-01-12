@@ -2,7 +2,7 @@
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { Mail, Lock, User, ArrowRight, ClipboardList } from "lucide-react";
 import { BiLogIn } from "react-icons/bi";
 import { FcGoogle } from "react-icons/fc";
@@ -11,10 +11,6 @@ import { toast } from "sonner";
 
 export default function RegisterPage() {
   const router = useRouter();
-
-  // --- IMPORTANT: mounted guard avoids React hydration mismatch when DOM/window is read on mount.
-  // We render nothing on the *very first* render pass and only render the full UI after mount.
-  // This preserves all styles, svg paths and logic exactly while preventing SSR/client mismatches.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -28,6 +24,50 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [rateLimitCooldown, setRateLimitCooldown] = useState<number | null>(null);
+
+  // Check rate limit on mount
+  useEffect(() => {
+    checkRateLimit();
+  }, []);
+
+  const checkRateLimit = () => {
+    if (typeof window === 'undefined') return false;
+
+    const attempts = JSON.parse(localStorage.getItem('signup_attempts') || '[]');
+    const now = Date.now();
+    const oneHourAgo = now - 60 * 60 * 1000;
+
+    // Filter attempts from last hour
+    const recentAttempts = attempts.filter((time: number) => time > oneHourAgo);
+
+    // Update storage
+    localStorage.setItem('signup_attempts', JSON.stringify(recentAttempts));
+
+    // Check if rate limited (max 3 attempts per hour)
+    if (recentAttempts.length >= 3) {
+      const oldestAttempt = Math.min(...recentAttempts);
+      const cooldownEnd = oldestAttempt + 60 * 60 * 1000;
+      const remainingMs = cooldownEnd - now;
+
+      if (remainingMs > 0) {
+        setRateLimitCooldown(Math.ceil(remainingMs / 1000 / 60)); // minutes
+        return true;
+      }
+    }
+
+    setRateLimitCooldown(null);
+    return false;
+  };
+
+  const recordSignupAttempt = () => {
+    if (typeof window === 'undefined') return;
+
+    const attempts = JSON.parse(localStorage.getItem('signup_attempts') || '[]');
+    attempts.push(Date.now());
+    localStorage.setItem('signup_attempts', JSON.stringify(attempts));
+    checkRateLimit();
+  };
 
   // NEW: dynamic card height for short viewports
   const [cardHeight, setCardHeight] = useState<number>(520);
@@ -102,6 +142,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setLoading(true);
     try {
+      const supabase = createClient();
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       toast.success("You are logged in");
@@ -116,15 +157,37 @@ export default function RegisterPage() {
 
   async function handleEmailSignup(e: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     e.preventDefault();
+
+    // Check client-side rate limit first
+    if (checkRateLimit()) {
+      toast.error(`Too many signup attempts. Please wait ${rateLimitCooldown} minutes before trying again.`);
+      return;
+    }
+
     setLoading(true);
     try {
+      const supabase = createClient();
       const { error } = await supabase.auth.signUp({ email, password });
-      if (error) throw error;
+
+      if (error) {
+        // Handle rate limit error specifically
+        if (error.message.includes('rate limit') || error.status === 429) {
+          recordSignupAttempt();
+          toast.error("Email rate limit exceeded. Try using Google/GitHub login or wait 60 minutes.", {
+            duration: 5000,
+          });
+          return;
+        }
+        throw error;
+      }
+
+      recordSignupAttempt();
       toast.success("Sign-up successful. You can complete your profile in the profile section.");
       router.push("/");
     } catch (err) {
       console.error(err);
-      toast.error((err as Error)?.message || "Sign-up error");
+      const errorMsg = (err as Error)?.message || "Sign-up error";
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -133,6 +196,7 @@ export default function RegisterPage() {
   async function handleOAuth(provider: "github" | "google") {
     try {
       setLoading(true);
+      const supabase = createClient();
       const { error } = await supabase.auth.signInWithOAuth({ provider });
       if (error) throw error;
     } catch (err) {
@@ -203,9 +267,8 @@ export default function RegisterPage() {
               style={{
                 transition: "opacity 420ms ease, transform 700ms cubic-bezier(.22,.9,.26,1)",
               }}
-              className={`absolute inset-0 z-10 rounded-sm border-4 border-black shadow-[10px_10px_0_#000] p-8 bg-[#6F6EF6] ${
-                mode === "login" ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6 pointer-events-none"
-              }`}
+              className={`absolute inset-0 z-10 rounded-sm border-4 border-black shadow-[10px_10px_0_#000] p-8 bg-[#6F6EF6] ${mode === "login" ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6 pointer-events-none"
+                }`}
             >
               <h1 className="text-[28px] font-black text-black flex items-center gap-2">
                 <BiLogIn /> LOGIN
@@ -275,14 +338,20 @@ export default function RegisterPage() {
               style={{
                 transition: "opacity 420ms ease, transform 700ms cubic-bezier(.22,.9,.26,1)",
               }}
-              className={`absolute inset-0 z-20 rounded-sm border-4 border-black shadow-[10px_10px_0_#000] p-8 bg-[#FFC20E] ${
-                mode === "signup" ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6 pointer-events-none"
-              }`}
+              className={`absolute inset-0 z-20 rounded-sm border-4 border-black shadow-[10px_10px_0_#000] p-8 bg-[#FFC20E] ${mode === "signup" ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6 pointer-events-none"
+                }`}
             >
               <h1 className="text-[28px] font-black text-black flex items-center gap-2">
                 <ClipboardList /> SIGN UP
               </h1>
               <p className="text-xs text-black mt-1">Get started with a new account</p>
+
+              {rateLimitCooldown && (
+                <div className="mt-3 p-3 bg-red-500 border-2 border-black text-white text-xs font-bold">
+                  ⚠️ Rate limited. Wait {rateLimitCooldown} min or use OAuth below.
+                </div>
+              )}
+
               <div className="h-0.5 w-full bg-black my-6" />
               <div className="relative mb-4">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 text-black" />
@@ -318,9 +387,9 @@ export default function RegisterPage() {
               <div className="flex items-center gap-4 mb-6">
                 <button
                   onClick={handleEmailSignup}
-                  disabled={loading}
+                  disabled={loading || !!rateLimitCooldown}
                   type="button"
-                  className="flex items-center justify-between w-[170px] px-5 py-3 bg-black text-white border-4 border-black shadow-[4px_4px_0_green] font-bold"
+                  className="flex items-center justify-between w-[170px] px-5 py-3 bg-black text-white border-4 border-black shadow-[4px_4px_0_green] font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Sign up
                   <span className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center">
@@ -353,9 +422,8 @@ export default function RegisterPage() {
           </div>
 
           <div
-            className={`absolute bottom-[-72px] sm:bottom-[-88px] floating-toggle ${hasInteracted ? "transition-on" : ""} ${
-              mode === "login" ? "is-login" : "is-signup"
-            }`}
+            className={`absolute bottom-[-72px] sm:bottom-[-88px] floating-toggle ${hasInteracted ? "transition-on" : ""} ${mode === "login" ? "is-login" : "is-signup"
+              }`}
             style={{
               left: 0,
               transform: `translateX(${translateX}px)`,
