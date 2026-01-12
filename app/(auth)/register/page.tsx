@@ -3,12 +3,13 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
+import { Button } from "@/components/ui/button";
 import { Mail, Lock, User, ArrowRight, ClipboardList } from "lucide-react";
 import { BiLogIn } from "react-icons/bi";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { toast } from "sonner";
-
+import { Eye, EyeOff } from "lucide-react";
 export default function RegisterPage() {
   const router = useRouter();
 
@@ -27,6 +28,7 @@ export default function RegisterPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // NEW: dynamic card height for short viewports
@@ -203,9 +205,8 @@ export default function RegisterPage() {
               style={{
                 transition: "opacity 420ms ease, transform 700ms cubic-bezier(.22,.9,.26,1)",
               }}
-              className={`absolute inset-0 z-10 rounded-sm border-4 border-black shadow-[10px_10px_0_#000] p-8 bg-[#6F6EF6] ${
-                mode === "login" ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6 pointer-events-none"
-              }`}
+              className={`absolute inset-0 z-10 rounded-sm border-4 border-black shadow-[10px_10px_0_#000] p-8 bg-[#6F6EF6] ${mode === "login" ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6 pointer-events-none"
+                }`}
             >
               <h1 className="text-[28px] font-black text-black flex items-center gap-2">
                 <BiLogIn /> LOGIN
@@ -228,11 +229,23 @@ export default function RegisterPage() {
                 <input
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  type="password"
+                  type={show ? "text" : "password"}
                   placeholder="Password"
                   aria-label="Password"
                   className="w-full pl-12 py-3 bg-[#FDFCF8] border-[3px] border-black shadow-[4px_4px_0_#000] outline-none"
                 />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-0 size-10"
+                  onClick={() => setShow((s) => !s)}
+                >
+                  {show ? (
+                    <EyeOff className="text-xl" />
+                  ) : (
+                    <Eye className="" />
+                  )}
+                </Button>
               </div>
               <div className="flex items-center gap-4 mb-6">
                 <button
@@ -275,9 +288,8 @@ export default function RegisterPage() {
               style={{
                 transition: "opacity 420ms ease, transform 700ms cubic-bezier(.22,.9,.26,1)",
               }}
-              className={`absolute inset-0 z-20 rounded-sm border-4 border-black shadow-[10px_10px_0_#000] p-8 bg-[#FFC20E] ${
-                mode === "signup" ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6 pointer-events-none"
-              }`}
+              className={`absolute inset-0 z-20 rounded-sm border-4 border-black shadow-[10px_10px_0_#000] p-8 bg-[#FFC20E] ${mode === "signup" ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6 pointer-events-none"
+                }`}
             >
               <h1 className="text-[28px] font-black text-black flex items-center gap-2">
                 <ClipboardList /> SIGN UP
@@ -309,11 +321,23 @@ export default function RegisterPage() {
                 <input
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  type="password"
+                  type={show ? "text" : "password"}
                   placeholder="Password"
                   aria-label="Password"
                   className="w-full pl-12 py-3 bg-white border-[3px] border-black shadow-[4px_4px_0_#000] outline-none"
                 />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-0 size-10"
+                  onClick={() => setShow((s) => !s)}
+                >
+                  {show ? (
+                    <EyeOff className="text-xl" />
+                  ) : (
+                    <Eye className="" />
+                  )}
+                </Button>
               </div>
               <div className="flex items-center gap-4 mb-6">
                 <button
@@ -353,9 +377,8 @@ export default function RegisterPage() {
           </div>
 
           <div
-            className={`absolute bottom-[-72px] sm:bottom-[-88px] floating-toggle ${hasInteracted ? "transition-on" : ""} ${
-              mode === "login" ? "is-login" : "is-signup"
-            }`}
+            className={`absolute bottom-[-72px] sm:bottom-[-88px] floating-toggle ${hasInteracted ? "transition-on" : ""} ${mode === "login" ? "is-login" : "is-signup"
+              }`}
             style={{
               left: 0,
               transform: `translateX(${translateX}px)`,
