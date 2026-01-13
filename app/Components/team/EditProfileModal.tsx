@@ -189,8 +189,6 @@ export default function EditProfileModal({
     setError(null);
 
     try {
-      console.log("Form values:", values);
-
       const userUpdate = {
         name: values.name,
         branch: values.branch,
@@ -224,11 +222,6 @@ export default function EditProfileModal({
         cv_url: values.cv_url || null,
       };
 
-      console.log("Member update payload:", memberUpdate);
-      console.log("Bio value:", values.bio);
-      console.log("Thought value:", values.thought);
-      console.log("Updating for userId:", userId);
-
       // First, check if a team_members record exists for this user
       const { data: existingMember } = await supabase
         .from("team_members")
@@ -236,14 +229,12 @@ export default function EditProfileModal({
         .eq("userid", userId)
         .maybeSingle();
 
-      console.log("Existing team member record:", existingMember);
 
       let updateData;
       let memberError;
 
       if (!existingMember) {
         // If no record exists, insert a new one
-        console.log("No team_members record found, creating one...");
         const insertResult = await supabase
           .from("team_members")
           .insert({ userid: userId, ...memberUpdate })
@@ -253,7 +244,6 @@ export default function EditProfileModal({
         memberError = insertResult.error;
       } else {
         // Update existing record
-        console.log("Updating existing team_members record...");
         const updateResult = await supabase
           .from("team_members")
           .update(memberUpdate)

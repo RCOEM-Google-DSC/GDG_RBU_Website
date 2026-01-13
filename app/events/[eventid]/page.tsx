@@ -172,7 +172,7 @@ export default function EventPage({
               className="absolute -top-4 -left-4 text-[#ffbe0b] fill-[#ffbe0b]"
               size={40}
             />
-            <h2 className="text-2xl md:text-3xl font-black bg-black text-white inline-block px-2 py-1 mb-4 -rotate-0 md:-rotate-1">
+            <h2 className="text-2xl md:text-3xl font-black bg-black text-white inline-block px-2 py-1 mb-4 rotate-0 md:-rotate-1">
               THE BRIEF
             </h2>
             <p className="text-base md:text-xl font-bold leading-relaxed">
@@ -182,19 +182,33 @@ export default function EventPage({
         </div>
 
         {/* STATS */}
-        <div className="md:col-span-4">
+        <div className="md:col-span-4 space-y-6">
           <div
             className={`bg-[#8338ec] p-6 md:p-8 ${border} shadow-[6px_6px_0px_0px_#000]
-            rotate-0 md:rotate-2 text-center text-white flex flex-col items-center justify-center h-full min-h-[240px]`}
+            rotate-0 md:rotate-2 text-center text-white flex flex-col items-center justify-center h-full min-h-60`}
           >
             <Users size={40} className="md:w-12 md:h-12 mb-3" />
             <span className="text-5xl md:text-6xl font-black">
               {participants}
             </span>
-            <span className="bg-white text-black px-3 py-1 font-black uppercase text-sm md:text-base mt-2 -rotate-0 md:-rotate-2 border-2 border-black">
+            <span className="bg-white text-black px-3 py-1 font-black uppercase text-sm md:text-base mt-2 rotate-0 md:-rotate-2 border-2 border-black">
               Minds Blown
             </span>
           </div>
+
+          {/* Download Badge Button - Show if badge_url exists */}
+          {event.badge_url && (
+            <a
+              href={`/events/${eventid}/badge`}
+              className={`block bg-[#ffbe0b] p-6 md:p-8 ${border} shadow-[6px_6px_0px_0px_#000]
+              rotate-0 md:-rotate-2 text-center text-black font-black uppercase text-lg md:text-xl
+              hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#000] transition-all duration-200
+              flex flex-col items-center justify-center gap-3 cursor-pointer`}
+            >
+              <Ticket size={40} className="md:w-12 md:h-12" />
+              <span>Download Badge</span>
+            </a>
+          )}
         </div>
       </section>
 

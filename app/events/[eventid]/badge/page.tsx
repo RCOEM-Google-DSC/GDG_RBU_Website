@@ -2,12 +2,37 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-const BadgeGenerator = () => {
+import { notFound, useParams, redirect } from 'next/navigation';
+import { getEvent } from '@/supabase/supabase';
+
+export default function BadgePage() {
+    const params = useParams();
+    const eventid = params.eventid as string;
+    const [event, setEvent] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
     const [uploadedImage, setUploadedImage] = useState<string | null>(null);
     const [compositeImage, setCompositeImage] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const fetchEvent = async () => {
+            try {
+                const eventData = await getEvent(eventid);
+                if (!eventData) {
+                    notFound();
+                }
+                setEvent(eventData);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching event:', error);
+                notFound();
+            }
+        };
+
+        fetchEvent();
+    }, [eventid]);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -21,7 +46,7 @@ const BadgeGenerator = () => {
     };
 
     const generateBadge = () => {
-        if (!uploadedImage || !canvasRef.current) return;
+        if (!uploadedImage || !canvasRef.current || !event) return;
 
         setIsProcessing(true);
         const canvas = canvasRef.current;
@@ -38,6 +63,10 @@ const BadgeGenerator = () => {
 
         const userImg = new window.Image();
         const badgeImg = new window.Image();
+
+        // Set crossOrigin to allow canvas export from external images
+        userImg.crossOrigin = 'anonymous';
+        badgeImg.crossOrigin = 'anonymous';
 
         userImg.onload = () => {
             // Calculate user image aspect ratio
@@ -102,23 +131,34 @@ const BadgeGenerator = () => {
                 setIsProcessing(false);
             };
 
-            badgeImg.src = '/techsprintBadge.png';
+            // Get badge image URL from event data
+            const badgeImageUrl = event.badge_url;
+
+            // If no badge_url, show error
+            if (!badgeImageUrl) {
+                console.error('No badge URL found for event:', event.title);
+                setIsProcessing(false);
+                return;
+            }
+
+            badgeImg.src = badgeImageUrl;
         };
 
         userImg.src = uploadedImage;
     };
 
     useEffect(() => {
-        if (uploadedImage) {
+        if (uploadedImage && event) {
             generateBadge();
         }
-    }, [uploadedImage]);
+    }, [uploadedImage, event]);
 
     const handleDownload = () => {
-        if (!compositeImage) return;
+        if (!compositeImage || !event) return;
 
         const link = document.createElement('a');
-        link.download = 'techsprint-badge.png';
+        const sanitizedTitle = event.title.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+        link.download = `${sanitizedTitle}-badge.png`;
         link.href = compositeImage;
         link.click();
     };
@@ -130,6 +170,19 @@ const BadgeGenerator = () => {
             fileInputRef.current.value = '';
         }
     };
+
+    if (loading || !event) {
+        return (
+            <div className="min-h-screen grid place-items-center font-black text-2xl">
+                LOADING BADGE GENERATOR…
+            </div>
+        );
+    }
+
+    // Redirect if no badge available
+    if (!event.badge_url) {
+        redirect(`/events/${eventid}`);
+    }
 
     return (
         <div className="min-h-screen bg-white text-black pt-15 pb-20">
@@ -149,12 +202,12 @@ const BadgeGenerator = () => {
                     {/* Left: Heading */}
                     <div className="lg:sticky lg:top-24">
                         <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] font-retron fade-in-20 delay-500">
-                            Badge
+                            {event.title}
                             <br />
-                            Generator
+                            Badge
                         </h1>
                         <p className="mt-6 text-lg md:text-xl font-bold">
-                            Upload your photo and get your personalized TechSprint badge
+                            Upload your photo and get your personalized {event.title} badge
                         </p>
                     </div>
 
@@ -235,7 +288,7 @@ const BadgeGenerator = () => {
                             <div className="space-y-6">
                                 <div className="flex flex-col items-center">
                                     <div
-                                        className="relative w-full aspect-[4/5] overflow-hidden bg-white"
+                                        className="relative w-full aspect-4/5 overflow-hidden bg-white"
                                         style={{
                                             border: '4px solid #000000',
                                             boxShadow: '6px 6px 0px #000000',
@@ -319,6 +372,4 @@ const BadgeGenerator = () => {
             </div>
         </div>
     );
-};
-
-export default BadgeGenerator;
+}

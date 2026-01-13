@@ -6,7 +6,6 @@ import EventTicket from "../Components/Common/UpcomingEvent";
 import PastEvent from "../Components/Common/PastEvent";
 import { getUpcomingEvents, getPastEvents } from "@/supabase/supabase";
 import Footer from "../Components/Landing/Footer";
-import Link from "next/link";
 
 type Event = {
   id: string;
@@ -152,14 +151,6 @@ const EventsPage = () => {
                 const registerUrl = event.register_url ?? REGISTER_URL;
                 const imageSrc = cloudinarySafe(
                   event.image_url ?? FALLBACK_IMAGE,
-                );
-
-                // debug each item's image prior to passing to EventTicket
-                console.log(
-                  `Event ${event.id} image:`,
-                  event.image_url,
-                  "-> use:",
-                  imageSrc,
                 );
 
                 return (
