@@ -10,6 +10,10 @@ export function baseOptions(): BaseLayoutProps {
         text: "Home",
         url: "/",
       },
+      {
+        text: "GitHub Session",
+        url: "/github-session",
+      },
     ],
   };
 }
