@@ -18,6 +18,7 @@ import { CgProfile } from "react-icons/cg";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { nb } from "@/components/ui/neo-brutalism";
 const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
   const router = useRouter();
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -116,7 +117,12 @@ const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
 
       <DropdownMenuContent
         align="end"
-        className="w-64 rounded-2xl border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+        className={nb({
+          border: 2,
+          shadow: "lg",
+          rounded: "2xl",
+          className: "w-64",
+        })}
       >
         <DropdownMenuLabel className="px-4 py-3">
           <p className="font-semibold">{fullName || userEmail.split("@")[0]}</p>

@@ -3,6 +3,7 @@ import { AiFillGithub } from "react-icons/ai";
 import { FaXTwitter } from "react-icons/fa6";
 import { Linkedin, Instagram, Globe } from "lucide-react";
 import { TbBrandLeetcode } from "react-icons/tb";
+import { nb } from "@/components/ui/neo-brutalism";
 export type SocialPlatform = "github" | "linkedin" | "twitter" | "instagram" | "leetcode" | "website";
 
 interface SocialButtonProps {
@@ -68,18 +69,13 @@ export function SocialButton({ href, platform, label, className = "" }: SocialBu
       target="_blank"
       rel="noreferrer"
       title={label || platform}
-      className={`
-        group flex items-center gap-2 p-3
-        border-2 border-black
-        shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-        transition-all duration-200
-        hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]
-        active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
-        ${config.bgClass}
-        ${config.textClass}
-        ${config.hoverClass}
-        ${className}
-      `}
+      className={nb({
+        border: 2,
+        shadow: "md",
+        hover: "lift",
+        active: "push",
+        className: `group flex items-center gap-2 p-3 ${config.bgClass} ${config.textClass} ${config.hoverClass} ${className}`,
+      })}
     >
       <Icon size={23} strokeWidth={2.5} className="" />
       {platform === "leetcode" && label && <span className="font-bold">{label}</span>}

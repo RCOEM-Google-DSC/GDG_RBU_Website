@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { Ticket, Users, ArrowDownRight, Sparkles } from "lucide-react";
 import { getEvent, getGalleryImages, getEventWithPartner } from "@/supabase/supabase";
 import { Lightbox } from "@/app/Components/session-docs/Lightbox";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
 export default function EventPage({
   params: paramsPromise,
@@ -81,10 +82,6 @@ export default function EventPage({
   const price = event.is_paid ? `₹${event.fee}` : "FREE";
 
   /* ---------------- STYLES ---------------- */
-  const border = "border-4 border-black";
-  const shadow = "shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]";
-  const cardBase = `bg-white ${border} ${shadow}`;
-
   // small helper to normalize partner data and image urls
   const makeSafeUrl = (u: string | null | undefined) =>
     u ? String(u).replace("/upload/", "/upload/f_auto,q_auto/") : "";
@@ -117,8 +114,10 @@ export default function EventPage({
         {/* NOTE: changed structure so the yellow tag is positioned relative to the image box wrapper */}
         <div className="relative">
           {/* HERO IMAGE (the bordered box) */}
-          <div
-            className={`relative z-10 w-full h-[300px] md:h-[420px] ${border}
+          <NeoBrutalism
+            border={4}
+            shadow="none"
+            className={`relative z-10 w-full h-[300px] md:h-[420px] 
             shadow-[6px_6px_0px_0px_#8338ec] md:shadow-[8px_8px_0px_0px_#8338ec] bg-white p-2 rotate-0 md:rotate-1 mt-36 sm:mt-32 md:mt-20 cursor-pointer group`}
             onClick={() => openImageViewer(
               event.image_url
@@ -138,17 +137,19 @@ export default function EventPage({
               className="w-full h-full object-cover border-2 border-black  transition-transform duration-300"
             />
 
-            <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_#000] z-30">
+            <NeoBrutalism border={4} shadow="md" rounded="full" className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 z-30">
               <ArrowDownRight
                 size={24}
                 className="md:w-8 md:h-8 text-[#8338ec]"
               />
-            </div>
-          </div>
+            </NeoBrutalism>
+          </NeoBrutalism>
 
           {/* TITLE CARD: positioned relative to the image box wrapper and pulled ABOVE it */}
-          <div
-            className={`absolute left-4 -top-10 md:-top-14 z-20 bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:-rotate-2 ${border} ${shadow} max-w-sm md:max-w-md`}
+          <NeoBrutalism
+            border={4}
+            shadow="xl"
+            className={`absolute left-4 -top-10 md:-top-14 z-20 bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:-rotate-2 max-w-sm md:max-w-md`}
           >
             <h1 className="text-2xl md:text-4xl font-black leading-[0.9] tracking-tighter uppercase">
               {event.title}
@@ -157,7 +158,7 @@ export default function EventPage({
               <span>{eventDate}</span>
               <span className="ml-5 lg:ml-8">{event.venue || "TBA"}</span>
             </div>
-          </div>
+          </NeoBrutalism>
         </div>
       </div>
 
@@ -165,8 +166,10 @@ export default function EventPage({
       <section className="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-start relative z-10">
         {/* DESCRIPTION */}
         <div className="md:col-span-8">
-          <div
-            className={`${cardBase} p-6 md:p-8 rotate-0 md:-rotate-1 relative`}
+          <NeoBrutalism
+            border={4}
+            shadow="xl"
+            className="bg-white p-6 md:p-8 rotate-0 md:-rotate-1 relative"
           >
             <Sparkles
               className="absolute -top-4 -left-4 text-[#ffbe0b] fill-[#ffbe0b]"
@@ -178,14 +181,15 @@ export default function EventPage({
             <p className="text-base md:text-xl font-bold leading-relaxed">
               {event.description}
             </p>
-          </div>
+          </NeoBrutalism>
         </div>
 
         {/* STATS */}
         <div className="md:col-span-4 space-y-6">
-          <div
-            className={`bg-[#8338ec] p-6 md:p-8 ${border} shadow-[6px_6px_0px_0px_#000]
-            rotate-0 md:rotate-2 text-center text-white flex flex-col items-center justify-center h-full min-h-60`}
+          <NeoBrutalism
+            border={4}
+            shadow="lg"
+            className="bg-[#8338ec] p-6 md:p-8 rotate-0 md:rotate-2 text-center text-white flex flex-col items-center justify-center h-full min-h-60"
           >
             <Users size={40} className="md:w-12 md:h-12 mb-3" />
             <span className="text-5xl md:text-6xl font-black">
@@ -194,16 +198,19 @@ export default function EventPage({
             <span className="bg-white text-black px-3 py-1 font-black uppercase text-sm md:text-base mt-2 rotate-0 md:-rotate-2 border-2 border-black">
               Minds Blown
             </span>
-          </div>
+          </NeoBrutalism>
 
           {/* Download Badge Button - Show if badge_url exists */}
           {event.badge_url && (
             <a
               href={`/events/${eventid}/badge`}
-              className={`block bg-[#ffbe0b] p-6 md:p-8 ${border} shadow-[6px_6px_0px_0px_#000]
-              rotate-0 md:-rotate-2 text-center text-black font-black uppercase text-lg md:text-xl
-              hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#000] transition-all duration-200
-              flex flex-col items-center justify-center gap-3 cursor-pointer`}
+              className={nb({
+                border: 4,
+                shadow: "lg",
+                hover: "shadowGrow",
+                className:
+                  "block bg-[#ffbe0b] p-6 md:p-8 rotate-0 md:-rotate-2 text-center text-black font-black uppercase text-lg md:text-xl flex flex-col items-center justify-center gap-3 cursor-pointer",
+              })}
             >
               <Ticket size={40} className="md:w-12 md:h-12" />
               <span>Download Badge</span>
@@ -216,12 +223,20 @@ export default function EventPage({
       {partnersArray.length > 0 && (
         <section className="max-w-6xl my-20 mx-auto p-4 md:p-6 relative z-10">
           <div className="flex justify-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-black bg-white px-6 py-2 border-4 border-black rotate-0 md:-rotate-2 shadow-[4px_4px_0px_0px_#000]">
+            <NeoBrutalism
+              border={4}
+              shadow="md"
+              className="text-2xl md:text-3xl font-black bg-white px-6 py-2 rotate-0 md:-rotate-2"
+            >
               PARTNER{partnersArray.length > 1 ? "S" : ""}
-            </h2>
+            </NeoBrutalism>
           </div>
 
-          <div className={`${cardBase} p-6 md:p-8 flex flex-col gap-6`}>
+          <NeoBrutalism
+            border={4}
+            shadow="xl"
+            className="bg-white p-6 md:p-8 flex flex-col gap-6"
+          >
             {partnersArray.map((p: any, idx: number) => (
               <div key={idx} className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                 {/* left: partner image  */}
@@ -250,14 +265,26 @@ export default function EventPage({
                         href={String(p.website)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-[#ffbe0b] text-black px-6 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 active:translate-y-1 transition-all"
+                        className={nb({
+                          border: 4,
+                          shadow: "lg",
+                          hover: "lift",
+                          active: "push",
+                          className:
+                            "inline-flex items-center gap-2 bg-[#ffbe0b] text-black px-6 py-3 font-black",
+                        })}
                       >
                         Visit partner website
                       </a>
                     ) : (
                       <button
                         disabled
-                        className="inline-flex items-center gap-2 bg-gray-200 text-black px-6 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_#000] opacity-60 cursor-not-allowed"
+                        className={nb({
+                          border: 4,
+                          shadow: "lg",
+                          className:
+                            "inline-flex items-center gap-2 bg-gray-200 text-black px-6 py-3 font-black opacity-60 cursor-not-allowed",
+                        })}
                       >
                         No website available
                       </button>
@@ -266,7 +293,7 @@ export default function EventPage({
                 </div>
               </div>
             ))}
-          </div>
+          </NeoBrutalism>
         </section>
       )}
 
@@ -274,13 +301,19 @@ export default function EventPage({
       {event.crew_url && (
         <section className="max-w-6xl my-20 mx-auto p-4 md:p-6 relative z-10">
           <div className="flex justify-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-black bg-white px-6 py-2 border-4 border-black rotate-0 md:-rotate-2 shadow-[4px_4px_0px_0px_#000]">
+            <NeoBrutalism
+              border={4}
+              shadow="md"
+              className="text-2xl md:text-3xl font-black bg-white px-6 py-2 rotate-0 md:-rotate-2"
+            >
               THE CREW
-            </h2>
+            </NeoBrutalism>
           </div>
 
-          <div
-            className={`${cardBase} p-3 md:p-4 bg-[#ffbe0b] rotate-0 md:rotate-1 cursor-pointer group`}
+          <NeoBrutalism
+            border={4}
+            shadow="xl"
+            className="bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:rotate-1 cursor-pointer group"
             onClick={() => openImageViewer(
               event.crew_url.replace("/upload/", "/upload/f_auto,q_auto/")
             )}
@@ -297,7 +330,7 @@ export default function EventPage({
                 className="w-full h-auto md:h-[530px] object-contain md:object-cover border-2 border-white contrast-125 group-hover:scale-101 transition-transform duration-300"
               />
             </div>
-          </div>
+          </NeoBrutalism>
         </section>
       )}
 
@@ -314,9 +347,10 @@ export default function EventPage({
                 i % 2 === 0 ? "md:-rotate-2" : "md:rotate-2";
               return (
                 <div key={i} className="relative group">
-                  <div
-                    className={`bg-white p-4 pb-12 ${border}
-                  shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)]
+                  <NeoBrutalism
+                    border={4}
+                    shadow="lg"
+                    className={`bg-white p-4 pb-12
                   rotate-0 ${rotationClass}
                   hover:rotate-0 hover:scale-105 transition-transform duration-300 cursor-pointer`}
                     onClick={() => openImageViewer(src)}
@@ -333,7 +367,7 @@ export default function EventPage({
                     <div className="mt-4 font-black text-center text-gray-400 uppercase tracking-widest">
                       FIG. {String(i + 1).padStart(2, "0")}
                     </div>
-                  </div>
+                  </NeoBrutalism>
                 </div>
               );
             })}

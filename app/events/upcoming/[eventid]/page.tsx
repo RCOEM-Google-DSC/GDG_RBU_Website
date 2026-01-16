@@ -13,6 +13,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { getEventWithPartner } from "@/supabase/supabase";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
 type EventRecord = {
   id: string;
@@ -100,7 +101,11 @@ export default function UpcomingEventPage({
           <p className="text-gray-600 mt-2">This event doesn't exist or has been removed.</p>
           <button
             onClick={() => router.push("/events")}
-            className="mt-6 inline-block bg-black text-white px-5 py-3 font-bold border-4 border-black shadow-[6px_6px_0_0_#000]"
+            className={nb({
+              border: 4,
+              shadow: "lg",
+              className: "mt-6 inline-block bg-black text-white px-5 py-3 font-bold",
+            })}
           >
             Back to events
           </button>
@@ -154,11 +159,6 @@ export default function UpcomingEventPage({
   const eventVenue = event.venue || event.location || "TBA";
   const price = event.is_paid ? `₹${event.fee ?? 0}` : "FREE";
 
-  // styling tokens (keeps your look)
-  const border = "border-4 border-black";
-  const shadow = "shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]";
-  const cardBase = `bg-white ${border} ${shadow}`;
-
   return (
     <div className="min-h-screen font-mono text-black selection:bg-[#8338ec] selection:text-white pb-32 relative overflow-x-hidden bg-[#FDFCF8]">
       {/* background grid */}
@@ -173,37 +173,57 @@ export default function UpcomingEventPage({
 
       {/* HERO */}
       <div className="relative max-w-6xl mx-auto p-4 md:p-6 pt-0 pb-12 md:pb-16">
-        <div className={`absolute top-12 md:top-16 left-4 md:left-6 z-20 bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:-rotate-2 ${border} ${shadow} max-w-sm md:max-w-md`}>
+        <NeoBrutalism
+          border={4}
+          shadow="xl"
+          className="absolute top-12 md:top-16 left-4 md:left-6 z-20 bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:-rotate-2 max-w-sm md:max-w-md"
+        >
           <h1 className="text-2xl md:text-4xl font-black leading-[0.9] tracking-tighter uppercase">{event.title}</h1>
           <div className="mt-2 font-bold border-t-2 border-black pt-2 flex justify-between text-xs md:text-sm">
             <span>{eventDate}</span>
             <span>{eventVenue}</span>
           </div>
-        </div>
+        </NeoBrutalism>
 
-        <div className={`relative z-10 w-full h-[300px] md:h-[420px] ${border} shadow-[6px_6px_0px_0px_#8338ec] md:shadow-[8px_8px_0px_0px_#8338ec] bg-white p-2 rotate-0 md:rotate-1 mt-24 md:mt-20`}>
+        <NeoBrutalism
+          border={4}
+          shadow="none"
+          className="relative z-10 w-full h-[300px] md:h-[420px] shadow-[6px_6px_0px_0px_#8338ec] md:shadow-[8px_8px_0px_0px_#8338ec] bg-white p-2 rotate-0 md:rotate-1 mt-24 md:mt-20"
+        >
           <Image height={420} width={1200} src={eventImage} alt={event.title || "Event image"} className="w-full h-full object-cover border-2 border-black" />
 
-          <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 rounded-full border-4 border-black shadow-[4px_4px_0_0px_#000] z-30">
+          <NeoBrutalism
+            border={4}
+            shadow="md"
+            className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 rounded-full z-30"
+          >
             <ArrowDownRight size={24} className="md:w-8 md:h-8 text-[#8338ec]" />
-          </div>
-        </div>
+          </NeoBrutalism>
+        </NeoBrutalism>
       </div>
 
       {/* DESCRIPTION + KEY INFO */}
       <section className="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-start relative z-10">
         {/* DESCRIPTION */}
         <div className="md:col-span-8">
-          <div className={`${cardBase} p-6 md:p-8 rotate-0 md:-rotate-1 relative`}>
+          <NeoBrutalism
+            border={4}
+            shadow="xl"
+            className="bg-white p-6 md:p-8 rotate-0 md:-rotate-1 relative"
+          >
             <Sparkles className="absolute -top-4 -left-4 text-[#ffbe0b] fill-[#ffbe0b]" size={40} />
             <h2 className="text-2xl md:text-3xl font-black bg-black text-white inline-block px-2 py-1 mb-4 -rotate-0 md:-rotate-1">THE BRIEF</h2>
             <p className="text-base md:text-xl font-bold leading-relaxed">{event.description}</p>
-          </div>
+          </NeoBrutalism>
         </div>
 
         {/* KEY INFO */}
         <div className="md:col-span-4">
-          <div className={`p-6 md:p-8 ${border} shadow-[6px_6px_0_0px_#000] rotate-0 md:rotate-2 text-center bg-white flex flex-col gap-4`}>
+          <NeoBrutalism
+            border={4}
+            shadow="lg"
+            className="p-6 md:p-8 rotate-0 md:rotate-2 text-center bg-white flex flex-col gap-4"
+          >
             <div className="flex items-center gap-3 justify-center">
               <div className="p-2.5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
                 <Calendar size={18} />
@@ -243,7 +263,7 @@ export default function UpcomingEventPage({
                 <p className="text-gray-900 font-semibold text-sm">{price}</p>
               </div>
             </div>
-          </div>
+          </NeoBrutalism>
         </div>
       </section>
 
@@ -251,14 +271,28 @@ export default function UpcomingEventPage({
       {crewImage && (
         <section className="max-w-6xl mx-auto p-4 md:p-6 relative z-10">
           <div className="flex justify-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-black bg-white px-6 py-2 border-4 border-black rotate-0 md:-rotate-2 shadow-[4px_4px_0_0px_#000]">THE CREW</h2>
+            <NeoBrutalism
+              border={4}
+              shadow="md"
+              className="text-2xl md:text-3xl font-black bg-white px-6 py-2 rotate-0 md:-rotate-2"
+            >
+              THE CREW
+            </NeoBrutalism>
           </div>
 
-          <div className={`${cardBase} p-3 md:p-4 bg-[#ffbe0b] rotate-0 md:rotate-1`}>
-            <div className="bg-black p-2 border-4 border-black rotate-0 md:-rotate-1">
+          <NeoBrutalism
+            border={4}
+            shadow="xl"
+            className="p-3 md:p-4 bg-[#ffbe0b] rotate-0 md:rotate-1"
+          >
+            <NeoBrutalism
+              border={4}
+              shadow="none"
+              className="bg-black p-2 rotate-0 md:-rotate-1"
+            >
               <Image height={340} width={600} src={crewImage} alt="The Crew" className="w-full h-[280px] md:h-[340px] object-cover border-2 border-white contrast-125" />
-            </div>
-          </div>
+            </NeoBrutalism>
+          </NeoBrutalism>
         </section>
       )}
 
@@ -266,13 +300,27 @@ export default function UpcomingEventPage({
       {partnerData && (
         <section className="max-w-6xl mx-auto p-4 md:p-6 relative z-10">
           <div className="flex justify-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-black bg-white px-6 py-2 border-4 border-black rotate-0 md:-rotate-2 shadow-[4px_4px_0_0px_#000]">PARTNER</h2>
+            <NeoBrutalism
+              border={4}
+              shadow="md"
+              className="text-2xl md:text-3xl font-black bg-white px-6 py-2 rotate-0 md:-rotate-2"
+            >
+              PARTNER
+            </NeoBrutalism>
           </div>
 
-          <div className={`${cardBase} p-6 md:p-8 rotate-0 md:rotate-1`}>
+          <NeoBrutalism
+            border={4}
+            shadow="xl"
+            className="p-6 md:p-8 rotate-0 md:rotate-1 bg-white"
+          >
             <div className="flex flex-col md:flex-row items-center gap-6">
               {partnerData.logo_url && (
-                <div className="bg-white p-4 border-4 border-black shadow-[4px_4px_0_0px_#000]">
+                <NeoBrutalism
+                  border={4}
+                  shadow="md"
+                  className="bg-white p-4"
+                >
                   <Image
                     src={String(partnerData.logo_url).replace("/upload/", "/upload/f_auto,q_auto/")}
                     alt={partnerData.name || "Partner logo"}
@@ -280,7 +328,7 @@ export default function UpcomingEventPage({
                     height={160}
                     className="object-contain"
                   />
-                </div>
+                </NeoBrutalism>
               )}
 
               <div className="text-center md:text-left">
@@ -290,14 +338,20 @@ export default function UpcomingEventPage({
                     href={partnerData.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block mt-2 bg-[#ffbe0b] text-black font-black px-4 py-2 border-4 border-black shadow-[4px_4px_0_0px_#000] hover:-translate-y-0.5 transition-transform"
+                    className={nb({
+                      border: 4,
+                      shadow: "md",
+                      hover: "liftSmall",
+                      className:
+                        "inline-block mt-2 bg-[#ffbe0b] text-black font-black px-4 py-2",
+                    })}
                   >
                     Visit partner
                   </a>
                 )}
               </div>
             </div>
-          </div>
+          </NeoBrutalism>
         </section>
       )}
 
@@ -305,22 +359,40 @@ export default function UpcomingEventPage({
       {event.is_team_event && (
         <section className="max-w-6xl mx-auto p-4 md:p-6 relative z-10">
           <div className="flex justify-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-black bg-white px-6 py-2 border-4 border-black rotate-0 md:-rotate-2 shadow-[4px_4px_0_0px_#000]">TEAM INFO</h2>
+            <NeoBrutalism
+              border={4}
+              shadow="md"
+              className="text-2xl md:text-3xl font-black bg-white px-6 py-2 rotate-0 md:-rotate-2"
+            >
+              TEAM INFO
+            </NeoBrutalism>
           </div>
 
-          <div className={`${cardBase} p-6 md:p-8 rotate-0 md:rotate-1`}>
+          <NeoBrutalism
+            border={4}
+            shadow="xl"
+            className="p-6 md:p-8 rotate-0 md:rotate-1 bg-white"
+          >
             <p className="font-bold mb-2">This is a team event.</p>
             <div className="flex gap-4 items-center">
-              <div className="bg-white p-3 border-4 border-black shadow-[4px_4px_0_0px_#000]">
+              <NeoBrutalism
+                border={4}
+                shadow="md"
+                className="bg-white p-3"
+              >
                 <div className="text-sm text-gray-500">Min team size</div>
                 <div className="text-xl font-black">{event.min_team_size ?? "N/A"}</div>
-              </div>
-              <div className="bg-white p-3 border-4 border-black shadow-[4px_4px_0_0px_#000]">
+              </NeoBrutalism>
+              <NeoBrutalism
+                border={4}
+                shadow="md"
+                className="bg-white p-3"
+              >
                 <div className="text-sm text-gray-500">Max team size</div>
                 <div className="text-xl font-black">{event.max_team_size ?? "N/A"}</div>
-              </div>
+              </NeoBrutalism>
             </div>
-          </div>
+          </NeoBrutalism>
         </section>
       )}
 
@@ -331,7 +403,14 @@ export default function UpcomingEventPage({
             onClick={() => {
               router.push(resigerUrl);
             }}
-            className={`bg-[#ffbe0b] text-black text-lg md:text-xl font-black py-3 px-6 md:py-4 md:px-8 border-4 border-black shadow-[6px_6px_0_0px_#000] md:shadow-[8px_8px_0_0px_#000] hover:-translate-y-1 active:translate-y-1 transition-all flex items-center gap-2 md:gap-3 rotate-0 md:rotate-1`}
+            className={nb({
+              border: 4,
+              shadow: "lg",
+              hover: "lift",
+              active: "push",
+              className:
+                "bg-[#ffbe0b] text-black text-lg md:text-xl font-black py-3 px-6 md:py-4 md:px-8 flex items-center gap-2 md:gap-3 rotate-0 md:rotate-1 md:shadow-[8px_8px_0_0px_#000]",
+            })}
           >
             <Ticket size={20} className="md:w-7 md:h-7" />
             Register

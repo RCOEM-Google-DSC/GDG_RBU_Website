@@ -7,6 +7,7 @@ import ClubLeadCard from "../Components/team/ClubLeadCard";
 import Image from "next/image";
 import Footer from "../Components/Landing/Footer";
 import { supabase } from "@/supabase/supabase";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
 type Member = {
   id: string;
@@ -199,10 +200,7 @@ export default function TeamPage() {
       />
       {/* hero: group photo */}
       <section
-        className="pt-5 pb-12 md:pb-20 px-8"
-        style={{
-          borderBottom: "4px solid #000000",
-        }}
+        className="pt-5 pb-12 md:pb-20 px-8 border-b-4 border-black"
       >
         <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-8">
           {/* left: title and domain buttons */}
@@ -222,11 +220,14 @@ export default function TeamPage() {
                       .getElementById("mentors-section")
                       ?.scrollIntoView({ behavior: "smooth", block: "start" })
                   }
-                  className="px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-bold uppercase tracking-wide transition-all duration-200 hover:translate-x-1 hover:translate-y-1 "
+                  className={nb({
+                    border: 3,
+                    shadow: "sm",
+                    hover: "lift",
+                    className:
+                      "px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-bold uppercase tracking-wide",
+                  })}
                   style={{
-                    border: "3px solid #000000",
-                    boxShadow: "3px 3px 0px #000000",
-
                     color: "#000000",
                   }}
                   onMouseEnter={(e) => {
@@ -249,10 +250,14 @@ export default function TeamPage() {
                       .getElementById(`domain-${domain}`)
                       ?.scrollIntoView({ behavior: "smooth", block: "start" })
                   }
-                  className="px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-bold uppercase tracking-wide transition-all duration-200 hover:translate-x-1 hover:translate-y-1 "
+                  className={nb({
+                    border: 3,
+                    shadow: "sm",
+                    hover: "lift",
+                    className:
+                      "px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-bold uppercase tracking-wide",
+                  })}
                   style={{
-                    border: "3px solid #000000",
-                    boxShadow: "3px 3px 0px #000000",
                     backgroundColor: "#ffffff",
                     color: "#000000",
                   }}
@@ -273,12 +278,10 @@ export default function TeamPage() {
 
           {/* right: team image */}
           <div className="hidden lg:block shrink-0 ">
-            <div
+            <NeoBrutalism
+              border={4}
+              shadow="lg"
               className="w-[520px] xl:w-[720px] h-[347px] xl:h-[480px] overflow-hidden"
-              style={{
-                border: "4px solid #000000",
-                boxShadow: "6px 6px 0px #000000",
-              }}
             >
               <Image
                 src="https://res.cloudinary.com/dlvkywzol/image/upload/v1767200855/IMG-20251014-WA0066_zwzfw3.jpg"
@@ -287,17 +290,14 @@ export default function TeamPage() {
                 height={480}
                 className="w-full h-full object-cover"
               />
-            </div>
+            </NeoBrutalism>
           </div>
         </div>
       </section>
 
       {/* Club Lead Section */}
       <section
-        className="py-12 md:py-20 px-8 flex justify-center items-center"
-        style={{
-          borderBottom: "4px solid #000000",
-        }}
+        className="py-12 md:py-20 px-8 flex justify-center items-center border-b-4 border-black"
       >
         <ClubLeadCard />
       </section>
@@ -306,10 +306,7 @@ export default function TeamPage() {
       {mentors.length > 0 && (
         <section
           id="mentors-section"
-          className="flex flex-col md:flex-row relative min-h-screen px-8"
-          style={{
-            borderBottom: "3px solid #000000",
-          }}
+          className="flex flex-col md:flex-row relative min-h-screen px-8 border-b-[3px] border-black"
         >
           {/* left: Mentors title */}
           <div className="w-full md:w-[35%] xl:w-[30%] p-4 sm:p-6 md:p-8 lg:p-12">
@@ -359,10 +356,7 @@ export default function TeamPage() {
 
       {/* domains section */}
       <div
-        className="px-8"
-        style={{
-          borderTop: "4px solid #000000",
-        }}
+        className="px-8 border-t-4 border-black"
       >
         {domains.map((domain) => {
           const members = groupedDomains[domain] || [];
@@ -390,10 +384,7 @@ export default function TeamPage() {
             <section
               key={domain}
               id={`domain-${domain}`}
-              className="flex flex-col md:flex-row relative min-h-screen"
-              style={{
-                borderBottom: "3px solid #000000",
-              }}
+              className="flex flex-col md:flex-row relative min-h-screen border-b-[3px] border-black"
             >
               {/* left domain name */}
               <div className="w-full md:w-[35%] xl:w-[30%] p-4 sm:p-6 md:p-8 lg:p-12">

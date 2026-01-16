@@ -5,6 +5,7 @@ import { Github, Linkedin, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
 import Link from "next/link";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
 interface TeamMemberCardProps {
   id: string;
@@ -96,20 +97,14 @@ function TeamMemberCard({
             e.stopPropagation();
             handleCardClick();
           }}
-          className="
-            absolute top-3 right-3 z-30
-            w-9 h-9
-            flex items-center justify-center
-            rounded-full
-            backdrop-blur-md
-            bg-white/40
-            border border-black/20
-            shadow-[2px_2px_0px_#000]
-            transition-all duration-200
-            hover:bg-black
-            hover:text-white
-            hover:scale-110
-          "
+          className={nb({
+            border: 2,
+            shadow: "xs",
+            rounded: "full",
+            hover: "none",
+            className:
+              "absolute top-3 right-3 z-30 w-9 h-9 flex items-center justify-center backdrop-blur-md bg-white/40 border-black/20 transition-all duration-200 hover:bg-black hover:text-white hover:scale-110",
+          })}
           aria-label="Open profile"
         >
           <ArrowUpRight className="w-4 h-4" strokeWidth={2.5} />
@@ -175,7 +170,12 @@ function TeamMemberCard({
 
         {/* Name */}
         <div
-          className="absolute bottom-0 right-0 bg-white border-[3px] border-black rounded-2xl md:rounded-[20px] flex items-center justify-center overflow-hidden px-3 md:px-4 z-10"
+          className={nb({
+            border: 3,
+            shadow: "none",
+            rounded: "2xl",
+            className: "absolute bottom-0 right-0 bg-white md:rounded-[20px] flex items-center justify-center overflow-hidden px-3 md:px-4 z-10"
+          })}
           style={{
             width: `${((notchWidth - borderWidth * 2) / width) * 100}%`,
             height: `${((notchHeight - borderWidth * 2) / height) * 100}%`,

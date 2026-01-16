@@ -13,6 +13,7 @@ import {
   Rocket,
 } from "lucide-react";
 import Image from "next/image";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 import { DecoCross } from "@/app/Components/session-docs/DecoCross";
 import { DecoZigZag } from "@/app/Components/session-docs/DecoZigZag";
 import { DecoCircle } from "@/app/Components/session-docs/DecoCircle";
@@ -70,7 +71,11 @@ export default function GithubGuide() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 pt-16 md:pt-24 mb-16 relative z-10">
-        <div className="bg-[#ffbe0b] border-4 border-black p-8 md:p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] relative">
+        <NeoBrutalism
+          border={4}
+          shadow="3xl"
+          className="bg-[#ffbe0b] p-8 md:p-12 relative"
+        >
           <DecoZigZag className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-48 h-8 text-red-500" />
 
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
@@ -96,7 +101,7 @@ export default function GithubGuide() {
               <Github size={180} className="text-white mx-auto" />
             </div>
           </div>
-        </div>
+        </NeoBrutalism>
       </div>
 
       <div className="max-w-5xl mx-auto px-6 space-y-24 relative z-10">
@@ -217,7 +222,11 @@ export default function GithubGuide() {
             <Coffee size={120} strokeWidth={1} className="text-orange-200" />
           </div>
 
-          <div className="bg-[#1a1a1a] text-white p-6 md:p-12 border-4 border-black shadow-[16px_16px_0px_0px_#000000] relative overflow-hidden">
+          <NeoBrutalism
+            border={4}
+            shadow="4xl"
+            className="bg-[#1a1a1a] text-white p-6 md:p-12 relative overflow-hidden"
+          >
             <div className="relative z-10">
               <div className="flex flex-col md:flex-row gap-6 md:items-end mb-12 border-b-2 border-gray-700 pb-8">
                 <div>
@@ -337,26 +346,36 @@ export default function GithubGuide() {
                 </div>
               </div>
             </div>
-          </div>
+          </NeoBrutalism>
         </section>
 
         <section>
           <div className="flex justify-center mb-8">
-            <h2 className="text-3xl font-black bg-yellow-300 px-8 py-4 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <NeoBrutalism
+              border={4}
+              shadow="xl"
+              className="text-3xl font-black bg-yellow-300 px-8 py-4"
+            >
               REPOSITORY GALLERY
-            </h2>
+            </NeoBrutalism>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
             {REPO_IMAGES.map((src, i) => (
-              <div key={i} className="group size-75 bg-white p-4 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all">
-                <div className="h-48 bg-gray-100 border-2 border-black mb-4 flex items-center justify-center relative overflow-hidden">
+              <NeoBrutalism
+                key={i}
+                border={4}
+                shadow="xl"
+                hover="shadowGrowLg"
+                className="group size-75 bg-white p-4"
+              >
+                <NeoBrutalism border={2} shadow="none" className="h-48 bg-gray-100 mb-4 flex items-center justify-center relative overflow-hidden">
                   <Image width={200} height={200} src={src} alt={`Img ${i + 1}`} className="w-full h-full object-cover cursor-pointer" onClick={() => openLightbox(src)} />
 
-                </div>
+                </NeoBrutalism>
 
                 <p className="text-lg font-bold text-gray-600">{REPO_IMAGES_DESC[i]}</p>
-              </div>
+              </NeoBrutalism>
             ))}
           </div>
         </section>

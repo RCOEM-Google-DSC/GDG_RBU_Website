@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/supabase/supabase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
 export default function ClubLeadCard() {
   const [clubLead, setClubLead] = useState<any>(null);
@@ -82,44 +83,34 @@ export default function ClubLeadCard() {
 
   return (
     <div className="relative w-full max-w-5xl mx-auto">
-      {/* Shadow */}
-      <div
-        className="absolute w-full h-full"
-        style={{
-          backgroundColor: "#000000",
-          top: "8px",
-          left: "8px",
-        }}
-      />
-
-      {/* Main Card - Clickable Div */}
-      <div
+      <NeoBrutalism
+        border={4}
+        shadow="xl"
         onClick={handleCardClick}
         className="relative bg-white p-6 sm:p-8 md:p-12 flex flex-col md:flex-row items-center md:items-start gap-8 sm:gap-10 md:gap-16 w-full group cursor-pointer"
-        style={{
-          border: "4px solid #000000",
-        }}
       >
         {/* Arrow indicator - Top Right */}
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white rounded-full p-1.5 sm:p-2 shadow-md opacity-90 group-hover:opacity-100 transition-opacity z-20">
+        <div className={nb({
+          border: 2,
+          shadow: "xs",
+          rounded: "full",
+          className: "absolute top-3 right-3 sm:top-4 sm:right-4 bg-white p-1.5 sm:p-2 opacity-90 group-hover:opacity-100 transition-opacity z-20"
+        })}>
           <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800" strokeWidth={2.5} />
         </div>
 
         {/* Photo Section */}
         <div className="relative shrink-0 flex justify-center w-full md:w-auto">
           {/* CLUB LEAD Label */}
-          <div
-            className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 px-3 py-1.5 sm:px-4 sm:py-2 z-10 -rotate-6"
-            style={{
-              backgroundColor: "#FFD23D",
-              border: "3px solid #000000",
-              boxShadow: "4px 4px 0px #000000",
-            }}
+          <NeoBrutalism
+            border={3}
+            shadow="md"
+            className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 px-3 py-1.5 sm:px-4 sm:py-2 z-10 -rotate-6 bg-[#FFD23D]"
           >
             <span className="text-xs sm:text-sm font-black tracking-tight uppercase">
               CLUB LEAD
             </span>
-          </div>
+          </NeoBrutalism>
 
           {/* Photo */}
           <div
@@ -191,7 +182,7 @@ export default function ClubLeadCard() {
             &rdquo;
           </span>
         </div>
-      </div>
+      </NeoBrutalism>
     </div>
   );
 }

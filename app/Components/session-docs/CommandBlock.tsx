@@ -1,5 +1,6 @@
 import React from "react";
 import { CopyButton } from "../Reusables/CopyButton";
+import { NeoBrutalism } from "@/components/ui/neo-brutalism";
 
 export const CommandBlock: React.FC<{ command: string; label?: string }> = ({
     command,
@@ -11,7 +12,12 @@ export const CommandBlock: React.FC<{ command: string; label?: string }> = ({
                 {label}
             </div>
         )}
-        <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm border-4 border-black shadow-[6px_6px_0px_0px_#8338ec] relative">
+        <NeoBrutalism
+            border={4}
+            shadow="none"
+            rounded="lg"
+            className="bg-gray-900 text-green-400 p-4 font-mono text-sm shadow-[6px_6px_0px_0px_#8338ec] relative"
+        >
             <div className="flex items-baseline gap-2">
                 <span className="select-none text-gray-500">$</span>
                 <div className="whitespace-pre-wrap wrap-break-word flex-1 min-w-0 pr-12">
@@ -19,6 +25,6 @@ export const CommandBlock: React.FC<{ command: string; label?: string }> = ({
                 </div>
             </div>
             <CopyButton text={command} />
-        </div>
+        </NeoBrutalism>
     </div>
 );

@@ -1,6 +1,7 @@
 import { CheckCircle } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { NeoBrutalism } from "@/components/ui/neo-brutalism";
 const MeetOurTeam = () => {
   return (
     <motion.div
@@ -11,12 +12,10 @@ const MeetOurTeam = () => {
       transition={{ duration: 0.3, ease: "easeInOut", delay: 0.1 }}
     >
       <div className="size-full flex items-center justify-center ">
-        <div
+        <NeoBrutalism
+          border={4}
+          shadow="xl"
           className="max-w-7xl w-full overflow-hidden bg-[#FDFCF8]"
-          style={{
-            border: "4px solid #000000",
-            boxShadow: "8px 8px 0px #000000",
-          }}
         >
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left Content Section */}
@@ -104,7 +103,7 @@ const MeetOurTeam = () => {
               />
             </div>
           </div>
-        </div>
+        </NeoBrutalism>
       </div>
     </motion.div>
   );

@@ -2,6 +2,7 @@
 import { ProfileHeader } from "../Components/Profile/ProfileHeader";
 import { EventCard } from "../Components/Profile/EventCard";
 import { useProfileData } from "../../hooks/useProfileData";
+import { NeoBrutalism } from "@/components/ui/neo-brutalism";
 
 export default function ProfilePage() {
   const { user, events, badges, loading, error } = useProfileData();
@@ -16,12 +17,13 @@ export default function ProfilePage() {
         )}
 
         {error && !loading && (
-          <div className="relative">
-            <div className="absolute bg-black h-full w-full rounded-xl top-1.5 left-1.5" />
-            <div className="relative bg-[#ff5050] border-2 border-black rounded-xl p-6 text-center">
-              <p className="text-black font-bold">{error}</p>
-            </div>
-          </div>
+          <NeoBrutalism
+            border={2}
+            shadow="md"
+            className="bg-[#ff5050] p-6 text-center"
+          >
+            <p className="text-black font-bold">{error}</p>
+          </NeoBrutalism>
         )}
 
         {!loading && !error && user && (
@@ -36,29 +38,31 @@ export default function ProfilePage() {
               {/* Left: Events (8 columns) */}
               <div className="lg:col-span-8 space-y-6">
                 {/* Section Header with Neo-Brutalism */}
-                <div className="relative">
-                  <div className="absolute bg-black h-full w-full rounded-xl top-1.5 left-1.5" />
-                  <div className="relative bg-[#4284ff] border-[3px] border-black rounded-xl px-6 py-4 ">
-                    <div>
-                      <h2 className="text-2xl font-black text-white tracking-tight">
-                        MY EVENTS
-                      </h2>
-                    </div>
+                <NeoBrutalism
+                  border={3}
+                  shadow="md"
+                  className="bg-[#4284ff] px-6 py-4"
+                >
+                  <div>
+                    <h2 className="text-2xl font-black text-white tracking-tight">
+                      MY EVENTS
+                    </h2>
                   </div>
-                </div>
+                </NeoBrutalism>
 
                 {events.length === 0 ? (
-                  <div className="relative">
-                    <div className="absolute bg-black h-full w-full rounded-xl top-1.5 left-1.5" />
-                    <div className="relative bg-white border-[3px] border-black rounded-xl p-10 text-center min-h-[180px] flex flex-col items-center justify-center">
-                      <p className="text-neutral-700 font-bold text-lg mb-2">
-                        No Events Yet
-                      </p>
-                      <p className="text-neutral-500 font-medium text-sm">
-                        You haven&apos;t registered for any events yet.
-                      </p>
-                    </div>
-                  </div>
+                  <NeoBrutalism
+                    border={3}
+                    shadow="md"
+                    className="bg-white p-10 text-center min-h-[180px] flex flex-col items-center justify-center"
+                  >
+                    <p className="text-neutral-700 font-bold text-lg mb-2">
+                      No Events Yet
+                    </p>
+                    <p className="text-neutral-500 font-medium text-sm">
+                      You haven&apos;t registered for any events yet.
+                    </p>
+                  </NeoBrutalism>
                 ) : (
                   <div className="space-y-4">
                     {events.map((event) => (

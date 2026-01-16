@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { notFound, useParams, redirect } from 'next/navigation';
 import { getEvent } from '@/supabase/supabase';
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
 export default function BadgePage() {
     const params = useParams();
@@ -212,35 +213,31 @@ export default function BadgePage() {
                     </div>
 
                     {/* Right: Upload or Result */}
-                    <div
-                        className="bg-white p-6 md:p-10"
-                        style={{
-                            border: '4px solid #000000',
-                            boxShadow: '8px 8px 0px #000000',
-                        }}
+                    <NeoBrutalism
+                      border={4}
+                      shadow="xl"
+                      className="bg-white p-6 md:p-10"
                     >
                         {!compositeImage ? (
                             /* Upload Section */
                             <div className="space-y-6">
-                                <div
+                                <NeoBrutalism
+                                    border={4}
+                                    shadow="none"
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="w-full aspect-4/5 flex flex-col items-center justify-center cursor-pointer bg-white hover:bg-gray-50 transition-colors group"
-                                    style={{
-                                        border: '4px dashed #000000',
-                                    }}
+                                    className="w-full aspect-4/5 flex flex-col items-center justify-center cursor-pointer bg-white hover:bg-gray-50 transition-colors group border-dashed"
                                 >
                                     {uploadedImage ? (
                                         <div className="relative w-full h-full p-4">
-                                            <Image
-                                                width={200}
-                                                height={200}
-                                                src={uploadedImage}
-                                                alt="Uploaded"
-                                                className="w-full h-full object-cover"
-                                                style={{
-                                                    border: '3px solid #000000',
-                                                }}
-                                            />
+                                            <NeoBrutalism border={3} shadow="none" className="w-full h-full">
+                                                <Image
+                                                    width={200}
+                                                    height={200}
+                                                    src={uploadedImage}
+                                                    alt="Uploaded"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </NeoBrutalism>
                                         </div>
                                     ) : (
                                         <div className="text-center p-8">
@@ -265,7 +262,7 @@ export default function BadgePage() {
                                             </p>
                                         </div>
                                     )}
-                                </div>
+                                </NeoBrutalism>
                                 <input
                                     ref={fileInputRef}
                                     type="file"
@@ -287,12 +284,10 @@ export default function BadgePage() {
                             /* Preview & Download Section */
                             <div className="space-y-6">
                                 <div className="flex flex-col items-center">
-                                    <div
+                                    <NeoBrutalism
+                                        border={4}
+                                        shadow="lg"
                                         className="relative w-full aspect-4/5 overflow-hidden bg-white"
-                                        style={{
-                                            border: '4px solid #000000',
-                                            boxShadow: '6px 6px 0px #000000',
-                                        }}
                                     >
                                         <Image
                                             width={200}
@@ -301,17 +296,20 @@ export default function BadgePage() {
                                             alt="Badge Preview"
                                             className="w-full h-full object-cover"
                                         />
-                                    </div>
+                                    </NeoBrutalism>
                                 </div>
 
                                 <div className="flex flex-col gap-4">
                                     <button
                                         onClick={handleDownload}
-                                        className="w-full px-8 py-4 text-base md:text-lg font-black uppercase tracking-wide bg-black text-white transition-all duration-200 hover:translate-x-1 hover:translate-y-1 flex items-center justify-center gap-3"
-                                        style={{
-                                            border: '3px solid #000000',
-                                            boxShadow: '4px 4px 0px #000000',
-                                        }}
+                                        className={nb({
+                                            border: 3,
+                                            shadow: "md",
+                                            hover: "lift",
+                                            active: "push",
+                                            className:
+                                                "w-full px-8 py-4 text-base md:text-lg font-black uppercase tracking-wide bg-black text-white flex items-center justify-center gap-3",
+                                        })}
                                     >
                                         <svg
                                             className="w-6 h-6"
@@ -331,11 +329,14 @@ export default function BadgePage() {
 
                                     <button
                                         onClick={handleReset}
-                                        className="w-full px-8 py-4 text-base md:text-lg font-black uppercase tracking-wide bg-white text-black transition-all duration-200 hover:translate-x-1 hover:translate-y-1 flex items-center justify-center gap-3"
-                                        style={{
-                                            border: '3px solid #000000',
-                                            boxShadow: '4px 4px 0px #000000',
-                                        }}
+                                        className={nb({
+                                            border: 3,
+                                            shadow: "md",
+                                            hover: "lift",
+                                            active: "push",
+                                            className:
+                                                "w-full px-8 py-4 text-base md:text-lg font-black uppercase tracking-wide bg-white text-black flex items-center justify-center gap-3",
+                                        })}
                                         onMouseEnter={(e) => {
                                             e.currentTarget.style.backgroundColor = '#000000';
                                             e.currentTarget.style.color = '#ffffff';
@@ -363,7 +364,7 @@ export default function BadgePage() {
                                 </div>
                             </div>
                         )}
-                    </div>
+                    </NeoBrutalism>
                 </div>
 
                 {/* Hidden Canvas */}

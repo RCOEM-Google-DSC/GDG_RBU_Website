@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import EditProfileModal from "@/app/Components/team/EditProfileModal";
 import { SocialButton } from "@/app/Components/team/SocialButton";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
 /* Decorations */
 const DecoCross = ({ className }: { className?: string }) => (
@@ -114,9 +115,13 @@ export default function ProfileClientView({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start mb-16 md:mb-20">
           <div className="md:col-span-5 flex justify-center md:justify-start">
             <div className="relative group">
-              <div className="absolute top-4 left-4 w-full h-full bg-black rounded-xl transition-transform duration-200 group-hover:translate-x-2 group-hover:translate-y-2"></div>
-
-              <div className="relative w-80 h-80 md:w-96 md:h-96 bg-white border-4 border-black rounded-xl overflow-hidden p-0 transition-transform duration-200 group-hover:-translate-y-1 group-hover:-translate-x-1">
+              <NeoBrutalism
+                border={4}
+                rounded="xl"
+                shadow="xl"
+                hover="lift"
+                className="relative w-80 h-80 md:w-96 md:h-96 bg-white overflow-hidden p-0"
+              >
                 <Image
                   height={800}
                   width={800}
@@ -125,11 +130,15 @@ export default function ProfileClientView({
                   className="w-full h-full object-cover transition-all duration-300"
                   priority
                 />
-              </div>
+              </NeoBrutalism>
 
-              <div className="absolute -top-6 -right-6 bg-yellow-300 border-2 border-black px-3 py-1 font-black transform rotate-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <NeoBrutalism
+                border={2}
+                shadow="md"
+                className="absolute -top-6 -right-6 bg-yellow-300 px-3 py-1 font-black transform rotate-12"
+              >
                 HELLO!
-              </div>
+              </NeoBrutalism>
             </div>
           </div>
 
@@ -143,25 +152,28 @@ export default function ProfileClientView({
               </div>
             </div>
 
-            <div className="bg-white p-6 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative">
+            <NeoBrutalism
+              border={2}
+              shadow="xl"
+              className="bg-white p-6 relative"
+            >
               <DecoZigZag className="absolute -top-3 left-4 w-20 h-4 text-yellow-400" />
               <p className="text-xl font-bold leading-relaxed">
                 &quot;{profile.bio || "No bio yet."}&quot;
               </p>
-            </div>
+            </NeoBrutalism>
 
             <div className="flex flex-wrap gap-4 justify-center md:justify-start pt-2">
               <a
                 href={`mailto:${u?.email}`}
-                className={`
-                  flex items-center gap-2 px-6 py-3
-                  bg-yellow-300 text-black font-black text-lg
-                  border-2 border-black
-                  shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-                  hover:bg-yellow-400 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]
-                  active:translate-x-1 active:translate-y-1 active:shadow-none
-                  transition-all duration-200
-                `}
+                className={nb({
+                  border: 2,
+                  shadow: "md",
+                  hover: "lift",
+                  active: "push",
+                  className:
+                    "flex items-center gap-2 px-6 py-3 bg-yellow-300 text-black font-black text-lg hover:bg-yellow-400",
+                })}
               >
                 <Send size={20} strokeWidth={3} /> SAY HELLO
               </a>
@@ -171,15 +183,14 @@ export default function ProfileClientView({
                   href={resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`
-                    flex items-center gap-2 px-6 py-3
-                    bg-white text-black font-black text-lg
-                    border-2 border-black
-                    shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-                    hover:bg-gray-50 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]
-                    active:translate-y-0 active:shadow-none active:translate-x-1
-                    transition-all duration-200
-                  `}
+                  className={nb({
+                    border: 2,
+                    shadow: "md",
+                    hover: "lift",
+                    active: "push",
+                    className:
+                      "flex items-center gap-2 px-6 py-3 bg-white text-black font-black text-lg hover:bg-gray-50",
+                  })}
                 >
                   <Download size={20} strokeWidth={3} /> RESUME
                 </a>
@@ -189,28 +200,28 @@ export default function ProfileClientView({
                 <>
                   <button
                     onClick={() => setShowEdit(true)}
-                    className={`
-                      flex items-center gap-2 px-4 py-3
-                      bg-blue-300 text-black font-bold border-2 border-black
-                      shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-                      hover:bg-blue-400 hover:-translate-y-1
-                      active:shadow-none active:translate-x-1 active:translate-y-1
-                      transition-all
-                    `}
+                    className={nb({
+                      border: 2,
+                      shadow: "md",
+                      hover: "lift",
+                      active: "push",
+                      className:
+                        "flex items-center gap-2 px-4 py-3 bg-blue-300 text-black font-bold hover:bg-blue-400",
+                    })}
                   >
                     <Pencil size={18} strokeWidth={2.5} />
                   </button>
 
                   <Link
                     href="/admin"
-                    className={`
-                      flex items-center gap-2 px-4 py-3
-                      bg-red-300 text-black font-bold border-2 border-black
-                      shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-                      hover:bg-red-400 hover:-translate-y-1
-                      active:shadow-none active:translate-x-1 active:translate-y-1
-                      transition-all
-                    `}
+                    className={nb({
+                      border: 2,
+                      shadow: "md",
+                      hover: "lift",
+                      active: "push",
+                      className:
+                        "flex items-center gap-2 px-4 py-3 bg-red-300 text-black font-bold hover:bg-red-400",
+                    })}
                   >
                     <LayoutDashboard size={18} strokeWidth={2.5} />
                   </Link>
@@ -221,7 +232,11 @@ export default function ProfileClientView({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-yellow-50 border-2 border-black p-8 relative shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] min-h-[250px] flex flex-col justify-center">
+          <NeoBrutalism
+            border={2}
+            shadow="xl"
+            className="bg-yellow-50 p-8 relative min-h-[250px] flex flex-col justify-center"
+          >
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-black/10 rotate-2 backdrop-blur-sm border-l border-r border-white/30"></div>
             <div className="absolute top-4 right-4 text-black">
               <Code size={32} strokeWidth={2.5} />
@@ -233,9 +248,13 @@ export default function ProfileClientView({
             <p className="text-2xl font-black italic text-black leading-tight">
               &quot;{profile.thought || "No thought shared."}&quot;
             </p>
-          </div>
+          </NeoBrutalism>
 
-          <div className="md:col-span-2 bg-white border-2 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <NeoBrutalism
+            border={2}
+            shadow="xl"
+            className="md:col-span-2 bg-white p-8"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div className="space-y-3">
                 <h3 className="flex w-60 items-center gap-2 text-lg font-black uppercase bg-black text-white px-2 py-1">
@@ -293,7 +312,7 @@ export default function ProfileClientView({
                 </div>
               </div>
             </div>
-          </div>
+          </NeoBrutalism>
         </div>
       </div>
 

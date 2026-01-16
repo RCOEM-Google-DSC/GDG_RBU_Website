@@ -45,6 +45,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { FaXTwitter } from "react-icons/fa6";
 import ImageCropModal from "./ImageCropModal";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
 // Zod Schema for Profile Form
 const profileFormSchema = z.object({
@@ -275,13 +276,13 @@ export default function EditProfileModal({
     <>
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent
-          className="max-w-2xl max-h-[90vh] overflow-y-auto"
-          style={{
-            backgroundColor: "#ffffff",
-            border: "4px solid #000000",
-            boxShadow: "4px 4px 0px #000000",
-            borderRadius: 0,
-          }}
+          className={nb({
+            border: 4,
+            shadow: "md",
+            rounded: "none",
+            className:
+              "max-w-2xl max-h-[90vh] overflow-y-auto bg-white",
+          })}
         >
           <DialogHeader>
             <DialogTitle
@@ -307,11 +308,11 @@ export default function EditProfileModal({
                 {/* Profile Image with Pencil Icon */}
                 <div className="relative group">
                   <div
-                    className="w-28 h-28 overflow-hidden"
-                    style={{
-                      border: "3px solid #000000",
-                      boxShadow: "4px 4px 0px #000000",
-                    }}
+                    className={nb({
+                      border: 3,
+                      shadow: "md",
+                      className: "w-28 h-28 overflow-hidden",
+                    })}
                   >
                     {imagePreview ? (
                       <Image
@@ -331,12 +332,12 @@ export default function EditProfileModal({
                   {/* Pencil Icon Button */}
                   <Label
                     htmlFor="image-upload"
-                    className="absolute bottom-1 right-1 text-white p-2 cursor-pointer transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
-                    style={{
-                      backgroundColor: "#000000",
-                      border: "2px solid #000000",
-                      boxShadow: "2px 2px 0px #000000",
-                    }}
+                    className={nb({
+                      border: 2,
+                      shadow: "xs",
+                      className:
+                        "absolute bottom-1 right-1 text-white p-2 cursor-pointer transition-all duration-200 hover:translate-x-1 hover:translate-y-1 bg-black",
+                    })}
                     title="Change profile picture"
                   >
                     <Pencil size={16} />
@@ -368,11 +369,12 @@ export default function EditProfileModal({
                           <Input
                             placeholder="Your Name"
                             {...field}
-                            className="text-lg font-semibold text-slate-800 h-auto py-1 px-2"
-                            style={{
-                              border: "2px solid #000000",
-                              boxShadow: "2px 2px 0px #000000",
-                            }}
+                            className={nb({
+                              border: 2,
+                              shadow: "xs",
+                              className:
+                                "text-lg font-semibold text-slate-800 h-auto py-1 px-2",
+                            })}
                             autoFocus={false}
                           />
                         </FormControl>
@@ -409,11 +411,7 @@ export default function EditProfileModal({
                         <Input
                           placeholder="Enter phone number"
                           {...field}
-                          className="font-medium"
-                          style={{
-                            border: "3px solid #000000",
-                            boxShadow: "3px 3px 0px #000000",
-                          }}
+                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -438,11 +436,7 @@ export default function EditProfileModal({
                         <Input
                           placeholder="Enter branch"
                           {...field}
-                          className="font-medium"
-                          style={{
-                            border: "3px solid #000000",
-                            boxShadow: "3px 3px 0px #000000",
-                          }}
+                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -467,11 +461,7 @@ export default function EditProfileModal({
                         <Input
                           placeholder="Enter section"
                           {...field}
-                          className="font-medium"
-                          style={{
-                            border: "3px solid #000000",
-                            boxShadow: "3px 3px 0px #000000",
-                          }}
+                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -496,11 +486,7 @@ export default function EditProfileModal({
                           placeholder="email@example.com"
                           type="email"
                           {...field}
-                          className="font-medium"
-                          style={{
-                            border: "3px solid #000000",
-                            boxShadow: "3px 3px 0px #000000",
-                          }}
+                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -525,11 +511,7 @@ export default function EditProfileModal({
                     <FormControl>
                       <Textarea
                         placeholder="Tell us about yourself..."
-                        className="resize-none font-medium"
-                        style={{
-                          border: "3px solid #000000",
-                          boxShadow: "3px 3px 0px #000000",
-                        }}
+                        className={nb({ border: 3, shadow: "sm", className: "resize-none font-medium" })}
                         rows={3}
                         {...field}
                       />
@@ -555,11 +537,7 @@ export default function EditProfileModal({
                     <FormControl>
                       <Textarea
                         placeholder="Share your thoughts..."
-                        className="resize-none font-medium"
-                        style={{
-                          border: "3px solid #000000",
-                          boxShadow: "3px 3px 0px #000000",
-                        }}
+                        className={nb({ border: 3, shadow: "sm", className: "resize-none font-medium" })}
                         rows={3}
                         {...field}
                       />
@@ -587,11 +565,7 @@ export default function EditProfileModal({
                         <Input
                           placeholder="https://github.com/username"
                           {...field}
-                          className="font-medium"
-                          style={{
-                            border: "3px solid #000000",
-                            boxShadow: "3px 3px 0px #000000",
-                          }}
+                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -615,11 +589,7 @@ export default function EditProfileModal({
                         <Input
                           placeholder="https://linkedin.com/in/username"
                           {...field}
-                          className="font-medium"
-                          style={{
-                            border: "3px solid #000000",
-                            boxShadow: "3px 3px 0px #000000",
-                          }}
+                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -643,11 +613,7 @@ export default function EditProfileModal({
                         <Input
                           placeholder="https://instagram.com/username"
                           {...field}
-                          className="font-medium"
-                          style={{
-                            border: "3px solid #000000",
-                            boxShadow: "3px 3px 0px #000000",
-                          }}
+                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -671,11 +637,7 @@ export default function EditProfileModal({
                         <Input
                           placeholder="https://twitter.com/username"
                           {...field}
-                          className="font-medium"
-                          style={{
-                            border: "3px solid #000000",
-                            boxShadow: "3px 3px 0px #000000",
-                          }}
+                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -699,11 +661,7 @@ export default function EditProfileModal({
                         <Input
                           placeholder="https://leetcode.com/username"
                           {...field}
-                          className="font-medium"
-                          style={{
-                            border: "3px solid #000000",
-                            boxShadow: "3px 3px 0px #000000",
-                          }}
+                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -727,11 +685,7 @@ export default function EditProfileModal({
                         <Input
                           placeholder="https://example.com/resume.pdf"
                           {...field}
-                          className="font-medium"
-                          style={{
-                            border: "3px solid #000000",
-                            boxShadow: "3px 3px 0px #000000",
-                          }}
+                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -742,17 +696,13 @@ export default function EditProfileModal({
 
               {/* ERROR MESSAGE */}
               {error && (
-                <div
-                  className="text-sm font-bold p-3"
-                  style={{
-                    color: "#dc2626",
-                    backgroundColor: "#fef2f2",
-                    border: "3px solid #000000",
-                    boxShadow: "3px 3px 0px #000000",
-                  }}
+                <NeoBrutalism
+                  border={3}
+                  shadow="sm"
+                  className="text-sm font-bold p-3 text-red-600 bg-red-50"
                 >
                   {error}
-                </div>
+                </NeoBrutalism>
               )}
 
               {/* FOOTER BUTTONS */}
@@ -761,25 +711,14 @@ export default function EditProfileModal({
                   type="button"
                   variant="outline"
                   onClick={onClose}
-                  className="font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
-                  style={{
-                    border: "3px solid #000000",
-                    boxShadow: "4px 4px 0px #000000",
-                    backgroundColor: "#ffffff",
-                    color: "#000000",
-                  }}
+                  className={nb({ border: 3, shadow: "md", className: "font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1 bg-white text-black" })}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={form.formState.isSubmitting}
-                  className="font-bold text-white transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
-                  style={{
-                    backgroundColor: "#000000",
-                    border: "3px solid #000000",
-                    boxShadow: "4px 4px 0px #000000",
-                  }}
+                  className={nb({ border: 3, shadow: "md", className: "font-bold text-white transition-all duration-200 hover:translate-x-1 hover:translate-y-1 bg-black" })}
                 >
                   {form.formState.isSubmitting ? (
                     <>

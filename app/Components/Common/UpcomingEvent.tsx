@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UpcomingEventCardProps } from "@/lib/types";
 import Image from "next/image";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop";
 
@@ -30,7 +31,13 @@ const UpcomingEvent = ({
         {/* Desktop: Side-by-side layout */}
         <div className="hidden lg:flex lg:flex-row w-full h-[500px] gap-6">
           {/* LEFT SECTION: Event Image & Details */}
-          <div className="relative w-[65%] h-full rounded-3xl overflow-hidden group border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transition-all">
+          <NeoBrutalism
+            border={4}
+            shadow="xl"
+            rounded="3xl"
+            hover="shadowGrowLg"
+            className="relative w-[65%] h-full overflow-hidden group"
+          >
             {/* Background Image */}
             <Image
               height={500}
@@ -50,9 +57,14 @@ const UpcomingEvent = ({
             <div className="absolute inset-0 p-8 flex flex-col justify-between z-10">
               {/* Top Tags */}
               <div className="flex flex-wrap gap-3">
-                <span className="px-4 py-1.5 rounded-full border-2 border-black bg-white text-black text-xs font-bold tracking-wider uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                <NeoBrutalism
+                  border={2}
+                  shadow="sm"
+                  rounded="full"
+                  className="px-4 py-1.5 bg-white text-black text-xs font-bold tracking-wider uppercase"
+                >
                   {tags && tags[0]}
-                </span>
+                </NeoBrutalism>
               </div>
 
               {/* Bottom Info */}
@@ -70,7 +82,17 @@ const UpcomingEvent = ({
                   href={`/events/upcoming/${id}`}
                   aria-label={`View details for ${title}`}
                 >
-                  <Button className="w-14 h-14 bg-[#FFC20E] rounded-full flex items-center justify-center border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-yellow-400 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all">
+                  <Button
+                    className={nb({
+                      border: 3,
+                      shadow: "md",
+                      rounded: "full",
+                      hover: "shadowGrow",
+                      active: "push",
+                      className:
+                        "w-14 h-14 bg-[#FFC20E] flex items-center justify-center hover:bg-yellow-400",
+                    })}
+                  >
                     <ArrowUpRight
                       className="text-black w-6 h-6"
                       strokeWidth={2.5}
@@ -79,7 +101,7 @@ const UpcomingEvent = ({
                 </Link>
               </div>
             </div>
-          </div>
+          </NeoBrutalism>
 
           {/* RIGHT SECTION: Gold Pass Ticket - Desktop Only */}
           <div className="relative w-[35%] h-full">
@@ -151,7 +173,15 @@ const UpcomingEvent = ({
                   </div>
 
                   <Button
-                    className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+                    className={nb({
+                      border: 3,
+                      shadow: "md",
+                      rounded: "xl",
+                      hover: "shadowGrow",
+                      active: "push",
+                      className:
+                        "w-full bg-black text-white py-4 font-bold text-lg hover:bg-gray-800",
+                    })}
                     onClick={handleRegisterClick}
                   >
                     Register Now
@@ -163,7 +193,12 @@ const UpcomingEvent = ({
         </div>
 
         {/* Mobile: Image with overlaid ticket card */}
-        <div className="lg:hidden relative w-full h-auto rounded-3xl overflow-hidden border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <NeoBrutalism
+          border={4}
+          shadow="lg"
+          rounded="3xl"
+          className="lg:hidden relative w-full h-auto overflow-hidden"
+        >
           {/* Background Image Section */}
           <div className="relative w-full h-[400px] sm:h-[450px]">
             <Image
@@ -184,9 +219,14 @@ const UpcomingEvent = ({
             <div className="absolute inset-0 p-5 sm:p-6 flex flex-col justify-between z-10">
               {/* Top Tags */}
               <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 rounded-full border-2 border-black bg-white text-black text-xs font-bold tracking-wider uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <NeoBrutalism
+                  border={2}
+                  shadow="xs"
+                  rounded="full"
+                  className="px-3 py-1 bg-white text-black text-xs font-bold tracking-wider uppercase"
+                >
                   {tags && tags[0]}
-                </span>
+                </NeoBrutalism>
               </div>
 
               {/* Bottom Section with Title */}
@@ -202,7 +242,17 @@ const UpcomingEvent = ({
                   href={`/events/upcoming/${id}`}
                   aria-label={`View details for ${title}`}
                 >
-                  <Button className="w-12 h-12 bg-[#FFC20E] rounded-full flex items-center justify-center border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-yellow-400 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all">
+                  <Button
+                    className={nb({
+                      border: 3,
+                      shadow: "sm",
+                      rounded: "full",
+                      hover: "shadowGrow",
+                      active: "push",
+                      className:
+                        "w-12 h-12 bg-[#FFC20E] flex items-center justify-center hover:bg-yellow-400",
+                    })}
+                  >
                     <ArrowUpRight
                       className="text-black w-5 h-5"
                       strokeWidth={2.5}
@@ -236,13 +286,21 @@ const UpcomingEvent = ({
 
             {/* Register Button */}
             <Button
-              className="w-full bg-black text-white py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+              className={nb({
+                border: 3,
+                shadow: "md",
+                rounded: "xl",
+                hover: "shadowGrow",
+                active: "push",
+                className:
+                  "w-full bg-black text-white py-3 sm:py-3.5 font-bold text-sm sm:text-base hover:bg-gray-800",
+              })}
               onClick={handleRegisterClick}
             >
               Register Now
             </Button>
           </div>
-        </div>
+        </NeoBrutalism>
       </div>
     </div>
   );

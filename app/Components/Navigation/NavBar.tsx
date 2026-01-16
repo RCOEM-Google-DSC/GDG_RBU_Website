@@ -7,6 +7,7 @@ import ProfileDropdown from "../Common/ProfileDropdown";
 import MobileProfileDropdown from "../Common/MobileProfileDropdown";
 import { Menu, X, Terminal, User as UserIcon } from "lucide-react";
 import Image from "next/image";
+import { nb } from "@/components/ui/neo-brutalism";
 
 const LINK_STYLES = [
   { color: "bg-blue-400", hover: "hover:bg-blue-500/90" },
@@ -137,13 +138,13 @@ export default function NavBar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-5 py-2 font-black text-black ${style.color}
-                border-2 border-black
-                shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-                hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
-                hover:scale-110 ${style.hover}
-                active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
-                transition-all duration-200 ${NAV_ROUND}`}
+                className={nb({
+                  border: 2,
+                  shadow: "md",
+                  hover: "shadowGrow",
+                  active: "push",
+                  className: `px-5 py-2 font-black text-black ${style.color} hover:scale-110 ${style.hover} ${NAV_ROUND}`,
+                })}
               >
                 {link.label}
               </Link>
@@ -158,12 +159,13 @@ export default function NavBar() {
           ) : (
             <Link
               href="/register"
-              className={`px-6 py-3 font-bold text-white bg-black border-2 border-black
-              shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-              hover:bg-gray-300 hover:text-black
-              hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
-              active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
-              transition-all ${NAV_ROUND}`}
+              className={nb({
+                border: 2,
+                shadow: "md",
+                hover: "shadowGrow",
+                active: "push",
+                className: `px-6 py-3 font-bold text-white bg-black hover:bg-gray-300 hover:text-black ${NAV_ROUND}`,
+              })}
             >
               Join Us
             </Link>
@@ -173,9 +175,12 @@ export default function NavBar() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="md:hidden p-2 bg-white border-2 border-black
-          shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]
-          active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+          className={nb({
+            border: 2,
+            shadow: "sm",
+            active: "push",
+            className: "md:hidden p-2 bg-white",
+          })}
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -200,7 +205,12 @@ export default function NavBar() {
         {/* Close X button added at top-right inside the sidebar */}
         <button
           onClick={() => setIsMobileMenuOpen(false)}
-          className="absolute top-4 right-4 md:hidden p-2 bg-white border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+          className={nb({
+            border: 2,
+            shadow: "sm",
+            active: "push",
+            className: "absolute top-4 right-4 md:hidden p-2 bg-white",
+          })}
           aria-label="Close menu"
         >
           <X size={20} />
@@ -219,11 +229,12 @@ export default function NavBar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`px-4 py-3 font-black text-black ${style.color}
-                  border-2 border-black
-                  shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-                  active:translate-x-1 active:translate-y-1 active:shadow-none
-                  transition-all ${NAV_ROUND}`}
+                  className={nb({
+                    border: 2,
+                    shadow: "md",
+                    active: "push",
+                    className: `px-4 py-3 font-black text-black ${style.color} ${NAV_ROUND}`,
+                  })}
                 >
                   {link.label}
                 </Link>
@@ -240,12 +251,12 @@ export default function NavBar() {
               <Link
                 href="/register"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={` block px-6 py-3 font-bold text-white bg-black border-2 border-black
-              shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-              hover:bg-gray-300 hover:text-black
-              hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
-              active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
-              transition-all ${NAV_ROUND}`}
+                className={nb({
+                  border: 2,
+                  shadow: "md",
+                  active: "push",
+                  className: `block px-6 py-3 font-bold text-white bg-black hover:bg-gray-300 hover:text-black ${NAV_ROUND}`,
+                })}
               >
                 JOIN US
               </Link>

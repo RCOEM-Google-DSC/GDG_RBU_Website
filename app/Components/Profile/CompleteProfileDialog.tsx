@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { supabase, getCurrentUserId } from "../../../supabase/supabase";
 import { Camera } from "lucide-react";
 import ImageCropModal from "../team/ImageCropModal";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
 interface CompleteProfileDialogProps {
   user: UIUser;
@@ -186,27 +187,24 @@ export function CompleteProfileDialog({
         {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
 
         <DialogContent
-          className="overflow-y-auto p-6 max-w-4xl max-h-[90vh]"
-          style={{
-            backgroundColor: "#ffffff",
-            border: "4px solid #000000",
-            boxShadow: "4px 4px 0px #000000",
-            borderRadius: 0,
-          }}
+          className={nb({
+              border: 4,
+              shadow: "md",
+              rounded: "none",
+              className: "overflow-y-auto p-6 max-w-4xl max-h-[90vh] bg-white"
+          })}
         >
           <form onSubmit={handleSubmit}>
             <DialogHeader>
               <div className="flex items-center gap-5">
                 {/* Avatar with Neo-Brutalism */}
                 <div className="relative shrink-0">
-                  <div
-                    className="size-20 overflow-hidden"
-                    style={{
-                      border: "3px solid #000000",
-                      boxShadow: "4px 4px 0px #000000",
-                      borderRadius: 0,
-                    }}
-                  >
+                  <div className={nb({
+                      border: 3,
+                      shadow: "md",
+                      rounded: "none",
+                      className: "size-20 overflow-hidden"
+                  })}>
                     {isValidImageUrl(imageUrl) ? (
                       <Image
                         src={imageUrl}
@@ -229,12 +227,12 @@ export function CompleteProfileDialog({
                     type="button"
                     onClick={handleAvatarClick}
                     disabled={uploading}
-                    className="bg-gray-300 absolute -bottom-1 -right-1 size-8 flex items-center justify-center font-bold transition-all duration-200 hover:translate-x-0.5 hover:translate-y-0.5"
-                    style={{
-                      border: "3px solid #000000",
-                      boxShadow: "3px 3px 0px #000000",
-                      borderRadius: 0,
-                    }}
+                    className={nb({
+                        border: 3,
+                        shadow: "sm",
+                        rounded: "none",
+                        className: "bg-gray-300 absolute -bottom-1 -right-1 size-8 flex items-center justify-center font-bold transition-all duration-200 hover:translate-x-0.5 hover:translate-y-0.5"
+                    })}
                   >
                     <Camera />
                   </button>
@@ -274,12 +272,12 @@ export function CompleteProfileDialog({
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="bg-white font-medium"
-                    style={{
-                      border: "3px solid #000000",
-                      boxShadow: "3px 3px 0px #000000",
-                      borderRadius: 0,
-                    }}
+                    className={nb({
+                      border: 3,
+                      shadow: "sm",
+                      rounded: "none",
+                      className: "bg-white font-medium"
+                    })}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -288,12 +286,12 @@ export function CompleteProfileDialog({
                     id="email"
                     value={user.email}
                     readOnly
-                    className="bg-neutral-100 cursor-not-allowed font-medium"
-                    style={{
-                      border: "3px solid #000000",
-                      boxShadow: "3px 3px 0px #000000",
-                      borderRadius: 0,
-                    }}
+                    className={nb({
+                      border: 3,
+                      shadow: "sm",
+                      rounded: "none",
+                      className: "bg-neutral-100 cursor-not-allowed font-medium"
+                    })}
                   />
                 </div>
               </div>
@@ -307,12 +305,12 @@ export function CompleteProfileDialog({
                     placeholder="A, B, C..."
                     value={section}
                     onChange={(e) => setSection(e.target.value)}
-                    className="bg-white font-medium"
-                    style={{
-                      border: "3px solid #000000",
-                      boxShadow: "3px 3px 0px #000000",
-                      borderRadius: 0,
-                    }}
+                    className={nb({
+                      border: 3,
+                      shadow: "sm",
+                      rounded: "none",
+                      className: "bg-white font-medium"
+                    })}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -339,32 +337,33 @@ export function CompleteProfileDialog({
                       placeholder="Enter your branch"
                       value={customBranch}
                       onChange={(e) => setCustomBranch(e.target.value)}
-                      className="bg-white font-medium"
-                      style={{
-                        border: "3px solid #000000",
-                        boxShadow: "3px 3px 0px #000000",
-                        borderRadius: 0,
-                      }}
+                      className={nb({
+                        border: 3,
+                        shadow: "sm",
+                        rounded: "none",
+                        className: "bg-white font-medium"
+                      })}
                       autoFocus
                     />
                   ) : (
                     <Select value={branch} onValueChange={handleBranchChange}>
                       <SelectTrigger
-                        className="w-full bg-white font-medium"
-                        style={{
-                          border: "3px solid #000000",
-                          boxShadow: "3px 3px 0px #000000",
-                          borderRadius: 0,
-                        }}
+                        className={nb({
+                          border: 3,
+                          shadow: "sm",
+                          rounded: "none",
+                          className: "w-full bg-white font-medium"
+                        })}
                       >
                         <SelectValue placeholder="Select Branch" />
                       </SelectTrigger>
                       <SelectContent
-                        style={{
-                          border: "3px solid #000000",
-                          boxShadow: "3px 3px 0px #000000",
-                          borderRadius: 0,
-                        }}
+                        className={nb({
+                          border: 3,
+                          shadow: "sm",
+                          rounded: "none",
+                          className: "bg-white"
+                        })}
                       >
                         {branchs.map((b) => (
                           <SelectItem key={b} value={b} className="font-medium">
@@ -382,12 +381,12 @@ export function CompleteProfileDialog({
                     placeholder="1234567890"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="bg-white font-medium"
-                    style={{
-                      border: "3px solid #000000",
-                      boxShadow: "3px 3px 0px #000000",
-                      borderRadius: 0,
-                    }}
+                    className={nb({
+                      border: 3,
+                      shadow: "sm",
+                      rounded: "none",
+                      className: "bg-white font-medium"
+                    })}
                   />
                 </div>
               </div>
@@ -401,12 +400,12 @@ export function CompleteProfileDialog({
                     placeholder="https://github.com/username"
                     value={github}
                     onChange={(e) => setGithub(e.target.value)}
-                    className="bg-white font-medium"
-                    style={{
-                      border: "3px solid #000000",
-                      boxShadow: "3px 3px 0px #000000",
-                      borderRadius: 0,
-                    }}
+                    className={nb({
+                      border: 3,
+                      shadow: "sm",
+                      rounded: "none",
+                      className: "bg-white font-medium"
+                    })}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -416,12 +415,12 @@ export function CompleteProfileDialog({
                     placeholder="https://linkedin.com/in/username"
                     value={linkedin}
                     onChange={(e) => setLinkedin(e.target.value)}
-                    className="bg-white font-medium"
-                    style={{
-                      border: "3px solid #000000",
-                      boxShadow: "3px 3px 0px #000000",
-                      borderRadius: 0,
-                    }}
+                    className={nb({
+                      border: 3,
+                      shadow: "sm",
+                      rounded: "none",
+                      className: "bg-white font-medium"
+                    })}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -431,44 +430,34 @@ export function CompleteProfileDialog({
                     placeholder="https://twitter.com/username"
                     value={twitter}
                     onChange={(e) => setTwitter(e.target.value)}
-                    className="bg-white font-medium"
-                    style={{
-                      border: "3px solid #000000",
-                      boxShadow: "3px 3px 0px #000000",
-                      borderRadius: 0,
-                    }}
+                    className={nb({
+                      border: 3,
+                      shadow: "sm",
+                      rounded: "none",
+                      className: "bg-white font-medium"
+                    })}
                   />
                 </div>
               </div>
 
               {/* Status Messages */}
               {status.type === "error" && (
-                <div
-                  className="text-sm font-bold px-4 py-2"
-                  style={{
-                    color: "#000000",
-                    backgroundColor: "#ff5050",
-                    border: "3px solid #000000",
-                    boxShadow: "3px 3px 0px #000000",
-                    borderRadius: 0,
-                  }}
+                <NeoBrutalism
+                  border={3}
+                  shadow="sm"
+                  className="text-sm font-bold px-4 py-2 text-black bg-[#ff5050]"
                 >
                   {status.message}
-                </div>
+                </NeoBrutalism>
               )}
               {status.type === "success" && (
-                <div
-                  className="text-sm font-bold px-4 py-2"
-                  style={{
-                    color: "#000000",
-                    backgroundColor: "#00f566",
-                    border: "3px solid #000000",
-                    boxShadow: "3px 3px 0px #000000",
-                    borderRadius: 0,
-                  }}
+                <NeoBrutalism
+                  border={3}
+                  shadow="sm"
+                  className="text-sm font-bold px-4 py-2 text-black bg-[#00f566]"
                 >
                   {status.message}
-                </div>
+                </NeoBrutalism>
               )}
               {uploading && (
                 <p className="text-sm font-bold" style={{ color: "#000000" }}>Uploading image…</p>
@@ -480,14 +469,12 @@ export function CompleteProfileDialog({
                 <Button
                   variant="outline"
                   type="button"
-                  className="font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
-                  style={{
-                    backgroundColor: "#ffffff",
-                    border: "3px solid #000000",
-                    boxShadow: "4px 4px 0px #000000",
-                    borderRadius: 0,
-                    color: "#000000",
-                  }}
+                  className={nb({
+                    border: 3,
+                    shadow: "md",
+                    rounded: "none",
+                    className: "font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1 bg-white text-black"
+                  })}
                 >
                   CANCEL
                 </Button>
@@ -495,14 +482,12 @@ export function CompleteProfileDialog({
               <Button
                 type="submit"
                 disabled={loading || uploading}
-                className="font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
-                style={{
-                  backgroundColor: loading || uploading ? "#d1d5db" : "#000000",
-                  border: "3px solid #000000",
-                  boxShadow: "4px 4px 0px #000000",
-                  borderRadius: 0,
-                  color: "#ffffff",
-                }}
+                className={nb({
+                  border: 3,
+                  shadow: "md",
+                  rounded: "none",
+                  className: `font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1 text-white ${loading || uploading ? "bg-gray-300" : "bg-black"}`
+                })}
               >
                 {loading ? "SAVING..." : "SAVE PROFILE"}
               </Button>

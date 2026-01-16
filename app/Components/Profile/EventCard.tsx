@@ -6,6 +6,7 @@ import { Calendar, Download, Share2, Loader2 } from "lucide-react";
 import { UIEvent } from "../../../lib/types";
 import { supabase } from "@/supabase/supabase";
 import Image from "next/image";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 interface EventCardProps {
   event: UIEvent;
 }
@@ -98,11 +99,8 @@ export function EventCard({ event }: EventCardProps) {
 
   return (
     <div className="relative">
-      {/* Shadow */}
-      <div className="absolute bg-black h-full w-full rounded-xl top-1.5 left-1.5" />
-      
       {/* Main Card */}
-      <div className="relative flex flex-col sm:flex-row overflow-hidden rounded-xl border-[3px] border-black bg-white">
+      <NeoBrutalism border={3} shadow="lg" rounded="xl" className="relative flex flex-col sm:flex-row overflow-hidden bg-white">
         {/* Image section */}
         <div className="relative w-full sm:w-64 h-48 sm:h-auto shrink-0">
           <Image
@@ -115,8 +113,12 @@ export function EventCard({ event }: EventCardProps) {
 
           {/* Tag Badge */}
           <div className="absolute top-3 left-3">
-            <div className="absolute bg-black h-full w-full rounded-lg top-1 left-1" />
-            <span className="relative inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-black tracking-wide uppercase bg-[#00f566] border-2 border-black">
+            <span className={nb({
+                border: 2,
+                shadow: "md",
+                rounded: "lg",
+                className: "inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-black tracking-wide uppercase bg-[#00f566]"
+            })}>
               <span className="w-2 h-2 rounded-full bg-black" />
               {event.tag}
             </span>
@@ -128,8 +130,12 @@ export function EventCard({ event }: EventCardProps) {
           <div className="space-y-3">
             {/* Date Badge */}
             <div className="inline-block relative">
-              <div className="absolute bg-black h-full w-full rounded-lg top-0.5 left-0.5" />
-              <div className="relative inline-flex items-center gap-2 rounded-lg bg-[#ffd23d] border-2 border-black px-3 py-1.5 text-xs font-bold">
+              <div className={nb({
+                  border: 2,
+                  shadow: "xs",
+                  rounded: "lg",
+                  className: "inline-flex items-center gap-2 bg-[#ffd23d] px-3 py-1.5 text-xs font-bold"
+              })}>
                 <Calendar className="w-4 h-4" />
                 <span>{event.date}</span>
               </div>
@@ -148,18 +154,23 @@ export function EventCard({ event }: EventCardProps) {
           {event.registration_status === "verified" && (
             <div className="flex items-center gap-3 pt-1">
               <div className="relative flex-1">
-                <div className="absolute bg-black h-full w-full rounded-lg top-1 left-1" />
                 <button
                   onClick={handleAction}
                   disabled={loading}
-                  className={cn(
-                    "relative w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-bold border-2 border-black transition-transform hover:translate-y-0.5",
-                    loading
-                      ? "bg-neutral-300 cursor-not-allowed"
-                      : certificateUrl
-                      ? "bg-[#4284ff] text-white"
-                      : "bg-white text-black",
-                  )}
+                  className={nb({
+                    border: 2,
+                    shadow: "md",
+                    rounded: "lg",
+                    hover: "liftSmall",
+                    className: cn(
+                        "w-full inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold",
+                        loading
+                        ? "bg-neutral-300 cursor-not-allowed"
+                        : certificateUrl
+                        ? "bg-[#4284ff] text-white"
+                        : "bg-white text-black",
+                    )
+                  })}
                 >
                   {loading ? (
                     <>
@@ -185,7 +196,7 @@ export function EventCard({ event }: EventCardProps) {
 
         {/* Accent Bar */}
         <div className="hidden sm:block absolute left-0 top-0 h-full w-2 bg-[#ff5050]" />
-      </div>
+      </NeoBrutalism>
     </div>
   );
 }

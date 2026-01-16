@@ -6,6 +6,7 @@ import { supabase } from "@/supabase/supabase";
 import { useRBAC } from "@/hooks/useRBAC";
 import { toast } from "sonner";
 import { Check, Loader2 } from "lucide-react";
+import { NeoBrutalism } from "@/components/ui/neo-brutalism";
 
 /* ---------------- UI Helpers ---------------- */
 
@@ -149,9 +150,11 @@ export default function CheckInClient() {
         const busy = verifyingId === reg.id;
 
         return (
-          <div
+          <NeoBrutalism
             key={reg.id}
-            className="bg-white border-2 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+            border={2}
+            shadow="lg"
+            className="bg-white p-6"
           >
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
@@ -211,7 +214,7 @@ export default function CheckInClient() {
                 <span>Verify</span>
               )}
             </button>
-          </div>
+          </NeoBrutalism>
         );
       })}
     </div>

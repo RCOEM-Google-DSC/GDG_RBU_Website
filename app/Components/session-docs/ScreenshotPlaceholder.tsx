@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { ArrowRight, Camera } from "lucide-react";
 import Image from "next/image";
+import { nb } from "@/components/ui/neo-brutalism";
 type Slide = { src?: string; label?: string; description?: string };
 
 export const ScreenshotPlaceholder: React.FC<{
@@ -42,7 +43,11 @@ export const ScreenshotPlaceholder: React.FC<{
                                 e.preventDefault();
                                 prev();
                             }}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white text-black p-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-30"
+                            className={nb({
+                                border: 2,
+                                shadow: "md",
+                                className: "absolute left-4 top-1/2 -translate-y-1/2 bg-white text-black p-2 z-30"
+                            })}
                             title="Previous Image"
                         >
                             <ArrowRight className="rotate-180" size={24} />
@@ -55,7 +60,11 @@ export const ScreenshotPlaceholder: React.FC<{
                                 e.preventDefault();
                                 next();
                             }}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white text-black p-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-30"
+                            className={nb({
+                                border: 2,
+                                shadow: "md",
+                                className: "absolute right-4 top-1/2 -translate-y-1/2 bg-white text-black p-2 z-30"
+                            })}
                             title="Next Image"
                         >
                             <ArrowRight size={24} />

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
 import QRCodeWithSvgLogo from "@/app/Components/checkin/QRCodeWithSvgLogo";
 import { toast } from "sonner";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 import {
   Ticket,
   Calendar,
@@ -35,11 +36,6 @@ const THEME = {
     border: "border-black",
   },
   borders: "border-2 border-black",
-  shadow: "shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
-  shadowHover:
-    "hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5",
-  shadowActive:
-    "active:shadow-none active:translate-x-[4px] active:translate-y-[4px]",
   fonts: {
     heading: "font-sans font-black uppercase tracking-tight",
     body: "font-mono text-sm font-medium",
@@ -81,15 +77,15 @@ const InputField = ({
         onChange={onChange}
         placeholder={placeholder}
         disabled={disabled}
-        className={`
-          w-full py-4 ${Icon ? "pl-12" : "pl-4"} pr-4
-          ${THEME.colors.surface} text-black
-          ${THEME.borders} ${THEME.shadow}
-          outline-none transition-all duration-200
-          focus:bg-[#E8F0FE] focus:border-[#4285F4] placeholder:text-gray-400 ${
+        className={nb({
+          border: 2,
+          shadow: "md",
+          className: `w-full py-4 ${Icon ? "pl-12" : "pl-4"} pr-4 ${
+            THEME.colors.surface
+          } text-black outline-none focus:bg-[#E8F0FE] focus:border-[#4285F4] placeholder:text-gray-400 ${
             THEME.fonts.body
-          }
-        `}
+          }`,
+        })}
         required={required}
       />
     </div>
@@ -133,7 +129,11 @@ function StackCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
       transition={{ duration: 0.35 }}
-      className={`bg-white ${THEME.borders} ${THEME.shadow} overflow-hidden`}
+      className={nb({
+        border: 2,
+        shadow: "md",
+        className: `bg-white overflow-hidden`,
+      })}
     >
       <div
         className="flex justify-between items-center px-6 py-3"
@@ -633,9 +633,13 @@ export default function EventRegisterPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
           {/* LEFT: Event Details (kept like your reference UI) */}
           <div className="lg:col-span-5 space-y-8">
-            <div className="inline-block bg-[#FBBC04] border-2 border-black px-3 py-1 font-mono text-xs font-bold transform -rotate-2">
+            <NeoBrutalism
+              border={2}
+              shadow="none"
+              className="inline-block bg-[#FBBC04] px-3 py-1 font-mono text-xs font-bold transform -rotate-2"
+            >
               {event.category || "Event Category"}
-            </div>
+            </NeoBrutalism>
 
             <h1
               className={`${THEME.fonts.heading} text-6xl md:text-7xl leading-none`}
@@ -648,7 +652,11 @@ export default function EventRegisterPage() {
             </p>
 
             <div className="flex flex-col gap-4 mt-4">
-              <div className="flex items-center gap-4 bg-white border-2 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <NeoBrutalism
+                border={2}
+                shadow="md"
+                className="flex items-center gap-4 bg-white p-4"
+              >
                 <Calendar
                   className="text-[#4285F4]"
                   size={24}
@@ -659,9 +667,13 @@ export default function EventRegisterPage() {
                     {formatDateTimeIST(event.date, event.time)}
                   </div>
                 </div>
-              </div>
+              </NeoBrutalism>
 
-              <div className="flex items-center gap-4 bg-white border-2 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <NeoBrutalism
+                border={2}
+                shadow="md"
+                className="flex items-center gap-4 bg-white p-4"
+              >
                 <MapPin
                   className="text-[#EA4335]"
                   size={24}
@@ -673,14 +685,16 @@ export default function EventRegisterPage() {
                     {event.venue || "Venue"}
                   </div>
                 </div>
-              </div>
+              </NeoBrutalism>
             </div>
           </div>
 
           {/* RIGHT: Form / cards / QR */}
           <div className="lg:col-span-7">
-            <div
-              className={`bg-white border-2 border-black p-8 md:p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative`}
+            <NeoBrutalism
+              border={2}
+              shadow="xl"
+              className="bg-white p-8 md:p-10 relative"
             >
               {/* Header */}
               <div className="mb-8 border-b-2 border-black pb-6 flex items-center gap-3">
@@ -984,7 +998,7 @@ export default function EventRegisterPage() {
                   )}
                 </>
               )}
-            </div>
+            </NeoBrutalism>
           </div>
         </div>
       </main>

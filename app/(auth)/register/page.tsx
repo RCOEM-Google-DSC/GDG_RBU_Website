@@ -10,6 +10,8 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
+import { nb } from "@/components/ui/neo-brutalism";
+
 export default function RegisterPage() {
   const router = useRouter();
 
@@ -252,7 +254,11 @@ export default function RegisterPage() {
                   onClick={handleEmailLogin}
                   disabled={loading}
                   type="button"
-                  className="flex items-center justify-between w-[170px] px-5 py-3 bg-black text-white border-[3px] border-black shadow-[4px_4px_0_red] font-bold"
+                  className={nb({
+                    border: 3,
+                    shadow: "none",
+                    className: "flex items-center justify-between w-[170px] px-5 py-3 bg-black text-white shadow-[4px_4px_0_red] font-bold"
+                  })}
                 >
                   <span className="flex items-center gap-2">Login</span>
                   <span className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center">
@@ -302,7 +308,11 @@ export default function RegisterPage() {
                   type="text"
                   placeholder="Username"
                   aria-label="Username"
-                  className="w-full pl-12 py-3 bg-white border-[3px] border-black shadow-[4px_4px_0_#000] outline-none"
+                  className={nb({
+                    border: 3,
+                    shadow: "md",
+                    className: "w-full pl-12 py-3 bg-white outline-none"
+                  })}
                 />
               </div>
               <div className="relative mb-4">
@@ -313,7 +323,11 @@ export default function RegisterPage() {
                   type="email"
                   placeholder="E-mail"
                   aria-label="E-mail"
-                  className="w-full pl-12 py-3 bg-white border-[3px] border-black shadow-[4px_4px_0_#000] outline-none"
+                  className={nb({
+                    border: 3,
+                    shadow: "md",
+                    className: "w-full pl-12 py-3 bg-white outline-none"
+                  })}
                 />
               </div>
               <div className="relative mb-6">
@@ -324,7 +338,11 @@ export default function RegisterPage() {
                   type={show ? "text" : "password"}
                   placeholder="Password"
                   aria-label="Password"
-                  className="w-full pl-12 py-3 bg-white border-[3px] border-black shadow-[4px_4px_0_#000] outline-none"
+                  className={nb({
+                    border: 3,
+                    shadow: "md",
+                    className: "w-full pl-12 py-3 bg-white outline-none"
+                  })}
                 />
                 <Button
                   type="button"
@@ -344,7 +362,11 @@ export default function RegisterPage() {
                   onClick={handleEmailSignup}
                   disabled={loading}
                   type="button"
-                  className="flex items-center justify-between w-[170px] px-5 py-3 bg-black text-white border-4 border-black shadow-[4px_4px_0_green] font-bold"
+                  className={nb({
+                    border: 4,
+                    shadow: "none",
+                    className: "flex items-center justify-between w-[170px] px-5 py-3 bg-black text-white shadow-[4px_4px_0_green] font-bold"
+                  })}
                 >
                   Sign up
                   <span className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center">
@@ -397,7 +419,12 @@ export default function RegisterPage() {
                 onClick={handleToggle}
                 type="button"
                 aria-label={mode === "login" ? "Sign up" : "Login"}
-                className="relative z-20 w-full h-full bg-black text-white rounded-md border-2 border-black shadow-[6px_6px_0_#000] font-bold text-2xl"
+                className={nb({
+                  border: 2,
+                  shadow: "lg",
+                  rounded: "md",
+                  className: "relative z-20 w-full h-full bg-black text-white font-bold text-2xl"
+                })}
               >
                 {mode === "login" ? "sign up" : "login"}
               </button>

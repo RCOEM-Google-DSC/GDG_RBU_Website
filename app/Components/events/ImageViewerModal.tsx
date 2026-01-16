@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
+import { nb } from "@/components/ui/neo-brutalism";
 
 interface ImageViewerModalProps {
     isOpen: boolean;
@@ -44,7 +45,11 @@ export default function ImageViewerModal({
             {/* Close button */}
             <button
                 onClick={onClose}
-                className="absolute top-4 right-4 z-50 bg-white text-black p-3 font-black border-4 border-black shadow-[4px_4px_0px_0px_#000] hover:bg-yellow-300 transition-all hover:-translate-y-1"
+                className={nb({
+                    border: 4,
+                    shadow: "md",
+                    className: "absolute top-4 right-4 z-50 bg-white text-black p-3 font-black hover:bg-yellow-300 transition-all hover:-translate-y-1"
+                })}
                 aria-label="Close image viewer"
             >
                 <X size={24} strokeWidth={3} />

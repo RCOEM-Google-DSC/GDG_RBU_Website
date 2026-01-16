@@ -5,6 +5,8 @@ import { FaYoutube, FaLinkedinIn, FaDiscord } from "react-icons/fa";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { BsTwitterX } from "react-icons/bs";
 import Image from "next/image";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
+
 type SocialButtonProps = {
   icon: React.ReactNode;
   label: string;
@@ -17,7 +19,14 @@ function SocialButton({ icon, label, href }: SocialButtonProps) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-row justify-center items-center gap-3 px-6 py-3 rounded-lg border-2 border-black bg-white hover:bg-black hover:text-white transition-all duration-300 shadow-[3.519px_3.519px_0px_0px_black] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,0.5)]"
+      className={nb({
+        border: 2,
+        shadow: "md",
+        rounded: "lg",
+        hover: "shadowGrow",
+        className:
+          "group flex flex-row justify-center items-center gap-3 px-6 py-3 bg-white hover:bg-black hover:text-white transition-all duration-300",
+      })}
     >
       <div className="w-10 h-10 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
         {icon}
@@ -127,12 +136,10 @@ function Desktop10Component() {
         }}
       />
       {/* neo brutalism box */}
-      <div className="absolute h-24 left-[377px] top-[410px] w-[675px] z-10 bg-white">
-        <div
-          aria-hidden="true"
-          className="absolute border-[5px] border-black border-solid inset-[-2.5px] pointer-events-none shadow-[9px_7px_0px_0px_black]"
-        />
-      </div>
+      <NeoBrutalism border={4} shadow="xl" className="absolute h-24 left-[377px] top-[410px] w-[675px] z-10 bg-white">
+        {null}
+      </NeoBrutalism>
+
       {/* right outer box */}
       <div className="absolute h-[146px] left-[759.5px] top-[390px] w-[335px] z-10">
         <div className="absolute inset-[-0.34%_-0.15%_-0.34%_-0.44%]">
@@ -408,9 +415,9 @@ function MobileLinksView() {
 
         <div className="relative mb-8 flex justify-center">
           <div className="relative inline-block">
-            <div className="border-[3px] border-black bg-white shadow-[6px_5px_0px_0px_black] px-6 py-3">
+            <NeoBrutalism border={3} shadow="lg" className="bg-white px-6 py-3">
               <h3 className="font-geist font-extrabold text-base whitespace-nowrap">Unlock Your Potential.</h3>
-            </div>
+            </NeoBrutalism>
             <div className="absolute top-0 right-0 w-full h-full -z-10 translate-x-[6px] translate-y-[5px] bg-[#D9D9D9] border-[3px] border-black border-l-0 border-t-0" />
           </div>
         </div>
@@ -418,7 +425,12 @@ function MobileLinksView() {
         <div className="grid grid-cols-1 gap-4 mb-6">
           <a
             href="mailto:gdsc@rknec.edu"
-            className="flex items-center gap-3 border-2 border-black rounded-lg px-4 py-4 shadow-[6px_6px_0px_0px_black] bg-white"
+            className={nb({
+              border: 2,
+              shadow: "lg",
+              rounded: "lg",
+              className: "flex items-center gap-3 px-4 py-4 bg-white",
+            })}
           >
             <div className="w-12 h-12 flex items-center justify-center border-2 border-black rounded-md">
               <CgMail className="w-6 h-6" />
@@ -428,7 +440,12 @@ function MobileLinksView() {
 
           <a
             href="https://discord.gg/WgJDe2e9aj"
-            className="flex items-center gap-3 border-2 border-black rounded-lg px-4 py-4 shadow-[6px_6px_0px_0px_black] bg-white"
+            className={nb({
+              border: 2,
+              shadow: "lg",
+              rounded: "lg",
+              className: "flex items-center gap-3 px-4 py-4 bg-white",
+            })}
           >
             <div className="w-12 h-12 flex items-center justify-center border-2 border-black rounded-md">
               <FaDiscord className="w-6 h-6" />
@@ -438,7 +455,12 @@ function MobileLinksView() {
 
           <a
             href="https://youtube.com/@gdsc_rcoem"
-            className="flex items-center gap-3 border-2 border-black rounded-lg px-4 py-4 shadow-[6px_6px_0px_0px_black] bg-white"
+            className={nb({
+              border: 2,
+              shadow: "lg",
+              rounded: "lg",
+              className: "flex items-center gap-3 px-4 py-4 bg-white",
+            })}
           >
             <div className="w-12 h-12 flex items-center justify-center border-2 border-black rounded-md">
               <FaYoutube className="w-6 h-6" />
@@ -448,7 +470,12 @@ function MobileLinksView() {
 
           <a
             href="https://twitter.com/gdsc_rcoem"
-            className="flex items-center gap-3 border-2 border-black rounded-lg px-4 py-4 shadow-[6px_6px_0px_0px_black] bg-white"
+            className={nb({
+              border: 2,
+              shadow: "lg",
+              rounded: "lg",
+              className: "flex items-center gap-3 px-4 py-4 bg-white",
+            })}
           >
             <div className="w-12 h-12 flex items-center justify-center border-2 border-black rounded-md">
               <BsTwitterX className="w-6 h-6" />
@@ -458,7 +485,12 @@ function MobileLinksView() {
 
           <a
             href="https://www.linkedin.com/company/gdsc-rcoem/"
-            className="flex items-center gap-3 border-2 border-black rounded-lg px-4 py-4 shadow-[6px_6px_0px_0px_black] bg-white"
+            className={nb({
+              border: 2,
+              shadow: "lg",
+              rounded: "lg",
+              className: "flex items-center gap-3 px-4 py-4 bg-white",
+            })}
           >
             <div className="w-12 h-12 flex items-center justify-center border-2 border-black rounded-md">
               <FaLinkedinIn className="w-6 h-6" />
@@ -468,7 +500,12 @@ function MobileLinksView() {
 
           <a
             href="https://www.instagram.com/gdg_rbu/"
-            className="flex items-center gap-3 border-2 border-black rounded-lg px-4 py-4 shadow-[6px_6px_0px_0px_black] bg-white"
+            className={nb({
+              border: 2,
+              shadow: "lg",
+              rounded: "lg",
+              className: "flex items-center gap-3 px-4 py-4 bg-white",
+            })}
           >
             <div className="w-12 h-12 flex items-center justify-center border-2 border-black rounded-md">
               <AiOutlineInstagram className="w-6 h-6" />

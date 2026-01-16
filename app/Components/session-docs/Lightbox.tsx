@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { X, Loader2 } from "lucide-react";
 import Image from "next/image"
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 type LightboxProps = {
     open: boolean;
     src: string;
@@ -28,14 +29,20 @@ export const Lightbox: React.FC<LightboxProps> = ({ open, src, onClose }) => {
         >
             <div className="absolute inset-0 bg-black/90 backdrop-blur-sm"></div>
 
-            <div
-                className="relative z-10 max-w-[95vw] max-h-[90vh] bg-white border-4 border-black p-2 shadow-[10px_10px_0px_0px_#ffbe0b] cursor-default animate-in fade-in zoom-in duration-300"
+            <NeoBrutalism
+                border={4}
+                shadow="none"
+                className="relative z-10 max-w-[95vw] max-h-[90vh] bg-white p-2 shadow-[10px_10px_0px_0px_#ffbe0b] cursor-default animate-in fade-in zoom-in duration-300"
                 onClick={(e) => e.stopPropagation()}
                 style={{ minWidth: imageLoaded ? 'auto' : '300px', minHeight: imageLoaded ? 'auto' : '300px' }}
             >
                 <button
                     onClick={onClose}
-                    className="absolute -top-6 -right-6 bg-red-500 text-white border-4 border-black p-2 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none active:translate-y-2 active:shadow-none transition-all z-20"
+                    className={nb({
+                        border: 4,
+                        shadow: "lg",
+                        className: "absolute -top-6 -right-6 bg-red-500 text-white p-2 hover:translate-y-1 hover:shadow-none active:translate-y-2 active:shadow-none transition-all z-20"
+                    })}
                     title="Close"
                 >
                     <X size={32} strokeWidth={4} />
@@ -58,7 +65,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ open, src, onClose }) => {
                         />
                     </div>
                 </div>
-            </div>
+            </NeoBrutalism>
         </div>
     );
 };

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
 interface ImageCropModalProps {
   open: boolean;
@@ -110,13 +111,7 @@ export default function ImageCropModal({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
-        className="max-w-3xl"
-        style={{
-          backgroundColor: "#ffffff",
-          border: "4px solid #000000",
-          boxShadow: "8px 8px 0px #000000",
-          borderRadius: 0,
-        }}
+        className={nb({ border: 4, shadow: "xl", rounded: "none", className: "max-w-3xl bg-white" })}
       >
         <DialogHeader>
           <DialogTitle
@@ -130,11 +125,7 @@ export default function ImageCropModal({
         <div className="space-y-6">
           {/* Crop Area */}
           <div
-            className="relative w-full bg-gray-100"
-            style={{
-              height: "400px",
-              border: "3px solid #000000",
-            }}
+            className={nb({ border: 3, shadow: "none", className: "relative w-full bg-gray-100 h-[400px]" })}
           >
             <Cropper
               
@@ -181,13 +172,7 @@ export default function ImageCropModal({
             variant="outline"
             onClick={onClose}
             disabled={uploading}
-            className="font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
-            style={{
-              border: "3px solid #000000",
-              boxShadow: "4px 4px 0px #000000",
-              backgroundColor: "#ffffff",
-              color: "#000000",
-            }}
+            className={nb({ border: 3, shadow: "md", className: "font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1 bg-white text-black" })}
           >
             Cancel
           </Button>
@@ -195,12 +180,7 @@ export default function ImageCropModal({
             type="button"
             onClick={handleSave}
             disabled={uploading}
-            className="font-bold text-white transition-all duration-200 hover:translate-x-1 hover:translate-y-1"
-            style={{
-              backgroundColor: "#000000",
-              border: "3px solid #000000",
-              boxShadow: "4px 4px 0px #000000",
-            }}
+            className={nb({ border: 3, shadow: "md", className: "font-bold text-white transition-all duration-200 hover:translate-x-1 hover:translate-y-1 bg-black" })}
           >
             {uploading ? (
               <>

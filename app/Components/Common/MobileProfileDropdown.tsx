@@ -16,6 +16,7 @@ import { CiLogout } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
 import { toast } from "sonner";
+import { nb } from "@/components/ui/neo-brutalism";
 
 const MobileProfileDropdown = ({
   onLogout,
@@ -91,12 +92,14 @@ const MobileProfileDropdown = ({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          className="w-full px-6 py-3 font-bold  bg-white text-black  border-2 border-black
-          shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-          hover:bg-gray-300 hover:text-black
-          hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
-          active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
-          transition-all rounded-md flex items-center justify-center gap-2"
+          className={nb({
+            border: 2,
+            shadow: "md",
+            active: "push",
+            rounded: "md",
+            className:
+              "w-full px-6 py-3 font-bold bg-white text-black hover:bg-gray-300 hover:text-black flex items-center justify-center gap-2",
+          })}
         >
           <Avatar className="h-6 w-6 rounded-full">
             {imageUrl ? (
@@ -114,7 +117,12 @@ const MobileProfileDropdown = ({
       <DropdownMenuContent
         side="top"
         align="center"
-        className="w-64 rounded-2xl border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mb-2"
+        className={nb({
+          border: 2,
+          shadow: "lg",
+          rounded: "2xl",
+          className: "w-64 mb-2",
+        })}
       >
         <DropdownMenuLabel className="px-4 py-3">
           <p className="font-semibold">{fullName || userEmail.split("@")[0]}</p>
