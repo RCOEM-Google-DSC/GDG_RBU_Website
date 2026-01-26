@@ -9,7 +9,7 @@ import {
 } from "react-icons/hi";
 import { ClipboardList } from "lucide-react";
 import { BiLogIn } from "react-icons/bi";
-import { svgPaths } from "@/lib/svg";
+import { svgPaths } from "@/lib/svg/svg";
 
 interface AuthFormProps {
   isLogin: boolean;

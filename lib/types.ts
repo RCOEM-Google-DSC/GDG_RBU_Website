@@ -1,5 +1,38 @@
 import { ReactNode } from "react";
 
+// Blogs
+export interface Blog {
+    id: string;
+    title: string;
+    image_url: string;
+    published_at: string;
+    likes_count: number;
+    markdown: string;
+    writer: {
+        name: string;
+        image_url: string;
+    };
+}
+
+export interface BlogAuthorProps {
+    name: string;
+    imageUrl: string;
+    bio?: string;
+    publishedCount?: number;
+}
+
+export interface BlogCardProps {
+    id: string;
+    title: string;
+    imageUrl: string;
+    publishedAt: string;
+    likesCount: number;
+    writerName: string;
+    writerImage: string;
+    markdownPreview: string;
+}
+
+
 export function isProfileComplete(user: {
   name?: string | null;
   email?: string | null;

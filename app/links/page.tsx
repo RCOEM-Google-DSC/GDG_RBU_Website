@@ -1,4 +1,4 @@
-import { svgPaths } from "@/lib/svg";
+import { svgPaths } from "@/lib/svg/svg";
 import clsx from "clsx";
 import { CgMail } from "react-icons/cg";
 import { FaYoutube, FaLinkedinIn, FaDiscord } from "react-icons/fa";
@@ -123,20 +123,21 @@ function LeftLogo() {
 
 function Desktop10Component() {
   return (
-    <div
-      className=" relative w-[1440px] h-[1024px]"
-      data-name="Desktop - 10"
-    >
+    <div className=" relative w-[1440px] h-[1024px]" data-name="Desktop - 10">
       <div
         className="fixed inset-0 pointer-events-none z-0 "
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
+            "linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
         }}
       />
       {/* neo brutalism box */}
-      <NeoBrutalism border={4} shadow="xl" className="absolute h-24 left-[377px] top-[410px] w-[675px] z-10 bg-white">
+      <NeoBrutalism
+        border={4}
+        shadow="xl"
+        className="absolute h-24 left-[377px] top-[410px] w-[675px] z-10 bg-white"
+      >
         {null}
       </NeoBrutalism>
 
@@ -398,25 +399,44 @@ function MobileLinksView() {
       <div className="w-full max-w-md relative">
         {/* Left Logo - positioned at heading height */}
         <div className="absolute left-0 top-9 w-12 h-12">
-          <Image src="/assets/shapes/r-b.svg" alt="left" width={48} height={48} className="w-full h-full" />
+          <Image
+            src="/assets/shapes/r-b.svg"
+            alt="left"
+            width={48}
+            height={48}
+            className="w-full h-full"
+          />
         </div>
 
         {/* Right Logo - positioned at heading height */}
         <div className="absolute right-0 top-9 w-12 h-12">
-          <Image src="/assets/shapes/y-g.svg" alt="right" width={48} height={48} className="w-full h-full" />
+          <Image
+            src="/assets/shapes/y-g.svg"
+            alt="right"
+            width={48}
+            height={48}
+            className="w-full h-full"
+          />
         </div>
 
-        <h1 className="text-center font-geist font-extrabold text-2xl leading-tight mb-2 px-14 mt-5">Join Our Community.</h1>
-        <h2 className="text-center font-geist font-extrabold text-2xl leading-tight mb-4 px-14">Connect and Grow with us.</h2>
+        <h1 className="text-center font-geist font-extrabold text-2xl leading-tight mb-2 px-14 mt-5">
+          Join Our Community.
+        </h1>
+        <h2 className="text-center font-geist font-extrabold text-2xl leading-tight mb-4 px-14">
+          Connect and Grow with us.
+        </h2>
 
         <p className="text-center text-sm text-gray-700 mb-6">
-          Connect with like-minded individuals, share knowledge, and grow together across our platform
+          Connect with like-minded individuals, share knowledge, and grow
+          together across our platform
         </p>
 
         <div className="relative mb-8 flex justify-center">
           <div className="relative inline-block">
             <NeoBrutalism border={3} shadow="lg" className="bg-white px-6 py-3">
-              <h3 className="font-geist font-extrabold text-base whitespace-nowrap">Unlock Your Potential.</h3>
+              <h3 className="font-geist font-extrabold text-base whitespace-nowrap">
+                Unlock Your Potential.
+              </h3>
             </NeoBrutalism>
             <div className="absolute top-0 right-0 w-full h-full -z-10 translate-x-[6px] translate-y-[5px] bg-[#D9D9D9] border-[3px] border-black border-l-0 border-t-0" />
           </div>
@@ -514,7 +534,9 @@ function MobileLinksView() {
           </a>
         </div>
 
-        <p className="text-center text-sm text-[#6e6d6d] mt-4">Stay connected</p>
+        <p className="text-center text-sm text-[#6e6d6d] mt-4">
+          Stay connected
+        </p>
       </div>
     </div>
   );

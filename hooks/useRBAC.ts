@@ -8,7 +8,7 @@ import {
   canManagePartners,
   canViewParticipants,
   UserRole,
-} from "@/lib/rbac";
+} from "@/lib/rbac/rbac";
 
 /**
  * Custom hook for role-based access control
