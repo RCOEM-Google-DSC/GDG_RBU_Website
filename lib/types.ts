@@ -32,6 +32,17 @@ export interface BlogCardProps {
     markdownPreview: string;
 }
 
+// comments
+export interface Comment {
+    id: string;
+    comment: string;
+    created_at: string;
+    user: {
+        name: string;
+        image_url: string;
+    };
+}
+
 
 export function isProfileComplete(user: {
   name?: string | null;

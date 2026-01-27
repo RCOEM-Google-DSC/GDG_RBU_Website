@@ -4,11 +4,9 @@ import NavBar from "./Components/Navigation/NavBar";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import { Toaster } from "sonner";
 
-
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import localFont from "next/font/local";
-
 
 const retron = localFont({
   src: "../lib/Retron2000.ttf",
@@ -75,9 +73,7 @@ export default function RootLayout({
           font-sans antialiased flex flex-col min-h-screen
         `}
       >
-      
         <script
-        
           dangerouslySetInnerHTML={{
             __html: `(function () {
               try {
@@ -97,7 +93,6 @@ export default function RootLayout({
         />
 
         <RootProvider theme={{ enabled: false }}>
-       
           <NavBar />
           <main className="relative w-full pt-[70px]">{children}</main>
           <Toaster position="top-right" richColors closeButton={true} />

@@ -1,11 +1,23 @@
 import { BlogCard } from "./BlogCard";
-import { Blog } from "@/lib/types"
+import { Blog } from "@/lib/types";
 
 interface BlogListProps {
     blogs: Blog[];
+    loading?: boolean;
 }
 
-export function BlogList({ blogs }: BlogListProps) {
+export function BlogList({ blogs, loading = false }: BlogListProps) {
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-4 border-black border-t-transparent mx-auto mb-4"></div>
+                    <h3 className="text-2xl font-black mb-2">Loading Blogs...</h3>
+                </div>
+            </div>
+        );
+    }
+
     if (!blogs || blogs.length === 0) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">

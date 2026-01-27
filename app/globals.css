@@ -498,3 +498,56 @@ html.preloader-active *:focus {
   z-index: 0 !important;
   opacity: 1 !important;
 }
+
+/* Syntax Highlighter - Remove ALL backgrounds from code tokens */
+pre code span,
+pre span,
+code span,
+.hljs span,
+[class*="hljs"] span,
+pre[class*="language-"] span,
+code[class*="language-"] span {
+  background: none !important;
+  background-color: transparent !important;
+}
+
+/* Ensure code block container maintains dark background */
+pre code,
+pre[class*="language-"],
+code[class*="language-"],
+.hljs,
+pre .hljs,
+code.hljs {
+  background: #282c34 !important;
+  background-color: #282c34 !important;
+}
+
+/* Override highlight.js theme background */
+.hljs {
+  background: #282c34 !important;
+  color: #abb2bf !important;
+  padding: 0 !important;
+}
+
+/* Remove all outlines and borders from code elements */
+pre code,
+code.hljs,
+.hljs,
+.hljs *,
+pre code *,
+code span {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+/* Remove all borders from code block table */
+table tr,
+table td,
+table tbody tr,
+table tbody td {
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+}

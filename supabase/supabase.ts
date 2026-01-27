@@ -12,7 +12,7 @@ function getSupabaseClient(): SupabaseClient {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error(
-      "Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file."
+      "Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file.",
     );
   }
 
@@ -60,6 +60,123 @@ export async function getSession() {
   return session;
 }
 
+// Blogs
+export async function getBlogs() {
+  const { data, error } = await supabase
+    .from("blogs")
+    .select(
+      `
+      id,
+      title,
+      image_url,
+      published_at,
+      likes_count,
+      markdown,
+      writer:writer_id (
+        name,
+        image_url
+      )
+    `,
+    )
+    .order("published_at", { ascending: false });
+  if (error) {
+    console.error(
+      "Error fetching blogs:",
+      error.message,
+      error.code,
+      error.details,
+    );
+    throw new Error(error.message || "Failed to fetch blogs");
+  }
+  return data;
+}
+
+export async function getBlog(blogid: string) {
+  const { data, error } = await supabase
+    .from("blogs")
+    .select(
+      `
+      *,
+      writer:writer_id (
+        name,
+        image_url
+      ),
+      comments:comments_blogs (
+        id,
+        comment,
+        created_at,
+        user:user_id (
+          name,
+          image_url
+        )
+      )
+    `,
+    )
+    .eq("id", blogid)
+    .single();
+
+  if (error) {
+    console.error(
+      "Error fetching blog:",
+      error.message,
+      error.code,
+      error.details,
+    );
+    throw new Error(error.message || "Failed to fetch blog");
+  }
+
+  return data;
+}
+
+export async function addComment(blogId: string, comment: string) {
+  const userId = await getCurrentUserId();
+
+  if (!userId) {
+    throw new Error("User must be authenticated to comment");
+  }
+
+  const { data, error } = await supabase
+    .from("comments_blogs")
+    .insert({
+      blog_id: blogId,
+      user_id: userId,
+      comment,
+      created_at: new Date().toISOString(),
+    })
+    .select(
+      `
+      id,
+      comment,
+      created_at,
+      user:user_id (
+        name,
+        image_url
+      )
+    `,
+    )
+    .single();
+
+  if (error) {
+    console.error("Comment error:", error.message, error.code, error.details);
+    throw new Error(error.message || "Failed to add comment");
+  }
+
+  return data;
+}
+
+export async function likeBlog(blogId: string) {
+  const { error } = await supabase.rpc("increment_blog_likes", {
+    blog_id: blogId,
+  });
+
+  if (error) {
+    console.error("Like error:", error.message, error.code, error.details);
+    throw new Error(error.message || "Failed to like blog");
+  }
+
+  return { success: true };
+}
+
 /**
  * Register for an event. Sets user_id = auth.uid() from the client.
  * RLS will enforce that users can only create registrations for themselves.
@@ -72,7 +189,7 @@ export async function registerForEvent(
     is_team_registration?: boolean;
     wants_random_team?: boolean;
     is_open_to_alliances?: boolean;
-  }
+  },
 ) {
   const userId = await getCurrentUserId();
 
@@ -96,7 +213,7 @@ export async function registerForEvent(
       "Registration error:",
       error.message,
       error.code,
-      error.details
+      error.details,
     );
     throw new Error(error.message || "Failed to register for event");
   }
@@ -143,7 +260,7 @@ export async function createEvent(eventData: {
       "Event creation error:",
       error.message,
       error.code,
-      error.details
+      error.details,
     );
     throw new Error(error.message || "Failed to create event");
   }
@@ -168,7 +285,7 @@ export async function updateEvent(
     is_team_event: boolean;
     max_team_size: number;
     category: string;
-  }>
+  }>,
 ) {
   const { data, error } = await supabase
     .from("events")
@@ -185,7 +302,7 @@ export async function updateEvent(
       "Event update error:",
       error.message,
       error.code,
-      error.details
+      error.details,
     );
     throw new Error(error.message || "Failed to update event");
   }
@@ -208,7 +325,7 @@ export async function getEvent(eventId: string) {
       "Error fetching event:",
       error.message,
       error.code,
-      error.details
+      error.details,
     );
     throw new Error(error.message || "Failed to fetch event");
   }
@@ -230,7 +347,7 @@ export async function getEvents() {
       "Error fetching events:",
       error.message,
       error.code,
-      error.details
+      error.details,
     );
     throw new Error(error.message || "Failed to fetch events");
   }
@@ -259,7 +376,7 @@ export async function getUserRegistrations() {
       "Error fetching registrations:",
       error.message,
       error.code,
-      error.details
+      error.details,
     );
     throw new Error(error.message || "Failed to fetch registrations");
   }
@@ -353,15 +470,15 @@ export async function getGalleryImages(galleryUid: string) {
   if (error || !data?.image_url) return [];
 
   return data.image_url.map((url: string) =>
-    url.replace("/upload/", "/upload/f_auto,q_auto/")
+    url.replace("/upload/", "/upload/f_auto,q_auto/"),
   );
 }
-
 
 export async function getEventWithPartner(eventId: string) {
   const { data, error } = await supabase
     .from("events")
-    .select(`
+    .select(
+      `
       *,
       partners (
         id,
@@ -370,7 +487,8 @@ export async function getEventWithPartner(eventId: string) {
         logo_url,
         created_at
       )
-    `)
+    `,
+    )
     .eq("id", eventId)
     .single();
 
@@ -379,7 +497,7 @@ export async function getEventWithPartner(eventId: string) {
       "Error fetching event with partner:",
       error.message,
       error.code,
-      error.details
+      error.details,
     );
     throw new Error(error.message || "Failed to fetch event with partner");
   }
