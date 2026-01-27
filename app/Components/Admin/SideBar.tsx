@@ -1,5 +1,12 @@
 import { BiCalendarEvent } from "react-icons/bi";
-import { Calendar, Handshake, Users2, UserCog } from "lucide-react";
+import {
+  Calendar,
+  Handshake,
+  Users2,
+  UserCog,
+  FileText,
+  PenSquare,
+} from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -24,6 +31,11 @@ const Buttons = [
     title: "Add Event",
     url: "/admin/events/add",
     icon: Calendar,
+  },
+  {
+    title: "Create Blog",
+    url: "/admin/blogs",
+    icon: PenSquare,
   },
   {
     title: "Users",

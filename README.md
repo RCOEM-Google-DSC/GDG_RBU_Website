@@ -45,5 +45,5 @@ Official website for Google Developer Groups on Campus - RBU
 | `/admin/events`              | ✅        | ✅         | ❌       |
 | `/admin/events/add`          | ✅        | ✅         | ❌       |
 | `/admin/team-members`        | ✅        | ✅         | ❌       |
-| `/admin/users`               | ✅        | ❌         | ❌       |
-
+| `/admin/users`               | ✅        | ✅ (partial)        | ❌       |
+| `/admin/blogs`               | ✅        | ✅         | ❌       |
