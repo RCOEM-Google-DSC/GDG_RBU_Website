@@ -44,7 +44,7 @@ export default function AdminLayout({
         <SideBar />
         <SidebarInset className="flex-1">
           {/* Sidebar trigger and header */}
-          <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-2 border-b bg-white px-4 transition-all duration-300">
+          <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-2 border-b bg-white px-4 transition-all duration-300 mt-4">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <h1 className="text-lg font-semibold">Admin Dashboard</h1>

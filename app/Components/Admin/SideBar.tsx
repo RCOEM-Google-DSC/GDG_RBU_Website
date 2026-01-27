@@ -7,6 +7,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -44,6 +45,9 @@ const Buttons = [
 export default function SideBar() {
   return (
     <Sidebar>
+      <SidebarHeader className="p-5 py-7 border-b-2">
+        <h2 className="text-2xl">Admin Dashboard</h2>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>

@@ -1,0 +1,150 @@
+/* Fumadocs-specific CSS - only loaded for docs pages */
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+/* Mobile sidebar positioning - below navbar */
+@media (max-width: 767px) {
+  /* Mobile sidebar drawer */
+  #gdg-docs-wrapper [data-slot="sidebar-container"],
+  #gdg-docs-wrapper #fd-sidebar,
+  #gdg-docs-wrapper aside[data-fd-sidebar="true"],
+  #gdg-docs-wrapper aside,
+  #gdg-docs-wrapper [role="dialog"] aside,
+  #gdg-docs-wrapper [data-vaul-drawer] aside {
+    top: 70px !important;
+    height: calc(100vh - 70px) !important;
+    max-height: calc(100vh - 70px) !important;
+    padding-top: 1rem !important;
+  }
+
+  /* Mobile sidebar backdrop/overlay */
+  #gdg-docs-wrapper [data-vaul-drawer-wrapper],
+  #gdg-docs-wrapper [data-vaul-overlay] {
+    top: 70px !important;
+    height: calc(100vh - 70px) !important;
+  }
+
+  /* Ensure sidebar content is scrollable on mobile */
+  #gdg-docs-wrapper [data-slot="sidebar-container"] > *,
+  #gdg-docs-wrapper #fd-sidebar > *,
+  #gdg-docs-wrapper aside > * {
+    max-height: calc(100vh - 70px - 2rem) !important;
+    overflow-y: auto !important;
+  }
+
+  /* Align sidebar header items horizontally */
+  #gdg-docs-wrapper [data-slot="sidebar"] > div:first-child,
+  #gdg-docs-wrapper aside[data-fd-sidebar="true"] > div:first-child,
+  #gdg-docs-wrapper #fd-sidebar > div:first-child {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Ensure toggle button and links are inline */
+  #gdg-docs-wrapper [data-slot="sidebar"] nav,
+  #gdg-docs-wrapper aside[data-fd-sidebar="true"] nav {
+    display: flex !important;
+    align-items: center !important;
+    flex: 1 !important;
+  }
+}
+
+/* Custom sidebar positioning to account for navbar - DESKTOP ONLY */
+@media (min-width: 768px) {
+  #gdg-docs-wrapper [data-slot="sidebar-container"],
+  #gdg-docs-wrapper #fd-sidebar,
+  #gdg-docs-wrapper aside[data-fd-sidebar="true"],
+  #gdg-docs-wrapper aside {
+    top: 15px !important;
+    height: calc(100vh - 70px) !important;
+    max-height: calc(100vh - 70px) !important;
+    overflow-y: auto !important;
+    width: var(--fd-sidebar-width) !important;
+    min-width: var(--fd-sidebar-width) !important;
+    flex-shrink: 0 !important;
+    transition:
+      top 0.3s ease,
+      height 0.3s ease;
+  }
+
+  /* Prevent sidebar content from stretching */
+  #gdg-docs-wrapper [data-slot="sidebar-container"] > *,
+  #gdg-docs-wrapper #fd-sidebar > *,
+  #gdg-docs-wrapper aside > * {
+    max-height: 100% !important;
+    overflow-y: auto !important;
+  }
+
+  /* Fix sidebar inner content height */
+  #gdg-docs-wrapper [data-slot="sidebar-container"] [data-slot="sidebar"] {
+    height: 100% !important;
+    max-height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Adjust sidebar when navbar is hidden */
+  body:has(nav.-translate-y-full) #gdg-docs-wrapper [data-slot="sidebar-container"],
+  body:has(nav.-translate-y-full) #gdg-docs-wrapper #fd-sidebar,
+  body:has(nav.-translate-y-full) #gdg-docs-wrapper aside[data-fd-sidebar="true"],
+  body:has(nav.-translate-y-full) #gdg-docs-wrapper aside {
+    top: 0 !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+  }
+}
+
+/* Fumadocs navigation positioning - below navbar - DESKTOP ONLY */
+@media (min-width: 768px) {
+  #gdg-docs-wrapper [data-fumadocs-nav],
+  #gdg-docs-wrapper nav[data-fd-nav="true"],
+  #gdg-docs-wrapper header {
+    top: 70px !important;
+    z-index: 40 !important;
+    transition: top 0.3s ease !important;
+  }
+
+  /* When navbar is hidden, move nav to top */
+  body:has(nav.-translate-y-full) #gdg-docs-wrapper [data-fumadocs-nav],
+  body:has(nav.-translate-y-full) #gdg-docs-wrapper nav[data-fd-nav="true"],
+  body:has(nav.-translate-y-full) #gdg-docs-wrapper header {
+    top: 0 !important;
+  }
+
+  /* Fumadocs sidebar toggle buttons - positioned below navbar with spacing */
+  #gdg-docs-wrapper [data-fumadocs-sidebar-toggle],
+  #gdg-docs-wrapper button[data-fd-sidebar-toggle="true"] {
+    top: calc(70px + 0.75rem) !important;
+    z-index: 50 !important;
+    transition: top 0.3s ease !important;
+  }
+
+  /* When navbar is hidden, move toggle buttons to top with small margin */
+  body:has(nav.-translate-y-full) #gdg-docs-wrapper [data-fumadocs-sidebar-toggle],
+  body:has(nav.-translate-y-full) #gdg-docs-wrapper button[data-fd-sidebar-toggle="true"] {
+    top: 0.75rem !important;
+  }
+}
+
+/* Hide theme toggle in docs */
+#gdg-docs-wrapper [data-theme-toggle],
+#gdg-docs-wrapper button[aria-label*="theme" i],
+#gdg-docs-wrapper button[aria-label*="Toggle theme" i] {
+  display: none !important;
+}
+
+/* Search button positioning */
+#gdg-docs-wrapper .docs-search-button,
+#gdg-docs-wrapper [data-search-toggle],
+#gdg-docs-wrapper button[aria-label="Search"] {
+  top: 500px !important;
+  transition: top 0.3s ease !important;
+}
+
+body:has(nav.-translate-y-full) #gdg-docs-wrapper .docs-search-button,
+body:has(nav.-translate-y-full) #gdg-docs-wrapper [data-search-toggle],
+body:has(nav.-translate-y-full) #gdg-docs-wrapper button[aria-label="Search"] {
+  top: 1rem !important;
+}

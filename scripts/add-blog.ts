@@ -33,11 +33,11 @@ interface BlogPost {
 
 // configs
 const blogPost: BlogPost = {
-  writerEmail: "24jaiswala_2@rbunagpur.in", 
+  writerEmail: "saptanshuwanjari63@gmail.com", 
   imageUrl:
-    "https://res.cloudinary.com/dlvkywzol/image/upload/v1767200855/IMG-20251014-WA0066_zwzfw3.jpg",
-  title: "Getting Started with Next.js and Supabase",
-  markdownFile: "./team-blogs/sample.md", 
+    "https://res.cloudinary.com/dlvkywzol/image/upload/v1769535172/WhatsApp_Image_2026-01-27_at_11.00.44_PM_e4e8au.jpg",
+  title: "Why LangChain is Changing How We Build AI Applications",
+  markdownFile: "./team-blogs/langchain.md", 
   publishedAt: new Date().toISOString(), 
 };
 
