@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
 /* Fumadocs-specific CSS - only loaded for docs pages */
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
@@ -86,9 +89,13 @@
   }
 
   /* Adjust sidebar when navbar is hidden */
-  body:has(nav.-translate-y-full) #gdg-docs-wrapper [data-slot="sidebar-container"],
+  body:has(nav.-translate-y-full)
+    #gdg-docs-wrapper
+    [data-slot="sidebar-container"],
   body:has(nav.-translate-y-full) #gdg-docs-wrapper #fd-sidebar,
-  body:has(nav.-translate-y-full) #gdg-docs-wrapper aside[data-fd-sidebar="true"],
+  body:has(nav.-translate-y-full)
+    #gdg-docs-wrapper
+    aside[data-fd-sidebar="true"],
   body:has(nav.-translate-y-full) #gdg-docs-wrapper aside {
     top: 0 !important;
     height: 100vh !important;
@@ -122,8 +129,12 @@
   }
 
   /* When navbar is hidden, move toggle buttons to top with small margin */
-  body:has(nav.-translate-y-full) #gdg-docs-wrapper [data-fumadocs-sidebar-toggle],
-  body:has(nav.-translate-y-full) #gdg-docs-wrapper button[data-fd-sidebar-toggle="true"] {
+  body:has(nav.-translate-y-full)
+    #gdg-docs-wrapper
+    [data-fumadocs-sidebar-toggle],
+  body:has(nav.-translate-y-full)
+    #gdg-docs-wrapper
+    button[data-fd-sidebar-toggle="true"] {
     top: 0.75rem !important;
   }
 }
