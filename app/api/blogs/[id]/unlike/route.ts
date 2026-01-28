@@ -8,7 +8,7 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    console.log("Attempting to like blog:", id);
+    console.log("Attempting to unlike blog:", id);
 
     // Create server-side Supabase client with cookie access
     const cookieStore = await cookies();
@@ -37,49 +37,34 @@ export async function POST(
 
     if (authError || !user) {
       return NextResponse.json(
-        { error: "User must be authenticated to like a blog" },
+        { error: "User must be authenticated to unlike a blog" },
         { status: 401 },
       );
     }
 
-    // Check if user has already liked this blog
-    const { data: existingLike } = await supabase
+    // Remove from blog_likes table
+    const { error: unlikeError } = await supabase
       .from("blog_likes")
-      .select("id")
+      .delete()
       .eq("blog_id", id)
-      .eq("user_id", user.id)
-      .maybeSingle();
+      .eq("user_id", user.id);
 
-    if (existingLike) {
+    if (unlikeError) {
+      console.error("Error removing like:", unlikeError);
       return NextResponse.json(
-        { error: "You have already liked this blog" },
-        { status: 400 },
-      );
-    }
-
-    // Insert into blog_likes table
-    const { error: likeError } = await supabase.from("blog_likes").insert({
-      blog_id: id,
-      user_id: user.id,
-      created_at: new Date().toISOString(),
-    });
-
-    if (likeError) {
-      console.error("Error adding like:", likeError);
-      return NextResponse.json(
-        { error: likeError.message || "Failed to like blog" },
+        { error: unlikeError.message || "Failed to unlike blog" },
         { status: 500 },
       );
     }
 
-    // Get current likes count and increment
+    // Get current likes count and decrement
     const { data: blogData } = await supabase
       .from("blogs")
       .select("likes_count")
       .eq("id", id)
       .single();
 
-    const newLikesCount = (blogData?.likes_count || 0) + 1;
+    const newLikesCount = Math.max((blogData?.likes_count || 0) - 1, 0);
 
     // Update likes_count in blogs table
     const { data, error: updateError } = await supabase
@@ -97,12 +82,12 @@ export async function POST(
       );
     }
 
-    console.log("Like successful:", data);
+    console.log("Unlike successful:", data);
     return NextResponse.json({ success: true, data }, { status: 200 });
   } catch (error: any) {
-    console.error("Error in like API route:", error);
+    console.error("Error in unlike API route:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to like blog" },
+      { error: error.message || "Failed to unlike blog" },
       { status: 500 },
     );
   }

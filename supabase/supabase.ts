@@ -164,17 +164,124 @@ export async function addComment(blogId: string, comment: string) {
   return data;
 }
 
-export async function likeBlog(blogId: string) {
-  const { error } = await supabase.rpc("increment_blog_likes", {
-    blog_id: blogId,
-  });
+/**
+ * Check if the current user has liked a specific blog
+ */
+export async function hasUserLikedBlog(blogId: string): Promise<boolean> {
+  const userId = await getCurrentUserId();
 
-  if (error) {
-    console.error("Like error:", error.message, error.code, error.details);
-    throw new Error(error.message || "Failed to like blog");
+  if (!userId) {
+    return false;
   }
 
-  return { success: true };
+  const { data, error } = await supabase
+    .from("blog_likes")
+    .select("id")
+    .eq("blog_id", blogId)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error checking if user liked blog:", error);
+    return false;
+  }
+
+  return !!data;
+}
+
+/**
+ * Like a blog post (adds to blog_likes table and increments likes_count)
+ */
+export async function likeBlog(blogId: string) {
+  const userId = await getCurrentUserId();
+
+  if (!userId) {
+    throw new Error("User must be authenticated to like a blog");
+  }
+
+  // Check if user has already liked this blog
+  const alreadyLiked = await hasUserLikedBlog(blogId);
+  if (alreadyLiked) {
+    throw new Error("You have already liked this blog");
+  }
+
+  // Insert into blog_likes table
+  const { error: likeError } = await supabase.from("blog_likes").insert({
+    blog_id: blogId,
+    user_id: userId,
+    created_at: new Date().toISOString(),
+  });
+
+  if (likeError) {
+    console.error("Error adding like:", likeError);
+    throw new Error(likeError.message || "Failed to like blog");
+  }
+
+  // increment likes 
+  const { data: blogData } = await supabase
+    .from("blogs")
+    .select("likes_count")
+    .eq("id", blogId)
+    .single();
+
+  const newLikesCount = (blogData?.likes_count || 0) + 1;
+
+  const { data, error: updateError } = await supabase
+    .from("blogs")
+    .update({ likes_count: newLikesCount })
+    .eq("id", blogId)
+    .select("likes_count")
+    .single();
+
+  if (updateError) {
+    console.error("Error updating likes count:", updateError);
+    throw new Error(updateError.message || "Failed to update likes count");
+  }
+
+  return data;
+}
+
+export async function unlikeBlog(blogId: string) {
+  const userId = await getCurrentUserId();
+
+  if (!userId) {
+    throw new Error("User must be authenticated to unlike a blog");
+  }
+
+  // remove like
+  const { error: unlikeError } = await supabase
+    .from("blog_likes")
+    .delete()
+    .eq("blog_id", blogId)
+    .eq("user_id", userId);
+
+  if (unlikeError) {
+    console.error("Error removing like:", unlikeError);
+    throw new Error(unlikeError.message || "Failed to unlike blog");
+  }
+
+  // decrement likes
+  const { data: blogData } = await supabase
+    .from("blogs")
+    .select("likes_count")
+    .eq("id", blogId)
+    .single();
+
+  const newLikesCount = Math.max((blogData?.likes_count || 0) - 1, 0);
+
+  const { data, error: updateError } = await supabase
+    .from("blogs")
+    .update({ likes_count: newLikesCount })
+    .eq("id", blogId)
+    .select("likes_count")
+    .single();
+
+  if (updateError) {
+    console.error("Error updating likes count:", updateError);
+    throw new Error(updateError.message || "Failed to update likes count");
+  }
+
+  return data;
 }
 
 /**
