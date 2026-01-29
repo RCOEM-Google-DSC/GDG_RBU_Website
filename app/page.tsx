@@ -10,6 +10,7 @@ import Hero from "./Components/Landing/Hero";
 import { getUpcomingEvents } from "@/supabase/supabase";
 import Link from "next/link";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
+import { toast } from "sonner";
 
 type Event = {
   id: string;
@@ -47,7 +48,7 @@ export default function Home() {
         const upcoming = await getUpcomingEvents();
         if (upcoming) setEvents(upcoming as Event[]);
       } catch (err) {
-        console.error("Error fetching upcoming events:", err);
+        toast.error("Error fetching upcoming events");
       }
     };
     fetchEvents();

@@ -1,20 +1,26 @@
-// app/events/[eventid]/page.tsx  (or wherever you keep it)
+// app/events/[id]/page.tsx  (or wherever you keep it)
 "use client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { Ticket, Users, ArrowDownRight, Sparkles } from "lucide-react";
-import { getEvent, getGalleryImages, getEventWithPartner } from "@/supabase/supabase";
+import {
+  getEvent,
+  getGalleryImages,
+  getEventWithPartner,
+  getEventFeedback,
+} from "@/supabase/supabase";
 import { Lightbox } from "@/app/Components/session-docs/Lightbox";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
+import { Feedback } from "@/app/Components/feedback/Feedback";
 
 export default function EventPage({
   params: paramsPromise,
 }: {
-  params: Promise<{ eventid: string }>;
+  params: Promise<{ id: string }>;
 }) {
   const params = React.use(paramsPromise);
-  const { eventid } = params;
+  const { id } = params;
 
   const [event, setEvent] = useState<any>(null);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
@@ -23,6 +29,7 @@ export default function EventPage({
     open: false,
     src: "",
   });
+  const [feedback, setFeedback] = useState<any[]>([]);
 
   /* ---------------- FETCH DATA ---------------- */
   useEffect(() => {
@@ -32,10 +39,10 @@ export default function EventPage({
         // If getEventWithPartner exists and works, use it; otherwise fallback to getEvent.
         let eventData: any = null;
         try {
-          eventData = await getEventWithPartner(eventid);
+          eventData = await getEventWithPartner(id);
         } catch (e) {
           // fallback to original getEvent if partner helper fails for any reason
-          eventData = await getEvent(eventid);
+          eventData = await getEvent(id);
         }
 
         if (!eventData) notFound();
@@ -47,6 +54,14 @@ export default function EventPage({
           setGalleryImages(images);
         }
 
+        // Fetch feedback for the event
+        try {
+          const feedbackData = await getEventFeedback(id);
+          setFeedback(feedbackData || []);
+        } catch (err) {
+          console.error("Error fetching feedback:", err);
+        }
+
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -55,7 +70,7 @@ export default function EventPage({
     };
 
     fetchData();
-  }, [eventid]);
+  }, [id]);
 
   if (loading || !event) {
     return (
@@ -104,8 +119,8 @@ export default function EventPage({
         className="fixed inset-0 -z-10 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
+            "linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
         }}
       />
 
@@ -119,25 +134,38 @@ export default function EventPage({
             shadow="none"
             className={`relative z-10 w-full h-[300px] md:h-[420px] 
             shadow-[6px_6px_0px_0px_#8338ec] md:shadow-[8px_8px_0px_0px_#8338ec] bg-white p-2 rotate-0 md:rotate-1 mt-36 sm:mt-32 md:mt-20 cursor-pointer group`}
-            onClick={() => openImageViewer(
-              event.image_url
-                ? event.image_url.replace("/upload/", "/upload/f_auto,q_auto/")
-                : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop"
-            )}
+            onClick={() =>
+              openImageViewer(
+                event.image_url
+                  ? event.image_url.replace(
+                    "/upload/",
+                    "/upload/f_auto,q_auto/",
+                  )
+                  : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop",
+              )
+            }
           >
             <Image
               height={420}
               width={800}
               src={
                 event.image_url
-                  ? event.image_url.replace("/upload/", "/upload/f_auto,q_auto/")
+                  ? event.image_url.replace(
+                    "/upload/",
+                    "/upload/f_auto,q_auto/",
+                  )
                   : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop"
               }
               alt={event.title}
               className="w-full h-full object-cover border-2 border-black  transition-transform duration-300"
             />
 
-            <NeoBrutalism border={4} shadow="md" rounded="full" className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 z-30">
+            <NeoBrutalism
+              border={4}
+              shadow="md"
+              rounded="full"
+              className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 z-30"
+            >
               <ArrowDownRight
                 size={24}
                 className="md:w-8 md:h-8 text-[#8338ec]"
@@ -203,7 +231,7 @@ export default function EventPage({
           {/* Download Badge Button - Show if badge_url exists */}
           {event.badge_url && (
             <a
-              href={`/events/${eventid}/badge`}
+              href={`/events/${id}/badge`}
               className={nb({
                 border: 4,
                 shadow: "lg",
@@ -238,7 +266,10 @@ export default function EventPage({
             className="bg-white p-6 md:p-8 flex flex-col gap-6"
           >
             {partnersArray.map((p: any, idx: number) => (
-              <div key={idx} className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+              <div
+                key={idx}
+                className="flex flex-col md:flex-row items-center gap-4 md:gap-8"
+              >
                 {/* left: partner image  */}
                 <div className="w-full md:w-1/3 flex items-center justify-center">
                   {p.logo_url ? (
@@ -314,9 +345,11 @@ export default function EventPage({
             border={4}
             shadow="xl"
             className="bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:rotate-1 cursor-pointer group"
-            onClick={() => openImageViewer(
-              event.crew_url.replace("/upload/", "/upload/f_auto,q_auto/")
-            )}
+            onClick={() =>
+              openImageViewer(
+                event.crew_url.replace("/upload/", "/upload/f_auto,q_auto/"),
+              )
+            }
           >
             <div className="bg-black p-2 border-4 border-black rotate-0 md:-rotate-1">
               <Image
@@ -375,13 +408,19 @@ export default function EventPage({
         </section>
       )}
 
+      {/* Feedback Section */}
+      <section className="my-24 max-w-6xl mx-auto p-4 md:p-6 relative z-10">
+        <NeoBrutalism border={4} shadow="xl" className="bg-white p-8">
+          <Feedback eventId={id} initialFeedback={feedback} />
+        </NeoBrutalism>
+      </section>
+
       {/* Lightbox */}
       <Lightbox
         open={lightbox.open}
         src={lightbox.src}
         onClose={() => setLightbox({ open: false, src: "" })}
       />
-
     </div>
   );
 }

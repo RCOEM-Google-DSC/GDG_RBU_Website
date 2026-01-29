@@ -8,7 +8,7 @@ import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
 export default function BadgePage() {
     const params = useParams();
-    const eventid = params.eventid as string;
+    const id = params.id as string;
     const [event, setEvent] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -20,7 +20,7 @@ export default function BadgePage() {
     useEffect(() => {
         const fetchEvent = async () => {
             try {
-                const eventData = await getEvent(eventid);
+                const eventData = await getEvent(id);
                 if (!eventData) {
                     notFound();
                 }
@@ -33,7 +33,7 @@ export default function BadgePage() {
         };
 
         fetchEvent();
-    }, [eventid]);
+    }, [id]);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -182,7 +182,7 @@ export default function BadgePage() {
 
     // Redirect if no badge available
     if (!event.badge_url) {
-        redirect(`/events/${eventid}`);
+        redirect(`/events/${id}`);
     }
 
     return (

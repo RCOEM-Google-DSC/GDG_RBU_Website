@@ -1,7 +1,8 @@
 "use client";
+import { MdEventAvailable } from "react-icons/md"; 
 
 import { useEffect, useState } from "react";
-import { Users } from "lucide-react";
+import { UserCog, Users } from "lucide-react";
 import { supabase } from "@/supabase/supabase";
 import { toast } from "sonner";
 import InfoCard from "../Components/Admin/InfoCard";
@@ -15,8 +16,8 @@ type StatsData = {
 export default function AdminPage() {
   const [stats, setStats] = useState<StatsData[]>([
     { title: "Total Users", data: 0, icon: Users },
-    { title: "Event Registrations", data: 0, icon: Users },
-    { title: "Team Members", data: 0, icon: Users },
+    { title: "Event Registrations", data: 0, icon: MdEventAvailable },
+    { title: "Team Members", data: 0, icon: UserCog },
   ]);
   const [loading, setLoading] = useState(true);
 
@@ -56,12 +57,12 @@ export default function AdminPage() {
         {
           title: "Event Registrations",
           data: registrationsCount || 0,
-          icon: Users,
+          icon: MdEventAvailable,
         },
         {
           title: "Team Members",
           data: teamMembersCount || 0,
-          icon: Users,
+          icon: UserCog,
         },
       ]);
     } catch (error) {

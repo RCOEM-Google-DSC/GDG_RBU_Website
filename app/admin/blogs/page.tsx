@@ -327,6 +327,7 @@ console.log(greeting);
 
                 {/* Actions */}
                 <div className="flex items-center gap-4">
+                    {/* publish button */}
                     <Button type="submit" disabled={loading} className="px-8">
                         {loading ? (
                             <>
@@ -340,6 +341,7 @@ console.log(greeting);
                             </>
                         )}
                     </Button>
+                    {/* cancel button */}
                     <Button
                         type="button"
                         variant="outline"
@@ -348,6 +350,7 @@ console.log(greeting);
                     >
                         Cancel
                     </Button>
+                    {/* preview toggle button */}
                     <Button
                         type="button"
                         variant="outline"

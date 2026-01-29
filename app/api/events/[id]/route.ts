@@ -22,7 +22,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  try {
+try {
     const { id } = await params;
     const body = await request.json();
 

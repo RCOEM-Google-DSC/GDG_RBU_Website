@@ -8,7 +8,6 @@ import QRCodeWithSvgLogo from "@/app/Components/checkin/QRCodeWithSvgLogo";
 import { toast } from "sonner";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 import {
-  Ticket,
   Calendar,
   MapPin,
   Check,
@@ -94,20 +93,6 @@ const InputField = ({
 
 /* ---------------- Stack Card — animates / collapses ---------------- */
 
-const formatIST = (utc: string | null) => {
-  if (!utc) return "Time";
-  return (
-    new Date(utc).toLocaleString("en-IN", {
-      timeZone: "Asia/Kolkata",
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    }) + " IST"
-  );
-};
 
 function StackCard({
   title,
@@ -176,7 +161,7 @@ function StackCard({
 /* ---------------- Main page ---------------- */
 
 export default function EventRegisterPage() {
-  const { eventid } = useParams<{ eventid: string }>();
+  const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
   const [event, setEvent] = useState<any | null>(null);
@@ -214,7 +199,7 @@ export default function EventRegisterPage() {
       const { data: eventData } = await supabase
         .from("events")
         .select("*")
-        .eq("id", eventid)
+        .eq("id", id)
         .single();
       const { data: userData } = await supabase
         .from("users")
@@ -226,7 +211,7 @@ export default function EventRegisterPage() {
       const { data: reg } = await supabase
         .from("registrations")
         .select("is_team_registration, team_name")
-        .eq("event_id", eventid)
+        .eq("event_id", id)
         .eq("user_id", uid)
         .maybeSingle();
 
@@ -248,8 +233,8 @@ export default function EventRegisterPage() {
       if (reg) {
         // show QR directly if already registered
         const payload = reg.is_team_registration
-          ? { e: eventid, leader: uid }
-          : { e: eventid, u: uid };
+          ? { e: id, leader: uid }
+          : { e: id, u: uid };
         setQrValue(
           `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`
         );
@@ -259,7 +244,7 @@ export default function EventRegisterPage() {
     };
 
     load();
-  }, [eventid, router]);
+  }, [id, router]);
 
   if (!event || !user) return <p>Loading...</p>;
 
@@ -366,7 +351,7 @@ export default function EventRegisterPage() {
     const { data: existingReg, error: exErr } = await supabase
       .from("registrations")
       .select("team_name,user_id")
-      .eq("event_id", eventid)
+      .eq("event_id", id)
       .eq("user_id", member.id)
       .maybeSingle();
 
@@ -477,7 +462,7 @@ export default function EventRegisterPage() {
     const { data: existingTeam } = await supabase
       .from("registrations")
       .select("id")
-      .eq("event_id", eventid)
+      .eq("event_id", id)
       .eq("team_name", teamName)
       .limit(1)
       .maybeSingle();
@@ -494,7 +479,7 @@ export default function EventRegisterPage() {
       const { data: reg } = await supabase
         .from("registrations")
         .select("team_name")
-        .eq("event_id", eventid)
+        .eq("event_id", id)
         .eq("user_id", m.userId)
         .maybeSingle();
 
@@ -509,7 +494,7 @@ export default function EventRegisterPage() {
     // prepare rows: leader + each member
     const rows = [
       {
-        event_id: eventid,
+        event_id: id,
         user_id: user.id,
         is_team_registration: true,
         team_name: teamName,
@@ -517,7 +502,7 @@ export default function EventRegisterPage() {
         status: "registered",
       },
       ...members.map((m) => ({
-        event_id: eventid,
+        event_id: id,
         user_id: m.userId,
         is_team_registration: true,
         team_name: teamName,
@@ -540,7 +525,7 @@ export default function EventRegisterPage() {
     toast.success("Team registered");
 
     // show QR (leader-based QR)
-    const payload = { e: eventid, leader: user.id };
+    const payload = { e: id, leader: user.id };
     setQrValue(
       `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`
     );
@@ -558,7 +543,7 @@ export default function EventRegisterPage() {
     setLoading(true);
     const { error } = await supabase.from("registrations").insert([
       {
-        event_id: eventid,
+        event_id: id,
         user_id: user.id,
         is_team_registration: false,
         status: "registered",
@@ -578,7 +563,7 @@ export default function EventRegisterPage() {
       toast.success("You're registered — join the WhatsApp group from the link below.");
     }
 
-    const payload = { e: eventid, u: user.id };
+    const payload = { e: id, u: user.id };
     setQrValue(
       `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`
     );

@@ -2,47 +2,66 @@ import { ReactNode } from "react";
 
 // Blogs
 export interface Blog {
-    id: string;
-    title: string;
+  id: string;
+  title: string;
+  image_url: string;
+  published_at: string;
+  likes_count: number;
+  markdown: string;
+  writer: {
+    name: string;
     image_url: string;
-    published_at: string;
-    likes_count: number;
-    markdown: string;
-    writer: {
-        name: string;
-        image_url: string;
-    };
+  };
 }
 
 export interface BlogAuthorProps {
-    name: string;
-    imageUrl: string;
-    bio?: string;
-    publishedCount?: number;
+  name: string;
+  imageUrl: string;
+  bio?: string;
+  publishedCount?: number;
 }
 
 export interface BlogCardProps {
-    id: string;
-    title: string;
-    imageUrl: string;
-    publishedAt: string;
-    likesCount: number;
-    writerName: string;
-    writerImage: string;
-    markdownPreview: string;
+  id: string;
+  title: string;
+  imageUrl: string;
+  publishedAt: string;
+  likesCount: number;
+  writerName: string;
+  writerImage: string;
+  markdownPreview: string;
 }
 
 // comments
 export interface Comment {
-    id: string;
-    comment: string;
-    created_at: string;
-    user: {
-        name: string;
-        image_url: string;
-    };
+  id: string;
+  comment: string;
+  created_at: string;
+  user: {
+    name: string;
+    image_url: string;
+  };
 }
 
+// Feedback
+export interface Feedback {
+  id: string;
+  event_id: string;
+  user_id: string | null;
+  email: string;
+  subject: string;
+  message: string;
+  submitted_at: string;
+  user?: {
+    name: string;
+    image_url: string;
+  };
+}
+
+export interface FeedbackFormData {
+  subject: string;
+  message: string;
+}
 
 export function isProfileComplete(user: {
   name?: string | null;

@@ -1,4 +1,4 @@
-// app/events/[eventid]/page.tsx
+// app/events/[id]/page.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -42,7 +42,7 @@ type EventRecord = {
 export default function UpcomingEventPage({
   params,
 }: {
-  params: Promise<{ eventid: string }> | { eventid: string };
+  params: Promise<{ id: string }> | { id: string };
 }) {
   const router = useRouter();
   const [event, setEvent] = useState<EventRecord | null>(null);
@@ -57,10 +57,10 @@ export default function UpcomingEventPage({
           typeof (params as any).then === "function"
             ? await (params as any)
             : (params as any);
-        const { eventid } = resolved;
+        const { id } = resolved;
 
         // <-- fetch event WITH partner relation
-        const eventData = await getEventWithPartner(eventid);
+        const eventData = await getEventWithPartner(id);
         if (!eventData) {
           if (!mounted) return;
           setNotFoundState(true);

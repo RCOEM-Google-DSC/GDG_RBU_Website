@@ -217,7 +217,7 @@ export async function likeBlog(blogId: string) {
     throw new Error(likeError.message || "Failed to like blog");
   }
 
-  // increment likes 
+  // increment likes
   const { data: blogData } = await supabase
     .from("blogs")
     .select("likes_count")
@@ -356,7 +356,7 @@ export async function createEvent(eventData: {
     .from("events")
     .insert({
       ...eventData,
-      organizer_id: userId, // Set organizer_id = auth.uid() as required by RLS
+      organizer_id: userId,
       created_at: new Date().toISOString(),
     })
     .select()
@@ -607,6 +607,127 @@ export async function getEventWithPartner(eventId: string) {
       error.details,
     );
     throw new Error(error.message || "Failed to fetch event with partner");
+  }
+
+  return data;
+}
+
+/**
+ * Submit feedback for an event
+ */
+export async function submitFeedback(
+  eventId: string,
+  feedbackData: { subject: string; message: string },
+) {
+  const userId = await getCurrentUserId();
+
+  if (!userId) {
+    throw new Error("User must be authenticated to submit feedback");
+  }
+
+  // Get user's email
+  const { data: userData } = await supabase
+    .from("users")
+    .select("email")
+    .eq("id", userId)
+    .single();
+
+  if (!userData?.email) {
+    throw new Error("User email not found");
+  }
+
+  const { data, error } = await supabase
+    .from("feedback")
+    .insert({
+      event_id: eventId,
+      user_id: userId,
+      email: userData.email,
+      subject: feedbackData.subject,
+      message: feedbackData.message,
+      submitted_at: new Date().toISOString(),
+    })
+    .select(
+      `
+      id,
+      subject,
+      message,
+      submitted_at,
+      user:user_id (
+        name,
+        image_url
+      )
+    `,
+    )
+    .single();
+
+  if (error) {
+    console.error("Feedback error:", error.message, error.code, error.details);
+    throw new Error(error.message || "Failed to submit feedback");
+  }
+
+  return data;
+}
+
+/**
+ * Get all feedback for a specific event
+ */
+export async function getEventFeedback(eventId: string) {
+  const { data, error } = await supabase
+    .from("feedback")
+    .select(
+      `
+      id,
+      subject,
+      message,
+      submitted_at,
+      user:user_id (
+        name,
+        image_url
+      )
+    `,
+    )
+    .eq("event_id", eventId)
+    .order("submitted_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching feedback:", error);
+    throw new Error(error.message || "Failed to fetch feedback");
+  }
+
+  return data;
+}
+
+/**
+ * Get all feedback submitted by the current user
+ */
+export async function getUserFeedback() {
+  const userId = await getCurrentUserId();
+
+  if (!userId) {
+    throw new Error("User must be authenticated to view feedback");
+  }
+
+  const { data, error } = await supabase
+    .from("feedback")
+    .select(
+      `
+      id,
+      event_id,
+      subject,
+      message,
+      submitted_at,
+      events (
+        title,
+        image_url
+      )
+    `,
+    )
+    .eq("user_id", userId)
+    .order("submitted_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching user feedback:", error);
+    throw new Error(error.message || "Failed to fetch user feedback");
   }
 
   return data;

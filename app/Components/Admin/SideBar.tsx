@@ -6,6 +6,7 @@ import {
   UserCog,
   FileText,
   PenSquare,
+  CalendarPlus,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -23,6 +24,11 @@ import {
 // Menu items.
 const Buttons = [
   {
+    title: "Dashboard",
+    url: "/admin",
+    icon: FileText,
+  },
+  {
     title: "Events",
     url: "/admin/events",
     icon: BiCalendarEvent,
@@ -30,7 +36,7 @@ const Buttons = [
   {
     title: "Add Event",
     url: "/admin/events/add",
-    icon: Calendar,
+    icon: CalendarPlus ,
   },
   {
     title: "Create Blog",
@@ -58,7 +64,7 @@ export default function SideBar() {
   return (
     <Sidebar>
       <SidebarHeader className="p-5 py-7 border-b-2">
-        <h2 className="text-2xl">Admin Dashboard</h2>
+        <h2 className="text-2xl font-sans font-semibold">Admin Dashboard</h2>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
