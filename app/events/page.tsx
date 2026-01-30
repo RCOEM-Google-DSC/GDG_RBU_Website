@@ -1,4 +1,3 @@
-// app/(yourpath)/EventsPage.tsx  (or wherever your component lives)
 "use client";
 
 import React, { useEffect, useState } from "react";
