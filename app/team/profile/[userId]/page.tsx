@@ -3,6 +3,10 @@ import { createClient } from "@/supabase/server";
 import { notFound } from "next/navigation";
 import ProfileClientView, { ProfileData } from "./ProfileClientView";
 
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+export const revalidate = 0;
+
 export default async function TeamProfilePage({
   params: paramsPromise,
 }: {

@@ -117,7 +117,7 @@ export default function UpcomingEventPage({
   // ---------------- helpers ----------------
   const safeImg = (url?: string | null, fallback = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop") =>
     url ? String(url).replace("/upload/", "/upload/f_auto,q_auto/") : fallback;
-  const resigerUrl = "https://vision.hack2skill.com/event/gdgoc-25-techsprint-rbu?utm_source=hack2skill&utm_medium=homepage"
+  const resigerUrl = "https://vision.hack2skill.com/event/gdgoc-25-techsprint-rbu?utm_source=hack2skill&utm_medium=homepage" 
 
   // partner may come as object or array depending on how the join returns
   const partnerData = (() => {
@@ -138,7 +138,7 @@ export default function UpcomingEventPage({
           month: "short",
           day: "numeric",
         });
-      } catch { }
+      } catch {}
     }
     return "TBA";
   })();
@@ -151,12 +151,12 @@ export default function UpcomingEventPage({
           hour: "2-digit",
           minute: "2-digit",
         });
-      } catch { }
+      } catch {}
     }
     return "TBA";
   })();
 
-  const eventVenue = event.venue || "TBA";
+  const eventVenue = event.venue || event.location || "TBA";
   const price = event.is_paid ? `₹${event.fee ?? 0}` : "FREE";
 
   return (

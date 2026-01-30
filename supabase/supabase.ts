@@ -714,3 +714,54 @@ export async function getUserFeedback() {
 
   return data;
 }
+
+/**
+ * Check if user has attended a specific event
+ */
+export async function checkUserAttendedEvent(eventId: string): Promise<boolean> {
+  const userId = await getCurrentUserId();
+  
+  if (!userId) {
+    return false;
+  }
+
+  const { data, error } = await supabase
+    .from("registrations")
+    .select("*")
+    .eq("event_id", eventId)
+    .eq("user_id", userId)
+    .eq("checkin_status", true)
+    .single();
+
+  if (error && error.code !== "PGRST116") { // PGRST116 is "no rows returned"
+    console.error("Error checking attendance:", error);
+    return false;
+  }
+
+  return !!data;
+}
+
+/**
+ * Check if user has submitted feedback for a specific event
+ */
+export async function hasUserSubmittedFeedback(eventId: string): Promise<boolean> {
+  const userId = await getCurrentUserId();
+  
+  if (!userId) {
+    return false;
+  }
+
+  const { data, error } = await supabase
+    .from("feedback")
+    .select("id")
+    .eq("event_id", eventId)
+    .eq("user_id", userId)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    console.error("Error checking feedback:", error);
+    return false;
+  }
+
+  return !!data;
+}

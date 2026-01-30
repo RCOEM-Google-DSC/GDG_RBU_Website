@@ -1,25 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/supabase/server";
+import { NextResponse } from "next/server";
+import { getBlogs } from "@/supabase/blogs-server";
 
 export async function GET() {
   try {
-    const supabase = await createClient();
-
-    const { data: blogs, error } = await supabase
-      .from("blogs")
-      .select(
-        `
-        *,
-        writer:writer_id (
-          id,
-          name,
-          image_url
-        )
-      `,
-      )
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
+    const blogs = await getBlogs();
 
     return NextResponse.json({ blogs }, { status: 200 });
   } catch (error: any) {

@@ -3,10 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import ReactMarkdown from "react-markdown";
-import { getBlog } from "@/supabase/supabase";
+import { getBlog } from "@/supabase/blogs-server";
 import { BlogActions } from "@/app/Components/blog/BlogActions";
 import { BlogComments } from "@/app/Components/blog/BlogComments";
 import { CodeBlock } from "@/app/Components/blog/CodeBlock";
+
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+export const revalidate = 0;
 
 export default async function BlogDetailPage({
     params,

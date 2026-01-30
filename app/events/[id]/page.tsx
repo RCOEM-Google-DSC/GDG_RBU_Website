@@ -4,15 +4,17 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { Ticket, Users, ArrowDownRight, Sparkles } from "lucide-react";
-import {
-  getEvent,
-  getGalleryImages,
+import { 
+  getEvent, 
+  getGalleryImages, 
   getEventWithPartner,
   getEventFeedback,
+  hasUserSubmittedFeedback,
+  checkUserAttendedEvent,
+  getCurrentUserId
 } from "@/supabase/supabase";
 import { Lightbox } from "@/app/Components/session-docs/Lightbox";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
-import NeoLoader from "@/app/Components/Common/NeoLoader";
 import { Feedback } from "@/app/Components/feedback/Feedback";
 
 export default function EventPage({
@@ -31,6 +33,7 @@ export default function EventPage({
     src: "",
   });
   const [feedback, setFeedback] = useState<any[]>([]);
+  const [canSubmitFeedback, setCanSubmitFeedback] = useState(false);
 
   /* ---------------- FETCH DATA ---------------- */
   useEffect(() => {
@@ -63,6 +66,17 @@ export default function EventPage({
           console.error("Error fetching feedback:", err);
         }
 
+        // Check if user can submit feedback
+        const userId = await getCurrentUserId();
+        if (userId) {
+          const hasAttended = await checkUserAttendedEvent(id);
+          const hasSubmitted = await hasUserSubmittedFeedback(id);
+          const eventDate = new Date(eventData.event_time || eventData.date);
+          const isPastEvent = eventDate < new Date();
+          
+          setCanSubmitFeedback(hasAttended && !hasSubmitted && isPastEvent);
+        }
+
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -74,7 +88,11 @@ export default function EventPage({
   }, [id]);
 
   if (loading || !event) {
-    return <NeoLoader fullScreen text="LOADING EVENT..." />;
+    return (
+      <div className="min-h-screen grid place-items-center font-black text-2xl">
+        LOADING EVENT…
+      </div>
+    );
   }
 
   /* ---------------- DERIVED ---------------- */
@@ -116,8 +134,8 @@ export default function EventPage({
         className="fixed inset-0 -z-10 pointer-events-none"
         style={{
           backgroundImage:
-            "linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
+            'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
         }}
       />
 
@@ -131,38 +149,25 @@ export default function EventPage({
             shadow="none"
             className={`relative z-10 w-full h-[300px] md:h-[420px] 
             shadow-[6px_6px_0px_0px_#8338ec] md:shadow-[8px_8px_0px_0px_#8338ec] bg-white p-2 rotate-0 md:rotate-1 mt-36 sm:mt-32 md:mt-20 cursor-pointer group`}
-            onClick={() =>
-              openImageViewer(
-                event.image_url
-                  ? event.image_url.replace(
-                    "/upload/",
-                    "/upload/f_auto,q_auto/",
-                  )
-                  : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop",
-              )
-            }
+            onClick={() => openImageViewer(
+              event.image_url
+                ? event.image_url.replace("/upload/", "/upload/f_auto,q_auto/")
+                : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop"
+            )}
           >
             <Image
               height={420}
               width={800}
               src={
                 event.image_url
-                  ? event.image_url.replace(
-                    "/upload/",
-                    "/upload/f_auto,q_auto/",
-                  )
+                  ? event.image_url.replace("/upload/", "/upload/f_auto,q_auto/")
                   : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop"
               }
               alt={event.title}
               className="w-full h-full object-cover border-2 border-black  transition-transform duration-300"
             />
 
-            <NeoBrutalism
-              border={4}
-              shadow="md"
-              rounded="full"
-              className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 z-30"
-            >
+            <NeoBrutalism border={4} shadow="md" rounded="full" className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 bg-white p-2 md:p-3 z-30">
               <ArrowDownRight
                 size={24}
                 className="md:w-8 md:h-8 text-[#8338ec]"
@@ -234,7 +239,7 @@ export default function EventPage({
                 shadow: "lg",
                 hover: "shadowGrow",
                 className:
-                  " bg-[#ffbe0b] p-6 md:p-8 rotate-0 md:-rotate-2 text-center text-black font-black uppercase text-lg md:text-xl flex flex-col items-center justify-center gap-3 cursor-pointer",
+                  "block bg-[#ffbe0b] p-6 md:p-8 rotate-0 md:-rotate-2 text-center text-black font-black uppercase text-lg md:text-xl flex flex-col items-center justify-center gap-3 cursor-pointer",
               })}
             >
               <Ticket size={40} className="md:w-12 md:h-12" />
@@ -263,10 +268,7 @@ export default function EventPage({
             className="bg-white p-6 md:p-8 flex flex-col gap-6"
           >
             {partnersArray.map((p: any, idx: number) => (
-              <div
-                key={idx}
-                className="flex flex-col md:flex-row items-center gap-4 md:gap-8"
-              >
+              <div key={idx} className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                 {/* left: partner image  */}
                 <div className="w-full md:w-1/3 flex items-center justify-center">
                   {p.logo_url ? (
@@ -342,11 +344,9 @@ export default function EventPage({
             border={4}
             shadow="xl"
             className="bg-[#ffbe0b] p-3 md:p-4 rotate-0 md:rotate-1 cursor-pointer group"
-            onClick={() =>
-              openImageViewer(
-                event.crew_url.replace("/upload/", "/upload/f_auto,q_auto/"),
-              )
-            }
+            onClick={() => openImageViewer(
+              event.crew_url.replace("/upload/", "/upload/f_auto,q_auto/")
+            )}
           >
             <div className="bg-black p-2 border-4 border-black rotate-0 md:-rotate-1">
               <Image
@@ -406,9 +406,13 @@ export default function EventPage({
       )}
 
       {/* Feedback Section */}
-      <section className="my-24 max-w-6xl mx-auto p-4 md:p-6 relative z-10">
+      <section className="my-24">
         <NeoBrutalism border={4} shadow="xl" className="bg-white p-8">
-          <Feedback eventId={id} initialFeedback={feedback} />
+          <Feedback 
+            eventId={id}
+            initialFeedback={feedback}
+            canSubmitFeedback={canSubmitFeedback}
+          />
         </NeoBrutalism>
       </section>
 
@@ -418,6 +422,7 @@ export default function EventPage({
         src={lightbox.src}
         onClose={() => setLightbox({ open: false, src: "" })}
       />
+
     </div>
   );
 }
