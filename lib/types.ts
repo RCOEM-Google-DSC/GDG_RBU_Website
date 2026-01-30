@@ -202,6 +202,7 @@ export type EventRow = {
   title: string;
   event_time: string | null;
   image_url: string | null;
+  badge_url: string | null;
 };
 
 export type UIEvent = {
@@ -214,6 +215,8 @@ export type UIEvent = {
   certificate_url?: string | null;
   certificate_generated_once: boolean;
   registration_status: string;
+  badge_url?: string | null; // User's generated badge
+  has_badge_template: boolean; // Event has a badge template
 };
 
 // ---------- BADGE TYPES ----------
@@ -236,6 +239,7 @@ export type Registration = {
   team_name?: string | null;
   certificate_url?: string | null;
   certificate_generated_once: boolean;
+  badge_url?: string | null;
 
   users: {
     id: string;

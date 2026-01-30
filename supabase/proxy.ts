@@ -6,17 +6,6 @@ export async function updateSession(request: NextRequest) {
     request,
   });
 
-  const publicRoutes = [
-    "/",
-    "/events",
-    "/team",
-    "/docs",
-    "/links",
-    "/register",
-    "/auth",
-    "/api",
-  ];
-
   // With Fluid compute, don't put this client in a global environment
   // variable. Always create a new one on each request.
   const supabase = createServerClient(
@@ -52,28 +41,16 @@ export async function updateSession(request: NextRequest) {
 
   const user = data?.claims;
 
-  const isPublicRoute = publicRoutes.some(
-    (route) =>
-      request.nextUrl.pathname === route ||
-      request.nextUrl.pathname.startsWith(route)
-  );
-
-  if (!user && !isPublicRoute) {
+  if (
+    !user &&
+    !request.nextUrl.pathname.startsWith("/register") &&
+    !request.nextUrl.pathname.startsWith("/auth")
+  ) {
+    // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/register";
     return NextResponse.redirect(url);
   }
-
-  //   if (
-  //     !user &&
-  //     !request.nextUrl.pathname.startsWith("/login") &&
-  //     !request.nextUrl.pathname.startsWith("/auth")
-  //   ) {
-  //     // no user, potentially respond by redirecting the user to the login page
-  //     const url = request.nextUrl.clone();
-  //     url.pathname = "/register";
-  //     return NextResponse.redirect(url);
-  //   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
@@ -90,20 +67,3 @@ export async function updateSession(request: NextRequest) {
 
   return supabaseResponse;
 }
-
-export async function proxy(request: NextRequest) {
-  return await updateSession(request);
-}
-
-export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
-};

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Trash2, AlertTriangle } from "lucide-react";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import DataTable from "@/app/Components/Reusables/DataTable";
 import ConfirmDialog from "@/app/Components/Reusables/ConfirmDialog";
 import {
@@ -30,6 +30,7 @@ export default function UsersPage() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [page, setPage] = useState(1);
+  const supabase = createClient();
 
   // Delete dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

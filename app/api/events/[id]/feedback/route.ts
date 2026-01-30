@@ -1,15 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { getEventFeedback } from "@/supabase/supabase";
+import { createClient } from "@/supabase/server";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const supabase = await createClient();
     const { id } = await params;
-    const feedback = await getEventFeedback(id);
+
+    const { data: feedback, error } = await supabase
+      .from("feedback")
+      .select("*")
+      .eq("event_id", id)
+      .order("submitted_at", { ascending: false });
+
+    if (error) throw error;
+
     return NextResponse.json({ feedback });
   } catch (error: any) {
     console.error("Error in GET /api/events/[id]/feedback:", error);
@@ -25,6 +32,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const supabase = await createClient();
     const { id } = await params;
     const { subject, message } = await request.json();
 
@@ -34,25 +42,6 @@ export async function POST(
         { status: 400 },
       );
     }
-
-    // Create server-side Supabase client with cookie access
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
-            );
-          },
-        },
-      },
-    );
 
     // Get authenticated user
     const {

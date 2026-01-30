@@ -1,13 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getBlog } from "@/supabase/supabase";
+import { createClient } from "@/supabase/server";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const supabase = await createClient();
     const { id } = await params;
-    const blog = await getBlog(id);
+
+    const { data: blog, error } = await supabase
+      .from("blogs")
+      .select(
+        `
+        *,
+        writer:writer_id (
+          id,
+          name,
+          image_url
+        )
+      `,
+      )
+      .eq("id", id)
+      .single();
+
+    if (error) throw error;
+
     return NextResponse.json({ blog });
   } catch (error: any) {
     return NextResponse.json(

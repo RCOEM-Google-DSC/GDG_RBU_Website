@@ -33,7 +33,9 @@ export function useProfileData(): UseProfileDataReturn {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") {
         router.push("/");
         router.refresh();
@@ -82,7 +84,7 @@ export function useProfileData(): UseProfileDataReturn {
 
           const { data: eventsData, error: eventsErr } = await supabase
             .from("events")
-            .select("id, title, event_time, image_url")
+            .select("id, title, event_time, image_url, badge_url")
             .in("id", eventIds);
 
           if (eventsErr) throw eventsErr;

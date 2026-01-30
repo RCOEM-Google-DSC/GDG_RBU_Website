@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
-import { notFound, useParams, redirect } from 'next/navigation';
-import { getEvent } from '@/supabase/supabase';
+import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import { notFound, useParams, redirect } from "next/navigation";
+import { getEvent } from "@/supabase/supabase";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
+import NeoLoader from "@/app/Components/Common/NeoLoader";
 
 export default function BadgePage() {
     const params = useParams();
@@ -27,7 +28,7 @@ export default function BadgePage() {
                 setEvent(eventData);
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching event:', error);
+                console.error("Error fetching event:", error);
                 notFound();
             }
         };
@@ -51,7 +52,7 @@ export default function BadgePage() {
 
         setIsProcessing(true);
         const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
         // Set canvas size to 1080x1350 (4:5 portrait ratio)
@@ -66,8 +67,8 @@ export default function BadgePage() {
         const badgeImg = new window.Image();
 
         // Set crossOrigin to allow canvas export from external images
-        userImg.crossOrigin = 'anonymous';
-        badgeImg.crossOrigin = 'anonymous';
+        userImg.crossOrigin = "anonymous";
+        badgeImg.crossOrigin = "anonymous";
 
         userImg.onload = () => {
             // Calculate user image aspect ratio
@@ -124,10 +125,16 @@ export default function BadgePage() {
                 }
 
                 // Draw badge overlay centered and scaled
-                ctx.drawImage(badgeImg, badgeOffsetX, badgeOffsetY, badgeDrawWidth, badgeDrawHeight);
+                ctx.drawImage(
+                    badgeImg,
+                    badgeOffsetX,
+                    badgeOffsetY,
+                    badgeDrawWidth,
+                    badgeDrawHeight,
+                );
 
                 // Convert canvas to data URL
-                const dataUrl = canvas.toDataURL('image/png');
+                const dataUrl = canvas.toDataURL("image/png");
                 setCompositeImage(dataUrl);
                 setIsProcessing(false);
             };
@@ -137,7 +144,7 @@ export default function BadgePage() {
 
             // If no badge_url, show error
             if (!badgeImageUrl) {
-                console.error('No badge URL found for event:', event.title);
+                console.error("No badge URL found for event:", event.title);
                 setIsProcessing(false);
                 return;
             }
@@ -157,8 +164,10 @@ export default function BadgePage() {
     const handleDownload = () => {
         if (!compositeImage || !event) return;
 
-        const link = document.createElement('a');
-        const sanitizedTitle = event.title.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+        const link = document.createElement("a");
+        const sanitizedTitle = event.title
+            .replace(/[^a-z0-9]/gi, "-")
+            .toLowerCase();
         link.download = `${sanitizedTitle}-badge.png`;
         link.href = compositeImage;
         link.click();
@@ -168,16 +177,12 @@ export default function BadgePage() {
         setUploadedImage(null);
         setCompositeImage(null);
         if (fileInputRef.current) {
-            fileInputRef.current.value = '';
+            fileInputRef.current.value = "";
         }
     };
 
     if (loading || !event) {
-        return (
-            <div className="min-h-screen grid place-items-center font-black text-2xl">
-                LOADING BADGE GENERATOR…
-            </div>
-        );
+        return <NeoLoader fullScreen text="LOADING BADGE GENERATOR..." />;
     }
 
     // Redirect if no badge available
@@ -192,8 +197,8 @@ export default function BadgePage() {
                 className="fixed inset-0 -z-10 pointer-events-none"
                 style={{
                     backgroundImage:
-                        'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
-                    backgroundSize: '80px 80px',
+                        "linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)",
+                    backgroundSize: "80px 80px",
                 }}
             />
 
@@ -213,11 +218,7 @@ export default function BadgePage() {
                     </div>
 
                     {/* Right: Upload or Result */}
-                    <NeoBrutalism
-                      border={4}
-                      shadow="xl"
-                      className="bg-white p-6 md:p-10"
-                    >
+                    <NeoBrutalism border={4} shadow="xl" className="bg-white p-6 md:p-10">
                         {!compositeImage ? (
                             /* Upload Section */
                             <div className="space-y-6">
@@ -229,7 +230,11 @@ export default function BadgePage() {
                                 >
                                     {uploadedImage ? (
                                         <div className="relative w-full h-full p-4">
-                                            <NeoBrutalism border={3} shadow="none" className="w-full h-full">
+                                            <NeoBrutalism
+                                                border={3}
+                                                shadow="none"
+                                                className="w-full h-full"
+                                            >
                                                 <Image
                                                     width={200}
                                                     height={200}
@@ -273,10 +278,10 @@ export default function BadgePage() {
 
                                 {isProcessing && (
                                     <div className="text-center py-6">
-                                        <div
-                                            className="inline-block w-16 h-16 border-4 border-black border-t-transparent animate-spin"
-                                        ></div>
-                                        <p className="mt-4 text-xl font-black uppercase">Generating...</p>
+                                        <div className="inline-block w-16 h-16 border-4 border-black border-t-transparent animate-spin"></div>
+                                        <p className="mt-4 text-xl font-black uppercase">
+                                            Generating...
+                                        </p>
                                     </div>
                                 )}
                             </div>
@@ -338,12 +343,12 @@ export default function BadgePage() {
                                                 "w-full px-8 py-4 text-base md:text-lg font-black uppercase tracking-wide bg-white text-black flex items-center justify-center gap-3",
                                         })}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#000000';
-                                            e.currentTarget.style.color = '#ffffff';
+                                            e.currentTarget.style.backgroundColor = "#000000";
+                                            e.currentTarget.style.color = "#ffffff";
                                         }}
                                         onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#ffffff';
-                                            e.currentTarget.style.color = '#000000';
+                                            e.currentTarget.style.backgroundColor = "#ffffff";
+                                            e.currentTarget.style.color = "#000000";
                                         }}
                                     >
                                         <svg
@@ -369,7 +374,6 @@ export default function BadgePage() {
 
                 {/* Hidden Canvas */}
                 <canvas ref={canvasRef} className="hidden" />
-
             </div>
         </div>
     );

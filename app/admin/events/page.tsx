@@ -5,7 +5,7 @@ import PastEvents from "@/app/Components/Admin/PastEvents";
 import UpcomingEventAdmin from "@/app/Components/Admin/UpcomingEventAdmin";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRBAC } from "@/hooks/useRBAC";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
 
 type Event = {
@@ -13,10 +13,11 @@ type Event = {
   title: string;
   description: string;
   image_url: string | null;
-  event_time: string;
-  location: string | null;
+  date: string;
+  time: string;
+  venue: string | null;
   registered_count?: number;
-  capacity: number | null;
+  max_participants: number | null;
   status?: string;
 };
 
@@ -25,6 +26,7 @@ export default function EventsPage() {
   const [upcomingEventsList, setUpcomingEventsList] = useState<Event[]>([]);
   const [pastEventsList, setPastEventsList] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     fetchEvents();
@@ -38,17 +40,20 @@ export default function EventsPage() {
       // Fetch upcoming events
       const { data: upcomingData, error: upcomingError } = await supabase
         .from("events")
-        .select(`
+        .select(
+          `
           id,
           title,
           description,
           image_url,
-          event_time,
-          location,
-          capacity
-        `)
-        .gte("event_time", now)
-        .order("event_time", { ascending: true });
+          date,
+          time,
+          venue,
+          max_participants
+        `,
+        )
+        .gte("date", now)
+        .order("date", { ascending: true });
 
       if (upcomingError) throw upcomingError;
 
@@ -65,32 +70,47 @@ export default function EventsPage() {
             registered_count: count || 0,
             status: "upcoming",
           };
-        })
+        }),
       );
 
       // Fetch past events
       const { data: pastData, error: pastError } = await supabase
         .from("events")
-        .select(`
+        .select(
+          `
           id,
           title,
           description,
           image_url,
-          event_time,
-          location
-        `)
-        .lt("event_time", now)
-        .order("event_time", { ascending: false });
+          date,
+          time,
+          venue
+        `,
+        )
+        .lt("date", now)
+        .order("date", { ascending: false });
 
       if (pastError) throw pastError;
 
-      setUpcomingEventsList(upcomingWithCounts);
+      setUpcomingEventsList(upcomingWithCounts as Event[]);
       setPastEventsList(
-        (pastData || []).map((e) => ({ ...e, capacity: null, status: "past" }))
+        (pastData || []).map((e) => ({
+          ...e,
+          max_participants: null,
+          status: "past",
+        })) as Event[],
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching events:", error);
-      toast.error("Failed to fetch events");
+      console.error("Details:", {
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        code: error?.code,
+      });
+      toast.error(
+        `Failed to fetch events: ${error?.message || "Unknown error"}`,
+      );
     } finally {
       setLoading(false);
     }
@@ -108,25 +128,22 @@ export default function EventsPage() {
 
         <TabsContent value="upcoming" className="space-y-6">
           {upcomingEventsList.length > 0 ? (
-            upcomingEventsList.map((event: any) => (
+            upcomingEventsList.map((event) => (
               <UpcomingEventAdmin
                 key={event.id}
                 id={event.id}
                 title={event.title}
                 description={event.description}
-                image_url={event.image_url}
-                date={new Date(event.event_time).toLocaleDateString("en-US", {
+                image_url={event.image_url || ""}
+                date={new Date(event.date).toLocaleDateString("en-US", {
                   day: "2-digit",
                   month: "short",
                   year: "numeric",
                 })}
-                time={new Date(event.event_time).toLocaleTimeString("en-US", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-                venue={event.location || "TBD"}
+                time={event.time || ""}
+                venue={event.venue || "TBD"}
                 registered_count={event.registered_count}
-                capacity={event.capacity}
+                capacity={event.max_participants ?? undefined}
               />
             ))
           ) : (
@@ -138,19 +155,19 @@ export default function EventsPage() {
 
         <TabsContent value="past">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {pastEventsList.map((event: any) => (
+            {pastEventsList.map((event) => (
               <PastEvents
                 key={event.id}
                 id={event.id}
                 title={event.title}
                 description={event.description}
-                image_url={event.image_url}
-                date={new Date(event.event_time).toLocaleDateString("en-US", {
+                image_url={event.image_url || ""}
+                date={new Date(event.date).toLocaleDateString("en-US", {
                   day: "2-digit",
                   month: "short",
                   year: "numeric",
                 })}
-                venue={event.location || ""}
+                venue={event.venue || ""}
               />
             ))}
           </div>

@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { Github, Linkedin, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/supabase/supabase";
+import { Card, CardContent } from "@/components/ui/card";
+import { createClient } from "@/supabase/client";
 import Link from "next/link";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
@@ -51,6 +52,7 @@ function TeamMemberCard({
 }: TeamMemberCardProps) {
   const router = useRouter();
   const [authUserId, setAuthUserId] = useState<string | null>(null);
+  const supabase = createClient();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -90,7 +92,6 @@ function TeamMemberCard({
       onClick={handleCardClick}
     >
       <div className="relative w-full h-full group transition-transform duration-300 hover:-translate-y-2">
-
         {/* 🔹 GLASS ARROW BUTTON (ONLY ADDITION) */}
         <button
           onClick={(e) => {
@@ -174,7 +175,8 @@ function TeamMemberCard({
             border: 3,
             shadow: "none",
             rounded: "2xl",
-            className: "absolute bottom-0 right-0 bg-white md:rounded-[20px] flex items-center justify-center overflow-hidden px-3 md:px-4 z-10"
+            className:
+              "absolute bottom-0 right-0 bg-white md:rounded-[20px] flex items-center justify-center overflow-hidden px-3 md:px-4 z-10",
           })}
           style={{
             width: `${((notchWidth - borderWidth * 2) / width) * 100}%`,

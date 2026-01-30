@@ -1,12 +1,13 @@
 "use client";
-
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Calendar, Download, Share2, Loader2 } from "lucide-react";
-import { UIEvent } from "../../../lib/types";
-import { supabase } from "@/supabase/supabase";
+import { Calendar, Share2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { UIEvent } from "@/lib/types";
+import { createClient } from "@/supabase/client";
 import Image from "next/image";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
+
 interface EventCardProps {
   event: UIEvent;
 }
@@ -16,6 +17,7 @@ export function EventCard({ event }: EventCardProps) {
   const [certificateUrl, setCertificateUrl] = useState<string | null>(
     event.certificate_url ?? null,
   );
+  const supabase = createClient();
 
   /**
    * DOWNLOAD EXISTING CERTIFICATE
@@ -40,67 +42,20 @@ export function EventCard({ event }: EventCardProps) {
     URL.revokeObjectURL(blobUrl);
   };
 
-  /**
-   * HANDLE BUTTON CLICK
-   */
-  const handleAction = async () => {
-    // CASE 1: Certificate exists → download
-    if (certificateUrl) {
-      await downloadCertificate(certificateUrl);
-      return;
-    }
-
-    // CASE 2: Generate on demand
-    try {
-      setLoading(true);
-
-      // 🔑 GET USER SESSION (CRITICAL FIX)
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!session) {
-        throw new Error("User not authenticated");
-      }
-
-      // 🔥 CALL EDGE FUNCTION WITH AUTH HEADER
-      const { data, error } = await supabase.functions.invoke(
-        "generate-certificate-on-demand",
-        {
-          body: {
-            event_id: event.id,
-          },
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-          },
-        },
-      );
-
-      if (error) {
-        console.error("Edge Function Error:", error);
-        throw error;
-      }
-
-      if (!data?.certificate_url) {
-        throw new Error("Certificate generation failed");
-      }
-
-      setCertificateUrl(data.certificate_url);
-
-      // Auto-download
-      await downloadCertificate(data.certificate_url);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to generate certificate");
-    } finally {
-      setLoading(false);
-    }
+  // handle badge
+  const handleBadge = () => {
+    window.location.href = `/events/${event.id}/badge`;
   };
 
   return (
     <div className="relative">
       {/* Main Card */}
-      <NeoBrutalism border={3} shadow="lg" rounded="xl" className="relative flex flex-col sm:flex-row overflow-hidden bg-white">
+      <NeoBrutalism
+        border={3}
+        shadow="lg"
+        rounded="xl"
+        className="relative flex flex-col sm:flex-row overflow-hidden bg-white"
+      >
         {/* Image section */}
         <div className="relative w-full sm:w-64 h-48 sm:h-auto shrink-0">
           <Image
@@ -110,19 +65,6 @@ export function EventCard({ event }: EventCardProps) {
             alt={event.title}
             className="w-full h-full object-cover"
           />
-
-          {/* Tag Badge */}
-          <div className="absolute top-3 left-3">
-            <span className={nb({
-                border: 2,
-                shadow: "md",
-                rounded: "lg",
-                className: "inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-black tracking-wide uppercase bg-[#00f566]"
-            })}>
-              <span className="w-2 h-2 rounded-full bg-black" />
-              {event.tag}
-            </span>
-          </div>
         </div>
 
         {/* Content */}
@@ -130,12 +72,15 @@ export function EventCard({ event }: EventCardProps) {
           <div className="space-y-3">
             {/* Date Badge */}
             <div className="inline-block relative">
-              <div className={nb({
+              <div
+                className={nb({
                   border: 2,
                   shadow: "xs",
                   rounded: "lg",
-                  className: "inline-flex items-center gap-2 bg-[#ffd23d] px-3 py-1.5 text-xs font-bold"
-              })}>
+                  className:
+                    "inline-flex items-center gap-2 bg-[#ffd23d] px-3 py-1.5 text-xs font-bold",
+                })}
+              >
                 <Calendar className="w-4 h-4" />
                 <span>{event.date}</span>
               </div>
@@ -152,10 +97,11 @@ export function EventCard({ event }: EventCardProps) {
 
           {/* Actions */}
           {event.registration_status === "verified" && (
-            <div className="flex items-center gap-3 pt-1">
-              <div className="relative flex-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+              {/* Certificate Button */}
+              {/* <div className="relative flex-1">
                 <button
-                  onClick={handleAction}
+                  onClick={handleCertificate}
                   disabled={loading}
                   className={nb({
                     border: 2,
@@ -163,33 +109,66 @@ export function EventCard({ event }: EventCardProps) {
                     rounded: "lg",
                     hover: "liftSmall",
                     className: cn(
-                        "w-full inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold",
-                        loading
+                      "w-full inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold",
+                      loading
                         ? "bg-neutral-300 cursor-not-allowed"
                         : certificateUrl
-                        ? "bg-[#4284ff] text-white"
-                        : "bg-white text-black",
-                    )
+                          ? "bg-[#4284ff] text-white"
+                          : "bg-white text-black",
+                    ),
                   })}
                 >
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      GENERATING…
+                      GENERATING...
                     </>
                   ) : certificateUrl ? (
                     <>
                       <Download className="w-4 h-4" />
-                      DOWNLOAD
+                      CERTIFICATE
                     </>
                   ) : (
                     <>
                       <Download className="w-4 h-4" />
-                      GENERATE
+                      CERTIFICATE
                     </>
                   )}
                 </button>
-              </div>
+              </div> */}
+
+              {/* Badge Button */}
+              {event.has_badge_template && (
+                <div className="relative flex-1">
+                  <button
+                    onClick={handleBadge}
+                    className={nb({
+                      border: 2,
+                      shadow: "md",
+                      rounded: "lg",
+                      hover: "liftSmall",
+                      className: cn(
+                        "w-full inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold",
+                        event.badge_url
+                          ? "bg-[#00f566] text-black"
+                          : "bg-black text-white",
+                      ),
+                    })}
+                  >
+                    {event.badge_url ? (
+                      <>
+                        <Share2 className="w-4 h-4" />
+                        VIEW BADGE
+                      </>
+                    ) : (
+                      <>
+                        <Share2 className="w-4 h-4" />
+                        GET BADGE
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

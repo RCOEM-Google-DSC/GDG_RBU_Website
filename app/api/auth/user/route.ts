@@ -1,18 +1,22 @@
 import { NextResponse } from "next/server";
-import { getCurrentUserId, getSession } from "@/supabase/supabase";
+import { createClient } from "@/supabase/server";
 
 export async function GET() {
   try {
-    const userId = await getCurrentUserId();
-    const session = await getSession();
+    const supabase = await createClient();
 
-    if (!userId || !session) {
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError || !session) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
     return NextResponse.json({
       user: session.user,
-      userId,
+      userId: session.user.id,
     });
   } catch (error) {
     console.error("Error fetching user:", error);

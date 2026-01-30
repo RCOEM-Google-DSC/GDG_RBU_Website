@@ -74,7 +74,7 @@ export const CodeBlock = ({
             </button>
 
             <div
-                className="overflow-x-auto rounded-lg bg-[#282c34]"
+                className="overflow-x-auto rounded-lg bg-[#282c34] code-scrollbar"
                 style={{
                     border: "4px solid black",
                     boxShadow: "8px 8px 0px 0px rgba(0,0,0,1)",

@@ -23,6 +23,7 @@ export default function AddEventPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploadingQR, setUploadingQR] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Form state
   const [selectedDate, setSelectedDate] = useState<Date>();
@@ -87,6 +88,34 @@ export default function AddEventPage() {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData, // The existing route expects 'file' in formData
+      });
+
+      if (!response.ok) throw new Error("Upload failed");
+
+      const data = await response.json();
+      // The API returns { url, secure_url, transformed_url, public_id }
+      // We'll use 'url' or 'secure_url'
+      setFormData((prev) => ({ ...prev, image_url: data.url }));
+    } catch (error) {
+      console.error("Image upload error:", error);
+      alert("Failed to upload image. Please try again.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -119,8 +148,10 @@ export default function AddEventPage() {
           newErrors.max_team_size = "Max team size must be a positive number";
         }
         if (!newErrors.min_team_size && !newErrors.max_team_size && min > max) {
-          newErrors.min_team_size = "Min team size cannot be greater than max team size";
-          newErrors.max_team_size = "Max team size cannot be less than min team size";
+          newErrors.min_team_size =
+            "Min team size cannot be greater than max team size";
+          newErrors.max_team_size =
+            "Max team size cannot be less than min team size";
         }
       }
     }
@@ -328,14 +359,50 @@ export default function AddEventPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="image_url">Event Image URL</Label>
+              <Label htmlFor="image_url">Event Image</Label>
+              <div className="flex items-center gap-4">
+                <Input
+                  id="image_url_file"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploadingImage}
+                  className="cursor-pointer"
+                />
+                {uploadingImage && (
+                  <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+                )}
+              </div>
+
+              {/* Hidden input to store the URL string if needed manually or just to keep the form data structure consistent */}
               <Input
-                id="image_url"
+                type="hidden"
                 name="image_url"
                 value={formData.image_url}
-                onChange={handleInputChange}
-                placeholder="https://example.com/image.jpg"
               />
+
+              {formData.image_url && (
+                <div className="mt-2 relative group">
+                  <Image
+                    src={formData.image_url}
+                    height={200}
+                    width={400} // Larger preview for event image
+                    alt="Event Image Preview"
+                    className="h-48 w-full object-cover rounded border"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, image_url: "" }))
+                    }
+                  >
+                    Remove
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -400,7 +467,9 @@ export default function AddEventPage() {
                     className={errors.min_team_size ? "border-red-500" : ""}
                   />
                   {errors.min_team_size && (
-                    <p className="text-sm text-red-500">{errors.min_team_size}</p>
+                    <p className="text-sm text-red-500">
+                      {errors.min_team_size}
+                    </p>
                   )}
                 </div>
 
@@ -418,7 +487,9 @@ export default function AddEventPage() {
                     className={errors.max_team_size ? "border-red-500" : ""}
                   />
                   {errors.max_team_size && (
-                    <p className="text-sm text-red-500">{errors.max_team_size}</p>
+                    <p className="text-sm text-red-500">
+                      {errors.max_team_size}
+                    </p>
                   )}
                 </div>
               </div>

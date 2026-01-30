@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import DataTable from "@/app/Components/Reusables/DataTable";
 import ConfirmDialog from "@/app/Components/Reusables/ConfirmDialog";
 import {
@@ -29,6 +29,7 @@ export default function TeamMembersPage() {
   const { canManageUsers } = useRBAC();
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   // Domain change warning dialog state
   const [domainChangeDialogOpen, setDomainChangeDialogOpen] = useState(false);

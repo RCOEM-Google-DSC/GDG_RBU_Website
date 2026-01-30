@@ -428,3 +428,26 @@ table tbody td {
   border-bottom: none !important;
   border-top: none !important;
 }
+
+/* Custom Scrollbar for Code Blocks */
+.code-scrollbar::-webkit-scrollbar {
+  height: 12px;
+  background: #282c34;
+  border-top: 2px solid #000;
+  border-radius: 0 0 6px 6px;
+}
+
+.code-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border: 2px solid #000;
+  border-radius: 6px;
+  min-width: 50px;
+}
+
+.code-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+
+.code-scrollbar::-webkit-scrollbar-corner {
+  background-color: #282c34;
+}

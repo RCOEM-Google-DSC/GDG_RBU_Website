@@ -7,6 +7,7 @@ import PastEvent from "../Components/Common/PastEvent";
 import { getUpcomingEvents, getPastEvents } from "@/supabase/supabase";
 import Footer from "../Components/Landing/Footer";
 import { NeoBrutalism } from "@/components/ui/neo-brutalism";
+import NeoLoader from "../Components/Common/NeoLoader";
 
 type Event = {
   id: string;
@@ -20,7 +21,6 @@ type Event = {
   status: string;
   register_url?: string | null;
   website_url?: string | null;
-
 };
 
 const FALLBACK_IMAGE =
@@ -28,8 +28,6 @@ const FALLBACK_IMAGE =
 
 const REGISTER_URL =
   "https://vision.hack2skill.com/event/gdgoc-25-techsprint-rbu?utm_source=hack2skill&utm_medium=homepage";
-
-
 
 const cloudinarySafe = (url?: string | null) => {
   if (!url) return FALLBACK_IMAGE;
@@ -56,7 +54,6 @@ const EventsPage = () => {
         getPastEvents(),
       ]);
 
-      
       setUpcomingEvents((upcoming || []) as Event[]);
       setPastEvents((past || []) as Event[]);
     } catch (err) {
@@ -67,14 +64,8 @@ const EventsPage = () => {
     }
   };
 
-
-
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-2xl font-black animate-pulse">LOADING EVENTS...</div>
-      </div>
-    );
+    return <NeoLoader fullScreen text="LOADING EVENTS..." />;
   }
 
   if (error) {
@@ -91,8 +82,8 @@ const EventsPage = () => {
         className="fixed inset-0 -z-10 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
+            "linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
         }}
       />
       {/* upcoming event */}
@@ -103,7 +94,7 @@ const EventsPage = () => {
           </h1>
 
           {upcomingEvents.length === 0 ? (
-              <div className="w-full max-w-4xl mx-auto">
+            <div className="w-full max-w-4xl mx-auto">
               <div className="relative w-full">
                 {/* Shadow layer */}
                 <div className="absolute top-3 left-3 right-0 bottom-0 bg-black rounded-3xl" />
@@ -149,8 +140,9 @@ const EventsPage = () => {
 
                     {/* Description */}
                     <p className="text-base sm:text-lg text-gray-700 mb-8 max-w-xl mx-auto leading-relaxed">
-                      We're cooking up something amazing! Stay tuned for our next event announcement.
-                      In the meantime, check out below what we've done before.
+                      We're cooking up something amazing! Stay tuned for our
+                      next event announcement. In the meantime, check out below
+                      what we've done before.
                     </p>
                   </div>
                 </NeoBrutalism>
@@ -229,7 +221,11 @@ const EventsPage = () => {
                     tags={[event.status]}
                     tagColor="#4285F4"
                     description={event.description}
-                    website_url={event.website_url == null ? `/events/${event.id}` : event.website_url}
+                    website_url={
+                      event.website_url == null
+                        ? `/events/${event.id}`
+                        : event.website_url
+                    }
                   />
                 );
               })}

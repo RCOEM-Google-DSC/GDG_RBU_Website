@@ -8,6 +8,7 @@ import Image from "next/image";
 import Footer from "../Components/Landing/Footer";
 import { supabase } from "@/supabase/supabase";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
+import NeoLoader from "../Components/Common/NeoLoader";
 
 type Member = {
   id: string;
@@ -52,7 +53,6 @@ type Senior = {
   linkedin?: string;
 };
 
-
 export default function TeamPage() {
   const [teamMembers, setTeamMembers] = useState<Member[]>([]);
   const [domainLeads, setDomainLeads] = useState<DomainLead[]>([]);
@@ -64,9 +64,9 @@ export default function TeamPage() {
     const fetchTeamData = async () => {
       try {
         // Fetch all team members with user data
-        const { data: teamData, error: teamError } = await supabase
-          .from("team_members")
-          .select(`
+        const { data: teamData, error: teamError } = await supabase.from(
+          "team_members",
+        ).select(`
             id,
             userid,
             domain,
@@ -100,9 +100,11 @@ export default function TeamPage() {
             domain: member.domain || "",
             name: userData?.name || "Unknown",
             email: userData?.email || "",
-            image_url: userData?.image_url || "https://placehold.co/400x500/png",
+            image_url:
+              userData?.image_url || "https://placehold.co/400x500/png",
             github: userData?.profile_links?.github || "https://github.com",
-            linkedin: userData?.profile_links?.linkedin || "https://linkedin.com",
+            linkedin:
+              userData?.profile_links?.linkedin || "https://linkedin.com",
             club_role: member["club role"],
           };
 
@@ -165,27 +167,26 @@ export default function TeamPage() {
   }, []);
 
   // Group members by domain
-  const groupedDomains = teamMembers.reduce<Record<string, Member[]>>((acc, m) => {
-    if (!m.domain) return acc; // Skip members without domain
-    if (!acc[m.domain]) acc[m.domain] = [];
-    acc[m.domain].push(m);
-    return acc;
-  }, {});
+  const groupedDomains = teamMembers.reduce<Record<string, Member[]>>(
+    (acc, m) => {
+      if (!m.domain) return acc; // Skip members without domain
+      if (!acc[m.domain]) acc[m.domain] = [];
+      acc[m.domain].push(m);
+      return acc;
+    },
+    {},
+  );
 
   // Get all unique domains from both leads and members, then sort them alphabetically
   const domainsFromMembers = Object.keys(groupedDomains);
-  const domainsFromLeads = domainLeads.map(lead => lead.domain);
+  const domainsFromLeads = domainLeads.map((lead) => lead.domain);
   const allDomains = [...new Set([...domainsFromMembers, ...domainsFromLeads])];
   const domains = allDomains.sort((a, b) =>
     a.toLowerCase().localeCompare(b.toLowerCase()),
   );
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-2xl font-black animate-pulse">LOADING TEAM...</div>
-      </div>
-    );
+    return <NeoLoader fullScreen text="LOADING TEAM..." />;
   }
 
   return (
@@ -194,14 +195,12 @@ export default function TeamPage() {
         className="fixed inset-0 -z-10 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
+            "linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
         }}
       />
       {/* hero: group photo */}
-      <section
-        className="pt-5 pb-12 md:pb-20 px-8 border-b-4 border-black"
-      >
+      <section className="pt-5 pb-12 md:pb-20 px-8 border-b-4 border-black">
         <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-8">
           {/* left: title and domain buttons */}
           <div className="flex-1">
@@ -296,9 +295,7 @@ export default function TeamPage() {
       </section>
 
       {/* Club Lead Section */}
-      <section
-        className="py-12 md:py-20 px-8 flex justify-center items-center border-b-4 border-black"
-      >
+      <section className="py-12 md:py-20 px-8 flex justify-center items-center border-b-4 border-black">
         <ClubLeadCard />
       </section>
 
@@ -323,7 +320,7 @@ export default function TeamPage() {
           <div className="flex-1 relative">
             <div className="p-4 sm:p-6 md:p-12 lg:p-16 xl:p-24 relative z-10">
               <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12 justify-items-center">
-                {mentors.map((mentor) => (
+                {mentors.map((mentor) =>
                   mentor.domain ? (
                     <LeaderCard
                       key={mentor.id}
@@ -345,8 +342,8 @@ export default function TeamPage() {
                       githubUrl={mentor.github ?? ""}
                       linkedinUrl={mentor.linkedin ?? ""}
                     />
-                  )
-                ))}
+                  ),
+                )}
               </div>
               <div className="h-16 md:h-32" />
             </div>
@@ -355,9 +352,7 @@ export default function TeamPage() {
       )}
 
       {/* domains section */}
-      <div
-        className="px-8 border-t-4 border-black"
-      >
+      <div className="px-8 border-t-4 border-black">
         {domains.map((domain) => {
           const members = groupedDomains[domain] || [];
           // Find ALL domain leads for this domain
@@ -374,10 +369,12 @@ export default function TeamPage() {
             });
 
           // Find seniors for this domain
-          const currentSeniors = seniors.filter((senior) => senior.domain === domain);
+          const currentSeniors = seniors.filter(
+            (senior) => senior.domain === domain,
+          );
           // Count only "domain lead" club roles (exclude "core") for Co Lead logic
           const actualDomainLeadsCount = currentDomainLeads.filter(
-            (lead) => lead.club_role === "domain lead"
+            (lead) => lead.club_role === "domain lead",
           ).length;
 
           return (
@@ -389,7 +386,6 @@ export default function TeamPage() {
               {/* left domain name */}
               <div className="w-full md:w-[35%] xl:w-[30%] p-4 sm:p-6 md:p-8 lg:p-12">
                 <div className="md:sticky md:top-24">
-
                   <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] font-retron">
                     {domain}
                   </h1>

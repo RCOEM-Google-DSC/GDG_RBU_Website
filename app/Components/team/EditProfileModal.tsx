@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
 import Link from "next/link";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import {
   Github,
   Linkedin,
@@ -114,6 +114,7 @@ export default function EditProfileModal({
   const [error, setError] = useState<string | null>(null);
   const [showCropModal, setShowCropModal] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string>("");
+  const supabase = createClient();
 
   // Initialize form with react-hook-form and zod
   const form = useForm<ProfileFormValues>({
@@ -230,7 +231,6 @@ export default function EditProfileModal({
         .eq("userid", userId)
         .maybeSingle();
 
-
       let updateData;
       let memberError;
 
@@ -280,8 +280,7 @@ export default function EditProfileModal({
             border: 4,
             shadow: "md",
             rounded: "none",
-            className:
-              "max-w-2xl max-h-[90vh] overflow-y-auto bg-white",
+            className: "max-w-2xl max-h-[90vh] overflow-y-auto bg-white",
           })}
         >
           <DialogHeader>
@@ -291,7 +290,10 @@ export default function EditProfileModal({
             >
               Edit Profile
             </DialogTitle>
-            <DialogDescription className="font-bold" style={{ color: "#000000" }}>
+            <DialogDescription
+              className="font-bold"
+              style={{ color: "#000000" }}
+            >
               Update your team details
             </DialogDescription>
           </DialogHeader>
@@ -411,7 +413,11 @@ export default function EditProfileModal({
                         <Input
                           placeholder="Enter phone number"
                           {...field}
-                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
+                          className={nb({
+                            border: 3,
+                            shadow: "sm",
+                            className: "font-medium",
+                          })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -436,7 +442,11 @@ export default function EditProfileModal({
                         <Input
                           placeholder="Enter branch"
                           {...field}
-                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
+                          className={nb({
+                            border: 3,
+                            shadow: "sm",
+                            className: "font-medium",
+                          })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -461,7 +471,11 @@ export default function EditProfileModal({
                         <Input
                           placeholder="Enter section"
                           {...field}
-                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
+                          className={nb({
+                            border: 3,
+                            shadow: "sm",
+                            className: "font-medium",
+                          })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -486,7 +500,11 @@ export default function EditProfileModal({
                           placeholder="email@example.com"
                           type="email"
                           {...field}
-                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
+                          className={nb({
+                            border: 3,
+                            shadow: "sm",
+                            className: "font-medium",
+                          })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -511,7 +529,11 @@ export default function EditProfileModal({
                     <FormControl>
                       <Textarea
                         placeholder="Tell us about yourself..."
-                        className={nb({ border: 3, shadow: "sm", className: "resize-none font-medium" })}
+                        className={nb({
+                          border: 3,
+                          shadow: "sm",
+                          className: "resize-none font-medium",
+                        })}
                         rows={3}
                         {...field}
                       />
@@ -537,7 +559,11 @@ export default function EditProfileModal({
                     <FormControl>
                       <Textarea
                         placeholder="Share your thoughts..."
-                        className={nb({ border: 3, shadow: "sm", className: "resize-none font-medium" })}
+                        className={nb({
+                          border: 3,
+                          shadow: "sm",
+                          className: "resize-none font-medium",
+                        })}
                         rows={3}
                         {...field}
                       />
@@ -565,7 +591,11 @@ export default function EditProfileModal({
                         <Input
                           placeholder="https://github.com/username"
                           {...field}
-                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
+                          className={nb({
+                            border: 3,
+                            shadow: "sm",
+                            className: "font-medium",
+                          })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -589,7 +619,11 @@ export default function EditProfileModal({
                         <Input
                           placeholder="https://linkedin.com/in/username"
                           {...field}
-                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
+                          className={nb({
+                            border: 3,
+                            shadow: "sm",
+                            className: "font-medium",
+                          })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -613,7 +647,11 @@ export default function EditProfileModal({
                         <Input
                           placeholder="https://instagram.com/username"
                           {...field}
-                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
+                          className={nb({
+                            border: 3,
+                            shadow: "sm",
+                            className: "font-medium",
+                          })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -637,7 +675,11 @@ export default function EditProfileModal({
                         <Input
                           placeholder="https://twitter.com/username"
                           {...field}
-                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
+                          className={nb({
+                            border: 3,
+                            shadow: "sm",
+                            className: "font-medium",
+                          })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -661,7 +703,11 @@ export default function EditProfileModal({
                         <Input
                           placeholder="https://leetcode.com/username"
                           {...field}
-                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
+                          className={nb({
+                            border: 3,
+                            shadow: "sm",
+                            className: "font-medium",
+                          })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -685,7 +731,11 @@ export default function EditProfileModal({
                         <Input
                           placeholder="https://example.com/resume.pdf"
                           {...field}
-                          className={nb({ border: 3, shadow: "sm", className: "font-medium" })}
+                          className={nb({
+                            border: 3,
+                            shadow: "sm",
+                            className: "font-medium",
+                          })}
                         />
                       </FormControl>
                       <FormMessage />
@@ -711,14 +761,24 @@ export default function EditProfileModal({
                   type="button"
                   variant="outline"
                   onClick={onClose}
-                  className={nb({ border: 3, shadow: "md", className: "font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1 bg-white text-black" })}
+                  className={nb({
+                    border: 3,
+                    shadow: "md",
+                    className:
+                      "font-bold transition-all duration-200 hover:translate-x-1 hover:translate-y-1 bg-white text-black",
+                  })}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={form.formState.isSubmitting}
-                  className={nb({ border: 3, shadow: "md", className: "font-bold text-white transition-all duration-200 hover:translate-x-1 hover:translate-y-1 bg-black" })}
+                  className={nb({
+                    border: 3,
+                    shadow: "md",
+                    className:
+                      "font-bold text-white transition-all duration-200 hover:translate-x-1 hover:translate-y-1 bg-black",
+                  })}
                 >
                   {form.formState.isSubmitting ? (
                     <>
@@ -736,17 +796,15 @@ export default function EditProfileModal({
       </Dialog>
 
       {/* Image Crop Modal */}
-      {
-        showCropModal && imageToCrop && (
-          <ImageCropModal
-            open={showCropModal}
-            imageSrc={imageToCrop}
-            onClose={() => setShowCropModal(false)}
-            onCropComplete={handleCropComplete}
-            uploading={uploading}
-          />
-        )
-      }
+      {showCropModal && imageToCrop && (
+        <ImageCropModal
+          open={showCropModal}
+          imageSrc={imageToCrop}
+          onClose={() => setShowCropModal(false)}
+          onCropComplete={handleCropComplete}
+          uploading={uploading}
+        />
+      )}
     </>
   );
 }

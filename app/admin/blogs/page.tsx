@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Loader2, Eye, Upload, EyeOff, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
 import { BlogPreview } from "@/app/Components/blog/BlogPreview";
 import { useRBAC } from "@/hooks/useRBAC";
@@ -29,6 +29,7 @@ export default function CreateBlogPage() {
     const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
     const [loadingUser, setLoadingUser] = useState(true);
     const [showPreview, setShowPreview] = useState(true);
+    const supabase = createClient();
 
     // Form state
     const [formData, setFormData] = useState({

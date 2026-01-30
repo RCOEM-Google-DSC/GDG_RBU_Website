@@ -3,6 +3,7 @@ import { BlogHeader } from "@/app/Components/blog/BlogHeader";
 import { BlogList } from "@/app/Components/blog/BlogList";
 import { Blog } from "@/lib/types";
 import { useState, useEffect } from "react";
+import Footer from "../Components/Landing/Footer";
 
 type FilterType = "all" | "most-liked" | "recent";
 
@@ -59,11 +60,12 @@ export default function BlogsPage() {
     }, [filter, blogs]);
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen bg-gray-50 pt-12">
+            <div className="max-w-7xl mx-auto mb-20 px-4 lg:px-8 sm:px-6">
                 <BlogHeader filter={filter} onFilterChange={setFilter} />
                 <BlogList blogs={filteredBlogs} loading={loading} />
             </div>
+            <Footer />
         </div>
     );
 }

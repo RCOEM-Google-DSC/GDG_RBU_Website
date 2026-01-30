@@ -12,6 +12,7 @@ import {
 } from "@/supabase/supabase";
 import { Lightbox } from "@/app/Components/session-docs/Lightbox";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
+import NeoLoader from "@/app/Components/Common/NeoLoader";
 import { Feedback } from "@/app/Components/feedback/Feedback";
 
 export default function EventPage({
@@ -73,11 +74,7 @@ export default function EventPage({
   }, [id]);
 
   if (loading || !event) {
-    return (
-      <div className="min-h-screen grid place-items-center font-black text-2xl">
-        LOADING EVENT…
-      </div>
-    );
+    return <NeoLoader fullScreen text="LOADING EVENT..." />;
   }
 
   /* ---------------- DERIVED ---------------- */
@@ -237,7 +234,7 @@ export default function EventPage({
                 shadow: "lg",
                 hover: "shadowGrow",
                 className:
-                  "block bg-[#ffbe0b] p-6 md:p-8 rotate-0 md:-rotate-2 text-center text-black font-black uppercase text-lg md:text-xl flex flex-col items-center justify-center gap-3 cursor-pointer",
+                  " bg-[#ffbe0b] p-6 md:p-8 rotate-0 md:-rotate-2 text-center text-black font-black uppercase text-lg md:text-xl flex flex-col items-center justify-center gap-3 cursor-pointer",
               })}
             >
               <Ticket size={40} className="md:w-12 md:h-12" />

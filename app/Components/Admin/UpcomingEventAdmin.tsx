@@ -13,7 +13,7 @@ import Image from "next/image";
 import { DataTable, FilterOption } from "@/app/Components/Reusables/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { CalendarDays, MapPin, Users } from "lucide-react";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
 
 // Participant type for the table
@@ -80,25 +80,15 @@ const participantColumns: ColumnDef<Participant>[] = [
       const isCheckedIn = status === "checked_in";
       return (
         <span
-          className={`text-xs px-2 py-1 rounded-md border ${
-            isCheckedIn
+          className={`text-xs px-2 py-1 rounded-md border ${isCheckedIn
               ? "bg-green-500/20 text-green-400 border-green-500/30"
               : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
-          }`}
+            }`}
         >
           {isCheckedIn ? "Checked In" : "Registered"}
         </span>
       );
     },
-  },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: () => (
-      <Button size="sm" variant="outline" className="h-7 text-xs">
-        Verify
-      </Button>
-    ),
   },
 ];
 
@@ -114,8 +104,11 @@ const UpcomingEventAdmin = ({
   capacity,
 }: UpcomingEventAdminProps) => {
   const [participants, setParticipants] = useState<Participant[]>([]);
-  const [branches, setBranches] = useState<{ value: string; label: string }[]>([]);
+  const [branches, setBranches] = useState<{ value: string; label: string }[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     fetchParticipants();
@@ -142,7 +135,7 @@ const UpcomingEventAdmin = ({
               section,
               phone_number
             )
-          `
+          `,
           )
           .eq("event_id", id);
 
@@ -159,7 +152,7 @@ const UpcomingEventAdmin = ({
           phone_number: reg.users?.phone_number || "",
           status: reg.status,
           registered_at: reg.created_at,
-        })
+        }),
       );
 
       setParticipants(participantsData);
@@ -169,7 +162,7 @@ const UpcomingEventAdmin = ({
         ...new Set(
           participantsData
             .map((p) => p.branch)
-            .filter((b): b is string => Boolean(b))
+            .filter((b): b is string => Boolean(b)),
         ),
       ];
       setBranches(uniqueBranches.map((b) => ({ value: b, label: b })));

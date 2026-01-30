@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CiLogout } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
-import { supabase, getCurrentUserId } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
 import { nb } from "@/components/ui/neo-brutalism";
 
@@ -27,15 +27,16 @@ const MobileProfileDropdown = ({
   const [role, setRole] = useState<string | null>(null);
   const [teamId, setTeamId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     const load = async () => {
       try {
-        const userId = await getCurrentUserId();
-        if (!userId) return;
-
         // 1️⃣ Fetch auth session (for email)
         const { data: sessionData } = await supabase.auth.getSession();
+        const userId = sessionData.session?.user?.id;
+        if (!userId) return;
+
         setUserEmail(sessionData.session?.user?.email ?? null);
 
         // 2️⃣ Fetch profile fields from users table

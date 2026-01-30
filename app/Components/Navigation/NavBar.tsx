@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import ProfileDropdown from "../Common/ProfileDropdown";
 import MobileProfileDropdown from "../Common/MobileProfileDropdown";
 import { Menu, X, Terminal, User as UserIcon } from "lucide-react";
@@ -33,6 +33,7 @@ export default function NavBar() {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const supabase = createClient();
 
   // keep scroll position when locking body
   const scrollRef = useRef<number>(0);

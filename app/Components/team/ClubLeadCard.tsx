@@ -2,7 +2,8 @@
 import Image from "next/image";
 import { Github, Instagram, Linkedin, ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { supabase } from "@/supabase/supabase";
+import { Card, CardContent } from "@/components/ui/card";
+import { createClient } from "@/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
@@ -11,13 +12,15 @@ export default function ClubLeadCard() {
   const [clubLead, setClubLead] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
     const fetchClubLead = async () => {
       try {
         const { data, error } = await supabase
           .from("team_members")
-          .select(`
+          .select(
+            `
             userid,
            
             instagram,
@@ -28,7 +31,8 @@ export default function ClubLeadCard() {
               profile_links,
               image_url
             )
-          `)
+          `,
+          )
           .eq("club role", "club lead")
           .single();
 
@@ -90,13 +94,19 @@ export default function ClubLeadCard() {
         className="relative bg-white p-6 sm:p-8 md:p-12 flex flex-col md:flex-row items-center md:items-start gap-8 sm:gap-10 md:gap-16 w-full group cursor-pointer"
       >
         {/* Arrow indicator - Top Right */}
-        <div className={nb({
-          border: 2,
-          shadow: "xs",
-          rounded: "full",
-          className: "absolute top-3 right-3 sm:top-4 sm:right-4 bg-white p-1.5 sm:p-2 opacity-90 group-hover:opacity-100 transition-opacity z-20"
-        })}>
-          <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800" strokeWidth={2.5} />
+        <div
+          className={nb({
+            border: 2,
+            shadow: "xs",
+            rounded: "full",
+            className:
+              "absolute top-3 right-3 sm:top-4 sm:right-4 bg-white p-1.5 sm:p-2 opacity-90 group-hover:opacity-100 transition-opacity z-20",
+          })}
+        >
+          <ArrowUpRight
+            className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800"
+            strokeWidth={2.5}
+          />
         </div>
 
         {/* Photo Section */}
@@ -113,9 +123,7 @@ export default function ClubLeadCard() {
           </NeoBrutalism>
 
           {/* Photo */}
-          <div
-            className="drop-shadow-2xl w-[200px] h-[260px] sm:w-[220px] sm:h-[280px] md:w-[260px] md:h-80 bg-white relative rounded-lg overflow-hidden border-2 border-gray-200"
-          >
+          <div className="drop-shadow-2xl w-[200px] h-[260px] sm:w-[220px] sm:h-[280px] md:w-[260px] md:h-80 bg-white relative rounded-lg overflow-hidden border-2 border-gray-200">
             <Image
               src={clubLead.imageUrl}
               alt={clubLead.name}

@@ -1,9 +1,9 @@
 "use client";
-import { MdEventAvailable } from "react-icons/md"; 
+import { MdEventAvailable } from "react-icons/md";
 
 import { useEffect, useState } from "react";
 import { UserCog, Users } from "lucide-react";
-import { supabase } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
 import InfoCard from "../Components/Admin/InfoCard";
 
@@ -20,6 +20,7 @@ export default function AdminPage() {
     { title: "Team Members", data: 0, icon: UserCog },
   ]);
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     fetchStats();

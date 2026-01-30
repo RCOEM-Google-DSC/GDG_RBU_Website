@@ -1,36 +1,18 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@/supabase/client";
 
-// Use lazy initialization to avoid errors during build/prerender
-let supabaseInstance: SupabaseClient | null = null;
+/**
+ * @deprecated This file is deprecated. Use @/supabase/client for client components
+ * or @/supabase/server for server components and API routes.
+ *
+ * This file is kept for backward compatibility during migration.
+ */
 
-function getSupabaseClient(): SupabaseClient {
-  if (supabaseInstance) return supabaseInstance;
+// Create a single instance using the new SSR client
+const supabaseInstance = createClient();
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error(
-      "Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file.",
-    );
-  }
-
-  supabaseInstance = createBrowserClient(supabaseUrl, supabaseAnonKey);
-  return supabaseInstance;
-}
-
-// Export a proxy that lazily initializes the client
-export const supabase = new Proxy({} as SupabaseClient, {
-  get(_, prop) {
-    const client = getSupabaseClient();
-    const value = (client as any)[prop];
-    if (typeof value === "function") {
-      return value.bind(client);
-    }
-    return value;
-  },
-});
+// Export the instance for backward compatibility
+export const supabase = supabaseInstance;
 
 /**
  * Get the current authenticated user's ID from Supabase session.

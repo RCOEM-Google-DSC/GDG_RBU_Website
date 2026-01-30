@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { Github, Linkedin, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/supabase/supabase";
+import { Card, CardContent } from "@/components/ui/card";
+import { createClient } from "@/supabase/client";
 import Link from "next/link";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
@@ -14,7 +15,7 @@ interface LeaderCardProps {
   imageUrl: string;
   githubUrl: string;
   linkedinUrl: string;
-  domain?: string; 
+  domain?: string;
   leadTitle?: string;
 }
 
@@ -55,6 +56,7 @@ function LeaderCard({
 }: LeaderCardProps) {
   const router = useRouter();
   const [authUserId, setAuthUserId] = useState<string | null>(null);
+  const supabase = createClient();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -102,7 +104,6 @@ function LeaderCard({
     >
       {/* Card container with hover effect */}
       <div className="relative w-full h-full group transition-transform duration-300 hover:-translate-y-2">
-
         {/* Arrow button to indicate clickable */}
         <button
           onClick={(e) => {
@@ -195,7 +196,8 @@ function LeaderCard({
             border: 3,
             shadow: "none",
             rounded: "2xl",
-            className: "absolute bottom-0 right-0 bg-white md:rounded-[20px] flex flex-col overflow-hidden z-10"
+            className:
+              "absolute bottom-0 right-0 bg-white md:rounded-[20px] flex flex-col overflow-hidden z-10",
           })}
           style={{
             width: `${((notchWidth - borderWidth * 2) / width) * 100}%`,
@@ -215,7 +217,7 @@ function LeaderCard({
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
 

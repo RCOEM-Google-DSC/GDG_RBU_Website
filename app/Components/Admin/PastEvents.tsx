@@ -10,7 +10,7 @@ import { Event } from "@/lib";
 
 const PastEvents = ({ id, title, image_url, date }: Event) => {
   return (
-    <Card className="flex flex-col overflow-hidden">
+    <Card className="flex flex-col overflow-hidden pt-0">
       {/* image */}
       <div className="relative h-40">
         <Image src={image_url} alt={title} fill className="object-cover" />

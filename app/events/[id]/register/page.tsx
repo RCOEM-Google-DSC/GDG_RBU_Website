@@ -19,6 +19,7 @@ import {
   Trash2,
   Loader2,
 } from "lucide-react";
+import NeoLoader from "@/app/Components/Common/NeoLoader";
 
 /* ---------------- THEME (kept like your original) ---------------- */
 
@@ -79,11 +80,9 @@ const InputField = ({
         className={nb({
           border: 2,
           shadow: "md",
-          className: `w-full py-4 ${Icon ? "pl-12" : "pl-4"} pr-4 ${
-            THEME.colors.surface
-          } text-black outline-none focus:bg-[#E8F0FE] focus:border-[#4285F4] placeholder:text-gray-400 ${
-            THEME.fonts.body
-          }`,
+          className: `w-full py-4 ${Icon ? "pl-12" : "pl-4"} pr-4 ${THEME.colors.surface
+            } text-black outline-none focus:bg-[#E8F0FE] focus:border-[#4285F4] placeholder:text-gray-400 ${THEME.fonts.body
+            }`,
         })}
         required={required}
       />
@@ -92,7 +91,6 @@ const InputField = ({
 );
 
 /* ---------------- Stack Card — animates / collapses ---------------- */
-
 
 function StackCard({
   title,
@@ -236,7 +234,7 @@ export default function EventRegisterPage() {
           ? { e: id, leader: uid }
           : { e: id, u: uid };
         setQrValue(
-          `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`
+          `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`,
         );
         // if team registration, also set team name hint (optional)
         if (reg.team_name) setTeamName(reg.team_name);
@@ -246,7 +244,8 @@ export default function EventRegisterPage() {
     load();
   }, [id, router]);
 
-  if (!event || !user) return <p>Loading...</p>;
+  if (!event || !user)
+    return <NeoLoader fullScreen text="LOADING REGISTRATION..." />;
 
   /* ---------- helper utilities ---------- */
 
@@ -273,7 +272,7 @@ export default function EventRegisterPage() {
         } else {
           return { ...c, expanded: false };
         }
-      })
+      }),
     );
   };
 
@@ -301,9 +300,8 @@ export default function EventRegisterPage() {
       {
         id: nextId,
         type: "member" as const,
-        title: `Team Member ${
-          cards.filter((c) => c.type === "member").length + 1
-        }`,
+        title: `Team Member ${cards.filter((c) => c.type === "member").length + 1
+          }`,
         expanded: true,
         validated: false,
         email: "",
@@ -365,7 +363,7 @@ export default function EventRegisterPage() {
       existingReg.team_name !== teamName
     ) {
       toast.error(
-        `${email} is already registered in another team (${existingReg.team_name})`
+        `${email} is already registered in another team (${existingReg.team_name})`,
       );
       return;
     }
@@ -376,9 +374,9 @@ export default function EventRegisterPage() {
         prev.map((c) =>
           c.id === cardId
             ? { ...c, validated: true, expanded: false, userId: member.id }
-            : c
-        )
-      )
+            : c,
+        ),
+      ),
     );
 
     toast.success(`${email} validated`);
@@ -423,8 +421,8 @@ export default function EventRegisterPage() {
     // collapse leader card (fold)
     setCards((prev) =>
       reindexMembers(
-        prev.map((c) => (c.type === "leader" ? { ...c, expanded: false } : c))
-      )
+        prev.map((c) => (c.type === "leader" ? { ...c, expanded: false } : c)),
+      ),
     );
   };
 
@@ -469,7 +467,7 @@ export default function EventRegisterPage() {
 
     if (existingTeam) {
       toast.error(
-        "Team name already taken for this event — choose another name"
+        "Team name already taken for this event — choose another name",
       );
       return;
     }
@@ -527,7 +525,7 @@ export default function EventRegisterPage() {
     // show QR (leader-based QR)
     const payload = { e: id, leader: user.id };
     setQrValue(
-      `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`
+      `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`,
     );
   };
 
@@ -560,12 +558,14 @@ export default function EventRegisterPage() {
 
     // Prompt user to join whatsapp group if available
     if (event?.whatsapp_url) {
-      toast.success("You're registered — join the WhatsApp group from the link below.");
+      toast.success(
+        "You're registered — join the WhatsApp group from the link below.",
+      );
     }
 
     const payload = { e: id, u: user.id };
     setQrValue(
-      `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`
+      `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`,
     );
   };
 
@@ -587,7 +587,20 @@ export default function EventRegisterPage() {
     if (!date || !time) return "Date & Time";
 
     // date expected 'YYYY-MM-DD', time expected 'HH:mm' (24-hour)
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
     const [y, m, d] = date.split("-");
     const [hh, mm] = time.split(":");
 
@@ -776,7 +789,7 @@ export default function EventRegisterPage() {
                                   <InputField
                                     label="EMAIL"
                                     value={user.email || ""}
-                                    onChange={() => {}}
+                                    onChange={() => { }}
                                     icon={Mail}
                                     disabled
                                   />
@@ -795,7 +808,10 @@ export default function EventRegisterPage() {
                                     label="SECTION"
                                     value={user.section || ""}
                                     onChange={(e: any) =>
-                                      setUser({ ...user, section: e.target.value })
+                                      setUser({
+                                        ...user,
+                                        section: e.target.value,
+                                      })
                                     }
                                     icon={Briefcase}
                                   />
@@ -803,7 +819,10 @@ export default function EventRegisterPage() {
                                     label="BRANCH"
                                     value={user.branch || ""}
                                     onChange={(e: any) =>
-                                      setUser({ ...user, branch: e.target.value })
+                                      setUser({
+                                        ...user,
+                                        branch: e.target.value,
+                                      })
                                     }
                                     icon={Briefcase}
                                   />
@@ -847,8 +866,8 @@ export default function EventRegisterPage() {
                                             prev.map((c) =>
                                               c.id === card.id
                                                 ? { ...c, email: val }
-                                                : c
-                                            )
+                                                : c,
+                                            ),
                                           );
                                         }}
                                         icon={Mail}
@@ -857,7 +876,9 @@ export default function EventRegisterPage() {
                                       />
                                       <div className="flex gap-3">
                                         <button
-                                          onClick={() => validateMember(card.id)}
+                                          onClick={() =>
+                                            validateMember(card.id)
+                                          }
                                           className="py-3 px-4 bg-[#34A853] text-white"
                                         >
                                           Validate Member
@@ -872,7 +893,9 @@ export default function EventRegisterPage() {
                                     </>
                                   ) : (
                                     <div className="py-3">
-                                      <div className="font-mono">{card.email}</div>
+                                      <div className="font-mono">
+                                        {card.email}
+                                      </div>
                                       <div className="text-xs text-gray-500">
                                         Validated
                                       </div>
@@ -923,7 +946,7 @@ export default function EventRegisterPage() {
                         <InputField
                           label="EMAIL"
                           value={user.email || ""}
-                          onChange={() => {}}
+                          onChange={() => { }}
                           icon={Mail}
                           disabled
                         />
@@ -1017,8 +1040,8 @@ export default function EventRegisterPage() {
     // collapse leader card visually
     setCards((prev) =>
       reindex(
-        prev.map((c) => (c.type === "leader" ? { ...c, expanded: false } : c))
-      )
+        prev.map((c) => (c.type === "leader" ? { ...c, expanded: false } : c)),
+      ),
     );
   }
 

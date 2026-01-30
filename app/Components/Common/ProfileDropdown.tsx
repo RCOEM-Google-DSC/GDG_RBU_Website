@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CiLogout } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
-import { supabase, getCurrentUserId } from "@/supabase/supabase";
+import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { nb } from "@/components/ui/neo-brutalism";
@@ -27,16 +27,16 @@ const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
   const [role, setRole] = useState<string | null>(null);
   const [teamId, setTeamId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     const load = async () => {
       try {
-        const userId = await getCurrentUserId();
+        const { data: sessionData } = await supabase.auth.getSession();
+        const userId = sessionData.session?.user?.id;
         if (!userId) return;
 
-        const { data: sessionData } = await supabase.auth.getSession();
         setUserEmail(sessionData.session?.user?.email ?? null);
-
 
         const { data: profileData, error: pErr } = await supabase
           .from("users")
@@ -49,7 +49,6 @@ const ProfileDropdown = ({ onLogout }: { onLogout?: () => void } = {}) => {
         setFullName(profileData?.name ?? null);
         setImageUrl(profileData?.image_url ?? null);
         setRole(profileData?.role ?? null);
-
 
         const { data: team } = await supabase
           .from("team_members")

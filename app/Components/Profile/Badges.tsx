@@ -15,32 +15,32 @@ export const DEFAULT_EVENT_IMAGE =
   "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=1000";
 
 export const BADGE_CONFIG: Record<string, { icon: ReactNode; color: string }> =
-  {
-    "AI Explorer": {
-      icon: <Cloud className="w-6 h-6 text-blue-500" />,
-      color: "bg-blue-100 dark:bg-blue-900/30",
-    },
-    "Hackathon Hero": {
-      icon: <Trophy className="w-6 h-6 text-red-500" />,
-      color: "bg-red-100 dark:bg-red-900/30",
-    },
-    "Community Lead": {
-      icon: <UserCheck className="w-6 h-6 text-yellow-600" />,
-      color: "bg-yellow-100 dark:bg-yellow-900/30",
-    },
-    "Cloud Certified": {
-      icon: <Award className="w-6 h-6 text-green-500" />,
-      color: "bg-green-100 dark:bg-green-900/30",
-    },
-    "Code Ninja": {
-      icon: <Code className="w-6 h-6 text-purple-500" />,
-      color: "bg-purple-100 dark:bg-purple-900/30",
-    },
-    Mentor: {
-      icon: <Share2 className="w-6 h-6 text-orange-500" />,
-      color: "bg-orange-100 dark:bg-orange-900/30",
-    },
-  };
+{
+  "AI Explorer": {
+    icon: <Cloud className="w-6 h-6 text-blue-500" />,
+    color: "bg-blue-100 dark:bg-blue-900/30",
+  },
+  "Hackathon Hero": {
+    icon: <Trophy className="w-6 h-6 text-red-500" />,
+    color: "bg-red-100 dark:bg-red-900/30",
+  },
+  "Community Lead": {
+    icon: <UserCheck className="w-6 h-6 text-yellow-600" />,
+    color: "bg-yellow-100 dark:bg-yellow-900/30",
+  },
+  "Cloud Certified": {
+    icon: <Award className="w-6 h-6 text-green-500" />,
+    color: "bg-green-100 dark:bg-green-900/30",
+  },
+  "Code Ninja": {
+    icon: <Code className="w-6 h-6 text-purple-500" />,
+    color: "bg-purple-100 dark:bg-purple-900/30",
+  },
+  Mentor: {
+    icon: <Share2 className="w-6 h-6 text-orange-500" />,
+    color: "bg-orange-100 dark:bg-orange-900/30",
+  },
+};
 
 // ---------- BUILDER FUNCTIONS ----------
 
@@ -104,6 +104,8 @@ export function buildUIEvents(
       certificate_url: reg?.certificate_url || null,
       registration_status: reg?.status ?? "registered",
       certificate_generated_once: reg?.certificate_generated_once || false,
+      badge_url: reg?.badge_url || null,
+      has_badge_template: Boolean(ev.badge_url),
     };
   });
 }
