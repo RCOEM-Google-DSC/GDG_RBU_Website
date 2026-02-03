@@ -1,0 +1,607 @@
+<!doctype html>
+<html class="scroll-smooth" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Hyun Barng Style Portfolio - Developer Edition</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=Inter:wght@300;400;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#111111", // Deep black/gray for primary actions
+              "background-light": "#F3F3F3", // Slightly off-white/paper grain feel
+              "background-dark": "#050505", // Deepest black
+              "surface-dark": "#121212",
+            },
+            fontFamily: {
+              display: ["'Archivo Black'", "sans-serif"],
+              body: ["'Inter'", "sans-serif"],
+            },
+            spacing: {
+              128: "32rem",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .grain-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 50;
+        opacity: 0.03;
+        background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuAMC3dGcqy1-4XQWWsaWI8n7YkRA-UmD3G_CIeTEbFOBmVjaiwDQuNuIWejd-8IkDy9b-lMtCnGS8UxfzLpPzd5uvw9QR546xJeCMn3JpPfXJbQ-BwSySxPDJHH6rUgAFwYcOV1nJIScVemI4Ro35-M2aH45dOIrE_3MORdDefUtddpjzO631hTDtLB3_B7H2KujyP6S3q7c6mbRMZcWDLvPsDT-iFh1caEdeKreSYf68fftglbRGB6bWqfyoKdjbitolWnl_jFFnw);
+      }
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-neutral-900 dark:text-white font-body transition-colors duration-500 antialiased selection:bg-neutral-900 selection:text-white dark:selection:bg-white dark:selection:text-neutral-900"
+  >
+    <div class="grain-overlay"></div>
+    <nav
+      class="fixed top-0 w-full z-40 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-sm border-b border-neutral-200 dark:border-neutral-800 transition-all duration-300"
+    >
+      <div
+        class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between"
+      >
+        <a
+          class="font-display uppercase text-xl tracking-tighter hover:opacity-70 transition-opacity"
+          href="#"
+        >
+          ALEX DEV_
+        </a>
+        <div
+          class="hidden md:flex items-center space-x-8 text-xs font-semibold uppercase tracking-widest"
+        >
+          <a
+            class="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+            href="#about"
+            >About</a
+          >
+          <a
+            class="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+            href="#skills"
+            >Skills</a
+          >
+          <a
+            class="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+            href="#projects"
+            >Work</a
+          >
+          <a
+            class="hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors"
+            href="#experience"
+            >Experience</a
+          >
+        </div>
+        <button
+          class="p-2 rounded-full hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors"
+          onclick="document.documentElement.classList.toggle('dark')"
+        >
+          <span class="material-icons-outlined text-sm">brightness_4</span>
+        </button>
+      </div>
+    </nav>
+    <header
+      class="relative min-h-screen flex flex-col justify-center items-center bg-background-dark text-white pt-20 px-6 overflow-hidden"
+    >
+      <div class="absolute inset-0 opacity-20 pointer-events-none">
+        <img
+          alt="Abstract dark geometric shapes"
+          class="w-full h-full object-cover"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFNxIiiMPhfy3_dS3-JZq7D8dZS-l9oBvA9WX9cz0FSKFLsAOTvqysFngMoFmKjbEZ9dDtS91ljKYRD5cAubQdOwnjWnrqbN0xZWjIwCEHsSA_jj4bDxyVzzxPOanmtZQHlTApKpOMIM4FEmos0AUDkhnkvw9m4UeYAwHuOTreoSQCU3SkxJfUAcqtCO06osrsrcdQTdm2QoNc-G7ZZrSy3XBMtCXw_5UAaRWi6BzXLFlSEWq1wM9o9hpgkhbUIXaChNG97Ru5tVI"
+        />
+        <div
+          class="absolute inset-0 bg-gradient-to-b from-background-dark via-transparent to-background-dark"
+        ></div>
+      </div>
+      <div class="relative z-10 text-center space-y-8 max-w-4xl mx-auto">
+        <div
+          class="inline-block bg-neutral-800/50 backdrop-blur px-3 py-1 rounded-full text-[10px] uppercase tracking-[0.2em] border border-neutral-700"
+        >
+          Portfolio 2024
+        </div>
+        <h1
+          class="font-display text-5xl md:text-8xl uppercase tracking-tighter leading-none"
+        >
+          Build The<br />
+          <span class="text-neutral-500">Unseen</span> Logic
+        </h1>
+        <p
+          class="font-light text-neutral-400 text-sm md:text-base max-w-lg mx-auto tracking-wide"
+        >
+          FULL STACK DEVELOPER | MACHINE LEARNING ENTHUSIAST
+        </p>
+        <div class="pt-8 flex justify-center gap-6">
+          <a
+            class="group flex items-center gap-2 border border-white/20 px-6 py-3 rounded-full hover:bg-white hover:text-black transition-all duration-300"
+            href="#"
+          >
+            <span class="text-xs font-bold uppercase tracking-widest"
+              >GitHub</span
+            >
+            <span
+              class="material-icons-outlined text-sm group-hover:translate-x-1 transition-transform"
+              >arrow_forward</span
+            >
+          </a>
+          <a
+            class="group flex items-center gap-2 border border-white/20 px-6 py-3 rounded-full hover:bg-white hover:text-black transition-all duration-300"
+            href="#"
+          >
+            <span class="text-xs font-bold uppercase tracking-widest"
+              >LinkedIn</span
+            >
+            <span
+              class="material-icons-outlined text-sm group-hover:translate-x-1 transition-transform"
+              >arrow_forward</span
+            >
+          </a>
+        </div>
+      </div>
+      <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+        <span class="material-icons-outlined text-neutral-500"
+          >arrow_downward</span
+        >
+      </div>
+    </header>
+    <div
+      class="w-full h-24 bg-background-light dark:bg-background-dark flex justify-center items-center overflow-hidden"
+    >
+      <div class="h-full w-[1px] bg-neutral-300 dark:bg-neutral-800 relative">
+        <div
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-neutral-900 dark:border-white bg-transparent"
+        ></div>
+      </div>
+    </div>
+    <section
+      class="py-24 bg-background-light dark:bg-background-dark"
+      id="about"
+    >
+      <div class="max-w-4xl mx-auto px-6 text-center">
+        <h2
+          class="font-display text-3xl md:text-5xl uppercase tracking-tight mb-8"
+        >
+          Engineer The Confidence
+        </h2>
+        <div
+          class="relative w-full aspect-video md:aspect-[21/9] bg-neutral-200 dark:bg-neutral-800 rounded-lg overflow-hidden mb-12 shadow-2xl"
+        >
+          <img
+            alt="Coding environment dark mode"
+            class="w-full h-full object-cover opacity-80 hover:scale-105 transition-transform duration-700"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhVWnA-1g3AeBewpGXhWk4r_7mBoRFB1GSV8Qq05V5cl-bL990piKrRTqVZeUQyB99NHk-AKf4Mqta0XAWwQLv-hgOmtQFalTqUjwsZ7cagyYbs3J7MsjNwzp-Ps16OAcVfcI3X1lMydlRkuPxid9kaZ1gYYkFcK9nnI8gJaBynnz4W9G_b01qbkN_mmRwxE_SGfWPcs8ld8oXrQ4eSs982IEY2c3GpBkVciChCU5R6PT2igy4lw5KbL2fg8b8NNZ06IGT7CVE0OE"
+          />
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div
+              class="bg-black/80 backdrop-blur-md px-8 py-4 border border-white/10 rounded-full"
+            >
+              <p class="text-white font-mono text-xs md:text-sm">
+                HELLO_WORLD.py
+              </p>
+            </div>
+          </div>
+        </div>
+        <p
+          class="text-lg md:text-xl font-light text-neutral-600 dark:text-neutral-300 leading-relaxed max-w-2xl mx-auto"
+        >
+          "...one of the few developers who bridges the gap between complex
+          backend logic and seamless frontend experiences. Focused on
+          scalability and user-centric architecture."
+        </p>
+        <div class="mt-8 flex justify-center">
+          <div
+            class="text-xs font-bold uppercase tracking-widest text-neutral-400"
+          >
+            Based in San Francisco
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      class="py-24 bg-white dark:bg-neutral-900 border-y border-neutral-200 dark:border-neutral-800"
+      id="skills"
+    >
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="font-display text-4xl uppercase tracking-tighter mb-4">
+            Complexity Made Simple
+          </h2>
+          <div
+            class="w-24 h-[1px] bg-neutral-300 dark:bg-neutral-700 mx-auto"
+          ></div>
+          <p class="mt-4 text-neutral-500 text-sm uppercase tracking-wider">
+            The tech stack defining my work
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+          <div class="group">
+            <div
+              class="w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 group-hover:bg-neutral-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-black transition-colors duration-300"
+            >
+              <span class="material-icons-outlined text-4xl">code</span>
+            </div>
+            <h3 class="font-display text-xl uppercase mb-4">Languages</h3>
+            <div class="flex flex-wrap justify-center gap-2">
+              <span
+                class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400"
+                >Python</span
+              >
+              <span
+                class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400"
+                >JavaScript/TS</span
+              >
+              <span
+                class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400"
+                >Rust</span
+              >
+              <span
+                class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400"
+                >SQL</span
+              >
+            </div>
+          </div>
+          <div class="group">
+            <div
+              class="w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 group-hover:bg-neutral-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-black transition-colors duration-300"
+            >
+              <span class="material-icons-outlined text-4xl">layers</span>
+            </div>
+            <h3 class="font-display text-xl uppercase mb-4">Frameworks</h3>
+            <div class="flex flex-wrap justify-center gap-2">
+              <span
+                class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400"
+                >React / Next.js</span
+              >
+              <span
+                class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400"
+                >Django</span
+              >
+              <span
+                class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400"
+                >FastAPI</span
+              >
+              <span
+                class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400"
+                >Tailwind</span
+              >
+            </div>
+          </div>
+          <div class="group">
+            <div
+              class="w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 group-hover:bg-neutral-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-black transition-colors duration-300"
+            >
+              <span class="material-icons-outlined text-4xl">psychology</span>
+            </div>
+            <h3 class="font-display text-xl uppercase mb-4">ML &amp; Tools</h3>
+            <div class="flex flex-wrap justify-center gap-2">
+              <span
+                class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400"
+                >PyTorch</span
+              >
+              <span
+                class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400"
+                >TensorFlow</span
+              >
+              <span
+                class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400"
+                >Docker</span
+              >
+              <span
+                class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400"
+                >AWS</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div
+      class="flex justify-center bg-background-light dark:bg-background-dark py-12"
+    >
+      <div class="flex space-x-2">
+        <div class="h-12 w-[1px] bg-neutral-400 dark:bg-neutral-600"></div>
+        <div class="h-12 w-[1px] bg-neutral-400 dark:bg-neutral-600"></div>
+        <div class="h-12 w-[1px] bg-neutral-400 dark:bg-neutral-600"></div>
+      </div>
+    </div>
+    <section class="bg-background-dark py-24 px-4 md:px-0" id="projects">
+      <div class="max-w-7xl mx-auto mb-16 px-6 text-center">
+        <h2 class="text-white font-display text-4xl uppercase tracking-wider">
+          Featured Works
+        </h2>
+      </div>
+      <div class="space-y-16 max-w-6xl mx-auto">
+        <article
+          class="relative group rounded-3xl overflow-hidden shadow-2xl bg-neutral-900"
+        >
+          <div class="aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden">
+            <img
+              alt="Dashboard analytics UI"
+              class="w-full h-full object-cover opacity-60 group-hover:opacity-40 group-hover:scale-105 transition-all duration-700"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB00xZXZcvLPv3PpqhMp-DbezZPN6Qti4YE4GF3mjjWt6DmLsMxDfS3SyMKAWoLJvIWuwA9H9rsI5GD9uGnYoo_sFYTpDLl9XDmy6iF8mcRhQq5tmPJGI25kCyZyhxO-sBP29jwD9GzeTf2grskP0RPnzT_VzFzkeDCuTz8Y5s_9Ur7B0hChHMOH9zU3Wp_etf4Gy79icWLMoS-ulOcVVq6rqIe6ycmkImwUqrExN2CPL7Y0lVn-BHJDkhtsdOQz8ZAuTmehnjZrN0"
+            />
+          </div>
+          <div
+            class="absolute bottom-0 left-0 w-full p-8 md:p-12 bg-gradient-to-t from-black via-black/50 to-transparent"
+          >
+            <div class="md:flex justify-between items-end">
+              <div class="mb-6 md:mb-0">
+                <h3
+                  class="text-white font-display text-3xl md:text-5xl uppercase mb-2"
+                >
+                  FinTech Analytics
+                </h3>
+                <p class="text-neutral-400 text-xs uppercase tracking-widest">
+                  SaaS Dashboard | React &amp; Python
+                </p>
+              </div>
+              <div class="max-w-md">
+                <p class="text-neutral-300 text-sm leading-relaxed mb-6">
+                  A high-performance financial data visualization platform
+                  processing millions of transaction rows in real-time. Built
+                  with a specialized focus on accessibility and data density.
+                </p>
+                <a
+                  class="inline-flex items-center text-white text-xs font-bold uppercase tracking-widest hover:text-neutral-400 transition-colors"
+                  href="#"
+                >
+                  View Case Study
+                  <span class="material-icons-outlined ml-2 text-sm"
+                    >arrow_forward</span
+                  >
+                </a>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article
+          class="relative group rounded-3xl overflow-hidden shadow-2xl bg-neutral-900"
+        >
+          <div class="aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden">
+            <img
+              alt="Cybersecurity lock concept"
+              class="w-full h-full object-cover opacity-60 group-hover:opacity-40 group-hover:scale-105 transition-all duration-700"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt39sp0mfEqrujonKHwS_ybLXF5DtaalZC9YAEfurP9p6nxcZ5F0Egm4G17Q_iHG6aBfG1LpxMM1Tyc5e20gzT6PNWNaSbupFzSekA3ZOmoIUG0pzMRZ62RmUMIqP9Qj00mug3ByULKV8lOVeUlh2mK19N7OjJR3kMMa8_BC1XuLOFzuYYd7r2KWbWgT1PrxK-Mqh-1UZR9-yVdRYgd-oqwah5inf2SQ3K59gKcwARmkId_GWqQZ_CquF_kA9hH3rs2GJVkSyG0Q4"
+            />
+          </div>
+          <div
+            class="absolute bottom-0 left-0 w-full p-8 md:p-12 bg-gradient-to-t from-black via-black/50 to-transparent"
+          >
+            <div class="md:flex justify-between items-end">
+              <div class="mb-6 md:mb-0">
+                <h3
+                  class="text-white font-display text-3xl md:text-5xl uppercase mb-2"
+                >
+                  Sentinel AI
+                </h3>
+                <p class="text-neutral-400 text-xs uppercase tracking-widest">
+                  Security | TensorFlow &amp; Rust
+                </p>
+              </div>
+              <div class="max-w-md">
+                <p class="text-neutral-300 text-sm leading-relaxed mb-6">
+                  An anomaly detection system for network traffic. Utilizes
+                  unsupervised learning to identify potential security threats
+                  without prior labeling, reducing false positives by 40%.
+                </p>
+                <a
+                  class="inline-flex items-center text-white text-xs font-bold uppercase tracking-widest hover:text-neutral-400 transition-colors"
+                  href="#"
+                >
+                  View GitHub
+                  <span class="material-icons-outlined ml-2 text-sm"
+                    >arrow_forward</span
+                  >
+                </a>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article
+          class="relative group rounded-3xl overflow-hidden shadow-2xl bg-neutral-900"
+        >
+          <div class="aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden">
+            <img
+              alt="AR VR headset"
+              class="w-full h-full object-cover opacity-60 group-hover:opacity-40 group-hover:scale-105 transition-all duration-700"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9juggdBd_Ve39JSd2eraU3qOWiobUiSHXWAXme6vb_OGEq0Of6DfpjcxlHP8hX-yWMF0AeInIlsk5AUN97r1XpC4SW16VsEq3N-lunjx18ZiA3BwOpLdgYBvog7pVBbdKYrnKj64YGnwu_V9wMNYPlup9jck2ifnmcQ2PM3H3ozeR-vDZRXN0xiqPbfGIXJQ6LhSeTedSkDU5mHTGrW2MnOcxw3FiUG0OuQ-q-sxx3thrqgHkO7stkaoe7S6QVeinp2MRWK7us6A"
+            />
+          </div>
+          <div
+            class="absolute bottom-0 left-0 w-full p-8 md:p-12 bg-gradient-to-t from-black via-black/50 to-transparent"
+          >
+            <div class="md:flex justify-between items-end">
+              <div class="mb-6 md:mb-0">
+                <h3
+                  class="text-white font-display text-3xl md:text-5xl uppercase mb-2"
+                >
+                  Project Vision
+                </h3>
+                <p class="text-neutral-400 text-xs uppercase tracking-widest">
+                  AR Experience | Three.js &amp; WebGL
+                </p>
+              </div>
+              <div class="max-w-md">
+                <p class="text-neutral-300 text-sm leading-relaxed mb-6">
+                  A web-based Augmented Reality museum experience. Allows users
+                  to interact with 3D artifacts directly in the browser without
+                  installing external applications.
+                </p>
+                <a
+                  class="inline-flex items-center text-white text-xs font-bold uppercase tracking-widest hover:text-neutral-400 transition-colors"
+                  href="#"
+                >
+                  Launch Demo
+                  <span class="material-icons-outlined ml-2 text-sm"
+                    >arrow_forward</span
+                  >
+                </a>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+    <section
+      class="py-24 bg-background-light dark:bg-background-dark"
+      id="experience"
+    >
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="font-display text-4xl uppercase tracking-tighter mb-4">
+            The Journey
+          </h2>
+          <div class="w-24 h-[1px] bg-neutral-900 dark:bg-white mx-auto"></div>
+        </div>
+        <div
+          class="relative border-l border-neutral-300 dark:border-neutral-700 ml-3 md:ml-0 space-y-12"
+        >
+          <div class="relative pl-8 md:pl-12">
+            <div
+              class="absolute -left-[5px] top-2 w-3 h-3 bg-primary rounded-full border-2 border-white dark:border-background-dark"
+            ></div>
+            <div
+              class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-2"
+            >
+              <h3 class="font-display text-xl uppercase">
+                Senior Full Stack Eng.
+              </h3>
+              <span class="text-xs font-mono text-neutral-500"
+                >2021 - Present</span
+              >
+            </div>
+            <div
+              class="mb-2 text-sm font-bold text-neutral-700 dark:text-neutral-300"
+            >
+              TechFlow Systems
+            </div>
+            <p
+              class="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed max-w-2xl"
+            >
+              Leading the core infrastructure team. Migrated legacy monolithic
+              architecture to microservices using Go and gRPC, improving system
+              throughput by 300%. Mentoring 4 junior developers.
+            </p>
+          </div>
+          <div class="relative pl-8 md:pl-12">
+            <div
+              class="absolute -left-[5px] top-2 w-3 h-3 bg-neutral-400 dark:bg-neutral-600 rounded-full border-2 border-white dark:border-background-dark"
+            ></div>
+            <div
+              class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-2"
+            >
+              <h3 class="font-display text-xl uppercase">Frontend Developer</h3>
+              <span class="text-xs font-mono text-neutral-500"
+                >2019 - 2021</span
+              >
+            </div>
+            <div
+              class="mb-2 text-sm font-bold text-neutral-700 dark:text-neutral-300"
+            >
+              Creative Agency X
+            </div>
+            <p
+              class="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed max-w-2xl"
+            >
+              Developed award-winning interactive websites for Fortune 500
+              clients. Specialized in WebGL animations and optimizing render
+              performance for mobile devices.
+            </p>
+          </div>
+          <div class="relative pl-8 md:pl-12">
+            <div
+              class="absolute -left-[5px] top-2 w-3 h-3 bg-neutral-400 dark:bg-neutral-600 rounded-full border-2 border-white dark:border-background-dark"
+            ></div>
+            <div
+              class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-2"
+            >
+              <h3 class="font-display text-xl uppercase">
+                Machine Learning Intern
+              </h3>
+              <span class="text-xs font-mono text-neutral-500">2018</span>
+            </div>
+            <div
+              class="mb-2 text-sm font-bold text-neutral-700 dark:text-neutral-300"
+            >
+              DataCorp
+            </div>
+            <p
+              class="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed max-w-2xl"
+            >
+              Assisted in training NLP models for customer sentiment analysis.
+              Cleaned large datasets and implemented data pipelines using Python
+              Pandas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer
+      class="bg-background-light dark:bg-background-dark pt-24 pb-12 border-t border-neutral-200 dark:border-neutral-800"
+    >
+      <div class="max-w-4xl mx-auto px-6 text-center">
+        <p class="text-neutral-500 text-sm uppercase tracking-widest mb-4">
+          Want to know more?
+        </p>
+        <h2
+          class="font-display text-5xl md:text-7xl uppercase tracking-tighter mb-12"
+        >
+          Let's Chat!
+        </h2>
+        <a
+          class="inline-block bg-primary text-white dark:text-black px-10 py-4 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-transform duration-300 shadow-lg"
+          href="mailto:hello@example.com"
+        >
+          Contact Me
+        </a>
+        <div
+          class="mt-24 pt-8 border-t border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row justify-between items-center text-xs text-neutral-500 uppercase tracking-widest"
+        >
+          <div class="mb-4 md:mb-0">© 2024 Alex Dev.</div>
+          <div class="flex space-x-6">
+            <a
+              class="hover:text-black dark:hover:text-white transition-colors"
+              href="#"
+              >Twitter</a
+            >
+            <a
+              class="hover:text-black dark:hover:text-white transition-colors"
+              href="#"
+              >Instagram</a
+            >
+            <a
+              class="hover:text-black dark:hover:text-white transition-colors"
+              href="#"
+              >Dribbble</a
+            >
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

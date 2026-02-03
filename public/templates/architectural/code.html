@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Architectural Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              display: ['Oswald', 'sans-serif'],
+            },
+            colors: {
+              accent: '#DC2626', 
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #09090b; }
+      ::-webkit-scrollbar-thumb { background: #27272a; }
+      ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+    </style>
+</head>
+<body class="bg-black text-zinc-100 antialiased selection:bg-accent selection:text-white">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- ICONS (Inline SVGs to avoid dependencies) ---
+        const IconArrowUpRight = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+        );
+        const IconGithub = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+        );
+        const IconLinkedin = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+        );
+        const IconMail = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+        );
+
+        // --- CONSTANTS ---
+        const PERSONAL_INFO = {
+            name: "ALEX CHEN",
+            role: "Full Stack Engineer | UI Specialist",
+            about: "I am a product-focused engineer who believes in solving meaningful problems through elegant code and intuitive interfaces. My passion lies in the subtle intersection of technical performance and artistic design. I don't just build features; I craft experiences that respect the user's time and intelligence.",
+            location: "San Francisco, CA",
+            email: "alex.chen@example.com",
+            phone: "+1 (555) 012-3456"
+        };
+
+        const PROJECTS = [
+            {
+                id: "1",
+                title: "Artceps",
+                role: "UX Research; Interface Design",
+                description: "A comprehensive digital marketplace for independent artists. Implements a novel auction mechanism and real-time gallery previews using WebGL. Connect with movies, people and cinema more than ever.",
+                imageUrl: "https://picsum.photos/id/12/800/600",
+                tags: ["React", "WebGL", "Node.js"],
+                duration: "3 months",
+                links: { live: "https://example.com", github: "https://github.com" }
+            },
+            {
+                id: "2",
+                title: "Sahayak",
+                role: "Service Design",
+                description: "An AI-powered dashboard for logistical supply chains. Connect with the right household help easily through our verified vetting system and real-time tracking.",
+                imageUrl: "https://picsum.photos/id/24/800/600",
+                tags: ["Next.js", "Python", "TensorFlow"],
+                duration: "2 months",
+                links: { live: "https://example.com" }
+            },
+            {
+                id: "3",
+                title: "STEMpedia",
+                role: "Lead Developer",
+                description: "An educational platform gamifying STEM concepts for early learners. Features interactive visualizations and progress tracking for educators.",
+                imageUrl: "https://picsum.photos/id/35/800/600",
+                tags: ["Vue", "D3.js", "Firebase"],
+                duration: "5 months",
+                links: { github: "https://github.com" }
+            }
+        ];
+
+        const EXPERIENCE = [
+            {
+                id: "1",
+                role: "Senior Frontend Engineer",
+                company: "TechFlow Systems",
+                period: "2021 - Present",
+                description: "Leading the migration of legacy dashboards to a modern React architecture. Improved load times by 40% and established a new internal design system."
+            },
+            {
+                id: "2",
+                role: "UI Developer",
+                company: "Creative Grid",
+                period: "2019 - 2021",
+                description: "Collaborated with designers to implement pixel-perfect landing pages for Fortune 500 clients. Specialized in complex animations and interaction design."
+            },
+            {
+                id: "3",
+                role: "Junior Web Developer",
+                company: "StartUp Inc",
+                period: "2018 - 2019",
+                description: "Built and maintained client-facing e-commerce storefronts. Assisted in backend API development using Express."
+            }
+        ];
+
+        const SKILLS = [
+            { category: "Languages", skills: ["TypeScript", "JavaScript (ES6+)", "Python", "SQL", "HTML5/CSS3"] },
+            { category: "Frameworks", skills: ["React", "Next.js", "Tailwind CSS", "Node.js", "Express", "Django"] },
+            { category: "Tools", skills: ["Git", "Docker", "AWS", "Figma", "PostgreSQL", "Jest"] }
+        ];
+
+        const SOCIALS = [
+            { platform: "GitHub", url: "https://github.com", icon: "github" },
+            { platform: "LinkedIn", url: "https://linkedin.com", icon: "linkedin" },
+            { platform: "Email", url: "mailto:alex.chen@example.com", icon: "mail" }
+        ];
+
+        // --- COMPONENTS ---
+
+        const SectionHeading = ({ title, className = "" }) => {
+            return (
+                <div className={`flex items-start gap-4 mb-16 ${className}`}>
+                <div className="flex shrink-0">
+                    <div className="w-8 h-12 bg-white rounded-tl-lg"></div>
+                    <div className="w-8 h-12 bg-accent rounded-br-lg -ml-4 mt-4 mix-blend-screen"></div> 
+                </div>
+                <h2 className="font-display font-bold text-5xl md:text-6xl uppercase tracking-tighter text-white">
+                    {title}
+                </h2>
+                </div>
+            );
+        };
+
+        const Header = () => {
+            const links = [
+                { label: "About", href: "#about" },
+                { label: "Projects", href: "#projects" },
+                { label: "Skills", href: "#skills" },
+                { label: "Experience", href: "#experience" },
+            ];
+
+            return (
+                <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm border-b border-zinc-900">
+                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                    <div className="font-display font-bold text-xl text-accent tracking-widest">
+                    A.CHEN<span className="text-white">.</span>
+                    </div>
+
+                    <ul className="hidden md:flex items-center gap-8">
+                    {links.map((link) => (
+                        <li key={link.label}>
+                        <a href={link.href} className="text-xs font-medium tracking-widest uppercase text-zinc-400 hover:text-white transition-colors">
+                            {link.label}
+                        </a>
+                        </li>
+                    ))}
+                    </ul>
+                    <div className="md:hidden text-xs text-zinc-500 uppercase tracking-widest">Menu</div>
+                </div>
+                </nav>
+            );
+        };
+
+        const Hero = () => {
+            return (
+                <section className="relative min-h-screen flex flex-col justify-center pt-20 border-b border-zinc-900 overflow-hidden">
+                <div className="absolute inset-0 pointer-events-none opacity-20">
+                    <div className="h-full w-full grid grid-cols-6 md:grid-cols-12 gap-0">
+                    {Array.from({ length: 12 }).map((_, i) => (
+                        <div key={i} className="border-r border-zinc-700 h-full"></div>
+                    ))}
+                    </div>
+                </div>
+
+                <div className="relative z-10 max-w-7xl mx-auto px-6 w-full grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                    <div className="md:col-span-8">
+                    <div className="relative">
+                        <div className="w-16 h-16 md:w-24 md:h-24 bg-accent mb-6 rounded-tr-3xl"></div>
+                        <h1 className="font-display font-bold text-7xl md:text-[9rem] leading-[0.85] tracking-tighter uppercase text-white mb-6">
+                        {PERSONAL_INFO.name.split(' ')[0]}<br />
+                        <span className="text-zinc-500">{PERSONAL_INFO.name.split(' ')[1]}</span>
+                        </h1>
+                    </div>
+                    
+                    <div className="mt-8 md:mt-12 max-w-xl">
+                        <p className="font-mono text-accent text-sm mb-2 tracking-widest uppercase">
+                        {PERSONAL_INFO.role}
+                        </p>
+                        <p className="text-zinc-400 text-lg md:text-xl leading-relaxed">
+                        {PERSONAL_INFO.about}
+                        </p>
+                    </div>
+                    </div>
+
+                    <div className="md:col-span-4 flex flex-col items-end justify-end h-full mt-12 md:mt-0">
+                        <div className="grid grid-cols-2 gap-2 w-full max-w-sm opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
+                            <img src="https://picsum.photos/300/200?grayscale" alt="Work 1" className="w-full h-24 object-cover rounded-sm" />
+                            <img src="https://picsum.photos/301/200?grayscale" alt="Work 2" className="w-full h-24 object-cover rounded-sm" />
+                            <img src="https://picsum.photos/302/200?grayscale" alt="Work 3" className="w-full h-24 object-cover rounded-sm" />
+                            <div className="w-full h-24 bg-zinc-900 flex items-center justify-center border border-zinc-800 rounded-sm">
+                                <span className="text-xs uppercase tracking-widest text-zinc-600">Explore</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="absolute bottom-12 left-6 md:left-12 flex items-center gap-4">
+                    <div className="h-[1px] w-12 bg-zinc-600"></div>
+                    <span className="text-xs uppercase tracking-widest text-zinc-500">Scroll</span>
+                </div>
+                </section>
+            );
+        };
+
+        const Projects = () => {
+            return (
+                <section id="projects" className="py-24 border-b border-zinc-900 bg-black relative">
+                <div className="absolute inset-0 pointer-events-none opacity-10">
+                    <div className="h-full w-full flex flex-col justify-between">
+                        {Array.from({ length: 10 }).map((_, i) => (
+                        <div key={i} className="border-b border-zinc-700 w-full h-full"></div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    <SectionHeading title="Projects" />
+
+                    <div className="space-y-0">
+                    {PROJECTS.map((project) => (
+                        <div key={project.id} className="group relative grid grid-cols-1 md:grid-cols-12 border-t border-zinc-800 py-16 gap-8 transition-colors duration-500 hover:bg-zinc-900/30">
+                        
+                        <div className="md:col-span-4 flex flex-col justify-between order-2 md:order-1">
+                            <div>
+                            {project.role && (
+                                <span className="block text-xs font-mono uppercase tracking-widest text-zinc-500 mb-2">
+                                {project.role}
+                                </span>
+                            )}
+                            <h3 className="font-display font-bold text-4xl text-white mb-6 group-hover:text-accent transition-colors">
+                                {project.title}
+                            </h3>
+                            
+                            {project.duration && (
+                                <div className="mb-6">
+                                <span className="text-xs text-zinc-500 uppercase tracking-wide">Duration</span>
+                                <p className="text-zinc-300">{project.duration}</p>
+                                </div>
+                            )}
+                            </div>
+
+                            <div className="flex items-center gap-4 mt-8 md:mt-0">
+                            {project.links.live && (
+                                <a href={project.links.live} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-zinc-700 flex items-center justify-center text-white hover:bg-accent hover:border-accent hover:text-black transition-all">
+                                <IconArrowUpRight size={20} />
+                                </a>
+                            )}
+                            {project.links.github && (
+                                <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-zinc-700 flex items-center justify-center text-white hover:bg-white hover:border-white hover:text-black transition-all">
+                                <IconGithub size={20} />
+                                </a>
+                            )}
+                            </div>
+                        </div>
+
+                        <div className="md:col-span-8 order-1 md:order-2">
+                            <div className="relative overflow-hidden aspect-video md:aspect-[21/9] bg-zinc-900 border border-zinc-800">
+                                <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
+                                <div className="absolute bottom-0 right-0 p-8 bg-black/80 backdrop-blur-md max-w-md border-t border-l border-zinc-800 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                <p className="text-zinc-300 text-sm leading-relaxed">
+                                    {project.description}
+                                </p>
+                                <div className="flex gap-2 mt-4 flex-wrap">
+                                    {project.tags.map(tag => (
+                                        <span key={tag} className="text-[10px] uppercase border border-zinc-600 px-2 py-1 text-zinc-400">
+                                        {tag}
+                                        </span>
+                                    ))}
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        </div>
+                    ))}
+                    </div>
+                </div>
+                </section>
+            );
+        };
+
+        const Skills = () => {
+            return (
+                <section id="skills" className="py-24 border-b border-zinc-900 bg-zinc-950">
+                <div className="max-w-7xl mx-auto px-6">
+                    <SectionHeading title="Etcetera" className="mb-20" /> 
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    {SKILLS.map((group) => (
+                        <div key={group.category} className="space-y-6">
+                        <h3 className="font-display text-2xl uppercase tracking-wider text-zinc-500 border-b border-zinc-800 pb-2">
+                            {group.category}
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                            {group.skills.map((skill) => (
+                            <span key={skill} className="px-4 py-3 bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm hover:border-accent hover:text-white transition-colors cursor-default">
+                                {skill}
+                            </span>
+                            ))}
+                        </div>
+                        </div>
+                    ))}
+                    </div>
+                    
+                    <div className="mt-24 pt-24 border-t border-zinc-900 relative">
+                        <div className="text-center max-w-2xl mx-auto">
+                            <p className="font-display text-4xl md:text-5xl text-white leading-tight">
+                                Not always working <br />
+                                <span className="text-zinc-600">(but always curious)</span>
+                            </p>
+                            <div className="mt-8 flex justify-center gap-4">
+                                <div className="w-2 h-2 bg-accent rounded-full"></div>
+                                <div className="w-2 h-2 bg-zinc-800 rounded-full"></div>
+                                <div className="w-2 h-2 bg-zinc-800 rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </section>
+            );
+        };
+
+        const Experience = () => {
+            return (
+                <section id="experience" className="py-24 bg-black border-b border-zinc-900">
+                <div className="max-w-7xl mx-auto px-6">
+                    <SectionHeading title="Experience" />
+
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+                        <div className="hidden md:block md:col-span-2"></div>
+                        <div className="md:col-span-10 space-y-12">
+                            {EXPERIENCE.map((item) => (
+                                <div key={item.id} className="relative pl-8 md:pl-0 border-l border-zinc-800 md:border-l-0">
+                                    <div className="absolute left-[-5px] top-2 w-2.5 h-2.5 bg-accent md:hidden"></div>
+                                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 items-start">
+                                        <div className="md:col-span-3">
+                                            <span className="text-accent font-mono text-sm tracking-widest uppercase block mb-1">
+                                                {item.period}
+                                            </span>
+                                            <h4 className="text-white font-bold text-lg">{item.company}</h4>
+                                        </div>
+                                        <div className="md:col-span-9">
+                                            <h3 className="text-xl md:text-2xl font-display uppercase tracking-wide text-zinc-200 mb-4">
+                                                {item.role}
+                                            </h3>
+                                            <p className="text-zinc-400 leading-relaxed max-w-2xl">
+                                                {item.description}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                </section>
+            );
+        };
+
+        const Footer = () => {
+            return (
+                <footer className="bg-black py-20 pb-8 border-t border-zinc-900">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
+                    <div>
+                        <h4 className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-8">Get in Touch</h4>
+                        <a href={`mailto:${PERSONAL_INFO.email}`} className="text-lg md:text-xl text-white hover:text-accent transition-colors block mb-2">
+                        {PERSONAL_INFO.email}
+                        </a>
+                        <p className="text-zinc-400">{PERSONAL_INFO.phone}</p>
+                    </div>
+
+                    <div>
+                        <h4 className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-8">Location</h4>
+                        <p className="text-lg md:text-xl text-white">{PERSONAL_INFO.location}</p>
+                        <p className="text-zinc-400">Open to remote work</p>
+                    </div>
+
+                    <div>
+                        <h4 className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-8">Find Me Here</h4>
+                        <div className="flex gap-4">
+                        {SOCIALS.map((social) => (
+                            <a key={social.platform} href={social.url} target="_blank" rel="noopener noreferrer" className="w-12 h-12 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white hover:border-white hover:bg-zinc-900 transition-all rounded-full group" aria-label={social.platform}>
+                            {social.icon === 'github' && <IconGithub size={18} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />}
+                            {social.icon === 'linkedin' && <IconLinkedin size={18} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />}
+                            {social.icon === 'mail' && <IconMail size={18} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />}
+                            </a>
+                        ))}
+                        </div>
+                    </div>
+                    </div>
+
+                    <div className="pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-xs text-zinc-600 uppercase tracking-wider">
+                        © {new Date().getFullYear()} {PERSONAL_INFO.name}. All Rights Reserved.
+                    </p>
+                    <div className="flex gap-6">
+                        <span className="text-xs text-zinc-600 uppercase tracking-wider cursor-pointer hover:text-zinc-400">About</span>
+                        <span className="text-xs text-zinc-600 uppercase tracking-wider cursor-pointer hover:text-zinc-400">Projects</span>
+                        <span className="text-xs text-zinc-600 uppercase tracking-wider cursor-pointer hover:text-zinc-400">Etcetera</span>
+                    </div>
+                    </div>
+                </div>
+                </footer>
+            );
+        };
+
+        const App = () => {
+            return (
+                <div className="min-h-screen bg-black text-white selection:bg-red-600 selection:text-white">
+                    <Header />
+                    <main>
+                        <Hero />
+                        <Skills />
+                        <Projects />
+                        <Experience />
+                    </main>
+                    <Footer />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

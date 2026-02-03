@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Developer Portfolio | Full Stack &amp; ML</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1A1A1A", // Very dark gray/black for high contrast primary actions
+                        secondary: "#D1A086", // Muted terracotta accent from the reference
+                        "background-light": "#F2F0EB", // Soft warm beige
+                        "surface-light": "#E8E6E1", // Slightly darker beige for cards
+                        "background-dark": "#121212", // Deep charcoal
+                        "surface-dark": "#1E1E1E", // Lighter charcoal for cards
+                        "text-light": "#333333",
+                        "text-dark": "#E5E5E5",
+                        "muted-light": "#666666",
+                        "muted-dark": "#A3A3A3",
+                    },
+                    fontFamily: {
+                        display: ["'Playfair Display'", "serif"],
+                        sans: ["'Inter'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D1A086;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b5856e;
+        }
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-sans transition-colors duration-300">
+<nav class="fixed top-0 w-full z-50 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 transition-colors duration-300">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-20">
+<div class="flex-shrink-0 flex items-center">
+<span class="font-display italic text-2xl font-bold">dev.portfolio</span>
+</div>
+<div class="hidden md:flex space-x-8 items-center">
+<a class="text-sm font-medium hover:text-secondary transition-colors" href="#about">About</a>
+<a class="text-sm font-medium hover:text-secondary transition-colors" href="#skills">Skills</a>
+<a class="text-sm font-medium hover:text-secondary transition-colors" href="#projects">Work</a>
+<a class="text-sm font-medium hover:text-secondary transition-colors" href="#experience">Experience</a>
+<button class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" id="theme-toggle">
+<i class="fas fa-moon dark:hidden"></i>
+<i class="fas fa-sun hidden dark:block"></i>
+</button>
+<a class="bg-primary text-white px-5 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity" href="#contact">Let's Talk</a>
+</div>
+<div class="md:hidden flex items-center">
+<button class="text-text-light dark:text-text-dark focus:outline-none">
+<i class="fas fa-bars text-xl"></i>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<div class="fade-in-up z-10">
+<div class="inline-block px-3 py-1 mb-6 border border-gray-300 dark:border-gray-600 rounded-full text-xs font-medium tracking-widest uppercase text-muted-light dark:text-muted-dark">
+                        Available for hire
+                    </div>
+<h1 class="font-display text-5xl md:text-6xl lg:text-7xl font-medium leading-tight mb-6">
+                        Building for <br/> <span class="italic text-secondary">intelligence.</span>
+</h1>
+<p class="text-lg md:text-xl text-muted-light dark:text-muted-dark mb-8 max-w-lg leading-relaxed">
+                        I'm Alex Jensen, a Full Stack Developer &amp; ML Enthusiast based in San Francisco. I craft elegant digital solutions that bridge the gap between complex algorithms and intuitive user experiences.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4 mb-10">
+<a class="inline-flex justify-center items-center px-8 py-3 bg-primary text-white rounded-full font-medium hover:opacity-90 transition-all transform hover:-translate-y-1" href="#projects">
+                            View Projects
+                        </a>
+<a class="inline-flex justify-center items-center px-8 py-3 border border-gray-300 dark:border-gray-600 rounded-full font-medium hover:border-primary dark:hover:border-white transition-all" href="https://github.com" target="_blank">
+<i class="fab fa-github mr-2"></i> GitHub
+                        </a>
+</div>
+<div class="flex items-center gap-6 text-muted-light dark:text-muted-dark text-sm font-medium uppercase tracking-wider">
+<span>Web</span>
+<span class="w-px h-4 bg-gray-300 dark:bg-gray-700"></span>
+<span>Machine Learning</span>
+<span class="w-px h-4 bg-gray-300 dark:bg-gray-700"></span>
+<span>Cloud Architecture</span>
+</div>
+</div>
+<div class="relative fade-in-up delay-200">
+<div class="absolute -top-10 -right-10 w-64 h-64 bg-secondary/20 rounded-full blur-3xl dark:bg-secondary/10"></div>
+<div class="relative overflow-hidden rounded-xl shadow-2xl aspect-[4/5] md:aspect-square lg:aspect-[4/5] group">
+<img alt="Alex Jensen Portrait" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCY0Md-cwfMCyptfszzctS9FI9bcNn5ZbIkutbYaNjPjUVx0JOIj_8-UugXusDPpASa9CkMwWz3y7ymja_bA5mBV6RCBTLmLd-QMiYAxLUFPIEGHyv5QHvzywKoFZ-EUVW9uKg0q7S7qPorj4myXgF3g9I5Mj_7CYjc2XQtZ2aAMppXJLt6WMh5CTt__kuWmUtIGWOXVwgI5uR0dURQjV4CXgLYrRpQxGuIIYS-BR8E9gWrR8U3Ilf8lnENlZTfP0ZNgzPu-usK_AVj"/>
+<div class="absolute bottom-6 left-6 right-6 bg-white/90 dark:bg-surface-dark/90 backdrop-blur-md p-4 rounded-lg shadow-lg">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-xs text-muted-light dark:text-muted-dark uppercase tracking-wider">Current Focus</p>
+<p class="font-display font-bold italic text-lg">Natural Language Processing</p>
+</div>
+<div class="h-10 w-10 bg-primary rounded-full flex items-center justify-center text-white">
+<i class="fas fa-brain"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-20 bg-white dark:bg-surface-dark transition-colors duration-300" id="about">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-center mb-12">
+<span class="px-4 py-2 border-y border-gray-200 dark:border-gray-700 text-xs font-semibold tracking-[0.2em] uppercase">My Philosophy</span>
+</div>
+<h2 class="text-3xl md:text-5xl font-display text-center mb-16 leading-tight">
+                Code driven, <span class="italic text-secondary">data smart.</span>
+</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="p-8 border border-gray-100 dark:border-gray-800 rounded-xl bg-background-light dark:bg-background-dark hover:shadow-lg transition-shadow duration-300">
+<div class="w-12 h-12 flex items-center justify-center mb-6 text-2xl">
+                        🧩
+                    </div>
+<h3 class="text-xl font-bold mb-3 font-display">Clean Architecture</h3>
+<p class="text-muted-light dark:text-muted-dark text-sm leading-relaxed">
+                        I believe software should be as beautiful on the inside as it is on the outside. Maintainable, scalable code is my standard, not an afterthought.
+                    </p>
+</div>
+<div class="p-8 border border-gray-100 dark:border-gray-800 rounded-xl bg-background-light dark:bg-background-dark hover:shadow-lg transition-shadow duration-300">
+<div class="w-12 h-12 flex items-center justify-center mb-6 text-2xl">
+                        🚀
+                    </div>
+<h3 class="text-xl font-bold mb-3 font-display">Performance First</h3>
+<p class="text-muted-light dark:text-muted-dark text-sm leading-relaxed">
+                        Speed is a feature. I optimize every layer of the stack, from database queries to client-side rendering, ensuring seamless user interactions.
+                    </p>
+</div>
+<div class="p-8 border border-gray-100 dark:border-gray-800 rounded-xl bg-background-light dark:bg-background-dark hover:shadow-lg transition-shadow duration-300">
+<div class="w-12 h-12 flex items-center justify-center mb-6 text-2xl">
+                        🤖
+                    </div>
+<h3 class="text-xl font-bold mb-3 font-display">AI Integration</h3>
+<p class="text-muted-light dark:text-muted-dark text-sm leading-relaxed">
+                        Leveraging the power of Machine Learning to create smarter applications that adapt, learn, and provide personalized value to users.
+                    </p>
+</div>
+</div>
+</div>
+</section>
+<section class="py-20 md:py-32" id="skills">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div class="relative h-[500px] hidden lg:block rounded-xl overflow-hidden">
+<img alt="Coding Setup" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1ILmeEMU5jA3xkHr_AUd7f12qJUTLq-pThvxU5BlJ8y3N9i8GpREfwYy4AcaLMdYHUoUpYoMZ7UUlY1dP-yBCOf-i90XdsFxYkduIoSBZas1Pl7IzJ-KD11VdmQVUOZCk2Xo-twDaF_9RSpvjBHzVcUtng4ANnQyFVRUkhoz4ob1F5kp5tlz8RtqO_PnTbws1ZBJjVBM4att-ygvQDxEdIokZ0EiH86YnXQV0MGHDqknYi_Uug6o9-pCgPMntmOPxOrf1RO4_QkvV"/>
+<div class="absolute inset-0 bg-primary/20 mix-blend-multiply"></div>
+</div>
+<div>
+<div class="inline-block border-b border-gray-300 dark:border-gray-600 pb-2 mb-8">
+<span class="text-xs font-semibold tracking-[0.2em] uppercase">Technical Proficiency</span>
+</div>
+<h2 class="font-display text-4xl mb-8">
+                        The tools I use to <span class="italic font-normal">create.</span>
+</h2>
+<div class="space-y-10">
+<div>
+<h3 class="font-display text-xl mb-4 italic">Languages &amp; Core</h3>
+<div class="flex flex-wrap gap-3">
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">Python</span>
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">TypeScript</span>
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">JavaScript (ES6+)</span>
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">SQL</span>
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">Rust</span>
+</div>
+</div>
+<div>
+<h3 class="font-display text-xl mb-4 italic">Frameworks &amp; Libraries</h3>
+<div class="flex flex-wrap gap-3">
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">React / Next.js</span>
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">FastAPI</span>
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">PyTorch</span>
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">Tailwind CSS</span>
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">Scikit-learn</span>
+</div>
+</div>
+<div>
+<h3 class="font-display text-xl mb-4 italic">Tools &amp; Infrastructure</h3>
+<div class="flex flex-wrap gap-3">
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">Docker</span>
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">AWS</span>
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">Git &amp; CI/CD</span>
+<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">PostgreSQL</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-20 bg-surface-light dark:bg-surface-dark transition-colors duration-300" id="projects">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="mb-16">
+<span class="block text-xs font-semibold tracking-[0.2em] uppercase mb-4 text-center">Selected Work</span>
+<h2 class="text-4xl md:text-5xl font-display text-center">Recent <span class="italic">deployments.</span></h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+<div class="group cursor-pointer">
+<div class="relative overflow-hidden rounded-lg mb-6 shadow-md aspect-video">
+<img alt="Finance Dashboard Project" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo0k-TFFLpRj27FoXVZ_9BMY3U3oLZKHCYQrLg9gxFrlcJNdGrVLOZYZ74yp3UX_29dBDyuY4uh__AlzE8opTLKX3jRCs3rTWq-_MJxNK7-nEZF7uBtWDNDNRxRxKr1RoXFohgI84N_ogm6T9nd4BLdpuhC7uyT5AZX8En6JCx0Yll3_49Anu6R4PF3qDmsdT6ErGE-JITbXMDPBaC27NebUOAcg69ef-RkQWsFn4cmSfS0TsT_hAVY4Ydo5Jk-xjWFNDI9QoK6x1r"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+<a class="bg-white text-black p-3 rounded-full hover:scale-110 transition-transform" href="#"><i class="fab fa-github"></i></a>
+<a class="bg-white text-black p-3 rounded-full hover:scale-110 transition-transform" href="#"><i class="fas fa-external-link-alt"></i></a>
+</div>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-2xl font-display font-medium mb-2 group-hover:text-secondary transition-colors">Vantage Analytics</h3>
+<p class="text-muted-light dark:text-muted-dark text-sm mb-3">A financial data visualization platform using React and D3.js.</p>
+<div class="flex gap-2 text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+<span>React</span> • <span>D3.js</span> • <span>Node.js</span>
+</div>
+</div>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="relative overflow-hidden rounded-lg mb-6 shadow-md aspect-video">
+<img alt="Health AI Project" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuGA48PKkl0-9RMSRN68_RzCdF7pO_bOnuV0_bi5GW8CYnnwfnnyRc8ywHHKb4LqEotWPrME59NmyapwwloyCPvsSvV8mcl3lMHcHhvmR4xWP9Zzg1xqRiXZZT1SrAeFI8WzxDvNKjWpqG-qwb-vc529NwRyUTGSJ7CMpu60SRaIzEDuK8Rwe3H36CS0wNaP5WVUJwk4Gj3bIKDijbfbMZyF6Bt-kOb_tZ8VHYp76oBW7E08qUCEn-Zu-RvhiFPDjvM8oTpgCJdWyx"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+<a class="bg-white text-black p-3 rounded-full hover:scale-110 transition-transform" href="#"><i class="fab fa-github"></i></a>
+<a class="bg-white text-black p-3 rounded-full hover:scale-110 transition-transform" href="#"><i class="fas fa-external-link-alt"></i></a>
+</div>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-2xl font-display font-medium mb-2 group-hover:text-secondary transition-colors">MediScan AI</h3>
+<p class="text-muted-light dark:text-muted-dark text-sm mb-3">Deep learning model for early detection of anomalies in X-ray scans.</p>
+<div class="flex gap-2 text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+<span>Python</span> • <span>PyTorch</span> • <span>FastAPI</span>
+</div>
+</div>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="relative overflow-hidden rounded-lg mb-6 shadow-md aspect-video">
+<img alt="Corporate Website" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQ2iajEFssF-wmXu5ythDYk6NzWR_jukR5TkoifWNe6JMM0-jemyQcDRAl7NFGDhW8gLMsaCsRVZHjtmZZImF7DoiIsV3M8mqGDlsdaGNayQ6ph1J38qmsNlxqn0hwVoLMftGroAiN4wduW3Ig8H2IXCMjf_IHKn4dFTBNA83ys27V8VzcFeNPpcQZFD_RuKJ2TTbsRLvRFy9157Mg-hPvyCpye6tZFXEnSYagovQl9sEW-7INz6o0sGjTsVsAikHgrVMUjN2nLfpF"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+<a class="bg-white text-black p-3 rounded-full hover:scale-110 transition-transform" href="#"><i class="fab fa-github"></i></a>
+<a class="bg-white text-black p-3 rounded-full hover:scale-110 transition-transform" href="#"><i class="fas fa-external-link-alt"></i></a>
+</div>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-2xl font-display font-medium mb-2 group-hover:text-secondary transition-colors">Urban Wheels</h3>
+<p class="text-muted-light dark:text-muted-dark text-sm mb-3">E-commerce platform for high-end urban cycling gear.</p>
+<div class="flex gap-2 text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+<span>Next.js</span> • <span>Stripe</span> • <span>Tailwind</span>
+</div>
+</div>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="relative overflow-hidden rounded-lg mb-6 shadow-md aspect-video">
+<img alt="Code Editor" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASuqosmRUUeayNiFkNGyYbqahdEp_tzxoirgsPpITtdHpFPSPIaxjtnC4cDfUKtCj6gepuL0SmuI8FeBT3U6kfhfRuc-KBRhBufxtQ1jajpVyrDZYvhJb9EJ5VqPwiGeeFjEtU1ptgNwfxcUbjqyMLchXiPW5q8d29fuVB4G_r_zYEYxPPNyAOJKxbQZwfJMG_taiC7TViBXf_CKct27tHSwJ0E6HM3u83WF3XOJQf1cfsd0UtfcL4G_OtTIvsw5DajQnvu62oXv8j"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+<a class="bg-white text-black p-3 rounded-full hover:scale-110 transition-transform" href="#"><i class="fab fa-github"></i></a>
+<a class="bg-white text-black p-3 rounded-full hover:scale-110 transition-transform" href="#"><i class="fas fa-external-link-alt"></i></a>
+</div>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-2xl font-display font-medium mb-2 group-hover:text-secondary transition-colors">DevFlow CLI</h3>
+<p class="text-muted-light dark:text-muted-dark text-sm mb-3">Open-source command line tool to automate developer workflow setups.</p>
+<div class="flex gap-2 text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+<span>Rust</span> • <span>Shell</span> • <span>GitHub Actions</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-16 text-center">
+<a class="inline-block border-b border-black dark:border-white pb-1 hover:text-secondary dark:hover:text-secondary hover:border-secondary dark:hover:border-secondary transition-all" href="#">View Archive on GitHub</a>
+</div>
+</div>
+</section>
+<section class="py-20 md:py-32" id="experience">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col items-center mb-16">
+<span class="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-full text-xs font-semibold tracking-[0.2em] uppercase">Career History</span>
+</div>
+<div class="relative border-l border-gray-200 dark:border-gray-700 ml-4 md:ml-0 space-y-12">
+<div class="relative pl-8 md:pl-12">
+<span class="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-secondary ring-4 ring-white dark:ring-background-dark"></span>
+<div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-2">
+<h3 class="text-2xl font-display">Senior Full Stack Engineer</h3>
+<span class="font-mono text-sm text-muted-light dark:text-muted-dark">2021 — Present</span>
+</div>
+<h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-gray-500 dark:text-gray-400">TechCorp Solutions</h4>
+<p class="text-muted-light dark:text-muted-dark leading-relaxed mb-4">
+                        Spearheaded the migration of legacy monoliths to microservices architecture, improving system uptime by 99.9%. Led a team of 5 developers in building a new customer-facing dashboard using Next.js and GraphQL.
+                    </p>
+<div class="flex flex-wrap gap-2">
+<span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">System Architecture</span>
+<span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">Team Leadership</span>
+</div>
+</div>
+<div class="relative pl-8 md:pl-12">
+<span class="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-gray-300 dark:bg-gray-600 ring-4 ring-white dark:ring-background-dark"></span>
+<div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-2">
+<h3 class="text-2xl font-display">Machine Learning Engineer</h3>
+<span class="font-mono text-sm text-muted-light dark:text-muted-dark">2019 — 2021</span>
+</div>
+<h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-gray-500 dark:text-gray-400">DataVision Inc.</h4>
+<p class="text-muted-light dark:text-muted-dark leading-relaxed mb-4">
+                        Developed predictive models for retail inventory management, reducing waste by 15%. Implemented NLP pipelines for sentiment analysis on customer feedback data using TensorFlow and Python.
+                    </p>
+<div class="flex flex-wrap gap-2">
+<span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">TensorFlow</span>
+<span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">Python</span>
+<span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">Data Pipeline</span>
+</div>
+</div>
+<div class="relative pl-8 md:pl-12">
+<span class="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-gray-300 dark:bg-gray-600 ring-4 ring-white dark:ring-background-dark"></span>
+<div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-2">
+<h3 class="text-2xl font-display">Web Developer</h3>
+<span class="font-mono text-sm text-muted-light dark:text-muted-dark">2017 — 2019</span>
+</div>
+<h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-gray-500 dark:text-gray-400">Creative Agency X</h4>
+<p class="text-muted-light dark:text-muted-dark leading-relaxed mb-4">
+                        Collaborated with designers to implement pixel-perfect frontend interfaces for high-profile clients. Optimized frontend performance achieving 95+ Lighthouse scores.
+                    </p>
+<div class="flex flex-wrap gap-2">
+<span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">JavaScript</span>
+<span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">Responsive Design</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-24 bg-primary text-white">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<span class="inline-block px-3 py-1 mb-6 border border-gray-600 rounded-full text-xs font-medium tracking-widest uppercase text-gray-400">
+                Get In Touch
+            </span>
+<h2 class="font-display text-4xl md:text-6xl mb-8 leading-tight">
+                Ready to bring your <br/> <span class="italic text-gray-400">ideas to life?</span>
+</h2>
+<div class="flex justify-center">
+<a class="bg-white text-primary px-8 py-3 rounded-full font-medium hover:bg-secondary hover:text-white transition-colors" href="mailto:hello@alexjensen.dev">
+                    Book a Free Call
+                 </a>
+</div>
+<div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto border-t border-gray-800 pt-10">
+<div class="text-center">
+<p class="text-2xl font-bold font-display">4+</p>
+<p class="text-xs uppercase text-gray-400 mt-1">Years Experience</p>
+</div>
+<div class="text-center">
+<p class="text-2xl font-bold font-display">30+</p>
+<p class="text-xs uppercase text-gray-400 mt-1">Projects Shipped</p>
+</div>
+<div class="text-center">
+<p class="text-2xl font-bold font-display">15</p>
+<p class="text-xs uppercase text-gray-400 mt-1">Happy Clients</p>
+</div>
+<div class="text-center">
+<p class="text-2xl font-bold font-display">100%</p>
+<p class="text-xs uppercase text-gray-400 mt-1">Code Quality</p>
+</div>
+</div>
+</div>
+</section>
+<footer class="bg-background-dark text-white pt-20 pb-10" id="contact">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+<div class="col-span-1 lg:col-span-2">
+<h3 class="font-display italic text-3xl mb-6">Alex Jensen</h3>
+<p class="text-gray-400 max-w-sm mb-6">
+                        Crafting digital experiences with code and creativity. Specializing in full-stack development and machine learning applications.
+                    </p>
+<div class="flex space-x-4">
+<a class="text-gray-400 hover:text-white transition-colors" href="#"><i class="fab fa-twitter text-xl"></i></a>
+<a class="text-gray-400 hover:text-white transition-colors" href="#"><i class="fab fa-linkedin text-xl"></i></a>
+<a class="text-gray-400 hover:text-white transition-colors" href="#"><i class="fab fa-github text-xl"></i></a>
+<a class="text-gray-400 hover:text-white transition-colors" href="#"><i class="fab fa-dribbble text-xl"></i></a>
+</div>
+</div>
+<div>
+<h4 class="text-sm font-bold uppercase tracking-wider mb-6">Navigation</h4>
+<ul class="space-y-4 text-gray-400 text-sm">
+<li><a class="hover:text-white transition-colors" href="#about">About</a></li>
+<li><a class="hover:text-white transition-colors" href="#projects">Projects</a></li>
+<li><a class="hover:text-white transition-colors" href="#experience">Experience</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Blog</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-sm font-bold uppercase tracking-wider mb-6">Contact</h4>
+<ul class="space-y-4 text-gray-400 text-sm">
+<li><a class="hover:text-white transition-colors" href="mailto:alex@example.com">alex@example.com</a></li>
+<li>San Francisco, CA</li>
+<li class="pt-4">
+<a class="inline-block border-b border-gray-600 hover:border-white pb-1 transition-colors" href="#">Download Resume</a>
+</li>
+</ul>
+</div>
+</div>
+<div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+<p>© 2023 Alex Jensen. All rights reserved.</p>
+<div class="flex space-x-6 mt-4 md:mt-0">
+<a class="hover:text-gray-300" href="#">Privacy Policy</a>
+<a class="hover:text-gray-300" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        // Check local storage or system preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        themeToggleBtn.addEventListener('click', () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        });
+    </script>
+
+</body></html>

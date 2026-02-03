@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Minimalist Grid Developer Portfolio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&amp;family=Space+Grotesk:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#000000",
+              "background-light": "#ffffff",
+              "background-dark": "#121212",
+              "border-light": "#000000",
+              "border-dark": "#404040",
+              "text-light": "#000000",
+              "text-dark": "#e5e5e5",
+            },
+            fontFamily: {
+              display: ["Space Grotesk", "sans-serif"],
+              sans: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0px", // Brutalist style typically uses sharp corners
+            },
+            spacing: {
+              '128': '32rem',
+            }
+          },
+        },
+      };
+    </script>
+<style>::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #666;
+        }.grid-border {
+            border: 1px solid;
+            @apply border-border-light dark:border-border-dark;
+        }.project-img {
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+        }
+        .project-img:hover {
+            filter: grayscale(0%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-sans transition-colors duration-300 antialiased selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
+<main class="w-full max-w-[1440px] mx-auto min-h-screen border-l border-r border-border-light dark:border-border-dark flex flex-col">
+<header class="grid grid-cols-12 border-b border-border-light dark:border-border-dark divide-x divide-border-light dark:divide-border-dark">
+<div class="col-span-12 md:col-span-1 p-4 flex items-center justify-center">
+<span class="material-icons-outlined text-2xl">menu</span>
+</div>
+<div class="col-span-6 md:col-span-2 p-4 flex items-center justify-center font-display font-medium text-xs uppercase tracking-widest hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors cursor-pointer">
+                Works
+            </div>
+<div class="col-span-6 md:col-span-2 p-4 flex items-center justify-center font-display font-medium text-xs uppercase tracking-widest hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors cursor-pointer">
+                About
+            </div>
+<div class="col-span-12 md:col-span-4 p-4 flex items-center justify-center font-display font-bold uppercase tracking-widest border-t md:border-t-0 border-border-light dark:border-border-dark">
+                Available for hire
+            </div>
+<div class="col-span-6 md:col-span-2 p-4 flex items-center justify-center font-display font-medium text-xs uppercase tracking-widest hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors cursor-pointer border-t md:border-t-0 border-border-light dark:border-border-dark">
+                Github
+            </div>
+<div class="col-span-6 md:col-span-1 p-4 flex items-center justify-center hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors cursor-pointer border-t md:border-t-0 border-border-light dark:border-border-dark">
+<span class="material-icons-outlined text-lg">alternate_email</span>
+</div>
+</header>
+<section class="grid grid-cols-1 lg:grid-cols-12 border-b border-border-light dark:border-border-dark divide-y lg:divide-y-0 lg:divide-x divide-border-light dark:divide-border-dark">
+<div class="col-span-12 lg:col-span-5 relative overflow-hidden group border-b lg:border-b-0 border-border-light dark:border-border-dark min-h-[400px] lg:min-h-[600px]">
+<img alt="Portrait of developer" class="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDV5oFS6Ol8SdQ4YJW9tPu_9SEGyrB3qjq7ZtcfLGUCZcDvtFfnVRKuJxeW0FnWBt6L5Pq-4jFLmLoEn7X-ky_jEJergmw5H_WuhEMqln7D7KPqzhx59_aaf65_ymxglBBvxNbX21ErgCAm6GkwI154qKd6NuaGKsRkfnqGB67VRnPblGTG4kgL1JlikuWWUmEw9nkqpRq62AgPvVw5BRLSmkHxXM0cD6PzTDCfp-_Jb2ZJ3HuaAyGTG2pG50AVF5NxFGRyWW5HzcQ"/>
+<div class="absolute bottom-4 left-4 bg-background-light dark:bg-background-dark px-2 py-1 border border-border-light dark:border-border-dark text-[10px] uppercase font-bold tracking-widest z-10">
+                    San Francisco, CA
+                </div>
+</div>
+<div class="col-span-12 lg:col-span-7 flex flex-col justify-between">
+<div class="p-8 lg:p-12">
+<p class="font-display text-xs font-bold uppercase tracking-[0.2em] mb-4 text-gray-500 dark:text-gray-400">Full Stack Developer | ML Enthusiast</p>
+<h1 class="font-display text-6xl lg:text-8xl font-black uppercase leading-[0.85] tracking-tight mb-6">
+                        Alex<br/>Vander
+                    </h1>
+<p class="font-sans text-sm md:text-base max-w-md leading-relaxed text-gray-600 dark:text-gray-300">
+                        Building digital experiences with a focus on brutalist design principles and scalable architecture. Formerly at TechCorp, currently pushing pixels and training models.
+                    </p>
+</div>
+<div class="grid grid-cols-2 border-t border-border-light dark:border-border-dark h-full max-h-[120px] divide-x divide-border-light dark:divide-border-dark">
+<div class="p-6 flex flex-col justify-between hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors cursor-pointer group">
+<span class="text-[10px] uppercase tracking-widest font-bold opacity-60">Status</span>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+<span class="font-display font-bold">Open to Work</span>
+</div>
+</div>
+<a class="p-6 flex items-center justify-between hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors cursor-pointer" href="#projects">
+<span class="font-display font-bold uppercase tracking-wide">View Projects</span>
+<span class="material-icons-outlined transform -rotate-45 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-12 border-b border-border-light dark:border-border-dark overflow-hidden">
+<div class="col-span-12 lg:col-span-8 p-8 lg:p-16 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-border-light dark:border-border-dark">
+<h2 class="font-display text-4xl lg:text-6xl font-black uppercase leading-none mb-4">
+                    The Code<br/>Era Begins
+                </h2>
+<p class="font-sans text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400">Since 2018</p>
+</div>
+<div class="col-span-12 lg:col-span-4 flex items-center justify-center bg-black text-white dark:bg-white dark:text-black py-12 lg:py-0">
+<span class="font-display text-[120px] lg:text-[180px] font-bold leading-none tracking-tighter">01</span>
+</div>
+</div>
+<section class="grid grid-cols-1 md:grid-cols-3 border-b border-border-light dark:border-border-dark divide-y md:divide-y-0 md:divide-x divide-border-light dark:divide-border-dark">
+<div class="p-8 flex flex-col h-full">
+<h3 class="font-display text-lg font-bold uppercase border-b border-border-light dark:border-border-dark pb-4 mb-6">Languages</h3>
+<ul class="space-y-3 font-sans text-sm">
+<li class="flex justify-between items-center group cursor-default">
+<span>JavaScript (ES6+)</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">code</span>
+</li>
+<li class="flex justify-between items-center group cursor-default">
+<span>TypeScript</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">code</span>
+</li>
+<li class="flex justify-between items-center group cursor-default">
+<span>Python</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">code</span>
+</li>
+<li class="flex justify-between items-center group cursor-default">
+<span>HTML5 &amp; CSS3</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">code</span>
+</li>
+<li class="flex justify-between items-center group cursor-default">
+<span>SQL</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">code</span>
+</li>
+</ul>
+</div>
+<div class="p-8 flex flex-col h-full">
+<h3 class="font-display text-lg font-bold uppercase border-b border-border-light dark:border-border-dark pb-4 mb-6">Frameworks</h3>
+<ul class="space-y-3 font-sans text-sm">
+<li class="flex justify-between items-center group cursor-default">
+<span>React / Next.js</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">layers</span>
+</li>
+<li class="flex justify-between items-center group cursor-default">
+<span>Vue.js</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">layers</span>
+</li>
+<li class="flex justify-between items-center group cursor-default">
+<span>Tailwind CSS</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">layers</span>
+</li>
+<li class="flex justify-between items-center group cursor-default">
+<span>Django</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">layers</span>
+</li>
+<li class="flex justify-between items-center group cursor-default">
+<span>TensorFlow</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">layers</span>
+</li>
+</ul>
+</div>
+<div class="p-8 flex flex-col h-full">
+<h3 class="font-display text-lg font-bold uppercase border-b border-border-light dark:border-border-dark pb-4 mb-6">Tools</h3>
+<ul class="space-y-3 font-sans text-sm">
+<li class="flex justify-between items-center group cursor-default">
+<span>Git &amp; GitHub</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">build</span>
+</li>
+<li class="flex justify-between items-center group cursor-default">
+<span>Docker</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">build</span>
+</li>
+<li class="flex justify-between items-center group cursor-default">
+<span>AWS (EC2, S3)</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">build</span>
+</li>
+<li class="flex justify-between items-center group cursor-default">
+<span>Figma</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">build</span>
+</li>
+<li class="flex justify-between items-center group cursor-default">
+<span>Postman</span>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">build</span>
+</li>
+</ul>
+</div>
+</section>
+<section class="grid grid-cols-1 lg:grid-cols-12 border-b border-border-light dark:border-border-dark divide-y lg:divide-y-0 lg:divide-x divide-border-light dark:divide-border-dark" id="projects">
+<div class="col-span-12 lg:col-span-8 relative group overflow-hidden border-b lg:border-b-0 border-border-light dark:border-border-dark">
+<img alt="Abstract interface design" class="w-full h-[400px] lg:h-[600px] object-cover grayscale group-hover:grayscale-0 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTNCXHzxLRpSyIMtcvCNxs4mZ7Eruy7ZduZxdu4kZEVncRPv0FB6bhekPqT6-nmZrZLK1Bd1hlIfahVB3lrd_TlbLiMhjnGVEBTCVGWBUsldetmBF9iA19rpc3zjN0w_Ul6cylLYGkncx7UagpgQN7w3_EYktvel4JG5e2XGhEUNia1poCo5dS7dZbrnpwy7BvbqmZ_oo4a6G8N31sShOAmzl1cUnzx0kiGkcyu9eoNU20wIslDuyhxLkZvw9xbvtEs90dN6t1Qj0"/>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+<div class="absolute top-4 left-4 bg-primary text-white px-3 py-1 text-xs font-bold uppercase">Featured Project</div>
+</div>
+<div class="col-span-12 lg:col-span-4 flex flex-col">
+<div class="flex-grow p-8 flex flex-col justify-center">
+<h3 class="font-display text-4xl font-bold uppercase mb-4">FinDash<br/>Analytics</h3>
+<p class="font-sans text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                        A comprehensive financial dashboard built with Next.js and D3.js. Features real-time data visualization, predictive modeling using Python backend, and a highly responsive grid layout.
+                    </p>
+<div class="flex gap-2 mb-8">
+<span class="border border-border-light dark:border-border-dark px-2 py-1 text-[10px] uppercase font-bold">React</span>
+<span class="border border-border-light dark:border-border-dark px-2 py-1 text-[10px] uppercase font-bold">D3.js</span>
+<span class="border border-border-light dark:border-border-dark px-2 py-1 text-[10px] uppercase font-bold">Node</span>
+</div>
+</div>
+<div class="grid grid-cols-2 border-t border-border-light dark:border-border-dark divide-x divide-border-light dark:divide-border-dark">
+<a class="p-6 flex items-center justify-center gap-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors font-display text-sm font-bold uppercase" href="#">
+<span class="material-icons-outlined text-base">code</span> Source
+                    </a>
+<a class="p-6 flex items-center justify-center gap-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors font-display text-sm font-bold uppercase" href="#">
+<span class="material-icons-outlined text-base">visibility</span> Live Demo
+                    </a>
+</div>
+</div>
+</section>
+<section class="grid grid-cols-1 md:grid-cols-2 border-b border-border-light dark:border-border-dark divide-y md:divide-y-0 md:divide-x divide-border-light dark:divide-border-dark">
+<div class="group">
+<div class="relative overflow-hidden h-64 border-b border-border-light dark:border-border-dark">
+<img alt="E-commerce code" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIHT2So2Vqmbzwx6UaxnyF4ATyNbMy2tblZR4jkO2Ik1d7iUQ4CI_M7MQ2-an4Du51OUibT8KO0HvUaS48gOerotiBtK5SQ-or2dOXlpv90b767IaYnT08-buB-WtarsE5VGmRHgQIRZmUXC7BaXYYw1mgCaM1TOJ2Orrb3g_0rq4BqhnGsc4RilO_b63seFEd5NfpnzXWVjHMOidGsyGzh5XSEShtI3-wgHJR3UTeUFs4Gk58cjk6tT5bhgXs823bvHfw5-egkrM"/>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-4">
+<h4 class="font-display text-2xl font-bold uppercase">E-Comm API</h4>
+<a class="hover:text-gray-500 transition-colors" href="#"><span class="material-icons-outlined">arrow_outward</span></a>
+</div>
+<p class="font-sans text-xs text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">
+                        A headless e-commerce backend built with Django REST Framework. Handles secure payments, inventory management, and user authentication.
+                    </p>
+<div class="flex gap-2">
+<span class="text-[10px] font-bold uppercase text-gray-400">Django</span>
+<span class="text-[10px] font-bold uppercase text-gray-400">Redis</span>
+<span class="text-[10px] font-bold uppercase text-gray-400">Postgres</span>
+</div>
+</div>
+</div>
+<div class="group">
+<div class="relative overflow-hidden h-64 border-b border-border-light dark:border-border-dark">
+<img alt="Data visualization dashboard" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpcnhZn4DTZdobGcYeEQ0y1_ThldP5tw5HtFo-RF6474h4zgGnGqKVkmvfGMLowCMC8xWNvjKgqIlPLOugiCWCwr6VGK_abHytAPAs7x5UYMXYQa1hrpN_eUjyv9hxiHlj5KFWIMrqpZVgzLSxvPoUQLxjU6D770AFqmu2dxSGw1vURFR3rs22Qdiu4pRqXUgMdblHaTkud3BUN-XTiykgku8F-4yjqdxvhXeMok7go2yd2Yup9adlqptL_BfEoKlcZFI7_Eevn1Q"/>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-4">
+<h4 class="font-display text-2xl font-bold uppercase">Vision AI</h4>
+<a class="hover:text-gray-500 transition-colors" href="#"><span class="material-icons-outlined">arrow_outward</span></a>
+</div>
+<p class="font-sans text-xs text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">
+                        Image recognition application using TensorFlow.js. Identifies objects in real-time through the browser webcam with 95% accuracy.
+                    </p>
+<div class="flex gap-2">
+<span class="text-[10px] font-bold uppercase text-gray-400">TensorFlow</span>
+<span class="text-[10px] font-bold uppercase text-gray-400">Vue</span>
+<span class="text-[10px] font-bold uppercase text-gray-400">WebRTC</span>
+</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-12 border-b border-border-light dark:border-border-dark overflow-hidden">
+<div class="col-span-12 lg:col-span-4 flex items-center justify-center bg-black text-white dark:bg-white dark:text-black py-12 lg:py-0 border-b lg:border-b-0 lg:border-r border-border-light dark:border-border-dark order-2 lg:order-1">
+<span class="font-display text-[120px] lg:text-[180px] font-bold leading-none tracking-tighter">02</span>
+</div>
+<div class="col-span-12 lg:col-span-8 p-8 lg:p-16 flex flex-col justify-center order-1 lg:order-2">
+<h2 class="font-display text-4xl lg:text-6xl font-black uppercase leading-none mb-4 text-right">
+                    Dev<br/>Journey
+                </h2>
+<p class="font-sans text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 text-right">Experience</p>
+</div>
+</div>
+<section class="border-b border-border-light dark:border-border-dark">
+<div class="grid grid-cols-1 lg:grid-cols-12 border-b border-border-light dark:border-border-dark group hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<div class="col-span-12 lg:col-span-2 p-6 flex items-center font-display font-bold text-lg text-gray-400 group-hover:text-primary dark:group-hover:text-white transition-colors">
+                    2021 — Now
+                 </div>
+<div class="col-span-12 lg:col-span-4 p-6 flex items-center border-t lg:border-t-0 lg:border-l border-border-light dark:border-border-dark">
+<h3 class="font-display text-xl font-bold uppercase">Senior Frontend Engineer</h3>
+</div>
+<div class="col-span-12 lg:col-span-6 p-6 flex items-center justify-between border-t lg:border-t-0 lg:border-l border-border-light dark:border-border-dark">
+<span class="font-sans text-base font-medium">TechCorp Solutions</span>
+<span class="material-icons-outlined opacity-0 group-hover:opacity-100 transition-opacity">north_east</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 border-b border-border-light dark:border-border-dark group hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<div class="col-span-12 lg:col-span-2 p-6 flex items-center font-display font-bold text-lg text-gray-400 group-hover:text-primary dark:group-hover:text-white transition-colors">
+                    2019 — 2021
+                 </div>
+<div class="col-span-12 lg:col-span-4 p-6 flex items-center border-t lg:border-t-0 lg:border-l border-border-light dark:border-border-dark">
+<h3 class="font-display text-xl font-bold uppercase">Full Stack Developer</h3>
+</div>
+<div class="col-span-12 lg:col-span-6 p-6 flex items-center justify-between border-t lg:border-t-0 lg:border-l border-border-light dark:border-border-dark">
+<span class="font-sans text-base font-medium">Creative Agency X</span>
+<span class="material-icons-outlined opacity-0 group-hover:opacity-100 transition-opacity">north_east</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 group hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<div class="col-span-12 lg:col-span-2 p-6 flex items-center font-display font-bold text-lg text-gray-400 group-hover:text-primary dark:group-hover:text-white transition-colors">
+                    2018 — 2019
+                 </div>
+<div class="col-span-12 lg:col-span-4 p-6 flex items-center border-t lg:border-t-0 lg:border-l border-border-light dark:border-border-dark">
+<h3 class="font-display text-xl font-bold uppercase">Junior Web Developer</h3>
+</div>
+<div class="col-span-12 lg:col-span-6 p-6 flex items-center justify-between border-t lg:border-t-0 lg:border-l border-border-light dark:border-border-dark">
+<span class="font-sans text-base font-medium">StartUp Inc.</span>
+<span class="material-icons-outlined opacity-0 group-hover:opacity-100 transition-opacity">north_east</span>
+</div>
+</div>
+</section>
+<section class="grid grid-cols-1 lg:grid-cols-12 border-b border-border-light dark:border-border-dark divide-y lg:divide-y-0 lg:divide-x divide-border-light dark:divide-border-dark">
+<div class="col-span-12 lg:col-span-7 p-8 lg:p-16 flex flex-col justify-center">
+<h2 class="font-display text-3xl lg:text-5xl font-black uppercase leading-tight mb-8">
+                    About My<br/>Philosophy
+                </h2>
+<div class="max-w-xl">
+<p class="font-sans text-sm lg:text-base leading-loose mb-6">
+                        I believe in the web as a medium for functional art. My approach combines rigorous engineering standards with an eye for stark, minimalist aesthetics. Code is not just about function; it's about structure, clarity, and intent.
+                    </p>
+<p class="font-sans text-xs italic text-gray-500 dark:text-gray-400">
+                        "Simplicity is the ultimate sophistication."
+                    </p>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-5 relative overflow-hidden min-h-[300px]">
+<img alt="Workspace desk" class="absolute inset-0 w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDmGGnqCa_oJceDO7fueg3fsNaMXKPc0gzS10zid7rGEuPYVrtIVk75nbGUC0Wm9Qqll66oAw3EZk3RhJVVcWAUUM2uTWSUlm0dx3A5_fsxFnn3nKXkQQTkSgZ9kWUfS3zvqiP3A-zsCYkgGjjHPXe3uSw5PEvmHm4PAPQGerTIaFM1L4dyT8Ch5MYA-QU5uv75ogST4eAxs9fAKVIWUszIQRpXHWlue8xppWCSGoqO2Q8CTZLcYxk-e-kRYKaSxdseP9z84i4HhI"/>
+<div class="absolute right-0 top-0 bottom-0 w-16 bg-black dark:bg-white text-white dark:text-black flex flex-col items-center justify-center overflow-hidden">
+<p class="writing-vertical font-display font-bold uppercase tracking-widest text-xs whitespace-nowrap opacity-50">Code Design Build Deploy Code Design Build Deploy</p>
+</div>
+</div>
+</section>
+<footer class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-border-light dark:divide-border-dark">
+<div class="col-span-12 lg:col-span-6 p-12 lg:p-24 flex flex-col justify-between min-h-[300px]">
+<div>
+<p class="font-display text-xs font-bold uppercase tracking-[0.2em] mb-4 text-gray-500 dark:text-gray-400">Contact</p>
+<a class="font-display text-3xl lg:text-5xl font-black uppercase hover:underline decoration-2 underline-offset-4 decoration-primary dark:decoration-white" href="mailto:hello@alexvander.dev">
+                        Let's<br/>Connect
+                    </a>
+</div>
+<div class="mt-8">
+<p class="font-sans text-xs text-gray-400">© 2024 Alex Vander. No cookies. No tracking.</p>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-6 flex flex-col">
+<div class="flex-grow grid grid-cols-2 divide-x divide-border-light dark:divide-border-dark border-b border-border-light dark:border-border-dark">
+<a class="flex items-center justify-center font-display font-bold uppercase hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors" href="#">
+                        LinkedIn
+                     </a>
+<a class="flex items-center justify-center font-display font-bold uppercase hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors" href="#">
+                        Twitter
+                     </a>
+</div>
+<div class="flex-grow grid grid-cols-2 divide-x divide-border-light dark:divide-border-dark">
+<a class="flex items-center justify-center font-display font-bold uppercase hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors" href="#">
+                        Instagram
+                     </a>
+<a class="flex items-center justify-center bg-black text-white dark:bg-white dark:text-black cursor-pointer group" href="#">
+<span class="material-icons-outlined transform group-hover:-translate-y-1 transition-transform">arrow_upward</span>
+</a>
+</div>
+</div>
+</footer>
+</main>
+
+</body></html>
