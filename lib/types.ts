@@ -271,3 +271,186 @@ export function isEventProfileComplete(user: {
     user?.branch,
   );
 }
+
+// ---------- PORTFOLIO TYPES ----------
+
+// Portfolio Templates
+export interface PortfolioTemplate {
+  id: string;
+  name: string;
+  description: string | null;
+  preview_image_url: string | null;
+  folder_name?: string; // Maps to filesystem folder
+  created_at: string;
+}
+
+// Portfolio
+export interface Portfolio {
+  id: string;
+  user_id: string;
+  template_id: string;
+  display_name: string;
+  profile_image_url: string | null;
+  about_me: string | null;
+  skills: string[];
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+
+  // Relations (populated on fetch)
+  template?: PortfolioTemplate;
+  projects?: PortfolioProject[];
+  experience?: PortfolioExperience[];
+  social_links?: PortfolioSocialLink[];
+}
+
+// Portfolio Project
+export interface PortfolioProject {
+  id: string;
+  portfolio_id: string;
+  title: string;
+  description: string | null;
+  image_url: string | null;
+  github_url: string | null;
+  live_url: string | null;
+  technologies: string[];
+  display_order: number;
+  created_at: string;
+}
+
+// Portfolio Experience
+export interface PortfolioExperience {
+  id: string;
+  portfolio_id: string;
+  company: string;
+  role: string;
+  description: string | null;
+  start_date: string;
+  end_date: string | null;
+  is_current: boolean;
+  display_order: number;
+  created_at: string;
+}
+
+// Portfolio Social Link
+export interface PortfolioSocialLink {
+  id: string;
+  portfolio_id: string;
+  platform: string;
+  url: string;
+  display_order: number;
+  created_at: string;
+}
+
+// Form Data Types
+export interface PortfolioFormData {
+  template_id: string;
+  display_name: string;
+  profile_image_url?: string;
+  about_me?: string;
+  skills: string[];
+}
+
+export interface ProjectFormData {
+  title: string;
+  description?: string;
+  image_url?: string;
+  github_url?: string;
+  live_url?: string;
+  technologies: string[];
+  display_order?: number;
+}
+
+export interface ExperienceFormData {
+  company: string;
+  role: string;
+  description?: string;
+  start_date: string;
+  end_date?: string;
+  is_current: boolean;
+  display_order?: number;
+}
+
+export interface SocialLinkFormData {
+  platform: string;
+  url: string;
+  display_order?: number;
+}
+
+// Predefined skills list for dropdown
+export const SKILL_OPTIONS = [
+  "JavaScript",
+  "TypeScript",
+  "Python",
+  "Java",
+  "C++",
+  "C#",
+  "Go",
+  "Rust",
+  "React",
+  "Next.js",
+  "Vue.js",
+  "Angular",
+  "Svelte",
+  "Node.js",
+  "Express",
+  "Django",
+  "Flask",
+  "FastAPI",
+  "Spring Boot",
+  "Laravel",
+  "HTML",
+  "CSS",
+  "Tailwind CSS",
+  "SASS",
+  "Bootstrap",
+  "PostgreSQL",
+  "MySQL",
+  "MongoDB",
+  "Redis",
+  "Firebase",
+  "Supabase",
+  "AWS",
+  "Google Cloud",
+  "Azure",
+  "Docker",
+  "Kubernetes",
+  "Git",
+  "GitHub",
+  "GitLab",
+  "CI/CD",
+  "Linux",
+  "Machine Learning",
+  "Deep Learning",
+  "TensorFlow",
+  "PyTorch",
+  "REST API",
+  "GraphQL",
+  "WebSocket",
+  "gRPC",
+  "Figma",
+  "UI/UX Design",
+  "Photoshop",
+  "Illustrator",
+  "Agile",
+  "Scrum",
+  "Project Management",
+] as const;
+
+// Platform options for social links
+export const SOCIAL_PLATFORMS = [
+  { value: "github", label: "GitHub", icon: "github" },
+  { value: "linkedin", label: "LinkedIn", icon: "linkedin" },
+  { value: "twitter", label: "Twitter/X", icon: "twitter" },
+  { value: "instagram", label: "Instagram", icon: "instagram" },
+  { value: "facebook", label: "Facebook", icon: "facebook" },
+  { value: "youtube", label: "YouTube", icon: "youtube" },
+  { value: "dribbble", label: "Dribbble", icon: "dribbble" },
+  { value: "behance", label: "Behance", icon: "behance" },
+  { value: "medium", label: "Medium", icon: "medium" },
+  { value: "dev", label: "Dev.to", icon: "dev" },
+  { value: "hashnode", label: "Hashnode", icon: "hashnode" },
+  { value: "leetcode", label: "LeetCode", icon: "leetcode" },
+  { value: "portfolio", label: "Personal Website", icon: "globe" },
+  { value: "email", label: "Email", icon: "mail" },
+] as const;
