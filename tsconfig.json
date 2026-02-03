@@ -35,5 +35,5 @@
     "app/Other/register/page.japp/Other/event-details/page.jsxge.japp/Other/events/page.jsxge.jsx",
     "app/Components/Reusables/Card.jsx"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "portfolios"]
 }

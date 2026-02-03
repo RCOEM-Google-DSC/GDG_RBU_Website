@@ -2,6 +2,65 @@ import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 
+interface Project {
+  id?: string;
+  title: string;
+  description?: string;
+  image_url?: string;
+  technologies?: string[];
+  github_url?: string;
+  live_url?: string;
+}
+
+interface Experience {
+  id?: string;
+  role: string;
+  company: string;
+  start_date: string;
+  end_date?: string;
+  is_current?: boolean;
+  description?: string;
+}
+
+interface SocialLink {
+  platform: string;
+  url: string;
+}
+
+interface Portfolio {
+  display_name?: string;
+  about_me?: string;
+  skills?: string[];
+  profile_image_url?: string;
+}
+
+interface PortfolioData {
+  personalInfo: {
+    name: string;
+    role: string;
+    about: string;
+    location: string;
+    email: string;
+  };
+  projects: Array<{
+    id: string;
+    title: string;
+    description: string;
+    imageUrl: string;
+    tags: string[];
+    links: { github: string; live: string };
+  }>;
+  experience: Array<{
+    id: string;
+    role: string;
+    company: string;
+    period: string;
+    description: string;
+  }>;
+  skills: string[];
+  socials: Array<{ platform: string; url: string }>;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
@@ -34,98 +93,68 @@ export async function POST(request: NextRequest) {
     }
 
     // Transform data to match template format
+    const typedPortfolio = portfolio as Portfolio | undefined;
+    const typedProjects = projects as Project[] | undefined;
+    const typedExperience = experience as Experience[] | undefined;
+    const typedSocialLinks = social_links as SocialLink[] | undefined;
+
     const personalInfo = {
-      name: portfolio?.display_name?.toUpperCase() || "YOUR NAME",
+      name: typedPortfolio?.display_name || "Your Name",
       role: "Developer",
-      about: portfolio?.about_me || "Welcome to my portfolio",
+      about: typedPortfolio?.about_me || "",
       location: "Location",
       email:
-        social_links
-          ?.find((s: { platform: string }) => s.platform === "email")
-          ?.url?.replace("mailto:", "") || "email@example.com",
-      phone: "",
+        typedSocialLinks
+          ?.find((s) => s.platform === "email")
+          ?.url?.replace("mailto:", "") || "",
     };
 
-    const transformedProjects = (projects || []).map(
-      (
-        p: {
-          id?: string;
-          title: string;
-          description?: string;
-          image_url?: string;
-          technologies?: string[];
-          github_url?: string;
-          live_url?: string;
-        },
-        index: number,
-      ) => ({
-        id: p.id || String(index + 1),
-        title: p.title || "Untitled Project",
-        role: "Developer",
-        description: p.description || "",
-        imageUrl:
-          p.image_url || `https://picsum.photos/id/${index + 10}/800/600`,
-        tags: p.technologies || [],
-        duration: "",
-        links: {
-          github: p.github_url || "",
-          live: p.live_url || "",
-        },
-      }),
-    );
+    const transformedProjects = (typedProjects || []).map((p, index) => ({
+      id: p.id || String(index + 1),
+      title: p.title || "Untitled Project",
+      description: p.description || "",
+      imageUrl:
+        p.image_url || `https://picsum.photos/seed/${index + 10}/800/600`,
+      tags: p.technologies || [],
+      links: {
+        github: p.github_url || "",
+        live: p.live_url || "",
+      },
+    }));
 
-    const transformedExperience = (experience || []).map(
-      (
-        e: {
-          id?: string;
-          role: string;
-          company: string;
-          start_date: string;
-          end_date?: string;
-          is_current?: boolean;
-          description?: string;
-        },
-        index: number,
-      ) => ({
-        id: e.id || String(index + 1),
-        role: e.role || "Role",
-        company: e.company || "Company",
-        period: `${e.start_date || ""} - ${e.is_current ? "Present" : e.end_date || ""}`,
-        description: e.description || "",
-      }),
-    );
+    const transformedExperience = (typedExperience || []).map((e, index) => ({
+      id: e.id || String(index + 1),
+      role: e.role || "Role",
+      company: e.company || "Company",
+      period: `${e.start_date || ""} - ${e.is_current ? "Present" : e.end_date || ""}`,
+      description: e.description || "",
+    }));
 
-    const skills = portfolio?.skills || [];
-    const transformedSkills = [{ category: "Skills", skills: skills }];
+    const skills = typedPortfolio?.skills || [];
 
-    const transformedSocials = (social_links || []).map(
-      (s: { platform: string; url: string }) => ({
-        platform: s.platform,
-        url: s.url,
-        icon: s.platform.toLowerCase(),
-      }),
-    );
+    const transformedSocials = (typedSocialLinks || []).map((s) => ({
+      platform: s.platform,
+      url: s.url,
+    }));
+
+    const portfolioData: PortfolioData = {
+      personalInfo,
+      projects: transformedProjects,
+      experience: transformedExperience,
+      skills,
+      socials: transformedSocials,
+    };
 
     // Inject data based on template type
     let modifiedHtml = templateHtml;
 
     if (templateId === "architectural") {
-      modifiedHtml = injectArchitecturalData(modifiedHtml, {
-        personalInfo,
-        transformedProjects,
-        transformedExperience,
-        transformedSkills,
-        transformedSocials,
-      });
+      modifiedHtml = injectArchitecturalData(modifiedHtml, portfolioData);
     } else {
-      const injectionScript = getTemplateInjectionScript(templateId, {
-        personalInfo,
-        projects: transformedProjects,
-        experience: transformedExperience,
-        skills: transformedSkills,
-        socials: transformedSocials,
-      });
-
+      const injectionScript = getTemplateInjectionScript(
+        templateId,
+        portfolioData,
+      );
       // Insert the script before the closing </body> tag
       modifiedHtml = modifiedHtml.replace(
         /<\/body>/i,
@@ -149,14 +178,14 @@ export async function POST(request: NextRequest) {
 
 // --- HELPER FUNCTIONS ---
 
-function injectArchitecturalData(html: string, data: any) {
+function injectArchitecturalData(html: string, data: PortfolioData) {
   const dataScript = `
     // --- INJECTED PORTFOLIO DATA ---
     const PERSONAL_INFO = ${JSON.stringify(data.personalInfo)};
-    const PROJECTS = ${JSON.stringify(data.transformedProjects)};
-    const EXPERIENCE = ${JSON.stringify(data.transformedExperience)};
-    const SKILLS = ${JSON.stringify(data.transformedSkills)};
-    const SOCIALS = ${JSON.stringify(data.transformedSocials)};
+    const PROJECTS = ${JSON.stringify(data.projects)};
+    const EXPERIENCE = ${JSON.stringify(data.experience)};
+    const SKILLS = ${JSON.stringify(data.skills)};
+    const SOCIALS = ${JSON.stringify(data.socials)};
     // --- END INJECTED DATA ---`;
 
   return html.replace(
@@ -165,7 +194,7 @@ function injectArchitecturalData(html: string, data: any) {
   );
 }
 
-function getTemplateInjectionScript(templateId: string, data: any) {
+function getTemplateInjectionScript(templateId: string, data: PortfolioData) {
   const commonData = `
     const portfolioData = {
       personalInfo: ${JSON.stringify(data.personalInfo)},
@@ -207,7 +236,7 @@ function getTemplateInjectionScript(templateId: string, data: any) {
 
   function injectData() {
     const { personalInfo, projects, experience, skills, socials } = portfolioData;
-    console.log("Injecting data for template: ${templateId}");
+    console.log("Injecting data for template: ${templateId}", portfolioData);
     
     try {
       ${specificLogic}
@@ -220,473 +249,939 @@ function getTemplateInjectionScript(templateId: string, data: any) {
 
 function getSoftTemplateLogic() {
   return `
-    // 1. Personal Info
-    // Hero Name
-    const heroName = document.querySelector('h1 span.italic'); 
-    // The soft template has "Building for intelligence" in h1, and "I'm Alex Jensen" in p
-    // Actually looking at the file:
-    // h1 is "Building for <br/> <span class="italic text-secondary">intelligence.</span>"
-    // p is "I'm Alex Jensen, a Full Stack..."
+    // ========== SOFT TEMPLATE ==========
     
-    // Replace text in the paragraph
-    const introP = document.querySelector('p.text-lg.md\\:text-xl');
-    if (introP) {
-      // Preserve the styling if possible, but simplest is to replace the text content carefully
-      // or use regex on the innerHTML for precise targeting
-      introP.innerHTML = introP.innerHTML.replace(/I'm [^,]+,/, \`I'm \${personalInfo.name},\`);
-      introP.innerHTML = introP.innerHTML.replace(/Full Stack Developer & ML Enthusiast/, personalInfo.tagline);
-      introP.innerHTML = introP.innerHTML.replace(/based in [^.]+/, \`based in \${personalInfo.location}\`);
+    // Helper function to get social link URL
+    function getSocialUrl(platform) {
+      const link = socials.find(s => s.platform.toLowerCase() === platform.toLowerCase());
+      return link ? link.url : '';
     }
-
-    // Nav Brand
+    
+    // 1. HERO SECTION
+    // Update the main intro paragraph with name
+    const heroIntro = document.querySelector('p.text-lg.md\\\\:text-xl');
+    if (heroIntro && personalInfo.name) {
+      heroIntro.innerHTML = heroIntro.innerHTML.replace(/I'm [^,]+,/, \`I'm \${personalInfo.name},\`);
+    }
+    
+    // Update nav brand
     const navBrand = document.querySelector('.font-display.italic.text-2xl');
-    if (navBrand) navBrand.textContent = personalInfo.name.toLowerCase().replace(/\\s/g, '.');
-
-    // Footer contact
-    const footerEmail = document.querySelector('a[href^="mailto:"]');
-    if (footerEmail) {
-       footerEmail.textContent = "Let's Talk"; 
-       footerEmail.href = \`mailto:\${personalInfo.email}\`;
+    if (navBrand && personalInfo.name) {
+      navBrand.textContent = personalInfo.name.toLowerCase().replace(/\\s+/g, '.') + '.dev';
     }
-
-    // 2. Projects
-    const projectsContainer = document.querySelector('#projects .grid');
-    if (projectsContainer) {
-      const templateCard = projectsContainer.querySelector('div.group'); // Get first card as template
-      if (templateCard) {
-        // Clear container but keep template
-        const templateHTML = templateCard.outerHTML;
-        projectsContainer.innerHTML = '';
-        
-        projects.forEach(project => {
-          const temp = document.createElement('div');
-          temp.innerHTML = templateHTML;
-          const card = temp.firstElementChild;
-          
-          // Image
-          const img = card.querySelector('img');
-          if (img) {
-            img.src = project.imageUrl || 'https://via.placeholder.com/800x600';
-            img.alt = project.title;
-          }
-          
-          // Title
-          const title = card.querySelector('h3');
-          if (title) title.textContent = project.title;
-          
-          // Description
-          const desc = card.querySelector('p.text-muted-light');
-          if (desc) desc.textContent = project.description;
-          
-          // Tags
-          const tagsContainer = card.querySelector('.flex.gap-2.text-xs');
-          if (tagsContainer) {
-             tagsContainer.innerHTML = project.techStack.map(tag => \`<span>\${tag}</span>\`).join(' • ');
-          }
-          
-          // Links
-          const links = card.querySelector('.absolute.inset-0.flex');
-          if (links) {
-             const github = links.children[0];
-             const demo = links.children[1];
-             if (github) github.href = project.links.github || '#';
-             if (demo) demo.href = project.links.live || '#';
-          }
-          
-          projectsContainer.appendChild(card);
-        });
+    
+    // Update GitHub button in hero
+    const githubBtn = document.querySelector('a[href="https://github.com"]');
+    const githubUrl = getSocialUrl('github');
+    if (githubBtn && githubUrl) {
+      githubBtn.href = githubUrl;
+    }
+    
+    // 2. ABOUT SECTION - Update philosophy cards if about_me is provided
+    if (personalInfo.about) {
+      const aboutSection = document.querySelector('#about');
+      if (aboutSection) {
+        const aboutHeading = aboutSection.querySelector('h2');
+        if (aboutHeading) {
+          aboutHeading.innerHTML = \`About \<span class="italic text-secondary"\>Me\</span\>\`;
+        }
+        // Add about text
+        const cardsContainer = aboutSection.querySelector('.grid.grid-cols-1.md\\\\:grid-cols-3');
+        if (cardsContainer) {
+          const aboutCard = document.createElement('div');
+          aboutCard.className = 'md:col-span-3 p-8 border border-gray-100 dark:border-gray-800 rounded-xl bg-background-light dark:bg-background-dark mb-8';
+          aboutCard.innerHTML = \`<p class="text-muted-light dark:text-muted-dark text-sm leading-relaxed">\${personalInfo.about}</p>\`;
+          cardsContainer.parentNode.insertBefore(aboutCard, cardsContainer);
+        }
       }
     }
-
-    // 3. Experience
-    const expContainer = document.querySelector('#experience .space-y-12');
-    if (expContainer) {
-       const templateItem = expContainer.querySelector('.relative.pl-8');
-       if (templateItem) {
-         const templateHTML = templateItem.outerHTML;
-         expContainer.innerHTML = '';
-         
-         experience.forEach((exp, index) => {
+    
+    // 3. SKILLS SECTION
+    const skillsSection = document.getElementById('skills');
+    if (skillsSection && skills.length > 0) {
+      // Clear all existing skill containers and replace with user skills
+      const skillContainers = skillsSection.querySelectorAll('.flex.flex-wrap.gap-3');
+      skillContainers.forEach((container, idx) => {
+        if (idx === 0) {
+          container.innerHTML = skills.map(skill => 
+            \`<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">\${skill}</span>\`
+          ).join('');
+        } else {
+          // Hide other skill categories
+          container.parentElement.style.display = 'none';
+        }
+      });
+      // Update first category title
+      const firstCategoryTitle = skillsSection.querySelector('h3.font-display');
+      if (firstCategoryTitle) {
+        firstCategoryTitle.textContent = 'Technical Skills';
+      }
+    } else if (skillsSection && skills.length === 0) {
+      skillsSection.style.display = 'none';
+    }
+    
+    // 4. PROJECTS SECTION
+    const projectsSection = document.getElementById('projects');
+    if (projectsSection) {
+      const projectsGrid = projectsSection.querySelector('.grid');
+      if (projectsGrid && projects.length > 0) {
+        const projectCards = projectsGrid.querySelectorAll('div.group.cursor-pointer');
+        
+        if (projectCards.length > 0) {
+          const templateCard = projectCards[0].outerHTML;
+          projectsGrid.innerHTML = '';
+          
+          projects.forEach((project, idx) => {
             const temp = document.createElement('div');
-            temp.innerHTML = templateHTML;
+            temp.innerHTML = templateCard;
+            const card = temp.firstElementChild;
+            
+            // Update image
+            const img = card.querySelector('img');
+            if (img) {
+              img.src = project.imageUrl;
+              img.alt = project.title;
+            }
+            
+            // Update title
+            const title = card.querySelector('h3');
+            if (title) title.textContent = project.title;
+            
+            // Update description
+            const desc = card.querySelector('p.text-muted-light');
+            if (desc) desc.textContent = project.description || 'No description provided';
+            
+            // Update tags
+            const tagsContainer = card.querySelector('.flex.gap-2.text-xs');
+            if (tagsContainer && project.tags.length > 0) {
+              tagsContainer.innerHTML = project.tags.slice(0, 3).map(tag => \`<span>\${tag}</span>\`).join(' • ');
+            } else if (tagsContainer) {
+              tagsContainer.style.display = 'none';
+            }
+            
+            // Update links
+            const linksOverlay = card.querySelector('.absolute.inset-0.bg-black\\\\/40');
+            if (linksOverlay) {
+              const links = linksOverlay.querySelectorAll('a');
+              if (links[0]) {
+                if (project.links.github) {
+                  links[0].href = project.links.github;
+                } else {
+                  links[0].style.display = 'none';
+                }
+              }
+              if (links[1]) {
+                if (project.links.live) {
+                  links[1].href = project.links.live;
+                } else {
+                  links[1].style.display = 'none';
+                }
+              }
+            }
+            
+            projectsGrid.appendChild(card);
+          });
+        }
+      } else if (projects.length === 0) {
+        // Hide projects section if no projects
+        projectsSection.style.display = 'none';
+      }
+    }
+    
+    // 5. EXPERIENCE SECTION
+    const experienceSection = document.getElementById('experience');
+    if (experienceSection) {
+      const expTimeline = experienceSection.querySelector('.space-y-12');
+      if (expTimeline && experience.length > 0) {
+        const expItems = expTimeline.querySelectorAll('.relative.pl-8');
+        
+        if (expItems.length > 0) {
+          const templateItem = expItems[0].outerHTML;
+          expTimeline.innerHTML = '';
+          
+          experience.forEach((exp, idx) => {
+            const temp = document.createElement('div');
+            temp.innerHTML = templateItem;
             const item = temp.firstElementChild;
             
-            // Adjust timeline dot color (alternating in original, random here or standard)
-            const dot = item.querySelector('span.absolute');
-            // Keep styling as is
-            
-            // Role
+            // Update role
             const role = item.querySelector('h3');
             if (role) role.textContent = exp.role;
             
-            // Period
+            // Update period
             const period = item.querySelector('span.font-mono');
             if (period) period.textContent = exp.period;
             
-            // Company
+            // Update company
             const company = item.querySelector('h4');
             if (company) company.textContent = exp.company;
             
-            // Description
+            // Update description
             const desc = item.querySelector('p.leading-relaxed');
-            if (desc) desc.textContent = exp.description;
+            if (desc) desc.textContent = exp.description || '';
             
-            // Tags - Soft template has them in experience
-             const tagsContainer = item.querySelector('.flex.flex-wrap.gap-2');
-             if (tagsContainer) {
-               // We don't have explicit tags for experience in our schema usually, but if we do:
-               // tagsContainer.style.display = 'none'; // hide if no data
-               // Or use generic skills? Let's hide to be safe or leave static if strictly needed, 
-               // but better to clear standard static data
-               tagsContainer.innerHTML = '';
-             }
-
-            expContainer.appendChild(item);
-         });
-       }
+            // Hide tags container (we don't have experience tags in schema)
+            const tagsContainer = item.querySelector('.flex.flex-wrap.gap-2');
+            if (tagsContainer) tagsContainer.style.display = 'none';
+            
+            // Update timeline dot color (first one is active/highlighted)
+            const dot = item.querySelector('span.absolute.-left-\\\\[5px\\\\]');
+            if (dot && idx === 0) {
+              dot.className = dot.className.replace('bg-gray-300', 'bg-secondary');
+            }
+            
+            expTimeline.appendChild(item);
+          });
+        }
+      } else if (experience.length === 0) {
+        experienceSection.style.display = 'none';
+      }
     }
-
-    // 4. Skills (Lists in bottom section)
-    const skillsSection = document.getElementById('skills');
-    if (skillsSection) {
-       // The soft template has "Languages & Core", etc.
-       // We'll just grab the first list and populate it with everything for simplicity, 
-       // or try to distribute if we had categories.
-       const skillContainer = skillsSection.querySelector('.flex.flex-wrap.gap-3');
-       if (skillContainer) {
-         skillContainer.innerHTML = skills.map(skill => 
-           \`<span class="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm">\${skill}</span>\`
-         ).join('');
-       }
+    
+    // 6. FOOTER / CONTACT
+    const footerName = document.querySelector('footer h3.font-display');
+    if (footerName && personalInfo.name) {
+      footerName.textContent = personalInfo.name;
+    }
+    
+    const footerEmail = document.querySelector('footer a[href^="mailto:"]');
+    if (footerEmail && personalInfo.email) {
+      footerEmail.href = \`mailto:\${personalInfo.email}\`;
+      footerEmail.textContent = personalInfo.email;
+    }
+    
+    // Update social links in footer
+    const footerSocials = document.querySelector('footer .flex.space-x-4');
+    if (footerSocials && socials.length > 0) {
+      const socialIcons = footerSocials.querySelectorAll('a');
+      socialIcons.forEach(icon => {
+        const iconClass = icon.querySelector('i')?.className || '';
+        let platform = '';
+        if (iconClass.includes('twitter')) platform = 'twitter';
+        if (iconClass.includes('linkedin')) platform = 'linkedin';
+        if (iconClass.includes('github')) platform = 'github';
+        if (iconClass.includes('dribbble')) platform = 'dribbble';
+        
+        const url = getSocialUrl(platform);
+        if (url) {
+          icon.href = url;
+        } else {
+          icon.style.display = 'none';
+        }
+      });
     }
   `;
 }
 
 function getMinimalistGridTemplateLogic() {
   return `
-    // 1. Personal Info - Minimalist uses "Alex Morgan" usually
-    // Header Name
-    const headerName = document.querySelector('header .font-bold.text-xl');
-    if (headerName) headerName.textContent = personalInfo.name.toUpperCase();
+    // ========== MINIMALIST-GRID TEMPLATE ==========
     
-    // Wrapper/Main Name
+    // Helper function to get social link URL
+    function getSocialUrl(platform) {
+      const link = socials.find(s => s.platform.toLowerCase() === platform.toLowerCase());
+      return link ? link.url : '';
+    }
+    
+    // 1. HERO / HEADER SECTION
+    // Update the main name in hero
     const mainHeading = document.querySelector('h1.text-6xl');
-    if (mainHeading) mainHeading.innerHTML = personalInfo.name.replace(' ', '<br/>');
-
-    // Intro Text
-    const introText = document.querySelector('p.text-xl.max-w-2xl');
-    if (introText) {
-       introText.textContent = personalInfo.about;
+    if (mainHeading && personalInfo.name) {
+      const names = personalInfo.name.split(' ');
+      mainHeading.innerHTML = names.join(' <br />');
     }
-
-    // 2. Projects
-    const projectsGrid = document.getElementById('work'); 
-    // Note: ID might be 'work' or 'projects' in minimalist
-    const targetGrid = projectsGrid ? projectsGrid.querySelector('.grid') : document.querySelector('section.grid-cols-1.md\\:grid-cols-2');
     
-    if (targetGrid) {
-       const cards = targetGrid.querySelectorAll('a.group');
-       if (cards.length > 0) {
-          const template = cards[0].outerHTML;
-          targetGrid.innerHTML = '';
-          
-          projects.forEach(project => {
-             const temp = document.createElement('div');
-             temp.innerHTML = template;
-             const card = temp.firstElementChild;
-             
-             // Link
-             if (card.tagName === 'A') card.href = project.links.live || project.links.github || '#';
-             
-             // Image
-             const img = card.querySelector('img');
-             if (img) {
-               img.src = project.imageUrl || 'https://via.placeholder.com/600x400';
-               img.alt = project.title;
-             }
-             
-             // Title
-             const title = card.querySelector('h3');
-             if (title) title.textContent = project.title;
-             
-             // Tags
-             const tags = card.querySelector('p.text-sm.text-gray-500');
-             if (tags) tags.textContent = project.techStack.join(' / ');
-             
-             targetGrid.appendChild(card);
-          });
-       }
+    // Update role/tagline
+    const roleText = document.querySelector('p.text-xl.md\\\\:text-2xl');
+    if (roleText && personalInfo.about) {
+      // Extract first sentence or use about as subtitle
+      const subtitle = personalInfo.about.split('.')[0] || 'Developer';
+      roleText.innerHTML = subtitle + '.';
     }
-
-    // 3. Experience 
-    // Minimalist usually has a simple list
-    const expDict = document.querySelector('.divide-y.divide-neutral-200');
-    if (expDict) {
-       const rows = expDict.querySelectorAll('.grid');
-       if (rows.length > 0) {
-          const template = rows[0].outerHTML;
-          expDict.innerHTML = '';
+    
+    // Update nav brand
+    const navBrand = document.querySelector('.text-2xl.font-display');
+    if (navBrand && personalInfo.name) {
+      navBrand.textContent = personalInfo.name.split(' ')[0].toUpperCase() + '.';
+    }
+    
+    // Update social icons in hero
+    const heroSocials = document.querySelector('.flex.gap-4');
+    if (heroSocials) {
+      const socialLinks = heroSocials.querySelectorAll('a');
+      socialLinks.forEach(link => {
+        const img = link.querySelector('img');
+        if (img) {
+          const alt = img.alt?.toLowerCase() || '';
+          let platform = '';
+          if (alt.includes('github')) platform = 'github';
+          if (alt.includes('linkedin')) platform = 'linkedin';
+          if (alt.includes('x') || alt.includes('twitter')) platform = 'twitter';
           
-          experience.forEach(exp => {
-             const temp = document.createElement('div');
-             temp.innerHTML = template;
-             const row = temp.firstElementChild;
-             
-             // Period
-             const period = row.querySelector('.col-span-12.md\\:col-span-3');
-             if (period) period.textContent = exp.period;
-             
-             // Company - Role
-             const mainCol = row.querySelector('.col-span-12.md\\:col-span-9');
-             if (mainCol) {
-                const title = mainCol.querySelector('h3');
-                if (title) title.textContent = exp.company;
-                
-                const role = mainCol.querySelector('p.text-neutral-500');
-                if (role) role.textContent = exp.role;
-                
-                const desc = mainCol.querySelector('p.mt-4');
-                if (desc) desc.textContent = exp.description;
-             }
-             
-             expDict.appendChild(row);
+          const url = getSocialUrl(platform);
+          if (url) {
+            link.href = url;
+          } else {
+            link.style.display = 'none';
+          }
+        }
+      });
+    }
+    
+    // 2. ABOUT SECTION
+    const aboutSection = document.getElementById('about');
+    if (aboutSection && personalInfo.about) {
+      const aboutParagraphs = aboutSection.querySelectorAll('p.mb-6, p:not(.mb-6)');
+      if (aboutParagraphs.length > 0) {
+        aboutParagraphs[0].textContent = personalInfo.about;
+        // Hide additional paragraphs if they exist
+        for (let i = 1; i < aboutParagraphs.length; i++) {
+          aboutParagraphs[i].style.display = 'none';
+        }
+      }
+    }
+    
+    // 3. SKILLS SECTION (Technical Arsenal)
+    if (aboutSection && skills.length > 0) {
+      const skillGroups = aboutSection.querySelectorAll('.space-y-8 > div');
+      skillGroups.forEach((group, idx) => {
+        const skillContainer = group.querySelector('.flex.flex-wrap.gap-2');
+        if (skillContainer) {
+          if (idx === 0) {
+            // First group gets all skills
+            const categoryTitle = group.querySelector('h4');
+            if (categoryTitle) categoryTitle.textContent = 'Technical Skills';
+            skillContainer.innerHTML = skills.map(skill => 
+              \`<span class="px-3 py-1 bg-white dark:bg-gray-800 border border-border-light dark:border-border-dark text-sm">\${skill}</span>\`
+            ).join('');
+          } else {
+            // Hide other groups
+            group.style.display = 'none';
+          }
+        }
+      });
+    }
+    
+    // 4. PROJECTS SECTION
+    const projectsHeader = document.getElementById('projects');
+    if (projectsHeader) {
+      // Featured project section
+      const featuredSection = projectsHeader.nextElementSibling;
+      if (featuredSection && projects.length > 0) {
+        const firstProject = projects[0];
+        
+        // Update featured project
+        const featTitle = featuredSection.querySelector('h3.text-3xl');
+        if (featTitle) featTitle.textContent = firstProject.title;
+        
+        const featDesc = featuredSection.querySelector('p.text-gray-600');
+        if (featDesc) featDesc.textContent = firstProject.description || '';
+        
+        const featImg = featuredSection.querySelector('img');
+        if (featImg) {
+          featImg.src = firstProject.imageUrl;
+          featImg.alt = firstProject.title;
+        }
+        
+        // Update links
+        const featLinks = featuredSection.querySelectorAll('.flex.gap-4 a');
+        if (featLinks.length >= 2) {
+          if (firstProject.links.github) {
+            featLinks[0].href = firstProject.links.github;
+          } else {
+            featLinks[0].style.display = 'none';
+          }
+          if (firstProject.links.live) {
+            featLinks[1].href = firstProject.links.live;
+          } else {
+            featLinks[1].style.display = 'none';
+          }
+        }
+        
+        // Other projects grid
+        const projectsGrid = featuredSection.nextElementSibling;
+        if (projectsGrid && projects.length > 1) {
+          const projectCards = projectsGrid.querySelectorAll('.group');
+          
+          if (projectCards.length > 0) {
+            const templateCard = projectCards[0].outerHTML;
+            projectsGrid.innerHTML = '';
+            
+            // Skip first project (already shown as featured)
+            projects.slice(1).forEach((project, idx) => {
+              const temp = document.createElement('div');
+              temp.innerHTML = templateCard;
+              const card = temp.firstElementChild;
+              
+              const img = card.querySelector('img');
+              if (img) {
+                img.src = project.imageUrl;
+                img.alt = project.title;
+              }
+              
+              const title = card.querySelector('h3');
+              if (title) title.textContent = project.title;
+              
+              const desc = card.querySelector('p.text-sm');
+              if (desc) desc.textContent = project.description || '';
+              
+              const links = card.querySelectorAll('.flex.gap-4 a');
+              if (links.length >= 2) {
+                if (project.links.github) {
+                  links[0].href = project.links.github;
+                } else {
+                  links[0].style.display = 'none';
+                }
+                if (project.links.live) {
+                  links[1].href = project.links.live;
+                } else {
+                  links[1].style.display = 'none';
+                }
+              }
+              
+              projectsGrid.appendChild(card);
+            });
+          }
+        } else if (projectsGrid && projects.length <= 1) {
+          projectsGrid.style.display = 'none';
+        }
+      } else if (projects.length === 0) {
+        // Hide projects section header and container
+        projectsHeader.style.display = 'none';
+        if (featuredSection) featuredSection.style.display = 'none';
+        const nextGrid = featuredSection?.nextElementSibling;
+        if (nextGrid) nextGrid.style.display = 'none';
+      }
+    }
+    
+    // 5. EXPERIENCE SECTION
+    const experienceSection = document.getElementById('experience');
+    if (experienceSection) {
+      const expTimeline = experienceSection.querySelector('.space-y-12, .relative.border-l');
+      if (expTimeline && experience.length > 0) {
+        const expItems = expTimeline.querySelectorAll('.pl-8, .relative.pl-8');
+        
+        if (expItems.length > 0) {
+          const templateItem = expItems[0].parentElement?.outerHTML || expItems[0].outerHTML;
+          expTimeline.innerHTML = '';
+          
+          experience.forEach((exp, idx) => {
+            const temp = document.createElement('div');
+            temp.innerHTML = templateItem;
+            const item = temp.firstElementChild;
+            
+            const role = item.querySelector('h3.text-xl');
+            if (role) role.textContent = exp.role;
+            
+            const period = item.querySelector('span.text-sm.font-mono');
+            if (period) period.textContent = exp.period;
+            
+            const company = item.querySelector('p.text-md');
+            if (company) company.textContent = exp.company;
+            
+            const desc = item.querySelector('p.text-sm.text-gray-600');
+            if (desc) desc.textContent = exp.description || '';
+            
+            expTimeline.appendChild(item);
           });
-       }
+        }
+      } else if (experience.length === 0) {
+        experienceSection.style.display = 'none';
+        // Also hide "Latest Articles" sidebar if it exists
+        const articlesSidebar = experienceSection.querySelector('.lg\\\\:col-span-1');
+        if (articlesSidebar) articlesSidebar.style.display = 'none';
+      }
+    }
+    
+    // 6. FOOTER / CONTACT
+    const footer = document.getElementById('contact');
+    if (footer) {
+      const footerEmail = footer.querySelector('a[href^="mailto:"]');
+      if (footerEmail && personalInfo.email) {
+        footerEmail.href = \`mailto:\${personalInfo.email}\`;
+        footerEmail.textContent = personalInfo.email;
+      }
+      
+      // Update footer social links
+      const footerSocials = footer.querySelectorAll('.flex.justify-center.gap-8 a');
+      footerSocials.forEach(link => {
+        const img = link.querySelector('img');
+        if (img) {
+          const alt = img.alt?.toLowerCase() || '';
+          let platform = '';
+          if (alt.includes('github')) platform = 'github';
+          if (alt.includes('linkedin')) platform = 'linkedin';
+          if (alt.includes('instagram')) platform = 'instagram';
+          
+          const url = getSocialUrl(platform);
+          if (url) {
+            link.href = url;
+          } else {
+            link.style.display = 'none';
+          }
+        }
+      });
+      
+      // Update copyright name
+      const copyright = footer.querySelector('.text-xs.text-gray-400');
+      if (copyright && personalInfo.name) {
+        copyright.textContent = \`© \${new Date().getFullYear()} \${personalInfo.name}. All rights reserved.\`;
+      }
     }
   `;
 }
 
 function getMagazineTemplateLogic() {
   return `
-    // 1. Personal Info
-    // Sidebar Name vertical
-    const verticalName = document.querySelector('.writing-vertical');
+    // ========== MAGAZINE TEMPLATE ==========
     
-    // Main Title "Alex Vander"
+    // Helper function to get social link URL
+    function getSocialUrl(platform) {
+      const link = socials.find(s => s.platform.toLowerCase() === platform.toLowerCase());
+      return link ? link.url : '';
+    }
+    
+    // 1. HEADER / HERO SECTION
+    // Update main name
     const mainTitle = document.querySelector('h1.font-display.text-6xl');
-    if (mainTitle) {
+    if (mainTitle && personalInfo.name) {
       const names = personalInfo.name.split(' ');
-      const firstName = names[0];
-      const lastName = names.length > 1 ? names.slice(1).join(' ') : '';
+      const firstName = names[0] || '';
+      const lastName = names.slice(1).join(' ') || '';
       mainTitle.innerHTML = \`\${firstName}<br/>\${lastName}\`;
     }
     
-    // Subtitle / Layout
+    // Update subtitle/role
     const subtitle = document.querySelector('p.font-display.text-xs.font-bold');
-    if (subtitle) subtitle.textContent = personalInfo.tagline;
-    
-    const bio = document.querySelector('p.font-sans.text-sm.md\\:text-base');
-    if (bio) bio.textContent = personalInfo.about;
-    
-    // Location
-    const loc = document.querySelector('.uppercase.tracking-widest.z-10');
-    if (loc) loc.textContent = personalInfo.location;
-
-    // 2. Projects
-    // Magazine has grid layout
-    const projectsSection = document.querySelector('#projects');
-    if (projectsSection) {
-       // Finds the container with Featured Project
-       // This template is complex, has specific featured vs others logic
-       // Simplest strategy: Find the header "FinDash Analytics" and trace back to container
-       const sampleTitle = projectsSection.querySelector('h3.font-display');
-       if (sampleTitle) {
-          // Assuming single project display as per snippet or similar structure
-          // This template seems to have one big featured project in snippet? 
-          // Let's check if there are multiple. 
-          // Snippet showed FinDash, E-Comm API, Vision AI. 
-          // They have different markup structures!
-          
-          // Implementation: Try to map first 3 projects to the 3 slots if available
-          
-          // Slot 1: Featured (FinDash)
-          const featuredContainer = projectsSection; // It starts with id="projects"
-          if (projects[0]) {
-             const p = projects[0];
-             const title = featuredContainer.querySelector('div.col-span-12.lg\\:col-span-4 h3');
-             if (title) title.innerHTML = p.title.replace(' ', '<br/>');
-             
-             const desc = featuredContainer.querySelector('div.col-span-12.lg\\:col-span-4 p.font-sans');
-             if (desc) desc.textContent = p.description;
-             
-             const img = featuredContainer.querySelector('img[alt="Abstract interface design"]');
-             if (img) img.src = p.imageUrl || img.src;
-          }
-          
-          // Slot 2 & 3: The grid below (E-Comm, Vision AI)
-          const nextSection = projectsSection.nextElementSibling; 
-          // The snippet shows HTML structure. After section#projects comes:
-          // <section class="grid grid-cols-1 md:grid-cols-2 ...">
-          if (nextSection && nextSection.classList.contains('grid-cols-1')) {
-             const items = nextSection.querySelectorAll('div.group');
-             items.forEach((item, idx) => {
-                const p = projects[idx + 1]; // Offset 1
-                if (p) {
-                   const t = item.querySelector('h4');
-                   if (t) t.textContent = p.title;
-                   
-                   const d = item.querySelector('p.font-sans');
-                   if (d) d.textContent = p.description;
-                   
-                   const img = item.querySelector('img');
-                   if (img) img.src = p.imageUrl || img.src;
-                   
-                   const tags = item.querySelector('.flex.gap-2');
-                   if (tags) {
-                     tags.innerHTML = p.techStack.slice(0,3).map(tag => 
-                       \`<span class="text-[10px] font-bold uppercase text-gray-400">\${tag}</span>\`
-                     ).join('');
-                   }
-                } else {
-                   item.style.display = 'none';
-                }
-             });
-          }
-       }
+    if (subtitle) {
+      subtitle.textContent = 'Developer Portfolio';
     }
-
-    // 3. Experience - "Dev Journey"
-    const expSection = document.querySelectorAll('section')[3]; // Heuristic if ID missing
-    // Or search for "2021 — Now"
-    // Better: find section containing "Dev<br/>Journey"
-    // The snippet has "Experience" section after "Dev Journey" block
     
-    // Look for grid rows with dates
-    const expRows = document.querySelectorAll('.grid.border-b.group');
-    if (expRows.length > 0) {
-       // We have rows. Capture template of one row.
-       const template = expRows[0].outerHTML;
-       // Find parent container
-       const container = expRows[0].parentElement;
-       
-       container.innerHTML = '';
-       
-       experience.forEach(exp => {
+    // Update bio/about
+    const bio = document.querySelector('p.font-sans.text-sm.md\\\\:text-base.max-w-md');
+    if (bio && personalInfo.about) {
+      bio.textContent = personalInfo.about;
+    }
+    
+    // Update location
+    const locationEl = document.querySelector('.z-10.absolute.bottom-4');
+    if (locationEl) {
+      // Keep or update location
+    }
+    
+    // Update header nav links
+    const githubNav = document.querySelectorAll('header .flex div')[3]; // GitHub position
+    if (githubNav && getSocialUrl('github')) {
+      githubNav.onclick = () => window.open(getSocialUrl('github'), '_blank');
+      githubNav.style.cursor = 'pointer';
+    }
+    
+    // 2. SKILLS SECTION
+    const skillsSections = document.querySelectorAll('section.grid.grid-cols-1.md\\\\:grid-cols-3');
+    if (skillsSections.length > 0 && skills.length > 0) {
+      const skillsSection = skillsSections[0];
+      const skillColumns = skillsSection.querySelectorAll('.p-8');
+      
+      if (skillColumns.length >= 3) {
+        // Distribute skills across columns or put all in first
+        const skillsPerColumn = Math.ceil(skills.length / 3);
+        
+        skillColumns.forEach((col, idx) => {
+          const ul = col.querySelector('ul');
+          if (ul) {
+            const startIdx = idx * skillsPerColumn;
+            const endIdx = Math.min(startIdx + skillsPerColumn, skills.length);
+            const colSkills = skills.slice(startIdx, endIdx);
+            
+            if (colSkills.length > 0) {
+              ul.innerHTML = colSkills.map(skill => 
+                \`<li class="flex justify-between items-center group cursor-default">
+                  <span>\${skill}</span>
+                  <span class="opacity-0 group-hover:opacity-100 transition-opacity material-icons-outlined text-xs">code</span>
+                </li>\`
+              ).join('');
+            } else {
+              col.style.display = 'none';
+            }
+          }
+        });
+        
+        // Update column headers
+        const headers = skillsSection.querySelectorAll('h3');
+        if (headers.length >= 3) {
+          headers[0].textContent = 'Primary Skills';
+          if (skills.length <= skillsPerColumn) {
+            headers[0].textContent = 'Skills';
+            skillColumns[1]?.style.display === 'none';
+            skillColumns[2]?.style.display === 'none';
+          }
+        }
+      }
+    } else if (skills.length === 0) {
+      const skillsSectionParent = document.querySelector('section.grid.grid-cols-1.md\\\\:grid-cols-3');
+      if (skillsSectionParent) skillsSectionParent.style.display = 'none';
+    }
+    
+    // 3. PROJECTS SECTION
+    const projectsSection = document.getElementById('projects');
+    if (projectsSection && projects.length > 0) {
+      // Featured project (first in projects section)
+      const featuredContainer = projectsSection.querySelector('.col-span-12.lg\\\\:col-span-4');
+      if (featuredContainer && projects[0]) {
+        const p = projects[0];
+        
+        const title = featuredContainer.querySelector('h3');
+        if (title) title.innerHTML = p.title.replace(' ', '<br/>');
+        
+        const desc = featuredContainer.querySelector('p.font-sans.text-sm');
+        if (desc) desc.textContent = p.description || '';
+        
+        // Update tags
+        const tagsContainer = featuredContainer.querySelector('.flex.gap-2.mb-8');
+        if (tagsContainer && p.tags.length > 0) {
+          tagsContainer.innerHTML = p.tags.slice(0, 3).map(tag => 
+            \`<span class="border border-border-light dark:border-border-dark px-2 py-1 text-[10px] uppercase font-bold">\${tag}</span>\`
+          ).join('');
+        }
+        
+        // Update links
+        const linkBtns = featuredContainer.querySelectorAll('.grid.grid-cols-2 a');
+        if (linkBtns.length >= 2) {
+          if (p.links.github) {
+            linkBtns[0].href = p.links.github;
+          } else {
+            linkBtns[0].style.visibility = 'hidden';
+          }
+          if (p.links.live) {
+            linkBtns[1].href = p.links.live;
+          } else {
+            linkBtns[1].style.visibility = 'hidden';
+          }
+        }
+      }
+      
+      // Featured project image
+      const featuredImg = projectsSection.querySelector('img[alt="Abstract interface design"]');
+      if (featuredImg && projects[0]?.imageUrl) {
+        featuredImg.src = projects[0].imageUrl;
+        featuredImg.alt = projects[0].title;
+      }
+      
+      // Other projects (grid below)
+      const otherProjectsSection = projectsSection.nextElementSibling;
+      if (otherProjectsSection?.classList.contains('grid')) {
+        const projectCards = otherProjectsSection.querySelectorAll('div.group');
+        
+        if (projectCards.length > 0 && projects.length > 1) {
+          const templateCard = projectCards[0].outerHTML;
+          otherProjectsSection.innerHTML = '';
+          
+          projects.slice(1).forEach((project, idx) => {
+            const temp = document.createElement('div');
+            temp.innerHTML = templateCard;
+            const card = temp.firstElementChild;
+            
+            const img = card.querySelector('img');
+            if (img) {
+              img.src = project.imageUrl;
+              img.alt = project.title;
+            }
+            
+            const title = card.querySelector('h4');
+            if (title) title.textContent = project.title;
+            
+            const desc = card.querySelector('p.font-sans.text-xs');
+            if (desc) desc.textContent = project.description || '';
+            
+            const tagsContainer = card.querySelector('.flex.gap-2');
+            if (tagsContainer && project.tags.length > 0) {
+              tagsContainer.innerHTML = project.tags.slice(0, 3).map(tag => 
+                \`<span class="text-[10px] font-bold uppercase text-gray-400">\${tag}</span>\`
+              ).join('');
+            }
+            
+            otherProjectsSection.appendChild(card);
+          });
+        } else if (projects.length <= 1) {
+          otherProjectsSection.style.display = 'none';
+        }
+      }
+    } else if (projects.length === 0) {
+      // Hide projects section
+      if (projectsSection) projectsSection.style.display = 'none';
+      const otherProjects = projectsSection?.nextElementSibling;
+      if (otherProjects) otherProjects.style.display = 'none';
+    }
+    
+    // 4. EXPERIENCE SECTION
+    // Find experience rows
+    const allSections = document.querySelectorAll('section');
+    let expSection = null;
+    allSections.forEach(section => {
+      if (section.innerHTML.includes('Dev') && section.innerHTML.includes('Journey')) {
+        expSection = section.nextElementSibling;
+      }
+    });
+    
+    if (!expSection) {
+      // Alternative: find by looking for experience rows
+      const expRows = document.querySelectorAll('.grid.grid-cols-1.lg\\\\:grid-cols-12.border-b.group');
+      if (expRows.length > 0) {
+        expSection = expRows[0].parentElement;
+      }
+    }
+    
+    if (expSection && experience.length > 0) {
+      const expRows = expSection.querySelectorAll('.grid.border-b, .grid.group');
+      
+      if (expRows.length > 0) {
+        const templateRow = expRows[0].outerHTML;
+        expSection.innerHTML = '';
+        
+        experience.forEach(exp => {
           const temp = document.createElement('div');
-          temp.innerHTML = template;
-          const row = temp.firstElementChild; // .grid ...
+          temp.innerHTML = templateRow;
+          const row = temp.firstElementChild;
           
-          // Date
-          const dateEl = row.querySelector('.col-span-12.lg\\:col-span-2');
-          if (dateEl) dateEl.textContent = exp.period;
+          // Update date
+          const dateEl = row.querySelector('.col-span-12.lg\\\\:col-span-2');
+          if (dateEl) dateEl.textContent = exp.period.replace(' - ', ' — ');
           
-          // Role
+          // Update role
           const roleEl = row.querySelector('h3');
-          if (roleEl) roleEl.textContent = exp.role;
+          if (roleEl) roleEl.textContent = exp.role.toUpperCase();
           
-          // Company
-          const compEl = row.querySelector('.font-sans.text-base');
-          if (compEl) compEl.textContent = exp.company;
+          // Update company
+          const companyEl = row.querySelector('.col-span-12.lg\\\\:col-span-6 span.font-sans');
+          if (companyEl) companyEl.textContent = exp.company;
           
-          container.appendChild(row);
-       });
+          expSection.appendChild(row);
+        });
+      }
+    } else if (experience.length === 0) {
+      // Hide experience section and its header
+      const devJourneyHeader = document.querySelector('div:has(> span:contains("02"))');
+      if (devJourneyHeader) devJourneyHeader.style.display = 'none';
+      if (expSection) expSection.style.display = 'none';
+    }
+    
+    // 5. FOOTER / CONTACT
+    const footer = document.querySelector('footer');
+    if (footer) {
+      // Update email link
+      const emailLink = footer.querySelector('a[href^="mailto:"]');
+      if (emailLink && personalInfo.email) {
+        emailLink.href = \`mailto:\${personalInfo.email}\`;
+      }
+      
+      // Update copyright
+      const copyright = footer.querySelector('.text-xs.text-gray-400');
+      if (copyright && personalInfo.name) {
+        copyright.textContent = \`© \${new Date().getFullYear()} \${personalInfo.name}. No cookies. No tracking.\`;
+      }
+      
+      // Update social links
+      const socialLinks = footer.querySelectorAll('.grid.grid-cols-2 a');
+      if (socialLinks.length >= 3) {
+        const platforms = ['linkedin', 'twitter', 'instagram'];
+        socialLinks.forEach((link, idx) => {
+          if (idx < platforms.length) {
+            const url = getSocialUrl(platforms[idx]);
+            if (url) {
+              link.href = url;
+            } else {
+              link.style.visibility = 'hidden';
+            }
+          }
+        });
+      }
     }
   `;
 }
 
 function getHyunBarngTemplateLogic() {
   return `
-    // 1. Personal Info
+    // ========== HYUN-BARNG TEMPLATE ==========
+    
+    // Helper function to get social link URL
+    function getSocialUrl(platform) {
+      const link = socials.find(s => s.platform.toLowerCase() === platform.toLowerCase());
+      return link ? link.url : '';
+    }
+    
+    // 1. HEADER / HERO
     // Nav Name
     const navName = document.querySelector('nav a.font-display');
-    if (navName) navName.textContent = personalInfo.name.toUpperCase() + '_';
-
-    // Hero Title "Build The Unseen Logic" -> Replace if user wants custom tagline, 
-    // but maybe stick to name + tagline
-    const heroTitle = document.querySelector('h1.font-display');
+    if (navName && personalInfo.name) {
+      navName.textContent = personalInfo.name.toUpperCase().replace(' ', '_') + '_';
+    }
+    
+    // Hero title - we'll keep the style but can update
+    const heroTitle = document.querySelector('h1.font-display.text-5xl');
     if (heroTitle) {
-      // Keep "Build The" style? Or replace fully.
-      // Let's replace with Tagline split
-      // "Full Stack Dev"
-      heroTitle.innerHTML = personalInfo.tagline.replace(' ', '<br/> <span class="text-neutral-500">') + '</span>';
+      // Keep dramatic title or personalize
+      const nameParts = personalInfo.name.split(' ');
+      if (nameParts.length > 1) {
+        heroTitle.innerHTML = \`\${nameParts[0]}<br /><span class="text-neutral-500">\${nameParts.slice(1).join(' ')}</span>\`;
+      }
     }
     
-    // Hero Subtitle
+    // Hero subtitle
     const heroSub = document.querySelector('p.font-light.text-neutral-400');
-    if (heroSub) heroSub.textContent = personalInfo.about.slice(0, 50) + '...';
-    
-    // About Section
-    const aboutTitle = document.querySelector('#about h2');
-    if (aboutTitle) aboutTitle.textContent = personalInfo.tagline;
-    
-    const aboutText = document.querySelector('#about p.text-lg');
-    if (aboutText) aboutText.textContent = '"' + personalInfo.about + '"';
-    
-    // Location
-    const loc = document.querySelector('#about .text-xs.font-bold');
-    if (loc) loc.textContent = 'Based in ' + personalInfo.location;
-
-    // 2. Skills
-    const skillsGrid = document.querySelector('#skills .grid'); 
-    // This has 3 groups: Languages, Frameworks, ML & Tools
-    // We can just dump everything into the first valid group and hide others or try to categorize
-    if (skillsGrid) {
-       // Simple approach: clear grid, make one big category for "My Skills"
-       skillsGrid.innerHTML = '';
-       
-       const groupDiv = document.createElement('div');
-       groupDiv.className = 'group';
-       
-       // Icon
-       groupDiv.innerHTML = \`
-         <div class="w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 group-hover:bg-neutral-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-black transition-colors duration-300">
-            <span class="material-icons-outlined text-4xl">code</span>
-         </div>
-         <h3 class="font-display text-xl uppercase mb-4">Core Tech</h3>
-         <div class="flex flex-wrap justify-center gap-2">
-           \${skills.map(s => \`<span class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400">\${s}</span>\`).join('')}
-         </div>
-       \`;
-       
-       skillsGrid.className = 'flex justify-center'; // Center single item
-       skillsGrid.appendChild(groupDiv);
+    if (heroSub) {
+      heroSub.textContent = (skills.slice(0, 3).join(' | ') || 'Developer').toUpperCase();
     }
-
-    // 3. Projects
-    const projectsContainer = document.querySelector('#projects .space-y-16');
-    if (projectsContainer) {
-       const articleTemplate = projectsContainer.querySelector('article');
-       if (articleTemplate) {
-         const template = articleTemplate.outerHTML;
-         projectsContainer.innerHTML = '';
-         
-         projects.forEach(project => {
+    
+    // Hero social buttons
+    const heroButtons = document.querySelectorAll('header .flex.justify-center.gap-6 a');
+    heroButtons.forEach(btn => {
+      const text = btn.textContent?.toLowerCase() || '';
+      if (text.includes('github')) {
+        const url = getSocialUrl('github');
+        if (url) btn.href = url;
+        else btn.style.display = 'none';
+      }
+      if (text.includes('linkedin')) {
+        const url = getSocialUrl('linkedin');
+        if (url) btn.href = url;
+        else btn.style.display = 'none';
+      }
+    });
+    
+    // 2. ABOUT SECTION
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+      const aboutTitle = aboutSection.querySelector('h2');
+      if (aboutTitle && personalInfo.name) {
+        aboutTitle.textContent = \`About \${personalInfo.name.split(' ')[0]}\`;
+      }
+      
+      const aboutText = aboutSection.querySelector('p.text-lg');
+      if (aboutText && personalInfo.about) {
+        aboutText.textContent = '"' + personalInfo.about + '"';
+      }
+      
+      // Location
+      const locationEl = aboutSection.querySelector('.text-xs.font-bold');
+      if (locationEl) {
+        locationEl.textContent = 'Full Stack Developer';
+      }
+    }
+    
+    // 3. SKILLS SECTION
+    const skillsSection = document.getElementById('skills');
+    if (skillsSection && skills.length > 0) {
+      const skillGroups = skillsSection.querySelectorAll('.group');
+      
+      if (skillGroups.length >= 3) {
+        // Distribute skills or consolidate
+        const skillsPerGroup = Math.ceil(skills.length / 3);
+        
+        skillGroups.forEach((group, idx) => {
+          const container = group.querySelector('.flex.flex-wrap');
+          const title = group.querySelector('h3');
+          
+          if (container) {
+            const startIdx = idx * skillsPerGroup;
+            const endIdx = Math.min(startIdx + skillsPerGroup, skills.length);
+            const groupSkills = skills.slice(startIdx, endIdx);
+            
+            if (groupSkills.length > 0) {
+              container.innerHTML = groupSkills.map(skill => 
+                \`<span class="px-3 py-1 border border-neutral-200 dark:border-neutral-700 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400">\${skill}</span>\`
+              ).join('');
+              
+              // Update title
+              if (title) {
+                const titles = ['Core Skills', 'Technologies', 'Tools'];
+                title.textContent = titles[idx] || 'Skills';
+              }
+            } else {
+              group.style.display = 'none';
+            }
+          }
+        });
+      }
+    } else if (skills.length === 0) {
+      if (skillsSection) skillsSection.style.display = 'none';
+    }
+    
+    // 4. PROJECTS SECTION
+    const projectsSection = document.getElementById('projects');
+    if (projectsSection && projects.length > 0) {
+      const projectsContainer = projectsSection.querySelector('.space-y-16');
+      
+      if (projectsContainer) {
+        const articles = projectsContainer.querySelectorAll('article');
+        
+        if (articles.length > 0) {
+          const templateArticle = articles[0].outerHTML;
+          projectsContainer.innerHTML = '';
+          
+          projects.forEach((project, idx) => {
             const temp = document.createElement('div');
-            temp.innerHTML = template;
+            temp.innerHTML = templateArticle;
             const article = temp.firstElementChild;
             
             // Image
             const img = article.querySelector('img');
-            if (img) img.src = project.imageUrl || img.src;
+            if (img) {
+              img.src = project.imageUrl;
+              img.alt = project.title;
+            }
             
             // Title
-            const h3 = article.querySelector('h3');
-            if (h3) h3.textContent = project.title;
+            const title = article.querySelector('h3');
+            if (title) title.textContent = project.title;
             
-            // Tags (Subtitle)
-            const sub = article.querySelector('p.uppercase.tracking-widest');
-            if (sub) sub.textContent = project.techStack.join(' | ');
+            // Tags subtitle
+            const subtitle = article.querySelector('p.text-neutral-400.text-xs');
+            if (subtitle && project.tags.length > 0) {
+              subtitle.textContent = project.tags.slice(0, 3).join(' & ');
+            }
             
             // Description
-            const desc = article.querySelector('p.text-neutral-300');
-            if (desc) desc.textContent = project.description;
+            const desc = article.querySelector('p.text-neutral-300.text-sm');
+            if (desc) desc.textContent = project.description || '';
+            
+            // Link
+            const link = article.querySelector('a.inline-flex');
+            if (link) {
+              if (project.links.live) {
+                link.href = project.links.live;
+                link.querySelector('span')?.replaceWith(document.createTextNode('View Project'));
+              } else if (project.links.github) {
+                link.href = project.links.github;
+                const textNode = Array.from(link.childNodes).find(n => n.nodeType === 3);
+                if (textNode) textNode.textContent = 'View GitHub';
+              } else {
+                link.style.display = 'none';
+              }
+            }
             
             projectsContainer.appendChild(article);
-         });
-       }
+          });
+        }
+      }
+    } else if (projects.length === 0) {
+      if (projectsSection) projectsSection.style.display = 'none';
     }
-
-    // 4. Experience
-    const expList = document.querySelector('#experience .space-y-12');
-    if (expList) {
-       const expTemplate = expList.querySelector('.relative.pl-8');
-       if (expTemplate) {
-         const tmpl = expTemplate.outerHTML;
-         expList.innerHTML = '';
-         
-         experience.forEach(exp => {
+    
+    // 5. EXPERIENCE SECTION
+    const experienceSection = document.getElementById('experience');
+    if (experienceSection && experience.length > 0) {
+      const expTimeline = experienceSection.querySelector('.space-y-12');
+      
+      if (expTimeline) {
+        const expItems = expTimeline.querySelectorAll('.relative.pl-8');
+        
+        if (expItems.length > 0) {
+          const templateItem = expItems[0].outerHTML;
+          expTimeline.innerHTML = '';
+          
+          experience.forEach((exp, idx) => {
             const temp = document.createElement('div');
-            temp.innerHTML = tmpl;
+            temp.innerHTML = templateItem;
             const item = temp.firstElementChild;
             
             // Role
@@ -694,30 +1189,89 @@ function getHyunBarngTemplateLogic() {
             if (role) role.textContent = exp.role;
             
             // Period
-            const period = item.querySelector('.font-mono');
+            const period = item.querySelector('span.text-xs.font-mono');
             if (period) period.textContent = exp.period;
             
             // Company
-            const comp = item.querySelector('.mb-2.text-sm.font-bold');
-            if (comp) comp.textContent = exp.company;
+            const company = item.querySelector('.text-sm.font-bold');
+            if (company) company.textContent = exp.company;
             
             // Description
-            const desc = item.querySelector('p.text-sm.leading-relaxed');
-            if (desc) desc.textContent = exp.description;
+            const desc = item.querySelector('p.text-neutral-600');
+            if (desc) desc.textContent = exp.description || '';
             
-            expList.appendChild(item);
-         });
-       }
+            // Timeline dot styling (first is highlighted)
+            const dot = item.querySelector('.absolute.-left-\\\\[5px\\\\]');
+            if (dot) {
+              if (idx === 0) {
+                dot.className = dot.className.replace('bg-neutral-400', 'bg-primary');
+              }
+            }
+            
+            expTimeline.appendChild(item);
+          });
+        }
+      }
+    } else if (experience.length === 0) {
+      if (experienceSection) experienceSection.style.display = 'none';
+    }
+    
+    // 6. FOOTER
+    const footer = document.querySelector('footer');
+    if (footer) {
+      // Update contact email
+      const contactBtn = footer.querySelector('a[href^="mailto:"]');
+      if (contactBtn && personalInfo.email) {
+        contactBtn.href = \`mailto:\${personalInfo.email}\`;
+      }
+      
+      // Update copyright
+      const copyright = footer.querySelector('.mb-4.md\\\\:mb-0');
+      if (copyright && personalInfo.name) {
+        copyright.textContent = \`© \${new Date().getFullYear()} \${personalInfo.name}.\`;
+      }
+      
+      // Update social links
+      const footerLinks = footer.querySelectorAll('.flex.space-x-6 a');
+      const platforms = ['twitter', 'instagram', 'dribbble'];
+      footerLinks.forEach((link, idx) => {
+        if (idx < platforms.length) {
+          const url = getSocialUrl(platforms[idx]);
+          if (url) {
+            link.href = url;
+          } else {
+            link.style.display = 'none';
+          }
+        }
+      });
     }
   `;
 }
 
 function getGenericTemplateLogic() {
   return `
-    // Fallback simple replacement
-    const nameEls = document.querySelectorAll('h1, h2');
-    nameEls.forEach(el => {
-      if (el.textContent.includes('Alex')) el.textContent = personalInfo.name;
+    // Generic fallback - simple name replacement
+    const nameElements = document.querySelectorAll('h1, h2, nav a');
+    nameElements.forEach(el => {
+      if (el.textContent?.includes('Alex')) {
+        el.textContent = el.textContent.replace(/Alex[\\s\\w]*/gi, personalInfo.name);
+      }
     });
+    
+    // Hide sections if no data
+    if (projects.length === 0) {
+      const projectsSection = document.getElementById('projects') || document.querySelector('[id*="project"]');
+      if (projectsSection) projectsSection.style.display = 'none';
+    }
+    
+    if (experience.length === 0) {
+      const expSection = document.getElementById('experience') || document.querySelector('[id*="experience"]');
+      if (expSection) expSection.style.display = 'none';
+    }
+    
+    if (skills.length === 0) {
+      const skillsSection = document.getElementById('skills') || document.querySelector('[id*="skill"]');
+      if (skillsSection) skillsSection.style.display = 'none';
+    }
   `;
 }
