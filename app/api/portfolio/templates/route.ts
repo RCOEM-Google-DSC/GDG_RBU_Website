@@ -5,14 +5,7 @@ import path from "path";
 import { NextResponse } from "next/server";
 import type { PortfolioTemplate } from "@/lib/types";
 
-// Map folder names to template slugs
-const TEMPLATE_FOLDER_MAP: Record<string, string> = {
-  "architectural-portfolio final": "architectural",
-  "hyun-barng-style-portfolio final": "hyun-barng",
-  "magzine-portfolio final": "magazine",
-  "minimalist-grid-portfolio final": "minimalist-grid",
-  "soft-portfolio final": "soft",
-};
+import { TEMPLATE_FOLDER_MAP } from "@/lib/templates";
 
 export async function GET() {
   try {
@@ -29,6 +22,10 @@ export async function GET() {
     for (const folder of folders) {
       if (!folder.isDirectory()) continue;
 
+      // Only include templates that are in our recognized map
+      const slug = TEMPLATE_FOLDER_MAP[folder.name];
+      if (!slug) continue;
+
       const metadataPath = path.join(
         portfoliosDir,
         folder.name,
@@ -39,10 +36,6 @@ export async function GET() {
         try {
           const metadataContent = fs.readFileSync(metadataPath, "utf-8");
           const metadata = JSON.parse(metadataContent);
-
-          const slug =
-            TEMPLATE_FOLDER_MAP[folder.name] ||
-            folder.name.toLowerCase().replace(/\s+/g, "-");
 
           templates.push({
             id: slug,

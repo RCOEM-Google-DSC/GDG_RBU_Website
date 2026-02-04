@@ -130,25 +130,31 @@ export function PortfolioRenderer({
                 )}
 
                 {/* Skills Section */}
-                {portfolio.skills && portfolio.skills.length > 0 && (
-                    <section>
-                        <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                            <span className="h-1 w-8 bg-primary rounded-full" />
-                            Skills
-                        </h2>
-                        <div className="flex flex-wrap gap-2">
-                            {portfolio.skills.map((skill, index) => (
-                                <Badge
-                                    key={index}
-                                    variant="secondary"
-                                    className="px-3 py-1 text-sm"
-                                >
-                                    {skill}
-                                </Badge>
-                            ))}
-                        </div>
-                    </section>
-                )}
+                {((portfolio.languages && portfolio.languages.length > 0) ||
+                    (portfolio.frameworks && portfolio.frameworks.length > 0) ||
+                    (portfolio.tools && portfolio.tools.length > 0)) && (
+                        <section>
+                            <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+                                <span className="h-1 w-8 bg-primary rounded-full" />
+                                Skills
+                            </h2>
+                            <div className="flex flex-wrap gap-2">
+                                {[
+                                    ...(portfolio.languages || []),
+                                    ...(portfolio.frameworks || []),
+                                    ...(portfolio.tools || []),
+                                ].map((skill, index) => (
+                                    <Badge
+                                        key={index}
+                                        variant="secondary"
+                                        className="px-3 py-1 text-sm"
+                                    >
+                                        {skill}
+                                    </Badge>
+                                ))}
+                            </div>
+                        </section>
+                    )}
 
                 {/* Projects Section */}
                 {sortedProjects.length > 0 && (

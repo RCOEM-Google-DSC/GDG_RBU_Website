@@ -1,0 +1,40 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;700;900&display=swap");
+
+.magazine-portfolio {
+  font-family: "Inter", sans-serif;
+}
+
+.font-display {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+/* Custom scrollbar to match the brutalist aesthetic */
+.magazine-portfolio ::-webkit-scrollbar {
+  width: 8px;
+}
+.magazine-portfolio ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.magazine-portfolio ::-webkit-scrollbar-thumb {
+  background: #333;
+}
+.magazine-portfolio ::-webkit-scrollbar-thumb:hover {
+  background: #000;
+}
+
+/* Vertical writing mode helper */
+.writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* Smooth scrolling */
+.magazine-portfolio {
+  scroll-behavior: smooth;
+}
+
+/* Ensure proper text rendering */
+.magazine-portfolio * {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

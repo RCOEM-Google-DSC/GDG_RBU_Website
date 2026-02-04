@@ -2,14 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-// Map template IDs to folder names
-const TEMPLATE_FOLDER_MAP: Record<string, string> = {
-  architectural: "architectural-portfolio final",
-  "hyun-barng": "hyun-barng-style-portfolio final",
-  magazine: "magzine-portfolio final",
-  "minimalist-grid": "minimalist-grid-portfolio final",
-  soft: "soft-portfolio final",
-};
+import { SLUG_TO_FOLDER_MAP, type TemplateId } from "@/lib/templates";
 
 export async function GET(
   request: NextRequest,
@@ -17,7 +10,7 @@ export async function GET(
 ) {
   try {
     const { templateId } = await params;
-    const folderName = TEMPLATE_FOLDER_MAP[templateId];
+    const folderName = SLUG_TO_FOLDER_MAP[templateId as TemplateId];
 
     if (!folderName) {
       return NextResponse.json(

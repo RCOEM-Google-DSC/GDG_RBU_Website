@@ -5,14 +5,7 @@ import type { Portfolio, PortfolioTemplate } from "@/lib/types";
 import fs from "fs";
 import path from "path";
 
-// Map folder names to template slugs
-const TEMPLATE_FOLDER_MAP: Record<string, string> = {
-    "architectural-portfolio final": "architectural",
-    "hyun-barng-style-portfolio final": "hyun-barng",
-    "magzine-portfolio final": "magazine",
-    "minimalist-grid-portfolio final": "minimalist-grid",
-    "soft-portfolio final": "soft",
-};
+import { TEMPLATE_FOLDER_MAP } from "@/lib/templates";
 
 async function getFilesystemTemplates(): Promise<PortfolioTemplate[]> {
     try {
@@ -28,6 +21,10 @@ async function getFilesystemTemplates(): Promise<PortfolioTemplate[]> {
         for (const folder of folders) {
             if (!folder.isDirectory()) continue;
 
+            // Only include templates that are in our recognized map
+            const slug = TEMPLATE_FOLDER_MAP[folder.name];
+            if (!slug) continue;
+
             const metadataPath = path.join(
                 portfoliosDir,
                 folder.name,
@@ -38,10 +35,6 @@ async function getFilesystemTemplates(): Promise<PortfolioTemplate[]> {
                 try {
                     const metadataContent = fs.readFileSync(metadataPath, "utf-8");
                     const metadata = JSON.parse(metadataContent);
-
-                    const slug =
-                        TEMPLATE_FOLDER_MAP[folder.name] ||
-                        folder.name.toLowerCase().replace(/\s+/g, "-");
 
                     templates.push({
                         id: slug,
@@ -104,14 +97,25 @@ export default async function PortfolioBuilderPage() {
     // Fetch templates from filesystem
     const fsTemplates = await getFilesystemTemplates();
 
-    // Merge templates (filesystem templates take priority for matching IDs)
+    // Merge templates (filesystem templates take priority)
     const templatesMap = new Map<string, PortfolioTemplate>();
 
-    // Add database templates first
-    (dbTemplates || []).forEach((t) => templatesMap.set(t.id, t));
+    // Only include recognized template IDs
+    const RECOGNIZED_IDS = ["architectural", "soft", "minimalist-grid", "magazine", "hyun-barng"];
 
-    // Add/override with filesystem templates
-    fsTemplates.forEach((t) => templatesMap.set(t.id, t));
+    // Add filesystem templates (they are our source of truth for code)
+    fsTemplates.forEach((t) => {
+        if (RECOGNIZED_IDS.includes(t.id)) {
+            templatesMap.set(t.id, t);
+        }
+    });
+
+    // Fallback to DB templates only if they match recognized IDs and aren't in FS
+    (dbTemplates || []).forEach((t) => {
+        if (RECOGNIZED_IDS.includes(t.id) && !templatesMap.has(t.id)) {
+            templatesMap.set(t.id, t);
+        }
+    });
 
     const allTemplates = Array.from(templatesMap.values());
 

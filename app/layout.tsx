@@ -1,7 +1,7 @@
 // app/layout.tsx
 import "./globals.css";
-import NavBar from "./Components/Navigation/NavBar";
 import { Toaster } from "sonner";
+import ConditionalLayout from "./Components/ConditionalLayout";
 
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
@@ -91,8 +91,7 @@ export default function RootLayout({
           }}
         />
 
-        <NavBar />
-        <main className="relative w-full pt-[70px]">{children}</main>
+        <ConditionalLayout>{children}</ConditionalLayout>
         <Toaster position="top-right" richColors closeButton={true} />
       </body>
     </html>

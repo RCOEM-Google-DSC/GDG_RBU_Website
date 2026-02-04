@@ -11,13 +11,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { SKILL_OPTIONS } from "@/lib/types";
+import { LANGUAGE_OPTIONS, FRAMEWORK_OPTIONS, TOOL_OPTIONS } from "@/lib/types";
 
 interface SkillsComboboxProps {
     value: string[];
     onChange: (value: string[]) => void;
     placeholder?: string;
     className?: string;
+    category?: "languages" | "frameworks" | "tools";
 }
 
 export function SkillsCombobox({
@@ -25,16 +26,25 @@ export function SkillsCombobox({
     onChange,
     placeholder = "Search and select skills...",
     className,
+    category,
 }: SkillsComboboxProps) {
     const [open, setOpen] = React.useState(false);
     const [search, setSearch] = React.useState("");
 
+    // Get the appropriate skill options based on category
+    const skillOptions = React.useMemo((): string[] => {
+        if (category === "languages") return [...LANGUAGE_OPTIONS] as string[];
+        if (category === "frameworks") return [...FRAMEWORK_OPTIONS] as string[];
+        if (category === "tools") return [...TOOL_OPTIONS] as string[];
+        return [];
+    }, [category]);
+
     const filteredSkills = React.useMemo(() => {
-        if (!search) return [...SKILL_OPTIONS];
-        return SKILL_OPTIONS.filter((skill) =>
+        if (!search) return skillOptions;
+        return skillOptions.filter((skill) =>
             skill.toLowerCase().includes(search.toLowerCase()),
         );
-    }, [search]);
+    }, [search, skillOptions]);
 
     const handleSelect = (skill: string) => {
         if (value.includes(skill)) {
@@ -128,21 +138,18 @@ export function SkillsCombobox({
                             </div>
                         )}
                     </div>
-                    {search &&
-                        !SKILL_OPTIONS.includes(
-                            search as (typeof SKILL_OPTIONS)[number],
-                        ) && (
-                            <div className="p-2 border-t">
-                                <Button
-                                    variant="secondary"
-                                    size="sm"
-                                    className="w-full"
-                                    onClick={handleAddCustom}
-                                >
-                                    Add &quot;{search}&quot; as custom skill
-                                </Button>
-                            </div>
-                        )}
+                    {search && !skillOptions.includes(search) && (
+                        <div className="p-2 border-t">
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                className="w-full"
+                                onClick={handleAddCustom}
+                            >
+                                Add &quot;{search}&quot; as custom skill
+                            </Button>
+                        </div>
+                    )}
                 </PopoverContent>
             </Popover>
 

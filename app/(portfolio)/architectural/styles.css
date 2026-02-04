@@ -1,0 +1,41 @@
+/* Architectural Portfolio Styles */
+
+/* Import fonts - Inter for body, Oswald for display/headings */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Oswald:wght@400;500;700&display=swap");
+
+/* Apply fonts globally for this portfolio */
+body {
+  font-family: "Inter", sans-serif;
+}
+
+.font-display {
+  font-family: "Oswald", sans-serif;
+}
+
+/* Custom scrollbar for that technical feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Ensure proper text rendering */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

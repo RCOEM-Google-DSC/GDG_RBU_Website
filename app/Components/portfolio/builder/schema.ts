@@ -9,7 +9,9 @@ export const portfolioSchema = z.object({
     .string()
     .max(2000, "About me must be less than 2000 characters")
     .optional(),
-  skills: z.array(z.string()),
+  languages: z.array(z.string()).default([]),
+  frameworks: z.array(z.string()).default([]),
+  tools: z.array(z.string()).default([]),
   is_published: z.boolean(),
 });
 

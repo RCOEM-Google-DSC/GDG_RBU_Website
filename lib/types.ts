@@ -292,7 +292,9 @@ export interface Portfolio {
   display_name: string;
   profile_image_url: string | null;
   about_me: string | null;
-  skills: string[];
+  languages: string[];
+  frameworks: string[];
+  tools: string[];
   is_published: boolean;
   created_at: string;
   updated_at: string;
@@ -348,7 +350,9 @@ export interface PortfolioFormData {
   display_name: string;
   profile_image_url?: string;
   about_me?: string;
-  skills: string[];
+  languages: string[];
+  frameworks: string[];
+  tools: string[];
 }
 
 export interface ProjectFormData {
@@ -377,8 +381,8 @@ export interface SocialLinkFormData {
   display_order?: number;
 }
 
-// Predefined skills list for dropdown
-export const SKILL_OPTIONS = [
+// Predefined skills list for dropdown - categorized
+export const LANGUAGE_OPTIONS = [
   "JavaScript",
   "TypeScript",
   "Python",
@@ -387,11 +391,30 @@ export const SKILL_OPTIONS = [
   "C#",
   "Go",
   "Rust",
+  "Ruby",
+  "PHP",
+  "Swift",
+  "Kotlin",
+  "Dart",
+  "SQL",
+  "HTML",
+  "CSS",
+  "R",
+  "MATLAB",
+  "Scala",
+  "Perl",
+] as const;
+
+export const FRAMEWORK_OPTIONS = [
   "React",
   "Next.js",
   "Vue.js",
   "Angular",
   "Svelte",
+  "SolidJS",
+  "Remix",
+  "Astro",
+  "Nuxt",
   "Node.js",
   "Express",
   "Django",
@@ -399,42 +422,72 @@ export const SKILL_OPTIONS = [
   "FastAPI",
   "Spring Boot",
   "Laravel",
-  "HTML",
-  "CSS",
+  "Ruby on Rails",
+  "ASP.NET",
   "Tailwind CSS",
   "SASS",
   "Bootstrap",
+  "Material-UI",
+  "Chakra UI",
+  "shadcn/ui",
+  "TensorFlow",
+  "PyTorch",
+  "Keras",
+  "Scikit-learn",
+] as const;
+
+export const TOOL_OPTIONS = [
+  "Git",
+  "GitHub",
+  "GitLab",
+  "Bitbucket",
+  "Docker",
+  "Kubernetes",
+  "AWS",
+  "Google Cloud",
+  "Azure",
   "PostgreSQL",
   "MySQL",
   "MongoDB",
   "Redis",
   "Firebase",
   "Supabase",
-  "AWS",
-  "Google Cloud",
-  "Azure",
-  "Docker",
-  "Kubernetes",
-  "Git",
-  "GitHub",
-  "GitLab",
+  "Vercel",
+  "Netlify",
   "CI/CD",
+  "Jenkins",
+  "GitHub Actions",
+  "GitLab CI",
   "Linux",
-  "Machine Learning",
-  "Deep Learning",
-  "TensorFlow",
-  "PyTorch",
   "REST API",
   "GraphQL",
   "WebSocket",
   "gRPC",
   "Figma",
-  "UI/UX Design",
+  "Adobe XD",
   "Photoshop",
   "Illustrator",
-  "Agile",
-  "Scrum",
-  "Project Management",
+  "Postman",
+  "VS Code",
+  "IntelliJ IDEA",
+  "Webpack",
+  "Vite",
+  "Babel",
+  "ESLint",
+  "Prettier",
+  "Jest",
+  "Cypress",
+  "Selenium",
+  "Jira",
+  "Trello",
+  "Notion",
+] as const;
+
+// Legacy combined array for backward compatibility
+export const SKILL_OPTIONS = [
+  ...LANGUAGE_OPTIONS,
+  ...FRAMEWORK_OPTIONS,
+  ...TOOL_OPTIONS,
 ] as const;
 
 // Platform options for social links

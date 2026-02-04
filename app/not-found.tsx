@@ -107,19 +107,6 @@ export default function NotFound() {
             Go Back
           </button>
         </div>
-
-        {/* Fun fact */}
-        <div className="mt-8 md:mt-12 mb-8 text-center">
-          <NeoBrutalism
-            border={3}
-            shadow="sm"
-            className="inline-block bg-yellow-400 px-4 md:px-6 py-2 md:py-3 -rotate-1 md:border-4 md:shadow-[4px_4px_0px_0px_#000]"
-          >
-            <p className="font-black text-xs sm:text-sm md:text-base uppercase">
-              💡 Fun Fact: The first 404 error was at CERN in 1992!
-            </p>
-          </NeoBrutalism>
-        </div>
       </div>
     </div>
   );

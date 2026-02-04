@@ -161,7 +161,8 @@ export function usePortfolioForm({
       toast.success(publish ? "Portfolio published!" : "Portfolio saved!");
 
       if (publish) {
-        router.push(`/portfolio/${userId}`);
+        const templateId = data.portfolio.template_id;
+        router.push(`/${templateId}/${userId}`);
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to save");
@@ -177,43 +178,13 @@ export function usePortfolioForm({
       return;
     }
 
-    setIsGeneratingPreview(true);
     try {
-      // Generate preview HTML via API
-      const response = await fetch("/api/portfolio/preview", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          templateId: formData.portfolio.template_id,
-          portfolio: formData.portfolio,
-          projects: formData.projects,
-          experience: formData.experience,
-          social_links: formData.social_links,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to generate preview");
-      }
-
-      // Get the HTML content
-      const html = await response.text();
-
-      // Create a blob and open in new tab
-      const blob = new Blob([html], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-      window.open(url, "_blank");
-
-      // Cleanup blob URL after a delay
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      // Serialize form data and open in new tab
+      const dataStr = encodeURIComponent(JSON.stringify(formData));
+      window.open(`/portfolio-preview/${formData.portfolio.template_id}?data=${dataStr}`, "_blank");
     } catch (error) {
       console.error("Preview error:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to generate preview",
-      );
-    } finally {
-      setIsGeneratingPreview(false);
+      toast.error("Failed to generate preview");
     }
   };
 

@@ -1,5 +1,5 @@
 import { createClient } from "@/supabase/server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { PortfolioRenderer } from "@/app/Components/portfolio/display";
 import type { Metadata } from "next";
 
@@ -58,6 +58,12 @@ export default async function PortfolioPage({ params }: PageProps) {
         notFound();
     }
 
+    // Redirect to template-specific route if available
+    if (portfolio.template_id) {
+        redirect(`/${portfolio.template_id}/${userId}`);
+    }
+
+    // Fallback to generic renderer if no template selected (though schema requires it)
     // Fetch user info
     const { data: user } = await supabase
         .from("users")
