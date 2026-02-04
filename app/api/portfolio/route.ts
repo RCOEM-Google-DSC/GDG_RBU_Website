@@ -86,7 +86,9 @@ export async function POST(request: NextRequest) {
         display_name: body.display_name,
         profile_image_url: body.profile_image_url || null,
         about_me: body.about_me || null,
-        skills: body.skills || [],
+        languages: body.languages || [],
+        frameworks: body.frameworks || [],
+        tools: body.tools || [],
         is_published: body.is_published || false,
       })
       .select()
