@@ -191,7 +191,7 @@ export function ExperienceStep({ form, fieldArray }: ExperienceStepProps) {
                         shadow: "md",
                         hover: "lift",
                         active: "push",
-                        className: "",
+                        className: "w-full md:w-auto",
                     })}
                 >
                     <Plus className="mr-2 h-4 w-4" />

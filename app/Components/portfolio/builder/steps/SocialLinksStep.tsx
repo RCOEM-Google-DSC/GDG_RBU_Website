@@ -45,12 +45,12 @@ export function SocialLinksStep({
             </CardHeader>
             <CardContent className="space-y-6">
                 {fields.map((field, index) => (
-                    <div key={field.id} className="flex gap-4 items-start">
+                    <div key={field.id} className="flex flex-col md:flex-row gap-4 items-start md:items-center">
                         <FormField
                             control={form.control}
                             name={`social_links.${index}.platform`}
                             render={({ field }) => (
-                                <FormItem className="w-48">
+                                <FormItem className="w-full md:w-48 shrink-0">
                                     <FormControl>
                                         <PlatformSelector
                                             value={field.value}
@@ -69,7 +69,7 @@ export function SocialLinksStep({
                             control={form.control}
                             name={`social_links.${index}.url`}
                             render={({ field }) => (
-                                <FormItem className="flex-1">
+                                <FormItem className="flex-1 w-full">
                                     <FormControl>
                                         <Input placeholder="https://..." {...field} />
                                     </FormControl>
@@ -88,7 +88,7 @@ export function SocialLinksStep({
                                 shadow: "xs",
                                 hover: "lift",
                                 active: "push",
-                                className: "bg-red-100 hover:bg-red-200",
+                                className: "bg-red-100 hover:bg-red-200 self-end md:self-auto",
                             })}
                         >
                             <Trash2 className="h-4 w-4 text-destructive" />
@@ -110,7 +110,7 @@ export function SocialLinksStep({
                         shadow: "md",
                         hover: "lift",
                         active: "push",
-                        className: "",
+                        className: "w-full md:w-auto",
                     })}
                 >
                     <Plus className="mr-2 h-4 w-4" />

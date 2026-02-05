@@ -28,16 +28,16 @@ export function FormHeader({
     onPreview,
 }: FormHeaderProps) {
     return (
-        <div className="flex items-center justify-between gap-12">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-12">
             <div>
-                <h1 className="text-5xl font-bold font-retron">
+                <h1 className="text-3xl md:text-5xl font-bold font-retron">
                     {isEditing ? "Edit Portfolio" : "Create Portfolio"}
                 </h1>
-                <p className="text-muted-foreground text-xl mt-3">
+                <p className="text-muted-foreground text-lg md:text-xl mt-3">
                     Build your professional portfolio in a few simple steps
                 </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
                 <Button
                     variant="outline"
                     onClick={onPreview} // Changed from handlePreview to onPreview to match props
@@ -47,7 +47,7 @@ export function FormHeader({
                         shadow: "sm",
                         hover: "lift",
                         active: "push",
-                        className: "bg-white hover:bg-zinc-50 text-black",
+                        className: "bg-white hover:bg-zinc-50 text-black flex-1 md:flex-none",
                     })}
                 >
                     {isGeneratingPreview ? (
@@ -66,7 +66,7 @@ export function FormHeader({
                         shadow: "md",
                         hover: "lift",
                         active: "push",
-                        className: "bg-amber-300 hover:bg-amber-400 text-black",
+                        className: "bg-amber-300 hover:bg-amber-400 text-black flex-1 md:flex-none",
                     })}
                 >
                     {isSaving ? (
@@ -84,7 +84,7 @@ export function FormHeader({
                         shadow: "md",
                         hover: "lift",
                         active: "push",
-                        className: "bg-green-400 hover:bg-green-500 text-black",
+                        className: "bg-green-400 hover:bg-green-500 text-black flex-1 md:flex-none",
                     })}
                 >
                     {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}

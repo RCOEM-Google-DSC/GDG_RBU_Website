@@ -120,7 +120,7 @@ export default async function PortfolioBuilderPage() {
     const allTemplates = Array.from(templatesMap.values());
 
     return (
-        <div className="container px-10 py-10 flex items-center justify-center mx-auto">
+        <div className="container px-4 md:px-10 py-10 flex items-center justify-center mx-auto">
             <PortfolioBuilderForm
                 existingPortfolio={portfolio as Portfolio | undefined}
                 templates={allTemplates}

@@ -336,7 +336,7 @@ export function ProjectsStep({ form, fieldArray }: ProjectsStepProps) {
                         shadow: "md",
                         hover: "lift",
                         active: "push",
-                        className: "",
+                        className: "w-full md:w-auto",
                     })}
                 >
                     <Plus className="mr-2 h-4 w-4" />

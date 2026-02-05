@@ -59,10 +59,10 @@ export function PortfolioBuilderForm({
             />
 
             {/* Main Content: Stepper (left) + Form (right) */}
-            <div className="flex gap-8">
+            <div className="flex flex-col lg:flex-row gap-8">
                 {/* Left Sidebar - Stepper (1/4 width) */}
-                <div className="w-1/4 min-w-[200px]">
-                    <div className="sticky top-24">
+                <div className="w-full lg:w-1/4 min-w-[200px]">
+                    <div className="lg:sticky lg:top-24">
                         <FormStepper
                             steps={STEPS}
                             currentStep={currentStep}

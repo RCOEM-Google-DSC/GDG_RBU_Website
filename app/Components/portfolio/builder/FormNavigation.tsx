@@ -24,7 +24,7 @@ export function FormNavigation({
     const isLastStep = currentStep === STEPS.length;
 
     return (
-        <div className="flex justify-between">
+        <div className="flex gap-4 justify-between">
             <Button
                 type="button"
                 variant="outline"
@@ -35,7 +35,7 @@ export function FormNavigation({
                     shadow: "md",
                     hover: "lift",
                     active: "push",
-                    className: "",
+                    className: "flex-1 md:flex-none",
                 })}
             >
                 Previous
@@ -49,7 +49,7 @@ export function FormNavigation({
                     shadow: "md",
                     hover: "lift",
                     active: "push",
-                    className: "",
+                    className: "flex-1 md:flex-none",
                 })}
             >
                 {isLastStep ? (
