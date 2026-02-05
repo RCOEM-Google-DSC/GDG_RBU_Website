@@ -8,7 +8,6 @@ import QRCodeWithSvgLogo from "@/app/Components/checkin/QRCodeWithSvgLogo";
 import { toast } from "sonner";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 import {
-  Ticket,
   Calendar,
   MapPin,
   Check,
@@ -46,6 +45,17 @@ const THEME = {
 
 const isProfileComplete = (u: any) =>
   !!(u?.name && u?.email && u?.phone_number && u?.section && u?.branch);
+
+/* password generator (frontend) */
+function generateRandomPassword(length = 8) {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let out = "";
+  for (let i = 0; i < length; i++) {
+    out += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return out;
+}
 
 /* ---------------- UI primitives (kept very close to yours) ---------------- */
 
@@ -137,7 +147,6 @@ function StackCard({
     >
       <div
         className="flex justify-between items-center px-6 py-3"
-        // header is clickable — call onHeaderClick if provided
         onClick={() => onHeaderClick && onHeaderClick()}
         style={{ cursor: onHeaderClick ? "pointer" : "default" }}
       >
@@ -173,6 +182,94 @@ function StackCard({
   );
 }
 
+/* ---------- Robust time parser & formatter ---------- */
+
+/**
+ * Parse various time string formats into hour (0-23) and minute (0-59).
+ * Supports:
+ *   "12:00 PM", "12 PM", "12:00AM", "4 PM", "4:30PM", "16:00", "09:15", "9:15 am"
+ * Returns null on failure.
+ */
+function parseTimeString(timeStr?: string): { hour: number; minute: number } | null {
+  if (!timeStr) return null;
+  const s = String(timeStr).trim();
+  if (!s) return null;
+
+  // Normalize spacing and lower-case for am/pm detection
+  const normalized = s.replace(/\s+/g, " ").toLowerCase();
+
+  // Regex: capture hour, optional :minute, optional space, optional am/pm
+  const m = normalized.match(/^([0-9]{1,2})(?::([0-9]{2}))?\s*(am|pm)?$/i);
+  if (!m) {
+    return null;
+  }
+
+  let hour = parseInt(m[1], 10);
+  const minute = m[2] ? parseInt(m[2], 10) : 0;
+  const ampm = m[3] ? m[3].toLowerCase() : null;
+
+  if (isNaN(hour) || isNaN(minute)) return null;
+  if (minute < 0 || minute > 59) return null;
+
+  // If am/pm present, interpret as 12-hour clock
+  if (ampm) {
+    if (ampm === "am") {
+      if (hour === 12) hour = 0;
+    } else if (ampm === "pm") {
+      if (hour < 12) hour += 12;
+    }
+  } else {
+    // No am/pm: assume 24-hour clock if hour >= 0 && hour <= 23
+    if (hour < 0 || hour > 23) return null;
+  }
+
+  return { hour, minute };
+}
+
+/**
+ * Format provided date (YYYY-MM-DD) and time string (flexible formats) into:
+ *   "DD Mon YYYY, hh:mm AM/PM IST"
+ * If time cannot be parsed, returns "DD Mon YYYY".
+ * If date missing, returns "Date & Time"
+ */
+function formatDateTimeIST(date: string | null, timeText: string | null) {
+  if (!date) return "Date & Time";
+
+  // parse date
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const parts = date.split("-");
+  if (parts.length < 3) {
+    // fallback: just return raw date
+    return date;
+  }
+  const [y, m, d] = parts;
+  const year = Number(y);
+  const monthIdx = Number(m) - 1;
+  const day = Number(d);
+
+  if (isNaN(year) || isNaN(monthIdx) || isNaN(day) || monthIdx < 0 || monthIdx > 11) {
+    return date;
+  }
+
+  // parse time string (flexible)
+  const t = parseTimeString(timeText || undefined);
+  if (!t) {
+    // no valid time — return just date
+    return `${String(day).padStart(2, "0")} ${months[monthIdx]} ${year}`;
+  }
+
+  // Convert 24-hour hour to 12-hour + AM/PM
+  let hour12 = t.hour;
+  const ampm = hour12 >= 12 ? "PM" : "AM";
+  if (hour12 === 0) hour12 = 12;
+  else if (hour12 > 12) hour12 = hour12 - 12;
+
+  const hhStr = String(hour12).padStart(2, "0");
+  const mmStr = String(t.minute).padStart(2, "0");
+
+  return `${String(day).padStart(2, "0")} ${months[monthIdx]} ${year}, ${hhStr}:${mmStr} ${ampm} IST`;
+}
+
 /* ---------------- Main page ---------------- */
 
 export default function EventRegisterPage() {
@@ -197,6 +294,11 @@ export default function EventRegisterPage() {
       userId?: string | null;
     }>
   >([]);
+
+  // team credentials (filled after team creation or if already existing)
+  const [teamCreds, setTeamCreds] = useState<
+    { userId: string; password: string } | null
+  >(null);
 
   /* ---------- LOAD initial data ---------- */
 
@@ -253,8 +355,29 @@ export default function EventRegisterPage() {
         setQrValue(
           `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`
         );
+
         // if team registration, also set team name hint (optional)
         if (reg.team_name) setTeamName(reg.team_name);
+
+        // fetch team credentials from teams table (if present)
+        if (reg.is_team_registration) {
+          try {
+            const { data: teamRow } = await supabase
+              .from("teams")
+              .select("leader_email, password, team_name")
+              .eq("leader_user_id", uid)
+              .maybeSingle();
+
+            if (teamRow) {
+              setTeamCreds({
+                userId: teamRow.leader_email,
+                password: teamRow.password,
+              });
+            }
+          } catch (err) {
+            console.warn("Failed to fetch team creds:", err);
+          }
+        }
       }
     };
 
@@ -326,7 +449,6 @@ export default function EventRegisterPage() {
       },
     ];
     setCards(next);
-    // framer motion will animate fold & slide
   };
 
   /* ---------- validate member by email ---------- */
@@ -408,14 +530,11 @@ export default function EventRegisterPage() {
 
   /* ---------- save leader edits to users table (email not editable) ---------- */
 
-  const saveLeaderEdits = async () => {
-    // validate leader profile locally
+  async function saveLeaderEditsLocal() {
     if (!user.name?.trim()) {
-      toast.error("Leader name is required");
+      toast.error("Leader name required");
       return;
     }
-
-    // update users table (exclude email)
     setLoading(true);
     const { error } = await supabase
       .from("users")
@@ -426,22 +545,18 @@ export default function EventRegisterPage() {
         branch: user.branch,
       })
       .eq("id", user.id);
-
     setLoading(false);
-
     if (error) {
       toast.error("Failed to save leader details");
       return;
     }
-
-    toast.success("Leader details saved");
-    // collapse leader card (fold)
+    toast.success("Leader saved");
     setCards((prev) =>
       reindexMembers(
         prev.map((c) => (c.type === "leader" ? { ...c, expanded: false } : c))
       )
     );
-  };
+  }
 
   /* ---------- register team: insert rows in registrations (leader + each member) ---------- */
 
@@ -473,7 +588,7 @@ export default function EventRegisterPage() {
       return;
     }
 
-    // check unique team name for this event
+    // check unique team name for this event (preserve your previous check)
     const { data: existingTeam } = await supabase
       .from("registrations")
       .select("id")
@@ -506,7 +621,58 @@ export default function EventRegisterPage() {
 
     setLoading(true);
 
-    // prepare rows: leader + each member
+    // === IMPORTANT FIX FOR RLS: fetch current session uid and use it for leader_user_id ===
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    const authUid = session?.user?.id ?? null;
+    if (!authUid) {
+      setLoading(false);
+      toast.error("You must be logged in to create a team.");
+      return;
+    }
+
+    // optional sanity check (do not block if mismatch — we prefer authUid)
+    if (user.id && authUid !== user.id) {
+      console.warn("local user.id differs from auth session uid", user.id, authUid);
+    }
+    // === end RLS fix ===
+
+    // generate the password on the frontend
+    const password = generateRandomPassword(8);
+    const leaderEmail = user.email;
+
+    // Prepare members json for teams table
+    const membersJson = members.map((m) => ({
+      user_id: m.userId,
+      email: m.email,
+    }));
+
+    const { data: teamInsert, error: teamErr } = await supabase
+      .from("teams")
+      .insert([
+        {
+          team_name: teamName,
+          leader_email: leaderEmail,
+          leader_user_id: authUid, // use the auth session uid (RLS requires this)
+          password,
+          points: 0,
+          members: membersJson,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ])
+      .select()
+      .maybeSingle();
+
+    if (teamErr) {
+      setLoading(false);
+      toast.error(teamErr.message || "Failed to create team (teams table)");
+      return;
+    }
+
+    // prepare rows: leader + each member (unchanged logic — still insert into registrations)
     const rows = [
       {
         event_id: id,
@@ -544,12 +710,14 @@ export default function EventRegisterPage() {
     setQrValue(
       `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`
     );
+
+    // set credentials so UI shows them below the QR
+    setTeamCreds({ userId: leaderEmail, password });
   };
 
   /* ---------- solo registration ---------- */
 
   const registerSolo = async () => {
-    // leader must be profile complete
     if (!isProfileComplete(user)) {
       toast.error("Complete your profile before registering");
       return;
@@ -573,7 +741,6 @@ export default function EventRegisterPage() {
 
     toast.success("Registered");
 
-    // Prompt user to join whatsapp group if available
     if (event?.whatsapp_url) {
       toast.success("You're registered — join the WhatsApp group from the link below.");
     }
@@ -597,31 +764,6 @@ export default function EventRegisterPage() {
     link.href = (canvas as HTMLCanvasElement).toDataURL();
     link.click();
   };
-  // Replace existing formatDateTimeIST with this safe, timezone-free formatter
-  const formatDateTimeIST = (date: string | null, time: string | null) => {
-    if (!date || !time) return "Date & Time";
-
-    // date expected 'YYYY-MM-DD', time expected 'HH:mm' (24-hour)
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const [y, m, d] = date.split("-");
-    const [hh, mm] = time.split(":");
-
-    const year = Number(y);
-    const monthIdx = Number(m) - 1;
-    const day = Number(d);
-    let hour = Number(hh);
-    const minute = Number(mm);
-
-    const ampm = hour >= 12 ? "PM" : "AM";
-    if (hour === 0) hour = 12;
-    else if (hour > 12) hour = hour - 12;
-
-    const hhStr = String(hour).padStart(2, "0");
-    const mmStr = String(minute).padStart(2, "0");
-
-    // Example output: "25 Dec 2025, 11:46 PM IST"
-    return `${String(day).padStart(2, "0")} ${months[monthIdx]} ${year}, ${hhStr}:${mmStr} ${ampm} IST`;
-  };
 
   /* ---------- UI ---------- */
 
@@ -631,7 +773,7 @@ export default function EventRegisterPage() {
     >
       <main className="max-w-6xl w-full mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
-          {/* LEFT: Event Details (kept like your reference UI) */}
+          {/* LEFT: Event Details */}
           <div className="lg:col-span-5 space-y-8">
             <NeoBrutalism
               border={2}
@@ -641,9 +783,7 @@ export default function EventRegisterPage() {
               {event.category || "Event Category"}
             </NeoBrutalism>
 
-            <h1
-              className={`${THEME.fonts.heading} text-6xl md:text-7xl leading-none`}
-            >
+            <h1 className={`${THEME.fonts.heading} text-6xl md:text-7xl leading-none`}>
               {event.title || "Event"}
             </h1>
 
@@ -652,38 +792,18 @@ export default function EventRegisterPage() {
             </p>
 
             <div className="flex flex-col gap-4 mt-4">
-              <NeoBrutalism
-                border={2}
-                shadow="md"
-                className="flex items-center gap-4 bg-white p-4"
-              >
-                <Calendar
-                  className="text-[#4285F4]"
-                  size={24}
-                  strokeWidth={2.5}
-                />
+              <NeoBrutalism border={2} shadow="md" className="flex items-center gap-4 bg-white p-4">
+                <Calendar className="text-[#4285F4]" size={24} strokeWidth={2.5} />
                 <div>
-                  <div className={`${THEME.fonts.heading}`}>
-                    {formatDateTimeIST(event.date, event.time)}
-                  </div>
+                  <div className={`${THEME.fonts.heading}`}>{formatDateTimeIST(event.date, event.time)}</div>
                 </div>
               </NeoBrutalism>
 
-              <NeoBrutalism
-                border={2}
-                shadow="md"
-                className="flex items-center gap-4 bg-white p-4"
-              >
-                <MapPin
-                  className="text-[#EA4335]"
-                  size={24}
-                  strokeWidth={2.5}
-                />
+              <NeoBrutalism border={2} shadow="md" className="flex items-center gap-4 bg-white p-4">
+                <MapPin className="text-[#EA4335]" size={24} strokeWidth={2.5} />
                 <div>
                   <div className={`${THEME.fonts.heading}`}>Venue</div>
-                  <div className="font-mono text-xs">
-                    {event.venue || "Venue"}
-                  </div>
+                  <div className="font-mono text-xs">{event.venue || "Venue"}</div>
                 </div>
               </NeoBrutalism>
             </div>
@@ -691,23 +811,13 @@ export default function EventRegisterPage() {
 
           {/* RIGHT: Form / cards / QR */}
           <div className="lg:col-span-7">
-            <NeoBrutalism
-              border={2}
-              shadow="xl"
-              className="bg-white p-8 md:p-10 relative"
-            >
+            <NeoBrutalism border={2} shadow="xl" className="bg-white p-8 md:p-10 relative">
               {/* Header */}
               <div className="mb-8 border-b-2 border-black pb-6 flex items-center gap-3">
                 <CodeIcon />
                 <div>
-                  <h2
-                    className={`${THEME.fonts.heading} text-3xl leading-none`}
-                  >
-                    Registration
-                  </h2>
-                  <p className="font-mono text-xs text-gray-500 mt-1">
-                    SECURE YOUR SPOT
-                  </p>
+                  <h2 className={`${THEME.fonts.heading} text-3xl leading-none`}>Registration</h2>
+                  <p className="font-mono text-xs text-gray-500 mt-1">SECURE YOUR SPOT</p>
                 </div>
               </div>
 
@@ -718,18 +828,13 @@ export default function EventRegisterPage() {
                     <div className="mx-auto">
                       <div className="flex items-center justify-center gap-3 mb-6">
                         <Check size={32} />
-                        <h3 className={`${THEME.fonts.heading} text-2xl`}>
-                          YOU'RE IN!
-                        </h3>
+                        <h3 className={`${THEME.fonts.heading} text-2xl`}>YOU'RE IN!</h3>
                       </div>
 
                       <div className="flex justify-center mb-6">
                         <QRCodeWithSvgLogo value={qrValue} />
                       </div>
-                      <button
-                        onClick={downloadQr}
-                        className="w-full py-4 bg-black text-white"
-                      >
+                      <button onClick={downloadQr} className="w-full py-4 bg-black text-white">
                         Download QR
                       </button>
                       {event.whatsapp_url && (
@@ -742,17 +847,26 @@ export default function EventRegisterPage() {
                           Join WhatsApp Group
                         </a>
                       )}
+
+                      {/* Show team credentials (if available) */}
+                      {teamCreds && (
+                        <div className="mt-6 inline-block text-left border-2 border-black p-4">
+                          <div className="font-mono text-xs">Event Login</div>
+                          <div className="font-bold">{teamCreds.userId}</div>
+                          <div className="mt-1">
+                            Password: <span className="font-mono">{teamCreds.password}</span>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-2">Save These Credentials For The Event</div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               ) : (
                 <>
-                  {/* ---------- BRANCH: team event vs solo event ---------- */}
-
+                  {/* TEAM vs SOLO */}
                   {event.is_team_event ? (
-                    // ---------- TEAM EVENT: keep your existing team UI (unchanged) ----------
                     <>
-                      {/* Team name input (required before adding members) */}
                       <InputField
                         label="TEAM NAME"
                         value={teamName}
@@ -761,7 +875,6 @@ export default function EventRegisterPage() {
                         icon={User}
                       />
 
-                      {/* Cards (leader + members) */}
                       <div className="space-y-4">
                         <AnimatePresence>
                           {cards.map((card) => (
@@ -769,57 +882,35 @@ export default function EventRegisterPage() {
                               key={card.id}
                               title={card.title}
                               expanded={card.expanded}
-                              onDelete={
-                                card.type === "member"
-                                  ? () => deleteMember(card.id)
-                                  : undefined
-                              }
+                              onDelete={card.type === "member" ? () => deleteMember(card.id) : undefined}
                               onHeaderClick={() => toggleCard(card.id)}
                             >
                               {card.type === "leader" ? (
-                                // leader edit fields (email disabled)
                                 <>
                                   <InputField
                                     label="NAME"
                                     value={user.name || ""}
-                                    onChange={(e: any) =>
-                                      setUser({ ...user, name: e.target.value })
-                                    }
+                                    onChange={(e: any) => setUser({ ...user, name: e.target.value })}
                                     icon={User}
                                     required
                                   />
-                                  <InputField
-                                    label="EMAIL"
-                                    value={user.email || ""}
-                                    onChange={() => {}}
-                                    icon={Mail}
-                                    disabled
-                                  />
+                                  <InputField label="EMAIL" value={user.email || ""} onChange={() => {}} icon={Mail} disabled />
                                   <InputField
                                     label="PHONE"
                                     value={user.phone_number || ""}
-                                    onChange={(e: any) =>
-                                      setUser({
-                                        ...user,
-                                        phone_number: e.target.value,
-                                      })
-                                    }
+                                    onChange={(e: any) => setUser({ ...user, phone_number: e.target.value })}
                                     icon={Phone}
                                   />
                                   <InputField
                                     label="SECTION"
                                     value={user.section || ""}
-                                    onChange={(e: any) =>
-                                      setUser({ ...user, section: e.target.value })
-                                    }
+                                    onChange={(e: any) => setUser({ ...user, section: e.target.value })}
                                     icon={Briefcase}
                                   />
                                   <InputField
                                     label="BRANCH"
                                     value={user.branch || ""}
-                                    onChange={(e: any) =>
-                                      setUser({ ...user, branch: e.target.value })
-                                    }
+                                    onChange={(e: any) => setUser({ ...user, branch: e.target.value })}
                                     icon={Briefcase}
                                   />
                                   <div className="flex gap-3">
@@ -828,28 +919,17 @@ export default function EventRegisterPage() {
                                       className="py-3 px-4 bg-[#4285F4] text-white flex items-center gap-2"
                                     >
                                       Save Leader
-                                      {loading && (
-                                        <Loader2 className="animate-spin" />
-                                      )}
+                                      {loading && <Loader2 className="animate-spin" />}
                                     </button>
 
-                                    {/* if not team event — allow solo register */}
                                     {!event.is_team_event && (
-                                      <button
-                                        onClick={registerSolo}
-                                        className="py-3 px-4 bg-black text-white ml-auto"
-                                      >
-                                        {loading ? (
-                                          <Loader2 className="animate-spin" />
-                                        ) : (
-                                          "Confirm RSVP"
-                                        )}
+                                      <button onClick={registerSolo} className="py-3 px-4 bg-black text-white ml-auto">
+                                        {loading ? <Loader2 className="animate-spin" /> : "Confirm RSVP"}
                                       </button>
                                     )}
                                   </div>
                                 </>
                               ) : (
-                                // member form (only present while expanded and not validated)
                                 <>
                                   {!card.validated ? (
                                     <>
@@ -858,29 +938,17 @@ export default function EventRegisterPage() {
                                         value={card.email || ""}
                                         onChange={(e: any) => {
                                           const val = e.target.value;
-                                          setCards((prev) =>
-                                            prev.map((c) =>
-                                              c.id === card.id
-                                                ? { ...c, email: val }
-                                                : c
-                                            )
-                                          );
+                                          setCards((prev) => prev.map((c) => (c.id === card.id ? { ...c, email: val } : c)));
                                         }}
                                         icon={Mail}
                                         placeholder="member@example.com"
                                         required
                                       />
                                       <div className="flex gap-3">
-                                        <button
-                                          onClick={() => validateMember(card.id)}
-                                          className="py-3 px-4 bg-[#34A853] text-white"
-                                        >
+                                        <button onClick={() => validateMember(card.id)} className="py-3 px-4 bg-[#34A853] text-white">
                                           Validate Member
                                         </button>
-                                        <button
-                                          onClick={() => deleteMember(card.id)}
-                                          className="py-3 px-4 border-2 border-black ml-auto"
-                                        >
+                                        <button onClick={() => deleteMember(card.id)} className="py-3 px-4 border-2 border-black ml-auto">
                                           Remove
                                         </button>
                                       </div>
@@ -888,9 +956,7 @@ export default function EventRegisterPage() {
                                   ) : (
                                     <div className="py-3">
                                       <div className="font-mono">{card.email}</div>
-                                      <div className="text-xs text-gray-500">
-                                        Validated
-                                      </div>
+                                      <div className="text-xs text-gray-500">Validated</div>
                                     </div>
                                   )}
                                 </>
@@ -900,97 +966,38 @@ export default function EventRegisterPage() {
                         </AnimatePresence>
                       </div>
 
-                      {/* Controls */}
                       <div className="mt-6 flex gap-3">
                         <button onClick={addMember} className="underline">
                           Add Member
                         </button>
 
                         <div className="ml-auto flex gap-3">
-                          <button
-                            onClick={registerTeam}
-                            className="py-3 px-4 bg-black text-white"
-                          >
-                            {loading ? (
-                              <Loader2 className="animate-spin" />
-                            ) : (
-                              <>
-                                Register Team <ArrowRight />
-                              </>
-                            )}
+                          <button onClick={registerTeam} className="py-3 px-4 bg-black text-white">
+                            {loading ? <Loader2 className="animate-spin" /> : <>Register Team <ArrowRight /></>}
                           </button>
                         </div>
                       </div>
                     </>
                   ) : (
-                    // ---------- SOLO EVENT: show only leader details + Register button ----------
                     <>
                       <div className="space-y-4">
-                        <InputField
-                          label="NAME"
-                          value={user.name || ""}
-                          onChange={(e: any) =>
-                            setUser({ ...user, name: e.target.value })
-                          }
-                          icon={User}
-                          required
-                        />
-                        <InputField
-                          label="EMAIL"
-                          value={user.email || ""}
-                          onChange={() => {}}
-                          icon={Mail}
-                          disabled
-                        />
-                        <InputField
-                          label="PHONE"
-                          value={user.phone_number || ""}
-                          onChange={(e: any) =>
-                            setUser({ ...user, phone_number: e.target.value })
-                          }
-                          icon={Phone}
-                        />
-                        <InputField
-                          label="SECTION"
-                          value={user.section || ""}
-                          onChange={(e: any) =>
-                            setUser({ ...user, section: e.target.value })
-                          }
-                          icon={Briefcase}
-                        />
-                        <InputField
-                          label="BRANCH"
-                          value={user.branch || ""}
-                          onChange={(e: any) =>
-                            setUser({ ...user, branch: e.target.value })
-                          }
-                          icon={Briefcase}
-                        />
+                        <InputField label="NAME" value={user.name || ""} onChange={(e: any) => setUser({ ...user, name: e.target.value })} icon={User} required />
+                        <InputField label="EMAIL" value={user.email || ""} onChange={() => {}} icon={Mail} disabled />
+                        <InputField label="PHONE" value={user.phone_number || ""} onChange={(e: any) => setUser({ ...user, phone_number: e.target.value })} icon={Phone} />
+                        <InputField label="SECTION" value={user.section || ""} onChange={(e: any) => setUser({ ...user, section: e.target.value })} icon={Briefcase} />
+                        <InputField label="BRANCH" value={user.branch || ""} onChange={(e: any) => setUser({ ...user, branch: e.target.value })} icon={Briefcase} />
                       </div>
 
                       <div className="mt-6 flex">
                         <div className="ml-auto">
-                          <button
-                            onClick={registerSolo}
-                            className="py-3 px-6 bg-black text-white"
-                          >
-                            {loading ? (
-                              <Loader2 className="animate-spin" />
-                            ) : (
-                              "Confirm RSVP"
-                            )}
+                          <button onClick={registerSolo} className="py-3 px-6 bg-black text-white">
+                            {loading ? <Loader2 className="animate-spin" /> : "Confirm RSVP"}
                           </button>
                         </div>
                       </div>
 
-                      {/* WhatsApp link shown for solo event as requested (same styling as QR view) */}
                       {event.whatsapp_url && (
-                        <a
-                          href={event.whatsapp_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block mt-4 text-center underline font-mono text-sm"
-                        >
+                        <a href={event.whatsapp_url} target="_blank" rel="noopener noreferrer" className="block mt-4 text-center underline font-mono text-sm">
                           Join WhatsApp Group
                         </a>
                       )}
@@ -1004,48 +1011,6 @@ export default function EventRegisterPage() {
       </main>
     </div>
   );
-
-  /* ---------- local helpers inside component (to avoid hoisting functions) ---------- */
-
-  async function saveLeaderEditsLocal() {
-    // wrapper so we can access functions/vars above
-    if (!user.name?.trim()) {
-      toast.error("Leader name required");
-      return;
-    }
-    setLoading(true);
-    const { error } = await supabase
-      .from("users")
-      .update({
-        name: user.name,
-        phone_number: user.phone_number,
-        section: user.section,
-        branch: user.branch,
-      })
-      .eq("id", user.id);
-    setLoading(false);
-    if (error) {
-      toast.error("Failed to save leader details");
-      return;
-    }
-    toast.success("Leader saved");
-    // collapse leader card visually
-    setCards((prev) =>
-      reindex(
-        prev.map((c) => (c.type === "leader" ? { ...c, expanded: false } : c))
-      )
-    );
-  }
-
-  function reindex(nextCards: typeof cards) {
-    // keep leader first then members with new titles
-    const leader = nextCards.filter((c) => c.type === "leader");
-    const members = nextCards.filter((c) => c.type === "member");
-    return [
-      ...leader,
-      ...members.map((m, i) => ({ ...m, title: `Team Member ${i + 1}` })),
-    ];
-  }
 }
 
 /* ---------- small decorative icon component to match your existing Code icon usage ---------- */
@@ -1061,22 +1026,8 @@ function CodeIcon() {
       }}
     >
       <svg width="20" height="20" viewBox="0 0 24 24">
-        <path
-          d="M8.5 11.5L4 8l4.5-3.5"
-          stroke="#000"
-          strokeWidth="1.5"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M15.5 11.5L20 8l-4.5-3.5"
-          stroke="#000"
-          strokeWidth="1.5"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <path d="M8.5 11.5L4 8l4.5-3.5" stroke="#000" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M15.5 11.5L20 8l-4.5-3.5" stroke="#000" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
   );
