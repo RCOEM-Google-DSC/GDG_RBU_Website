@@ -55,6 +55,7 @@ export async function getPortfolioData(
       `,
       )
       .eq("user_id", userId)
+      .eq("is_published", true)
       .single();
 
     if (error || !portfolio) {

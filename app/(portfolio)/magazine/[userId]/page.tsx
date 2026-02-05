@@ -12,30 +12,12 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
 interface PageProps {
+
   params: Promise<{ userId: string }>;
+
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { userId } = await params;
-  const portfolioData = await getPortfolioData(userId);
 
-  if (!portfolioData) {
-    return {
-      title: 'Portfolio Not Found',
-      description: 'The requested portfolio could not be found.',
-    };
-  }
-
-  return {
-    title: `${portfolioData.personalInfo.name} - Portfolio`,
-    description: portfolioData.personalInfo.about || `Portfolio of ${portfolioData.personalInfo.name}`,
-    openGraph: {
-      title: `${portfolioData.personalInfo.name} - Portfolio`,
-      description: portfolioData.personalInfo.about || `Portfolio of ${portfolioData.personalInfo.name}`,
-      type: 'profile',
-    },
-  };
-}
 
 export default async function MagazinePortfolio({ params }: PageProps) {
   const { userId } = await params;

@@ -1,38 +1,11 @@
 import { createClient } from "@/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import { PortfolioRenderer } from "@/app/Components/portfolio/display";
-import type { Metadata } from "next";
 
 interface PageProps {
     params: Promise<{ userId: string }>;
 }
 
-export async function generateMetadata({
-    params,
-}: PageProps): Promise<Metadata> {
-    const { userId } = await params;
-    const supabase = await createClient();
-
-    const { data: portfolio } = await supabase
-        .from("portfolios")
-        .select("display_name, about_me")
-        .eq("user_id", userId)
-        .eq("is_published", true)
-        .single();
-
-    if (!portfolio) {
-        return {
-            title: "Portfolio Not Found",
-        };
-    }
-
-    return {
-        title: `${portfolio.display_name} | Portfolio`,
-        description:
-            portfolio.about_me?.substring(0, 160) ||
-            `Portfolio of ${portfolio.display_name}`,
-    };
-}
 
 export default async function PortfolioPage({ params }: PageProps) {
     const { userId } = await params;

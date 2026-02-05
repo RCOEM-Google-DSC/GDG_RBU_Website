@@ -56,6 +56,7 @@ export async function getPortfolioData(
       `,
       )
       .eq("user_id", userId)
+      .eq("is_published", true)
       .single();
 
     if (error || !portfolio) {
@@ -131,7 +132,7 @@ export async function getPortfolioData(
         {
           category: "Tools",
           skills: portfolio.tools || [],
-          icon: "psychology",
+          icon: "wrench",
         },
       ].filter((group) => group.skills.length > 0),
       socials: (portfolio.social_links || []).map((s: any) => ({

@@ -4,8 +4,7 @@ import { Code2, Layers, Wrench, LucideIcon } from "lucide-react";
 const iconMap: Record<string, LucideIcon> = {
   code: Code2,
   layers: Layers,
-  psychology: Wrench,
-  extension: Wrench,
+  wrench: Wrench,
 };
 
 const SkillCard: React.FC<{
