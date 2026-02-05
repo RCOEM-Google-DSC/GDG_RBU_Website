@@ -6,7 +6,6 @@ import Link from 'next/link';
 interface HeroProps {
   personalInfo: {
     name: string;
-    role: string;
     about: string;
     email: string;
     phone: string;
