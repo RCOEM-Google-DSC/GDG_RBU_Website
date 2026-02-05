@@ -91,20 +91,34 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
             </div>
 
             {/* Edit Button */}
-            <CompleteProfileDialog
-              user={user}
-              trigger={
+            <div className="w-full space-y-3">
+              <CompleteProfileDialog
+                user={user}
+                trigger={
+                  <Button className={nb({
+                        border: 2,
+                        shadow: "lg",
+                        rounded: "xl",
+                        hover: "liftSmall",
+                        className: "w-full flex items-center justify-center gap-2 bg-black text-white px-5 py-3 font-bold text-sm whitespace-nowrap hover:bg-neutral-800"
+                    })}>
+                      EDIT PROFILE
+                    </Button>
+                }
+              />
+
+              <Link href="/portfolio-builder" className="block w-full">
                 <Button className={nb({
                       border: 2,
                       shadow: "lg",
                       rounded: "xl",
                       hover: "liftSmall",
-                      className: "w-full flex items-center justify-center gap-2 bg-black text-white px-5 py-3 font-bold text-sm whitespace-nowrap hover:bg-neutral-800"
+                      className: "w-full flex items-center justify-center gap-2 bg-green-400 text-black px-5 py-3 font-bold text-sm whitespace-nowrap hover:bg-green-500"
                   })}>
-                    EDIT PROFILE
+                    PORTFOLIO BUILDER
                   </Button>
-              }
-            />
+              </Link>
+            </div>
           </NeoBrutalism>
       </div>
 

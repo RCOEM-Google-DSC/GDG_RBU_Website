@@ -198,6 +198,20 @@ export default function ProfileClientView({
 
               {isSelf && (
                 <>
+                  <Link
+                    href="/portfolio-builder"
+                    className={nb({
+                      border: 2,
+                      shadow: "md",
+                      hover: "lift",
+                      active: "push",
+                      className:
+                        "flex items-center gap-2 px-4 py-3 bg-green-400 text-black font-bold hover:bg-green-500",
+                    })}
+                  >
+                    <LayoutDashboard size={18} strokeWidth={2.5} /> PORTFOLIO
+                  </Link>
+
                   <button
                     onClick={() => setShowEdit(true)}
                     className={nb({
