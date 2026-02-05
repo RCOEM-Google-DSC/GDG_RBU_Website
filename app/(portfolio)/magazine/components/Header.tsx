@@ -58,13 +58,10 @@ const Header: React.FC<HeaderProps> = ({
         ))}
         
         {/* Fill remaining space to keep layout consistent if links are few */}
-        {navLinks.length < 4 && Array.from({ length: 4 - navLinks.length }).map((_, i) => (
+        {navLinks.length < 5 && Array.from({ length: 5 - navLinks.length }).map((_, i) => (
           <div key={`spacer-${i}`} className="hidden md:block col-span-2 border-r border-black" />
         ))}
 
-        <div className="col-span-12 md:col-span-2 p-4 flex items-center justify-center font-display font-bold uppercase tracking-widest border-b md:border-b-0 border-black md:border-r bg-gray-50">
-          Available for hire
-        </div>
         <a href={githubLink} target="_blank" rel="noreferrer" className="col-span-12 md:col-span-1 p-4 flex items-center justify-center font-display font-medium text-xs uppercase tracking-widest hover:bg-black hover:text-white transition-colors cursor-pointer border-b md:border-b-0 border-black md:border-r">
           Github
         </a>

@@ -3,7 +3,6 @@ import { createClient } from "@/supabase/server";
 export interface MagazinePortfolioData {
   personalInfo: {
     name: string;
-    role: string;
     about: string;
     email: string;
     phone: string;
@@ -79,8 +78,7 @@ export async function getPortfolioData(
     // Transform data to match the magazine template structure
     const transformedData: MagazinePortfolioData = {
       personalInfo: {
-        name: portfolio.display_name || "Developer",
-        role: "Full Stack Engineer",
+        name: portfolio.display_name || "",
         about: portfolio.about_me || "",
         email: user?.email || "",
         phone: user?.phone_number || "",

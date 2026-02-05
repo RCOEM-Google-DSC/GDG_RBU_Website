@@ -4,7 +4,6 @@ import { ArrowRight, ArrowDown } from "lucide-react";
 interface HeroProps {
   personalInfo: {
     name: string;
-    role: string;
   };
   socials: Array<{
     platform: string;
@@ -34,10 +33,6 @@ export const Hero: React.FC<HeroProps> = ({ personalInfo, socials }) => {
             {personalInfo.name.split(" ").slice(-1)}
           </span>
         </h1>
-
-        <p className="font-light text-neutral-400 text-sm md:text-base max-w-lg mx-auto tracking-wide uppercase">
-          {personalInfo.role}
-        </p>
 
         <div className="pt-8 flex justify-center gap-6">
           {socials.map((social) => (

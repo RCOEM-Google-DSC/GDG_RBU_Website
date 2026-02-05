@@ -3,7 +3,6 @@ import { createClient } from "@/supabase/server";
 export interface MinimalistPortfolioData {
   personalInfo: {
     name: string;
-    role: string;
     about: string;
     email: string;
     phone: string;
@@ -75,8 +74,7 @@ export async function getPortfolioData(
 
     const transformedData: MinimalistPortfolioData = {
       personalInfo: {
-        name: portfolio.display_name || "Developer",
-        role: "Full Stack Engineer",
+        name: portfolio.display_name || "",
         about: portfolio.about_me || "",
         email: user?.email || "",
         phone: user?.phone_number || "",

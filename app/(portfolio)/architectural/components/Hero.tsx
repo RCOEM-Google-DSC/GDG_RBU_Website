@@ -3,7 +3,6 @@ import React from "react";
 interface HeroProps {
   personalInfo: {
     name: string;
-    role: string;
     about: string;
   };
   projects?: Array<{
@@ -42,9 +41,6 @@ export const Hero: React.FC<HeroProps> = ({ personalInfo, projects = [] }) => {
           </div>
 
           <div className="mt-8 md:mt-12 max-w-xl">
-            <p className="font-mono text-red-600 text-sm mb-2 tracking-widest uppercase">
-              {personalInfo.role}
-            </p>
             <p className="text-zinc-400 text-lg md:text-xl leading-relaxed">
               {personalInfo.about}
             </p>

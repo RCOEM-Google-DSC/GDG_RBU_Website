@@ -45,5 +45,4 @@ gha-creds-*.json
 
 conductor/*
 db/*
-db/ok.sql
 db/schema.sql

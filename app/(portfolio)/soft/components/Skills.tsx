@@ -1,15 +1,14 @@
 import React from "react";
 
 interface SkillsProps {
-  skills: string[];
+  skills: Array<{
+    category: string;
+    skills: string[];
+  }>;
 }
 
 const Skills: React.FC<SkillsProps> = ({ skills }) => {
   if (!skills || skills.length === 0) return null;
-
-  // Since we only get a flat list of skills from schema, we can either display them flat 
-  // or use a helper to categorize them if we want to preserve the original look.
-  // For now, I'll display them in a single group to follow the schema strictly.
 
   return (
     <section id="skills" className="py-20 md:py-32">
@@ -36,21 +35,23 @@ const Skills: React.FC<SkillsProps> = ({ skills }) => {
             </h2>
 
             <div className="space-y-10">
-              <div>
-                <h3 className="font-display text-xl mb-4 italic">
-                  Expertise
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  {skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="px-4 py-2 dark:text-black bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm hover:border-secondary dark:hover:border-secondary transition-colors cursor-default"
-                    >
-                      {skill}
-                    </span>
-                  ))}
+              {skills.map((group) => (
+                <div key={group.category}>
+                  <h3 className="font-display text-xl mb-4 italic">
+                    {group.category}
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {group.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="px-4 py-2 dark:text-black bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm hover:border-secondary dark:hover:border-secondary transition-colors cursor-default"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>

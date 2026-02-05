@@ -4,7 +4,6 @@ import { Icon } from './Icons';
 interface HeroProps {
   personalInfo: {
     name: string;
-    role: string;
     email: string;
   };
   socials: Array<{
@@ -22,9 +21,6 @@ export const Hero: React.FC<HeroProps> = ({ personalInfo, socials }) => {
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-display tracking-tighter text-slate-900 mb-6 leading-tight">
             {personalInfo.name}
           </h1>
-          <p className="text-xl md:text-2xl text-slate-600 font-light max-w-2xl leading-relaxed border-l-4 border-slate-900 pl-6 mb-8">
-            {personalInfo.role}
-          </p>
           <div className="flex gap-4">
             {socials.map((social) => (
               <a

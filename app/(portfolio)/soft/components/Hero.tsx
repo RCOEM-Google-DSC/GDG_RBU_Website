@@ -4,7 +4,6 @@ import { Brain } from "lucide-react";
 interface HeroProps {
   personalInfo: {
     name: string;
-    role: string;
     about: string;
     profileImage: string;
   };
@@ -18,9 +17,6 @@ const Hero: React.FC<HeroProps> = ({ personalInfo }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="animate-fade-in-up z-10">
-            <div className="inline-block px-3 py-1 mb-6 border border-gray-300 dark:border-gray-600 rounded-full text-xs font-medium tracking-widest uppercase text-muted-light dark:text-muted-dark">
-              Available for hire
-            </div>
             <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-medium leading-tight mb-6">
               Building for <br />{" "}
               <span className="italic text-secondary">intelligence.</span>
@@ -58,21 +54,6 @@ const Hero: React.FC<HeroProps> = ({ personalInfo }) => {
                   {personalInfo.name.charAt(0)}
                 </div>
               )}
-              <div className="absolute bottom-6 left-6 right-6 bg-white/90  dark:bg-neutral-800 backdrop-blur-md p-4 rounded-lg shadow-lg">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-muted-light dark:text-muted-dark uppercase tracking-wider">
-                      Current Focus
-                    </p>
-                    <p className="font-display font-bold italic text-lg">
-                      {personalInfo.role}
-                    </p>
-                  </div>
-                  <div className="h-10 w-10 bg-primary rounded-full flex items-center justify-center text-white">
-                    <Brain className="w-5 h-5" />
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

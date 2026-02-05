@@ -40,9 +40,6 @@ const Hero: React.FC<HeroProps> = ({ personalInfo }) => {
       {/* Content Column */}
       <div className="col-span-12 lg:col-span-7 flex flex-col justify-between">
         <div className="p-8 lg:p-12">
-          <p className="font-display text-xs font-bold uppercase tracking-[0.2em] mb-4 text-gray-500">
-            {personalInfo.role}
-          </p>
           <h1 className="font-display text-6xl lg:text-8xl font-black uppercase leading-[0.85] tracking-tight mb-6">
             {firstName}{lastName && <><br />{lastName}</>}
           </h1>

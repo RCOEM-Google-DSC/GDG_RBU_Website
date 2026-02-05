@@ -3,7 +3,6 @@ import { createClient } from "@/supabase/server";
 export interface ArchitecturalPortfolioData {
   personalInfo: {
     name: string;
-    role: string;
     about: string;
     email: string;
     phone: string;
@@ -78,8 +77,7 @@ export async function getPortfolioData(
     // Transform data to match the architectural template structure
     const transformedData: ArchitecturalPortfolioData = {
       personalInfo: {
-        name: portfolio.display_name || "Developer",
-        role: "Full Stack Engineer",
+        name: portfolio.display_name || "",
         about: portfolio.about_me || "",
         email: user?.email || "",
         phone: user?.phone_number || "",

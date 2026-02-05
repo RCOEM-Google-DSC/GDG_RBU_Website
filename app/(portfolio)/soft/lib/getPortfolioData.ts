@@ -3,7 +3,6 @@ import { createClient } from "@/supabase/server";
 export interface SoftPortfolioData {
   personalInfo: {
     name: string;
-    role: string;
     about: string;
     profileImage: string;
     email: string;
@@ -26,7 +25,10 @@ export interface SoftPortfolioData {
     period: string;
     description: string;
   }>;
-  skills: string[];
+  skills: Array<{
+    category: string;
+    skills: string[];
+  }>;
   socials: Array<{
     platform: string;
     url: string;
@@ -71,8 +73,7 @@ export async function getPortfolioData(
 
     const transformedData: SoftPortfolioData = {
       personalInfo: {
-        name: portfolio.display_name || "Developer",
-        role: "Full Stack Engineer",
+        name: portfolio.display_name || "",
         about: portfolio.about_me || "",
         profileImage: portfolio.profile_image_url || "",
         email: user?.email || "",
@@ -112,10 +113,10 @@ export async function getPortfolioData(
         };
       }),
       skills: [
-        ...(portfolio.languages || []),
-        ...(portfolio.frameworks || []),
-        ...(portfolio.tools || []),
-      ],
+        { category: "Languages", skills: portfolio.languages || [] },
+        { category: "Frameworks", skills: portfolio.frameworks || [] },
+        { category: "Tools", skills: portfolio.tools || [] },
+      ].filter((group) => group.skills.length > 0),
       socials: (portfolio.social_links || []).map((s: any) => ({
         platform: s.platform,
         url: s.url,

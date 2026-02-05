@@ -3,7 +3,6 @@ import { createClient } from "@/supabase/server";
 export interface HyunPortfolioData {
   personalInfo: {
     name: string;
-    role: string;
     about: string;
     email: string;
     phone: string;
@@ -78,8 +77,7 @@ export async function getPortfolioData(
 
     const transformedData: HyunPortfolioData = {
       personalInfo: {
-        name: portfolio.display_name || "Developer",
-        role: "Full Stack Developer",
+        name: portfolio.display_name || "",
         about: portfolio.about_me || "",
         email: user?.email || "",
         phone: user?.phone_number || "",
