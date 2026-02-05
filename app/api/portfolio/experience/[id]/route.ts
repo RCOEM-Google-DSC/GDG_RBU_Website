@@ -20,20 +20,22 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data: portfolio } = await supabase
-      .from("portfolios")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
+    const body: Partial<ExperienceFormData> & { portfolio_id?: string } = await request.json();
 
-    if (!portfolio) {
+    // Verify ownership - find if this entry belongs to a portfolio owned by this user
+    const { data: experienceCheck, error: checkError } = await supabase
+      .from("portfolio_experience")
+      .select("portfolio_id, portfolios!inner(user_id)")
+      .eq("id", id)
+      .eq("portfolios.user_id", user.id)
+      .maybeSingle();
+
+    if (checkError || !experienceCheck) {
       return NextResponse.json(
-        { error: "Portfolio not found" },
+        { error: "Experience entry not found or unauthorized" },
         { status: 404 },
       );
     }
-
-    const body: Partial<ExperienceFormData> = await request.json();
 
     // Handle is_current logic
     const updateData: Record<string, unknown> = { ...body };
@@ -45,7 +47,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .from("portfolio_experience")
       .update(updateData)
       .eq("id", id)
-      .eq("portfolio_id", portfolio.id)
       .select()
       .single();
 
@@ -75,15 +76,17 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data: portfolio } = await supabase
-      .from("portfolios")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
+    // Verify ownership
+    const { data: experienceCheck, error: checkError } = await supabase
+      .from("portfolio_experience")
+      .select("portfolios!inner(user_id)")
+      .eq("id", id)
+      .eq("portfolios.user_id", user.id)
+      .maybeSingle();
 
-    if (!portfolio) {
+    if (checkError || !experienceCheck) {
       return NextResponse.json(
-        { error: "Portfolio not found" },
+        { error: "Experience entry not found or unauthorized" },
         { status: 404 },
       );
     }
@@ -91,8 +94,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const { error } = await supabase
       .from("portfolio_experience")
       .delete()
-      .eq("id", id)
-      .eq("portfolio_id", portfolio.id);
+      .eq("id", id);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

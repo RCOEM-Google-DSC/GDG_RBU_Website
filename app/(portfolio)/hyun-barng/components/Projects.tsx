@@ -70,9 +70,12 @@ export const Projects: React.FC<ProjectsProps> = ({ projects }) => {
   if (!projects || projects.length === 0) return null;
 
   return (
-    <section id="projects" className="bg-background-dark py-24 px-4 md:px-0">
+    <section
+      id="projects"
+      className="bg-background-light dark:bg-background-dark py-24 px-4 md:px-0"
+    >
       <div className="max-w-7xl mx-auto mb-16 px-6 text-center">
-        <h2 className="text-white font-display text-4xl uppercase tracking-wider">
+        <h2 className="text-neutral-900 dark:text-white font-display text-4xl uppercase tracking-wider">
           Featured Works
         </h2>
       </div>

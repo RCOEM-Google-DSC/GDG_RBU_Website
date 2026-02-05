@@ -27,7 +27,10 @@ export async function GET() {
       `,
       )
       .eq("user_id", user.id)
-      .single();
+      .order("is_published", { ascending: false })
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
     if (error && error.code !== "PGRST116") {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -41,7 +44,7 @@ export async function GET() {
   }
 }
 
-// POST - Create new portfolio (one per user)
+// POST - Create new portfolio
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -54,20 +57,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check if user already has a portfolio
-    const { data: existing } = await supabase
-      .from("portfolios")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
-
-    if (existing) {
-      return NextResponse.json(
-        { error: "User already has a portfolio. Use PUT to update." },
-        { status: 409 },
-      );
-    }
-
     const body = await request.json();
 
     // Validate required fields
@@ -76,6 +65,14 @@ export async function POST(request: NextRequest) {
         { error: "template_id and display_name are required" },
         { status: 400 },
       );
+    }
+
+    // If this one is being published, unpublish all others first
+    if (body.is_published) {
+      await supabase
+        .from("portfolios")
+        .update({ is_published: false })
+        .eq("user_id", user.id);
     }
 
     const { data: portfolio, error } = await supabase
@@ -121,7 +118,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body: Partial<Portfolio> = await request.json();
+    const body: Partial<Portfolio> & { id?: string } = await request.json();
 
     // Remove fields that shouldn't be updated directly
     const {
@@ -135,12 +132,26 @@ export async function PUT(request: NextRequest) {
       ...updateData
     } = body;
 
+    if (!id) {
+      return NextResponse.json({ error: "Portfolio ID is required" }, { status: 400 });
+    }
+
+    // If this one is being published, unpublish all others first
+    if (updateData.is_published) {
+      await supabase
+        .from("portfolios")
+        .update({ is_published: false })
+        .eq("user_id", user.id)
+        .neq("id", id);
+    }
+
     const { data: portfolio, error } = await supabase
       .from("portfolios")
       .update({
         ...updateData,
         updated_at: new Date().toISOString(),
       })
+      .eq("id", id)
       .eq("user_id", user.id)
       .select(
         `

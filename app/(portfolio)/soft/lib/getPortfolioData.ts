@@ -35,11 +35,12 @@ export interface SoftPortfolioData {
 
 export async function getPortfolioData(
   userId: string,
+  templateId?: string,
 ): Promise<SoftPortfolioData | null> {
   try {
     const supabase = await createClient();
 
-    const { data: portfolio, error } = await supabase
+    let query = supabase
       .from("portfolios")
       .select(
         `
@@ -50,8 +51,13 @@ export async function getPortfolioData(
       `,
       )
       .eq("user_id", userId)
-      .eq("is_published", true)
-      .single();
+      .eq("is_published", true);
+
+    if (templateId) {
+      query = query.eq("template_id", templateId);
+    }
+
+    const { data: portfolio, error } = await query.maybeSingle();
 
     if (error || !portfolio) {
       return null;

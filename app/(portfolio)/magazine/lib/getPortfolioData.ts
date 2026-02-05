@@ -39,12 +39,13 @@ export interface MagazinePortfolioData {
 
 export async function getPortfolioData(
   userId: string,
+  templateId?: string,
 ): Promise<MagazinePortfolioData | null> {
   try {
     const supabase = await createClient();
 
     // Fetch portfolio with all related data
-    const { data: portfolio, error } = await supabase
+    let query = supabase
       .from("portfolios")
       .select(
         `
@@ -55,8 +56,13 @@ export async function getPortfolioData(
       `,
       )
       .eq("user_id", userId)
-      .eq("is_published", true)
-      .single();
+      .eq("is_published", true);
+
+    if (templateId) {
+      query = query.eq("template_id", templateId);
+    }
+
+    const { data: portfolio, error } = await query.maybeSingle();
 
     if (error || !portfolio) {
       console.log("No portfolio found for user:", userId);

@@ -15,7 +15,7 @@ const Experience: React.FC<ExperienceProps> = ({ experience }) => {
   if (!experience || experience.length === 0) return null;
 
   return (
-    <section className="border-b border-black">
+    <section id="experience" className="border-b border-black">
       {experience.map((exp) => (
         <div key={exp.id} className="grid grid-cols-1 lg:grid-cols-12 border-b border-black last:border-b-0 group hover:bg-gray-50 transition-colors">
           <div className="col-span-12 lg:col-span-2 p-6 flex items-center font-display font-bold text-lg text-gray-400 group-hover:text-black transition-colors">

@@ -6,11 +6,16 @@ interface HeroProps {
     role: string;
     about: string;
   };
+  projects?: Array<{
+    imageUrl: string;
+  }>;
 }
 
-export const Hero: React.FC<HeroProps> = ({ personalInfo }) => {
+export const Hero: React.FC<HeroProps> = ({ personalInfo, projects = [] }) => {
+  const heroImages = projects.slice(0, 3);
+  
   return (
-    <section className="relative min-h-screen flex flex-col justify-center pt-20 border-b border-zinc-900 overflow-hidden">
+    <section id="about" className="relative min-h-screen flex flex-col justify-center pt-20 border-b border-zinc-900 overflow-hidden">
       {/* Background Grid Lines */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
         <div className="h-full w-full grid grid-cols-6 md:grid-cols-12 gap-0">
@@ -46,31 +51,26 @@ export const Hero: React.FC<HeroProps> = ({ personalInfo }) => {
           </div>
         </div>
 
-        {/* Right / Bottom area (Image/Visuals) */}
-        <div className="md:col-span-4 flex flex-col items-end justify-end h-full mt-12 md:mt-0">
-          <div className="grid grid-cols-2 gap-2 w-full max-w-sm opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
-            <img
-              src="https://picsum.photos/300/200?grayscale"
-              alt="Work 1"
-              className="w-full h-24 object-cover rounded-sm"
-            />
-            <img
-              src="https://picsum.photos/301/200?grayscale"
-              alt="Work 2"
-              className="w-full h-24 object-cover rounded-sm"
-            />
-            <img
-              src="https://picsum.photos/302/200?grayscale"
-              alt="Work 3"
-              className="w-full h-24 object-cover rounded-sm"
-            />
-            <div className="w-full h-24 bg-zinc-900 flex items-center justify-center border border-zinc-800 rounded-sm">
-              <span className="text-xs uppercase tracking-widest text-zinc-600">
-                Explore
-              </span>
+        {/* Right / Bottom area (Project Images) */}
+        {heroImages.length > 0 && (
+          <div className="md:col-span-4 flex flex-col items-end justify-end h-full mt-12 md:mt-0">
+            <div className="grid grid-cols-2 gap-2 w-full max-w-sm opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
+              {heroImages.map((project, i) => (
+                <img
+                  key={i}
+                  src={project.imageUrl}
+                  alt={`Work ${i + 1}`}
+                  className="w-full h-24 object-cover rounded-sm"
+                />
+              ))}
+              <div className="w-full h-24 bg-zinc-900 flex items-center justify-center border border-zinc-800 rounded-sm">
+                <span className="text-xs uppercase tracking-widest text-zinc-600">
+                  Projects
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

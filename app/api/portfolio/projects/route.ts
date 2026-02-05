@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/supabase/server";
 import type { ProjectFormData } from "@/lib/types";
 
-// GET - Fetch all projects for current user's portfolio
-export async function GET() {
+// GET - Fetch all projects for a specific portfolio
+export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
 
@@ -15,24 +15,29 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's portfolio
+    const { searchParams } = new URL(request.url);
+    const portfolioId = searchParams.get("portfolioId");
+
+    if (!portfolioId) {
+      return NextResponse.json({ error: "portfolioId is required" }, { status: 400 });
+    }
+
+    // Verify ownership
     const { data: portfolio } = await supabase
       .from("portfolios")
       .select("id")
+      .eq("id", portfolioId)
       .eq("user_id", user.id)
       .single();
 
     if (!portfolio) {
-      return NextResponse.json(
-        { error: "Portfolio not found" },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: "Portfolio not found or unauthorized" }, { status: 404 });
     }
 
     const { data: projects, error } = await supabase
       .from("portfolio_projects")
       .select("*")
-      .eq("portfolio_id", portfolio.id)
+      .eq("portfolio_id", portfolioId)
       .order("display_order", { ascending: true });
 
     if (error) {
@@ -60,42 +65,40 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's portfolio
+    const body: ProjectFormData & { portfolio_id: string } = await request.json();
+
+    if (!body.title || !body.portfolio_id) {
+      return NextResponse.json(
+        { error: "Project title and portfolio_id are required" },
+        { status: 400 },
+      );
+    }
+
+    // Verify ownership
     const { data: portfolio } = await supabase
       .from("portfolios")
       .select("id")
+      .eq("id", body.portfolio_id)
       .eq("user_id", user.id)
       .single();
 
     if (!portfolio) {
-      return NextResponse.json(
-        { error: "Portfolio not found. Create a portfolio first." },
-        { status: 404 },
-      );
-    }
-
-    const body: ProjectFormData = await request.json();
-
-    if (!body.title) {
-      return NextResponse.json(
-        { error: "Project title is required" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "Portfolio not found or unauthorized" }, { status: 404 });
     }
 
     // Get max display_order
     const { data: maxOrder } = await supabase
       .from("portfolio_projects")
       .select("display_order")
-      .eq("portfolio_id", portfolio.id)
+      .eq("portfolio_id", body.portfolio_id)
       .order("display_order", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     const { data: project, error } = await supabase
       .from("portfolio_projects")
       .insert({
-        portfolio_id: portfolio.id,
+        portfolio_id: body.portfolio_id,
         title: body.title,
         description: body.description || null,
         image_url: body.image_url || null,

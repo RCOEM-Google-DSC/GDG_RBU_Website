@@ -17,7 +17,7 @@ interface PageProps {
 
 export default async function SoftPortfolio({ params }: PageProps) {
     const { userId } = await params;
-    const portfolioData = await getPortfolioData(userId);
+    const portfolioData = await getPortfolioData(userId, "soft");
 
     if (!portfolioData) {
         notFound();
@@ -25,10 +25,16 @@ export default async function SoftPortfolio({ params }: PageProps) {
 
     return (
         <>
-            <Header socials={portfolioData.socials} />
+            <Header 
+                socials={portfolioData.socials} 
+                hasAbout={!!portfolioData.personalInfo.about}
+                hasSkills={portfolioData.skills.length > 0}
+                hasProjects={portfolioData.projects.length > 0}
+                hasExperience={portfolioData.experience.length > 0}
+            />
             <main>
                 <Hero personalInfo={portfolioData.personalInfo} />
-                <Philosophy />
+                <Philosophy about={portfolioData.personalInfo.about} />
                 <Skills skills={portfolioData.skills} />
                 <Projects projects={portfolioData.projects} />
                 <Experience experience={portfolioData.experience} />
@@ -37,6 +43,10 @@ export default async function SoftPortfolio({ params }: PageProps) {
             <Footer
                 personalInfo={portfolioData.personalInfo}
                 socials={portfolioData.socials}
+                hasAbout={!!portfolioData.personalInfo.about}
+                hasSkills={portfolioData.skills.length > 0}
+                hasProjects={portfolioData.projects.length > 0}
+                hasExperience={portfolioData.experience.length > 0}
             />
         </>
     );

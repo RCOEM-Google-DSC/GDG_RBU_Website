@@ -20,16 +20,21 @@ interface PageProps {
 
 
 export default async function MagazinePortfolio({ params }: PageProps) {
-  const { userId } = await params;
-  const portfolioData = await getPortfolioData(userId);
+    const { userId } = await params;
+    const portfolioData = await getPortfolioData(userId, "magazine");
 
-  if (!portfolioData) {
-    notFound();
-  }
-
+    if (!portfolioData) {
+        notFound();
+    }
   return (
     <main className="w-full max-w-[1440px] mx-auto min-h-screen border-l border-r border-black flex flex-col bg-white text-black">
-      <Header socials={portfolioData.socials} />
+      <Header 
+        socials={portfolioData.socials} 
+        hasWorks={portfolioData.projects.length > 0}
+        hasAbout={!!portfolioData.personalInfo.about}
+        hasSkills={portfolioData.skills.length > 0}
+        hasExperience={portfolioData.experience.length > 0}
+      />
       <Hero personalInfo={portfolioData.personalInfo} />
       
       {portfolioData.skills.length > 0 && (
@@ -63,6 +68,10 @@ export default async function MagazinePortfolio({ params }: PageProps) {
       <Footer 
         personalInfo={portfolioData.personalInfo} 
         socials={portfolioData.socials}
+        hasAbout={!!portfolioData.personalInfo.about}
+        hasSkills={portfolioData.skills.length > 0}
+        hasWorks={portfolioData.projects.length > 0}
+        hasExperience={portfolioData.experience.length > 0}
       />
     </main>
   );

@@ -73,7 +73,7 @@ export default async function PortfolioBuilderPage() {
         redirect("/register?redirect=/portfolio-builder");
     }
 
-    // Fetch existing portfolio if any
+    // Fetch existing portfolio if any (most relevant one)
     const { data: portfolio } = await supabase
         .from("portfolios")
         .select(
@@ -86,7 +86,10 @@ export default async function PortfolioBuilderPage() {
     `,
         )
         .eq("user_id", user.id)
-        .single();
+        .order("is_published", { ascending: false })
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
     // Fetch templates from database
     const { data: dbTemplates } = await supabase

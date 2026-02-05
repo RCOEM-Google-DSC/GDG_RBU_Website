@@ -14,19 +14,37 @@ interface PageProps {
 
 
 export default async function ArchitecturalPortfolio({ params }: PageProps) {
+
+
     const { userId } = await params;
 
-    const portfolioData = await getPortfolioData(userId);
+
+    const portfolioData = await getPortfolioData(userId, "architectural");
+
+
+
+
 
     if (!portfolioData) {
+
+
         notFound();
+
+
     }
 
     return (
         <div className="min-h-screen bg-black text-zinc-100 antialiased selection:bg-accent selection:text-white">
-            <Header socials={portfolioData.socials} />
+            <Header 
+                name={portfolioData.personalInfo.name}
+                socials={portfolioData.socials} 
+                hasAbout={!!portfolioData.personalInfo.about}
+                hasProjects={portfolioData.projects.length > 0}
+                hasSkills={portfolioData.skills.length > 0}
+                hasExperience={portfolioData.experience.length > 0}
+            />
             <main>
-                <Hero personalInfo={portfolioData.personalInfo} />
+                <Hero personalInfo={portfolioData.personalInfo} projects={portfolioData.projects} />
                 <Skills skills={portfolioData.skills} />
                 <Projects projects={portfolioData.projects} />
                 <Experience experience={portfolioData.experience} />
@@ -34,6 +52,10 @@ export default async function ArchitecturalPortfolio({ params }: PageProps) {
             <Footer
                 personalInfo={portfolioData.personalInfo}
                 socials={portfolioData.socials}
+                hasAbout={!!portfolioData.personalInfo.about}
+                hasProjects={portfolioData.projects.length > 0}
+                hasSkills={portfolioData.skills.length > 0}
+                hasExperience={portfolioData.experience.length > 0}
             />
         </div>
     );

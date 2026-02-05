@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 interface FooterProps {
   personalInfo: {
@@ -12,9 +13,20 @@ interface FooterProps {
     url: string;
     icon: string;
   }>;
+  hasAbout?: boolean;
+  hasProjects?: boolean;
+  hasSkills?: boolean;
+  hasExperience?: boolean;
 }
 
-export const Footer: React.FC<FooterProps> = ({ personalInfo, socials }) => {
+export const Footer: React.FC<FooterProps> = ({
+  personalInfo,
+  socials,
+  hasAbout,
+  hasProjects,
+  hasSkills,
+  hasExperience,
+}) => {
   return (
     <footer className="bg-black py-20 pb-8 border-t border-zinc-900">
       <div className="max-w-7xl mx-auto px-6">
@@ -73,24 +85,38 @@ export const Footer: React.FC<FooterProps> = ({ personalInfo, socials }) => {
             Reserved.
           </p>
           <div className="flex gap-6">
-            <a
-              href="#about"
-              className="text-xs text-zinc-600 uppercase tracking-wider hover:text-zinc-400 transition-colors"
-            >
-              About
-            </a>
-            <a
-              href="#projects"
-              className="text-xs text-zinc-600 uppercase tracking-wider hover:text-zinc-400 transition-colors"
-            >
-              Projects
-            </a>
-            <a
-              href="#skills"
-              className="text-xs text-zinc-600 uppercase tracking-wider hover:text-zinc-400 transition-colors"
-            >
-              Skills
-            </a>
+            {hasAbout && (
+              <Link
+                href="#about"
+                className="text-xs text-zinc-600 uppercase tracking-wider hover:text-zinc-400 transition-colors"
+              >
+                About
+              </Link>
+            )}
+            {hasProjects && (
+              <Link
+                href="#projects"
+                className="text-xs text-zinc-600 uppercase tracking-wider hover:text-zinc-400 transition-colors"
+              >
+                Projects
+              </Link>
+            )}
+            {hasSkills && (
+              <Link
+                href="#skills"
+                className="text-xs text-zinc-600 uppercase tracking-wider hover:text-zinc-400 transition-colors"
+              >
+                Skills
+              </Link>
+            )}
+            {hasExperience && (
+              <Link
+                href="#experience"
+                className="text-xs text-zinc-600 uppercase tracking-wider hover:text-zinc-400 transition-colors"
+              >
+                Experience
+              </Link>
+            )}
           </div>
         </div>
       </div>

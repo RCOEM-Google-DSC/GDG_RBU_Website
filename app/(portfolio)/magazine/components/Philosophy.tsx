@@ -5,6 +5,8 @@ interface PhilosophyProps {
 }
 
 const Philosophy: React.FC<PhilosophyProps> = ({ about }) => {
+  if (!about) return null;
+
   return (
     <section className="grid grid-cols-1 lg:grid-cols-12 border-b border-black divide-y lg:divide-y-0 lg:divide-x divide-black" id="about">
       <div className="col-span-12 lg:col-span-7 p-8 lg:p-16 flex flex-col justify-center">
@@ -12,11 +14,8 @@ const Philosophy: React.FC<PhilosophyProps> = ({ about }) => {
           About My<br />Philosophy
         </h2>
         <div className="max-w-xl">
-          <p className="font-sans text-sm lg:text-base leading-loose mb-6 whitespace-pre-line">
-            {about || "I believe in the web as a medium for functional art. My approach combines rigorous engineering standards with an eye for stark, minimalist aesthetics. Code is not just about function; it's about structure, clarity, and intent."}
-          </p>
-          <p className="font-sans text-xs italic text-gray-500">
-            "Simplicity is the ultimate sophistication."
+          <p className="font-sans text-sm lg:text-base leading-loose mb-6 whitespace-pre-line text-gray-700">
+            {about}
           </p>
         </div>
       </div>

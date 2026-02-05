@@ -23,6 +23,8 @@ export function usePortfolioForm({
   const [currentStep, setCurrentStep] = React.useState(1);
   const [isSaving, setIsSaving] = React.useState(false);
   const [isGeneratingPreview, setIsGeneratingPreview] = React.useState(false);
+  const [showPublishDialog, setShowPublishDialog] = React.useState(false);
+  const [isPendingPublish, setIsPendingPublish] = React.useState(false);
 
   // Transform existing portfolio data to convert null to undefined for form compatibility
   const transformedProjects =
@@ -88,6 +90,24 @@ export function usePortfolioForm({
     name: "social_links",
   });
 
+  const checkPublishedAndSave = async () => {
+    try {
+      // If we're publishing, check if there's another one already published
+      const res = await fetch("/api/portfolio");
+      const { portfolio } = await res.json();
+      
+      // If there is a portfolio and it's published, and it's not the one we're editing
+      if (portfolio && portfolio.is_published && portfolio.id !== existingPortfolio?.id) {
+        setShowPublishDialog(true);
+      } else {
+        await handleSave(true);
+      }
+    } catch (error) {
+      console.error("Error checking published status:", error);
+      await handleSave(true); // Fallback to normal save
+    }
+  };
+
   const handleSave = async (publish: boolean = false) => {
     setIsSaving(true);
     try {
@@ -100,6 +120,7 @@ export function usePortfolioForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data.portfolio,
+          id: existingPortfolio?.id, // Pass ID for PUT
           is_published: publish,
         }),
       });
@@ -109,53 +130,59 @@ export function usePortfolioForm({
         throw new Error(error.error || "Failed to save portfolio");
       }
 
+      const { portfolio: savedPortfolio } = await portfolioRes.json();
+      const portfolioId = savedPortfolio.id;
+
       // Save projects
       for (const project of data.projects) {
+        const projectData = { ...project, portfolio_id: portfolioId };
         if (project.id) {
           await fetch(`/api/portfolio/projects/${project.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(project),
+            body: JSON.stringify(projectData),
           });
         } else {
           await fetch("/api/portfolio/projects", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(project),
+            body: JSON.stringify(projectData),
           });
         }
       }
 
       // Save experience
       for (const exp of data.experience) {
+        const expData = { ...exp, portfolio_id: portfolioId };
         if (exp.id) {
           await fetch(`/api/portfolio/experience/${exp.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(exp),
+            body: JSON.stringify(expData),
           });
         } else {
           await fetch("/api/portfolio/experience", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(exp),
+            body: JSON.stringify(expData),
           });
         }
       }
 
       // Save social links
       for (const link of data.social_links) {
+        const linkData = { ...link, portfolio_id: portfolioId };
         if (link.id) {
           await fetch(`/api/portfolio/social-links/${link.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(link),
+            body: JSON.stringify(linkData),
           });
         } else {
           await fetch("/api/portfolio/social-links", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(link),
+            body: JSON.stringify(linkData),
           });
         }
       }
@@ -170,6 +197,7 @@ export function usePortfolioForm({
       toast.error(error instanceof Error ? error.message : "Failed to save");
     } finally {
       setIsSaving(false);
+      setShowPublishDialog(false);
     }
   };
 
@@ -210,7 +238,10 @@ export function usePortfolioForm({
     setCurrentStep,
     isSaving,
     isGeneratingPreview,
+    showPublishDialog,
+    setShowPublishDialog,
     handleSave,
+    checkPublishedAndSave,
     handlePreview,
     nextStep,
     prevStep,
@@ -220,3 +251,4 @@ export function usePortfolioForm({
     socialLinksFieldArray,
   };
 }
+

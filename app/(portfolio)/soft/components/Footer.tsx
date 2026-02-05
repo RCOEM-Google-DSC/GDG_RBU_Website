@@ -9,6 +9,7 @@ import {
   Globe,
   LucideIcon,
 } from "lucide-react";
+import Link from "next/link";
 
 interface FooterProps {
   personalInfo: {
@@ -20,6 +21,10 @@ interface FooterProps {
     platform: string;
     url: string;
   }>;
+  hasAbout?: boolean;
+  hasSkills?: boolean;
+  hasProjects?: boolean;
+  hasExperience?: boolean;
 }
 
 const socialIconMap: Record<string, LucideIcon> = {
@@ -32,7 +37,14 @@ const socialIconMap: Record<string, LucideIcon> = {
   website: Globe,
 };
 
-const Footer: React.FC<FooterProps> = ({ personalInfo, socials }) => {
+const Footer: React.FC<FooterProps> = ({
+  personalInfo,
+  socials,
+  hasAbout,
+  hasSkills,
+  hasProjects,
+  hasExperience,
+}) => {
   if (!personalInfo) return null;
 
   return (
@@ -64,44 +76,55 @@ const Footer: React.FC<FooterProps> = ({ personalInfo, socials }) => {
           </div>
 
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-wider mb-6">
+            <h4 className="text-black dark:text-white text-sm font-bold uppercase tracking-wider mb-6">
               Navigation
             </h4>
             <ul className="space-y-4 text-gray-400 text-sm">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link href="#" className="hover:text-white transition-colors">
                   Home
-                </a>
+                </Link>
               </li>
-              <li>
-                <a href="#about" className="hover:text-white transition-colors">
-                  About
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#skills"
-                  className="hover:text-white transition-colors"
-                >
-                  Skills
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#projects"
-                  className="hover:text-white transition-colors"
-                >
-                  Projects
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#experience"
-                  className="hover:text-white transition-colors"
-                >
-                  Experience
-                </a>
-              </li>
+              {hasAbout && (
+                <li>
+                  <Link
+                    href="#about"
+                    className="hover:text-white transition-colors"
+                  >
+                    About
+                  </Link>
+                </li>
+              )}
+              {hasSkills && (
+                <li>
+                  <Link
+                    href="#skills"
+                    className="hover:text-white transition-colors"
+                  >
+                    Skills
+                  </Link>
+                </li>
+              )}
+              {hasProjects && (
+                <li>
+                  <Link
+                    href="#projects"
+                    className="hover:text-white transition-colors"
+                  >
+                    Projects
+                  </Link>
+                </li>
+              )}
+              {hasExperience && (
+                <li>
+                  <Link
+                    href="#experience"
+                    className="hover:text-white transition-colors"
+                  >
+                    Experience
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
 

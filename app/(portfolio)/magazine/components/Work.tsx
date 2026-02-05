@@ -21,7 +21,7 @@ const Work: React.FC<WorkProps> = ({ projects }) => {
   const gridProjects = projects.slice(1);
 
   return (
-    <div id="works">
+    <div id="projects">
       {/* Featured Project */}
       <section className="grid grid-cols-1 lg:grid-cols-12 border-b border-black divide-y lg:divide-y-0 lg:divide-x divide-black">
         <div className="col-span-12 lg:col-span-8 relative group overflow-hidden border-b lg:border-b-0 border-black">

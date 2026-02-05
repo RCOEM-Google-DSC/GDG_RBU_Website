@@ -19,7 +19,7 @@ const Skills: React.FC<SkillsProps> = ({ skills }) => {
   };
 
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3 border-b border-black divide-y md:divide-y-0 md:divide-x divide-black">
+    <section id="skills" className="grid grid-cols-1 md:grid-cols-3 border-b border-black divide-y md:divide-y-0 md:divide-x divide-black">
       {skills.map((skillGroup, idx) => (
         <div key={idx} className="p-8 flex flex-col h-full">
           <h3 className="font-display text-lg font-bold uppercase border-b border-black pb-4 mb-6">{skillGroup.category}</h3>

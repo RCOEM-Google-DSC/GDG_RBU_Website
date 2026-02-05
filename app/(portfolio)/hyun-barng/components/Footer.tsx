@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 interface FooterProps {
   name: string;
@@ -7,9 +8,21 @@ interface FooterProps {
     platform: string;
     url: string;
   }>;
+  hasAbout?: boolean;
+  hasSkills?: boolean;
+  hasProjects?: boolean;
+  hasExperience?: boolean;
 }
 
-export const Footer: React.FC<FooterProps> = ({ name, email, socials }) => {
+export const Footer: React.FC<FooterProps> = ({
+  name,
+  email,
+  socials,
+  hasAbout,
+  hasSkills,
+  hasProjects,
+  hasExperience,
+}) => {
   return (
     <footer className="bg-background-light dark:bg-background-dark pt-24 pb-12 border-t border-neutral-200 dark:border-neutral-800 transition-colors duration-500">
       <div className="max-w-4xl mx-auto px-6 text-center">
@@ -19,6 +32,14 @@ export const Footer: React.FC<FooterProps> = ({ name, email, socials }) => {
         <a href={`mailto:${email}`} className="inline-block bg-primary text-white dark:text-black px-10 py-4 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-transform duration-300 shadow-lg">
           Contact Me
         </a>
+
+        <nav className="mt-16 flex flex-wrap justify-center gap-x-8 gap-y-4">
+          <Link href="#" className="text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors">Home</Link>
+          {hasAbout && <Link href="#about" className="text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors">About</Link>}
+          {hasSkills && <Link href="#skills" className="text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors">Skills</Link>}
+          {hasProjects && <Link href="#projects" className="text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors">Projects</Link>}
+          {hasExperience && <Link href="#experience" className="text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors">Experience</Link>}
+        </nav>
         
         <div className="mt-24 pt-8 border-t border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row justify-between items-center text-xs text-neutral-500 uppercase tracking-widest">
           <div className="mb-4 md:mb-0">

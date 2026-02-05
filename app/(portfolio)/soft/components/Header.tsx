@@ -1,32 +1,35 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Sun, Moon, Menu } from "lucide-react";
+import { toggleTheme as toggleThemeUtil } from "../lib/theme";
 
 interface HeaderProps {
   socials?: Array<{
     platform: string;
     url: string;
   }>;
+  hasAbout?: boolean;
+  hasSkills?: boolean;
+  hasProjects?: boolean;
+  hasExperience?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ socials }) => {
+const Header: React.FC<HeaderProps> = ({
+  socials,
+  hasAbout = true,
+  hasSkills = true,
+  hasProjects = true,
+  hasExperience = true,
+}) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    if (
-      localStorage.theme === "dark" ||
-      (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
-    ) {
-      setIsDark(true);
-      document.documentElement.classList.add("dark");
-    } else {
-      setIsDark(false);
-      document.documentElement.classList.remove("dark");
-    }
+    // Initialize isDark state based on current theme
+    setIsDark(document.documentElement.classList.contains("dark"));
 
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -36,25 +39,18 @@ const Header: React.FC<HeaderProps> = ({ socials }) => {
   }, []);
 
   const toggleTheme = () => {
-    if (isDark) {
-      document.documentElement.classList.remove("dark");
-      localStorage.theme = "light";
-      setIsDark(false);
-    } else {
-      document.documentElement.classList.add("dark");
-      localStorage.theme = "dark";
-      setIsDark(true);
-    }
+    const newTheme = toggleThemeUtil();
+    setIsDark(newTheme === "dark");
   };
 
-  const NAV_ITEMS = [
-    { label: "Home", href: "#" },
-    { label: "About", href: "#about" },
-    { label: "Skills", href: "#skills" },
-    { label: "Projects", href: "#projects" },
-    { label: "Experience", href: "#experience" },
-    { label: "Contact", href: "#contact" },
-  ];
+  const navItems = [
+    { label: "Home", href: "#", show: true },
+    { label: "About", href: "#about", show: hasAbout },
+    { label: "Skills", href: "#skills", show: hasSkills },
+    { label: "Projects", href: "#projects", show: hasProjects },
+    { label: "Experience", href: "#experience", show: hasExperience },
+    { label: "Contact", href: "#contact", show: true },
+  ].filter((item) => item.show);
 
   return (
     <nav
@@ -69,14 +65,14 @@ const Header: React.FC<HeaderProps> = ({ socials }) => {
           </div>
 
           <div className="hidden md:flex space-x-8 items-center">
-            {NAV_ITEMS.map((item) => (
-              <a
+            {navItems.map((item) => (
+              <Link
                 key={item.label}
                 href={item.href}
                 className="text-sm font-medium hover:text-secondary transition-colors"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
 
             <button
@@ -85,18 +81,18 @@ const Header: React.FC<HeaderProps> = ({ socials }) => {
               aria-label="Toggle Dark Mode"
             >
               {isDark ? (
-                <Sun className="w-5 h-5" />
+                <Sun className="w-5 h-5 transition-transform hover:rotate-12" />
               ) : (
-                <Moon className="w-5 h-5" />
+                <Moon className="w-5 h-5 transition-transform hover:-rotate-12" />
               )}
             </button>
 
-            <a
+            <Link
               href="#contact"
               className="bg-primary text-white px-5 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
             >
               Let's Talk
-            </a>
+            </Link>
           </div>
 
           <div className="md:hidden flex items-center gap-4">
@@ -105,9 +101,9 @@ const Header: React.FC<HeaderProps> = ({ socials }) => {
               className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none"
             >
               {isDark ? (
-                <Sun className="w-5 h-5" />
+                <Sun className="w-5 h-5 transition-transform hover:rotate-12" />
               ) : (
-                <Moon className="w-5 h-5" />
+                <Moon className="w-5 h-5 transition-transform hover:-rotate-12" />
               )}
             </button>
             <button
@@ -124,23 +120,23 @@ const Header: React.FC<HeaderProps> = ({ socials }) => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-background-light dark:bg-background-dark border-b border-gray-200 dark:border-gray-800">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {NAV_ITEMS.map((item) => (
-              <a
+            {navItems.map((item) => (
+              <Link
                 key={item.label}
                 href={item.href}
                 className="block px-3 py-2 rounded-md text-base font-medium hover:text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
-            <a
+            <Link
               href="#contact"
               className="block px-3 py-2 mt-4 text-center bg-primary text-white rounded-md font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Let's Talk
-            </a>
+            </Link>
           </div>
         </div>
       )}

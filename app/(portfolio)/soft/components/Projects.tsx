@@ -1,4 +1,4 @@
-import React from "react";
+import Link from "next/link";
 import { Github, ExternalLink } from "lucide-react";
 
 interface ProjectsProps {
@@ -80,12 +80,12 @@ const Projects: React.FC<ProjectsProps> = ({ projects }) => {
         </div>
 
         <div className="mt-16 text-center">
-          <a
+          <Link
             href="#"
             className="inline-block border-b border-black dark:border-white pb-1 hover:text-secondary dark:hover:text-secondary hover:border-secondary dark:hover:border-secondary transition-all"
           >
             View Archive on GitHub
-          </a>
+          </Link>
         </div>
       </div>
     </section>

@@ -1,18 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;500;600&display=swap');
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons+Outlined');
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons+Outlined");
 
 :root {
-  --background-light: #F3F3F3;
+  --background-light: #f3f3f3;
   --background-dark: #050505;
+  --text-primary: #171717;
+  --text-secondary: #525252;
+  --border-color: #e5e5e5;
+}
+
+.dark {
+  --text-primary: #f5f5f5;
+  --text-secondary: #a3a3a3;
+  --border-color: #262626;
 }
 
 body {
   font-family: var(--font-inter), sans-serif;
   background-color: var(--background-light);
-  color: #171717;
-  transition: background-color 0.5s ease, color 0.5s ease;
+  color: var(--text-primary);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.dark body {
+  background-color: var(--background-dark);
 }
 
 .font-display {
@@ -50,7 +65,8 @@ body {
 }
 
 @keyframes bounce-slow {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(-25%);
     animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
   }

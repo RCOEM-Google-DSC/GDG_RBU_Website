@@ -1,4 +1,4 @@
-import React from "react";
+import Link from "next/link";
 import { Brain } from "lucide-react";
 
 interface HeroProps {
@@ -29,40 +29,36 @@ const Hero: React.FC<HeroProps> = ({ personalInfo }) => {
               I'm {personalInfo.name}, {personalInfo.about}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
-              <a
+              <Link
                 href="#projects"
                 className="inline-flex justify-center items-center px-8 py-3 bg-primary text-white rounded-full font-medium hover:opacity-90 transition-all transform hover:-translate-y-1"
               >
                 View Projects
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#contact"
                 className="inline-flex justify-center items-center px-8 py-3 border border-gray-300 dark:border-gray-600 rounded-full font-medium hover:border-primary dark:hover:border-white transition-all"
               >
                 Contact Me
-              </a>
-            </div>
-            <div className="flex items-center gap-6 text-muted-light dark:text-muted-dark text-sm font-medium uppercase tracking-wider">
-              <span>Web</span>
-              <span className="w-px h-4 bg-gray-300 dark:bg-gray-700"></span>
-              <span>Machine Learning</span>
-              <span className="w-px h-4 bg-gray-300 dark:bg-gray-700"></span>
-              <span>Cloud Architecture</span>
+              </Link>
             </div>
           </div>
 
           <div className="relative animate-fade-in-up delay-200">
             <div className="absolute -top-10 -right-10 w-64 h-64 bg-secondary/20 rounded-full blur-3xl dark:bg-secondary/10"></div>
             <div className="relative overflow-hidden rounded-xl shadow-2xl aspect-[4/5] md:aspect-square lg:aspect-[4/5] group">
-              <img
-                src={
-                  personalInfo.profileImage ||
-                  "https://lh3.googleusercontent.com/aida-public/AB6AXuCY0Md-cwfMCyptfszzctS9FI9bcNn5ZbIkutbYaNjPjUVx0JOIj_8-UugXusDPpASa9CkMwWz3y7ymja_bA5mBV6RCBTLmLd-QMiYAxLUFPIEGHyv5QHvzywKoFZ-EUVW9uKg0q7S7qPorj4myXgF3g9I5Mj_7CYjc2XQtZ2aAMppXJLt6WMh5CTt__kuWmUtIGWOXVwgI5uR0dURQjV4CXgLYrRpQxGuIIYS-BR8E9gWrR8U3Ilf8lnENlZTfP0ZNgzPu-usK_AVj"
-                }
-                alt={personalInfo.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute bottom-6 left-6 right-6 bg-white/90 dark:bg-surface-dark/90 backdrop-blur-md p-4 rounded-lg shadow-lg">
+              {personalInfo.profileImage ? (
+                <img
+                  src={personalInfo.profileImage}
+                  alt={personalInfo.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              ) : (
+                <div className="w-full h-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-400 font-display italic text-4xl">
+                  {personalInfo.name.charAt(0)}
+                </div>
+              )}
+              <div className="absolute bottom-6 left-6 right-6 bg-white/90  dark:bg-neutral-800 backdrop-blur-md p-4 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-muted-light dark:text-muted-dark uppercase tracking-wider">

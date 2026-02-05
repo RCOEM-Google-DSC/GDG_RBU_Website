@@ -15,17 +15,22 @@ interface PageProps {
 
 
 export default async function HyunPortfolio({ params }: PageProps) {
-    const { userId } = await params;
-    const portfolioData = await getPortfolioData(userId);
+  const { userId } = await params;
+  const portfolioData = await getPortfolioData(userId, "hyun-barng");
 
-    if (!portfolioData) {
-        notFound();
-    }
-
+  if (!portfolioData) {
+    notFound();
+  }
     return (
         <div className="relative min-h-screen">
             <div className="grain-overlay" />
-            <Navbar name={portfolioData.personalInfo.name} />
+            <Navbar 
+                name={portfolioData.personalInfo.name} 
+                hasAbout={!!portfolioData.personalInfo.about}
+                hasSkills={portfolioData.skills.length > 0}
+                hasProjects={portfolioData.projects.length > 0}
+                hasExperience={portfolioData.experience.length > 0}
+            />
             <main>
                 <Hero personalInfo={portfolioData.personalInfo} socials={portfolioData.socials} />
                 <div className="w-full h-24 bg-background-light dark:bg-background-dark flex justify-center items-center overflow-hidden">
@@ -49,6 +54,10 @@ export default async function HyunPortfolio({ params }: PageProps) {
                 name={portfolioData.personalInfo.name}
                 email={portfolioData.personalInfo.email}
                 socials={portfolioData.socials}
+                hasAbout={!!portfolioData.personalInfo.about}
+                hasSkills={portfolioData.skills.length > 0}
+                hasProjects={portfolioData.projects.length > 0}
+                hasExperience={portfolioData.experience.length > 0}
             />
         </div>
     );

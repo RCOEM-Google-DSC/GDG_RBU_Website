@@ -44,7 +44,7 @@ const Skills: React.FC<SkillsProps> = ({ skills }) => {
                   {skills.map((skill) => (
                     <span
                       key={skill}
-                      className="px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm hover:border-secondary dark:hover:border-secondary transition-colors cursor-default"
+                      className="px-4 py-2 dark:text-black bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-full text-sm hover:border-secondary dark:hover:border-secondary transition-colors cursor-default"
                     >
                       {skill}
                     </span>

@@ -20,21 +20,22 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verify ownership through portfolio
-    const { data: portfolio } = await supabase
-      .from("portfolios")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
+    const body: Partial<ProjectFormData> & { portfolio_id?: string } = await request.json();
 
-    if (!portfolio) {
+    // Verify ownership - find if this project belongs to a portfolio owned by this user
+    const { data: projectCheck, error: checkError } = await supabase
+      .from("portfolio_projects")
+      .select("portfolio_id, portfolios!inner(user_id)")
+      .eq("id", id)
+      .eq("portfolios.user_id", user.id)
+      .maybeSingle();
+
+    if (checkError || !projectCheck) {
       return NextResponse.json(
-        { error: "Portfolio not found" },
+        { error: "Project not found or unauthorized" },
         { status: 404 },
       );
     }
-
-    const body: Partial<ProjectFormData> = await request.json();
 
     const { data: project, error } = await supabase
       .from("portfolio_projects")
@@ -42,7 +43,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         ...body,
       })
       .eq("id", id)
-      .eq("portfolio_id", portfolio.id)
       .select()
       .single();
 
@@ -72,16 +72,17 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verify ownership through portfolio
-    const { data: portfolio } = await supabase
-      .from("portfolios")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
+    // Verify ownership
+    const { data: projectCheck, error: checkError } = await supabase
+      .from("portfolio_projects")
+      .select("portfolios!inner(user_id)")
+      .eq("id", id)
+      .eq("portfolios.user_id", user.id)
+      .maybeSingle();
 
-    if (!portfolio) {
+    if (checkError || !projectCheck) {
       return NextResponse.json(
-        { error: "Portfolio not found" },
+        { error: "Project not found or unauthorized" },
         { status: 404 },
       );
     }
@@ -89,8 +90,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const { error } = await supabase
       .from("portfolio_projects")
       .delete()
-      .eq("id", id)
-      .eq("portfolio_id", portfolio.id);
+      .eq("id", id);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

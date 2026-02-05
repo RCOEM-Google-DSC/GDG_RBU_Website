@@ -15,19 +15,22 @@ interface PageProps {
 
 
 export default async function MinimalistPortfolio({ params }: PageProps) {
-    const { userId } = await params;
-    const portfolioData = await getPortfolioData(userId);
+  const { userId } = await params;
+  const portfolioData = await getPortfolioData(userId, "minimalist-grid");
 
-    if (!portfolioData) {
-        notFound();
-    }
-
+  if (!portfolioData) {
+    notFound();
+  }
     return (
         <div className="min-h-screen bg-white selection:bg-slate-900 selection:text-white">
             <Header 
                 name={portfolioData.personalInfo.name} 
                 socials={portfolioData.socials} 
                 email={portfolioData.personalInfo.email} 
+                hasAbout={!!portfolioData.personalInfo.about}
+                hasSkills={portfolioData.skills.length > 0}
+                hasProjects={portfolioData.projects.length > 0}
+                hasExperience={portfolioData.experience.length > 0}
             />
             <main>
                 <Hero personalInfo={portfolioData.personalInfo} socials={portfolioData.socials} />
@@ -39,6 +42,10 @@ export default async function MinimalistPortfolio({ params }: PageProps) {
             <Footer
                 name={portfolioData.personalInfo.name}
                 socials={portfolioData.socials}
+                hasAbout={!!portfolioData.personalInfo.about}
+                hasSkills={portfolioData.skills.length > 0}
+                hasProjects={portfolioData.projects.length > 0}
+                hasExperience={portfolioData.experience.length > 0}
             />
         </div>
     );

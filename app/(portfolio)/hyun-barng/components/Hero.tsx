@@ -15,13 +15,9 @@ interface HeroProps {
 export const Hero: React.FC<HeroProps> = ({ personalInfo, socials }) => {
   return (
     <header className="relative min-h-screen flex flex-col justify-center items-center bg-background-dark text-white pt-20 px-6 overflow-hidden">
-      {/* Background Abstract */}
+      {/* Background Abstract - Subtle gradient instead of hardcoded image */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <img
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFNxIiiMPhfy3_dS3-JZq7D8dZS-l9oBvA9WX9cz0FSKFLsAOTvqysFngMoFmKjbEZ9dDtS91ljKYRD5cAubQdOwnjWnrqbN0xZWjIwCEHsSA_jj4bDxyVzzxPOanmtZQHlTApKpOMIM4FEmos0AUDkhnkvw9m4UeYAwHuOTreoSQCU3SkxJfUAcqtCO06osrsrcdQTdm2QoNc-G7ZZrSy3XBMtCXw_5UAaRWi6BzXLFlSEWq1wM9o9hpgkhbUIXaChNG97Ru5tVI"
-          alt="Abstract dark geometric shapes"
-          className="w-full h-full object-cover"
-        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#404040_0%,transparent_100%)]"></div>
         <div className="absolute inset-0 bg-linear-to-b from-background-dark via-transparent to-background-dark"></div>
       </div>
 
