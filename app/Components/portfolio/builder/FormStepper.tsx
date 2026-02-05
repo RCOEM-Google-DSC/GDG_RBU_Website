@@ -24,8 +24,14 @@ export function FormStepper({
     className,
 }: FormStepperProps) {
     return (
-        <nav aria-label="Progress" className={cn("overflow-x-auto pb-4 lg:pb-0", className)}>
-            <ol className="flex lg:flex-col gap-4 lg:gap-6 min-w-max lg:min-w-0 px-1 lg:px-0">
+        <nav
+            aria-label="Progress"
+            className={cn(
+                "w-full overflow-x-auto p-3 sm:p-4 lg:p-5 lg:pb-0",
+                className,
+            )}
+        >
+            <ol className="flex pb-5 lg:flex-col gap-2 sm:gap-3 lg:gap-6 min-w-max lg:min-w-0">
                 {steps.map((step, index) => {
                     const isCompleted = currentStep > step.id;
                     const isCurrent = currentStep === step.id;
@@ -46,7 +52,8 @@ export function FormStepper({
                                     {/* Mobile Horizontal Line */}
                                     <div
                                         className={cn(
-                                            "lg:hidden absolute left-[50%] top-5 w-full h-1 border-t-4 border-black z-0",
+                                            "lg:hidden absolute top-5 h-1 border-t-4 border-black z-0",
+                                            "left-[calc(50%+1.25rem)] right-0 w-[calc(100%-1.25rem)]",
                                             isCompleted ? "bg-primary" : "bg-gray-300",
                                         )}
                                         aria-hidden="true"
@@ -59,10 +66,14 @@ export function FormStepper({
                                 onClick={() => onStepClick?.(step.id)}
                                 disabled={!onStepClick}
                                 className={cn(
-                                    "relative flex lg:items-start gap-4 group w-full text-left z-10",
-                                    onStepClick && "cursor-pointer hover:opacity-80",
-                                    "flex-col lg:flex-row items-center lg:items-start text-center lg:text-left",
+                                    "relative flex gap-2 sm:gap-3 lg:gap-4 group w-full text-left z-10",
+                                    "flex-col items-center text-center",
+                                    "lg:flex-row lg:items-start lg:text-left",
+                                    onStepClick &&
+                                    "cursor-pointer hover:opacity-80 transition-opacity",
+                                    !onStepClick && "cursor-default",
                                 )}
+                                aria-current={isCurrent ? "step" : undefined}
                             >
                                 {/* Step Circle */}
                                 <span
@@ -81,11 +92,13 @@ export function FormStepper({
                                     {isCompleted ? <Check className="h-5 w-5" /> : step.id}
                                 </span>
 
-                                <div className="flex-1 min-w-0 pt-1">
+                                <div className="flex-1 min-w-0 lg:pt-1">
                                     {/* Step Title */}
                                     <span
                                         className={cn(
-                                            "block text-xs lg:text-sm font-bold truncate max-w-[80px] lg:max-w-none",
+                                            "block text-[10px] leading-tight sm:text-xs lg:text-sm font-bold",
+                                            "max-w-[60px] sm:max-w-20 lg:max-w-none",
+                                            "wrap-break-word hyphens-auto lg:truncate",
                                             isCurrent && "text-blue-600",
                                             !isCurrent && "text-gray-600",
                                         )}

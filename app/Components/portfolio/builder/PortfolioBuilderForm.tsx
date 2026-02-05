@@ -6,7 +6,7 @@ import { FormStepper } from "./FormStepper";
 import { FormHeader } from "./FormHeader";
 import { FormNavigation } from "./FormNavigation";
 import { usePortfolioForm } from "./hooks/usePortfolioForm";
-import { STEPS } from "./constants";
+import { STEPS } from "./helpers/constants";
 import {
     TemplateStep,
     BasicInfoStep,
@@ -141,7 +141,8 @@ export function PortfolioBuilderForm({
                             Replace Existing Portfolio?
                         </AlertDialogTitle>
                         <AlertDialogDescription className="text-zinc-600 font-medium">
-                            You already have a portfolio published. Publishing this new one will unpublish your current one. Do you want to proceed?
+                            You already have a portfolio published. Publishing this new one
+                            will unpublish your current one. Do you want to proceed?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2">

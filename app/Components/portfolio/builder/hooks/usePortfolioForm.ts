@@ -6,8 +6,8 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-import { formSchema, type FormData } from "../schema";
-import { STEPS } from "../constants";
+import { formSchema, type FormData } from "../helpers/schema";
+import { STEPS } from "../helpers/constants";
 import type { Portfolio } from "@/lib/types";
 
 interface UsePortfolioFormProps {
@@ -95,9 +95,13 @@ export function usePortfolioForm({
       // If we're publishing, check if there's another one already published
       const res = await fetch("/api/portfolio");
       const { portfolio } = await res.json();
-      
+
       // If there is a portfolio and it's published, and it's not the one we're editing
-      if (portfolio && portfolio.is_published && portfolio.id !== existingPortfolio?.id) {
+      if (
+        portfolio &&
+        portfolio.is_published &&
+        portfolio.id !== existingPortfolio?.id
+      ) {
         setShowPublishDialog(true);
       } else {
         await handleSave(true);
@@ -211,7 +215,10 @@ export function usePortfolioForm({
     try {
       // Serialize form data and open in new tab
       const dataStr = encodeURIComponent(JSON.stringify(formData));
-      window.open(`/portfolio-preview/${formData.portfolio.template_id}?data=${dataStr}`, "_blank");
+      window.open(
+        `/portfolio-preview/${formData.portfolio.template_id}?data=${dataStr}`,
+        "_blank",
+      );
     } catch (error) {
       console.error("Preview error:", error);
       toast.error("Failed to generate preview");
@@ -251,4 +258,3 @@ export function usePortfolioForm({
     socialLinksFieldArray,
   };
 }
-

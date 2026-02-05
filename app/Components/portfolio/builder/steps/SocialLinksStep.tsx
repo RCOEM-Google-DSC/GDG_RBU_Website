@@ -1,7 +1,7 @@
 "use client";
 
 import { UseFormReturn, UseFieldArrayReturn } from "react-hook-form";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Share2, Link } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -20,7 +20,7 @@ import {
 import { nb } from "@/components/ui/neo-brutalism";
 
 import { PlatformSelector } from "../PlatformSelector";
-import type { FormData } from "../schema";
+import type { FormData } from "../helpers/schema";
 
 interface SocialLinksStepProps {
     form: UseFormReturn<FormData>;
@@ -45,12 +45,19 @@ export function SocialLinksStep({
             </CardHeader>
             <CardContent className="space-y-6">
                 {fields.map((field, index) => (
-                    <div key={field.id} className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+                    <div
+                        key={field.id}
+                        className="flex flex-col md:flex-row gap-4 items-start md:items-center"
+                    >
                         <FormField
                             control={form.control}
                             name={`social_links.${index}.platform`}
                             render={({ field }) => (
                                 <FormItem className="w-full md:w-48 shrink-0">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <Share2 className="w-4 h-4 text-blue-600" />
+                                        <span className="text-sm font-medium">Platform</span>
+                                    </div>
                                     <FormControl>
                                         <PlatformSelector
                                             value={field.value}
@@ -70,6 +77,10 @@ export function SocialLinksStep({
                             name={`social_links.${index}.url`}
                             render={({ field }) => (
                                 <FormItem className="flex-1 w-full">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <Link className="w-4 h-4 text-green-600" />
+                                        <span className="text-sm font-medium">URL</span>
+                                    </div>
                                     <FormControl>
                                         <Input placeholder="https://..." {...field} />
                                     </FormControl>

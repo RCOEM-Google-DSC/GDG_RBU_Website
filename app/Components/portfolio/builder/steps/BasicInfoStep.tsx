@@ -21,10 +21,17 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { nb } from "@/components/ui/neo-brutalism";
-import { Upload, X, Loader2 } from "lucide-react";
+import {
+    Upload,
+    X,
+    Loader2,
+    User,
+    Image as ImageIcon,
+    FileText,
+} from "lucide-react";
 import Image from "next/image";
 
-import type { FormData } from "../schema";
+import type { FormData } from "../helpers/schema";
 
 interface BasicInfoStepProps {
     form: UseFormReturn<FormData>;
@@ -94,7 +101,9 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
         <Card className={nb({ border: 4, shadow: "lg", className: "bg-white" })}>
             <CardHeader>
                 <CardTitle className="text-2xl">Basic Information</CardTitle>
-                <CardDescription className="text-lg">Tell us about yourself</CardDescription>
+                <CardDescription className="text-lg">
+                    Tell us about yourself
+                </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <FormField
@@ -102,7 +111,10 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
                     name="portfolio.display_name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Display Name *</FormLabel>
+                            <FormLabel className="flex items-center gap-2 text-base">
+                                <User className="w-5 h-5 text-blue-600" />
+                                Display Name *
+                            </FormLabel>
                             <FormControl>
                                 <Input placeholder="John Doe" {...field} />
                             </FormControl>
@@ -116,7 +128,10 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
                     name="portfolio.profile_image_url"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Profile Image</FormLabel>
+                            <FormLabel className="flex items-center gap-2 text-base">
+                                <ImageIcon className="w-5 h-5 text-green-600" />
+                                Profile Image
+                            </FormLabel>
                             <FormControl>
                                 <div className="space-y-4">
                                     {/* Image Preview */}
@@ -206,7 +221,10 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
                     name="portfolio.about_me"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>About Me</FormLabel>
+                            <FormLabel className="flex items-center gap-2 text-base">
+                                <FileText className="w-5 h-5 text-purple-600" />
+                                About Me
+                            </FormLabel>
                             <FormControl>
                                 <Textarea
                                     placeholder="Tell visitors about yourself..."

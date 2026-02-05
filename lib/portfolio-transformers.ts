@@ -8,7 +8,6 @@ export function transformToArchitectural(data: any) {
   return {
     personalInfo: {
       name: portfolio?.display_name || "YOUR NAME",
-      role: "Full Stack Engineer",
       about: portfolio?.about_me || "",
       email: social_links?.find((s: any) => s.platform === "email")?.url?.replace("mailto:", "") || "",
       phone: "",
@@ -28,8 +27,10 @@ export function transformToArchitectural(data: any) {
       description: e.description || ""
     })),
     skills: [
-      { category: "Technical Skills", skills: portfolio?.skills || [] }
-    ],
+      { category: "Languages", skills: portfolio?.languages || [] },
+      { category: "Frameworks", skills: portfolio?.frameworks || [] },
+      { category: "Tools", skills: portfolio?.tools || [] },
+    ].filter(group => group.skills.length > 0),
     socials: (social_links || []).map((s: any) => ({
       platform: s.platform,
       url: s.url,
@@ -43,7 +44,6 @@ export function transformToSoft(data: any) {
   return {
     personalInfo: {
       name: portfolio?.display_name || "Your Name",
-      role: "Full Stack Engineer",
       about: portfolio?.about_me || "",
       profileImage: portfolio?.profile_image_url || "",
       email: social_links?.find((s: any) => s.platform === "email")?.url?.replace("mailto:", "") || "",
@@ -63,7 +63,11 @@ export function transformToSoft(data: any) {
       period: `${e.start_date || ""} - ${e.is_current ? "Present" : e.end_date || ""}`,
       description: e.description || "",
     })),
-    skills: portfolio?.skills || [],
+    skills: [
+      { category: "Languages", skills: portfolio?.languages || [] },
+      { category: "Frameworks", skills: portfolio?.frameworks || [] },
+      { category: "Tools", skills: portfolio?.tools || [] },
+    ].filter(group => group.skills.length > 0),
     socials: (social_links || []).map((s: any) => ({ platform: s.platform, url: s.url })),
   };
 }
@@ -73,7 +77,6 @@ export function transformToMagazine(data: any) {
     return {
       personalInfo: {
         name: portfolio?.display_name || "Developer",
-        role: "Full Stack Engineer",
         about: portfolio?.about_me || "",
         email: social_links?.find((s: any) => s.platform === "email")?.url?.replace("mailto:", "") || "",
         phone: "",
@@ -93,7 +96,11 @@ export function transformToMagazine(data: any) {
         period: `${e.start_date || ""} - ${e.is_current ? "Present" : e.end_date || ""}`,
         description: e.description || "",
       })),
-      skills: [{ category: "Skills", skills: portfolio?.skills || [] }],
+      skills: [
+        { category: "Languages", skills: portfolio?.languages || [] },
+        { category: "Frameworks", skills: portfolio?.frameworks || [] },
+        { category: "Tools", skills: portfolio?.tools || [] },
+      ].filter(group => group.skills.length > 0),
       socials: (social_links || []).map((s: any) => ({
         platform: s.platform,
         url: s.url,
@@ -107,7 +114,6 @@ export function transformToMinimalistGrid(data: any) {
   return {
     personalInfo: {
       name: portfolio?.display_name || "Developer",
-      role: "Full Stack Engineer",
       about: portfolio?.about_me || "",
       email: social_links?.find((s: any) => s.platform === "email")?.url?.replace("mailto:", "") || "",
       phone: "",
@@ -126,7 +132,11 @@ export function transformToMinimalistGrid(data: any) {
       period: `${e.start_date || ""} - ${e.is_current ? "Present" : e.end_date || ""}`,
       description: e.description || "",
     })),
-    skills: [{ category: "Skills", skills: portfolio?.skills || [] }],
+    skills: [
+      { category: "Languages", skills: portfolio?.languages || [] },
+      { category: "Frameworks", skills: portfolio?.frameworks || [] },
+      { category: "Tools", skills: portfolio?.tools || [] },
+    ].filter(group => group.skills.length > 0),
     socials: (social_links || []).map((s: any) => ({
       platform: s.platform,
       url: s.url,
@@ -140,7 +150,6 @@ export function transformToHyunBarng(data: any) {
   return {
     personalInfo: {
       name: portfolio?.display_name || "Developer",
-      role: "Full Stack Developer",
       about: portfolio?.about_me || "",
       email: social_links?.find((s: any) => s.platform === "email")?.url?.replace("mailto:", "") || "",
       phone: "",
@@ -162,7 +171,11 @@ export function transformToHyunBarng(data: any) {
       description: e.description || "",
       isLatest: index === 0 && e.is_current,
     })),
-    skills: [{ category: "Skills", skills: portfolio?.skills || [], icon: "code" }],
+    skills: [
+      { category: "Languages", skills: portfolio?.languages || [], icon: "code" },
+      { category: "Frameworks", skills: portfolio?.frameworks || [], icon: "layers" },
+      { category: "Tools", skills: portfolio?.tools || [], icon: "wrench" },
+    ].filter(group => group.skills.length > 0),
     socials: (social_links || []).map((s: any) => ({ platform: s.platform, url: s.url })),
   };
 }

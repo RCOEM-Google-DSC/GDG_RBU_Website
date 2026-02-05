@@ -41,7 +41,7 @@ export async function GET() {
             id: slug,
             name: metadata.name || folder.name,
             description: metadata.description || null,
-            preview_image_url: `/api/portfolio/templates/${slug}/preview`,
+            preview_image_url: `/templates/${slug}/thumbnail.png`,
             folder_name: folder.name,
             created_at: new Date().toISOString(),
           });

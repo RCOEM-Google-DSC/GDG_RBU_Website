@@ -17,7 +17,7 @@ import {
 import { nb } from "@/components/ui/neo-brutalism";
 
 import { TemplateSelector } from "../TemplateSelector";
-import type { FormData } from "../schema";
+import type { FormData } from "../helpers/schema";
 import type { PortfolioTemplate } from "@/lib/types";
 
 interface TemplateStepProps {

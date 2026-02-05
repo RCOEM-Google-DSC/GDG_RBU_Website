@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Save, Eye, Loader2 } from "lucide-react";
+import { Save, Eye, Loader2, CircleCheckBig } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { nb } from "@/components/ui/neo-brutalism";
 import { toast } from "sonner";
 
-import type { FormData } from "./schema";
+import type { FormData } from "./helpers/schema";
 
 interface FormHeaderProps {
     isEditing: boolean;
@@ -47,7 +47,8 @@ export function FormHeader({
                         shadow: "sm",
                         hover: "lift",
                         active: "push",
-                        className: "bg-white hover:bg-zinc-50 text-black flex-1 md:flex-none",
+                        className:
+                            "bg-white hover:bg-zinc-50 text-black flex-1 md:flex-none",
                     })}
                 >
                     {isGeneratingPreview ? (
@@ -66,7 +67,8 @@ export function FormHeader({
                         shadow: "md",
                         hover: "lift",
                         active: "push",
-                        className: "bg-amber-300 hover:bg-amber-400 text-black flex-1 md:flex-none",
+                        className:
+                            "bg-amber-300 hover:bg-amber-400 text-black flex-1 md:flex-none",
                     })}
                 >
                     {isSaving ? (
@@ -84,10 +86,12 @@ export function FormHeader({
                         shadow: "md",
                         hover: "lift",
                         active: "push",
-                        className: "bg-green-400 hover:bg-green-500 text-black flex-1 md:flex-none",
+                        className:
+                            "bg-green-400 hover:bg-green-500 text-black flex-1 md:flex-none",
                     })}
                 >
                     {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                    <CircleCheckBig />
                     Publish
                 </Button>
             </div>

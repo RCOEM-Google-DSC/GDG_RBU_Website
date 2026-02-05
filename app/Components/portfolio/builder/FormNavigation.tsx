@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { nb } from "@/components/ui/neo-brutalism";
-import { STEPS } from "./constants";
+import { STEPS } from "./helpers/constants";
 
 import { Eye, Loader2 } from "lucide-react";
 

@@ -2,7 +2,18 @@
 
 import { UseFormReturn, UseFieldArrayReturn } from "react-hook-form";
 import { useState } from "react";
-import { Plus, Trash2, Upload, X, Loader2 } from "lucide-react";
+import {
+    Plus,
+    Trash2,
+    Upload,
+    X,
+    Loader2,
+    FolderKanban,
+    Image as ImageIcon,
+    FileText,
+    Github,
+    ExternalLink,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -24,7 +35,7 @@ import {
 import { nb } from "@/components/ui/neo-brutalism";
 import Image from "next/image";
 
-import type { FormData } from "../schema";
+import type { FormData } from "../helpers/schema";
 
 interface ProjectsStepProps {
     form: UseFormReturn<FormData>;
@@ -107,7 +118,9 @@ export function ProjectsStep({ form, fieldArray }: ProjectsStepProps) {
         <Card className={nb({ border: 4, shadow: "lg", className: "bg-white" })}>
             <CardHeader>
                 <CardTitle className="text-2xl">Projects</CardTitle>
-                <CardDescription className="text-lg">Showcase your best work</CardDescription>
+                <CardDescription className="text-lg">
+                    Showcase your best work
+                </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
                 {fields.map((field, index) => (
@@ -144,7 +157,10 @@ export function ProjectsStep({ form, fieldArray }: ProjectsStepProps) {
                                 name={`projects.${index}.title`}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Title *</FormLabel>
+                                        <FormLabel className="flex items-center gap-2 text-base">
+                                            <FolderKanban className="w-4 h-4 text-blue-600" />
+                                            Title *
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="My Awesome Project"
@@ -169,7 +185,10 @@ export function ProjectsStep({ form, fieldArray }: ProjectsStepProps) {
 
                                     return (
                                         <FormItem className="md:col-span-2">
-                                            <FormLabel>Project Image</FormLabel>
+                                            <FormLabel className="flex items-center gap-2 text-base">
+                                                <ImageIcon className="w-4 h-4 text-green-600" />
+                                                Project Image
+                                            </FormLabel>
                                             <FormControl>
                                                 <div className="space-y-3">
                                                     {/* Image Preview */}
@@ -265,7 +284,10 @@ export function ProjectsStep({ form, fieldArray }: ProjectsStepProps) {
                             name={`projects.${index}.description`}
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Description</FormLabel>
+                                    <FormLabel className="flex items-center gap-2 text-base">
+                                        <FileText className="w-4 h-4 text-purple-600" />
+                                        Description
+                                    </FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="Describe your project..."
@@ -284,7 +306,10 @@ export function ProjectsStep({ form, fieldArray }: ProjectsStepProps) {
                                 name={`projects.${index}.github_url`}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>GitHub URL</FormLabel>
+                                        <FormLabel className="flex items-center gap-2 text-base">
+                                            <Github className="w-4 h-4 text-gray-700" />
+                                            GitHub URL
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="https://github.com/..."
@@ -302,7 +327,10 @@ export function ProjectsStep({ form, fieldArray }: ProjectsStepProps) {
                                 name={`projects.${index}.live_url`}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Live URL</FormLabel>
+                                        <FormLabel className="flex items-center gap-2 text-base">
+                                            <ExternalLink className="w-4 h-4 text-orange-600" />
+                                            Live URL
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="https://..."

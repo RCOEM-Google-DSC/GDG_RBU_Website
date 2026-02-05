@@ -1,6 +1,6 @@
 import { createClient } from "@/supabase/server";
 import { redirect } from "next/navigation";
-import { PortfolioBuilderForm } from "@/app/Components/portfolio/builder";
+import { PortfolioBuilderForm } from "@/app/Components/portfolio/builder/helpers";
 import type { Portfolio, PortfolioTemplate } from "@/lib/types";
 import fs from "fs";
 import path from "path";
@@ -104,7 +104,13 @@ export default async function PortfolioBuilderPage() {
     const templatesMap = new Map<string, PortfolioTemplate>();
 
     // Only include recognized template IDs
-    const RECOGNIZED_IDS = ["architectural", "soft", "minimalist-grid", "magazine", "hyun-barng"];
+    const RECOGNIZED_IDS = [
+        "architectural",
+        "soft",
+        "minimalist-grid",
+        "magazine",
+        "hyun-barng",
+    ];
 
     // Add filesystem templates (they are our source of truth for code)
     fsTemplates.forEach((t) => {

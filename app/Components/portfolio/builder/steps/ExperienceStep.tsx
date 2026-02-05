@@ -1,7 +1,15 @@
 "use client";
 
 import { UseFormReturn, UseFieldArrayReturn } from "react-hook-form";
-import { Plus, Trash2 } from "lucide-react";
+import {
+    Plus,
+    Trash2,
+    Briefcase,
+    UserCircle,
+    FileText,
+    Calendar,
+    CalendarCheck,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -22,7 +30,7 @@ import {
 } from "@/components/ui/form";
 import { nb } from "@/components/ui/neo-brutalism";
 
-import type { FormData } from "../schema";
+import type { FormData } from "../helpers/schema";
 
 interface ExperienceStepProps {
     form: UseFormReturn<FormData>;
@@ -75,7 +83,10 @@ export function ExperienceStep({ form, fieldArray }: ExperienceStepProps) {
                                 name={`experience.${index}.company`}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Company *</FormLabel>
+                                        <FormLabel className="flex items-center gap-2 text-base">
+                                            <Briefcase className="w-4 h-4 text-blue-600" />
+                                            Company *
+                                        </FormLabel>
                                         <FormControl>
                                             <Input placeholder="Company Name" {...field} />
                                         </FormControl>
@@ -89,7 +100,10 @@ export function ExperienceStep({ form, fieldArray }: ExperienceStepProps) {
                                 name={`experience.${index}.role`}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Role *</FormLabel>
+                                        <FormLabel className="flex items-center gap-2 text-base">
+                                            <UserCircle className="w-4 h-4 text-purple-600" />
+                                            Role *
+                                        </FormLabel>
                                         <FormControl>
                                             <Input placeholder="Software Engineer" {...field} />
                                         </FormControl>
@@ -104,7 +118,10 @@ export function ExperienceStep({ form, fieldArray }: ExperienceStepProps) {
                             name={`experience.${index}.description`}
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Description</FormLabel>
+                                    <FormLabel className="flex items-center gap-2 text-base">
+                                        <FileText className="w-4 h-4 text-green-600" />
+                                        Description
+                                    </FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="Describe your responsibilities..."
@@ -124,7 +141,10 @@ export function ExperienceStep({ form, fieldArray }: ExperienceStepProps) {
                                     name={`experience.${index}.start_date`}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Start Date *</FormLabel>
+                                            <FormLabel className="flex items-center gap-2 text-base">
+                                                <Calendar className="w-4 h-4 text-orange-600" />
+                                                Start Date *
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input type="date" {...field} />
                                             </FormControl>
@@ -141,7 +161,10 @@ export function ExperienceStep({ form, fieldArray }: ExperienceStepProps) {
                                             name={`experience.${index}.end_date`}
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>End Date</FormLabel>
+                                                    <FormLabel className="flex items-center gap-2 text-base">
+                                                        <CalendarCheck className="w-4 h-4 text-red-600" />
+                                                        End Date
+                                                    </FormLabel>
                                                     <FormControl>
                                                         <Input type="date" {...field} />
                                                     </FormControl>

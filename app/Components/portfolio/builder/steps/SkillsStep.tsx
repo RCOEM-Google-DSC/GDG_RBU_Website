@@ -20,7 +20,7 @@ import { nb } from "@/components/ui/neo-brutalism";
 import { Code2, Layers, Wrench } from "lucide-react";
 
 import { SkillsCombobox } from "../SkillsCombobox";
-import type { FormData } from "../schema";
+import type { FormData } from "../helpers/schema";
 
 interface SkillsStepProps {
     form: UseFormReturn<FormData>;
