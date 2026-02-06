@@ -30,7 +30,7 @@ export function usePortfolioForm({
     string | undefined
   >(existingPortfolio?.id);
 
-  // Transform existing portfolio data to convert null to undefined for form compatibility
+
   const transformedProjects =
     existingPortfolio?.projects?.map((p) => ({
       id: p.id,
