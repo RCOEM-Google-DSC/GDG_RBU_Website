@@ -62,7 +62,7 @@ export async function POST(
       .from("blogs")
       .select("likes_count")
       .eq("id", id)
-      .single();
+      .maybeSingle();
 
     const newLikesCount = Math.max((blogData?.likes_count || 0) - 1, 0);
 

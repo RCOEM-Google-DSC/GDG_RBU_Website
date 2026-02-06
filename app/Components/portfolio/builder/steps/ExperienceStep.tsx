@@ -9,6 +9,8 @@ import {
     FileText,
     Calendar,
     CalendarCheck,
+    Save,
+    Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,9 +37,16 @@ import type { FormData } from "../helpers/schema";
 interface ExperienceStepProps {
     form: UseFormReturn<FormData>;
     fieldArray: UseFieldArrayReturn<FormData, "experience">;
+    onSave?: (publish?: boolean) => void;
+    isSaving?: boolean;
 }
 
-export function ExperienceStep({ form, fieldArray }: ExperienceStepProps) {
+export function ExperienceStep({
+    form,
+    fieldArray,
+    onSave,
+    isSaving,
+}: ExperienceStepProps) {
     const { fields, append, remove } = fieldArray;
 
     return (
@@ -196,30 +205,52 @@ export function ExperienceStep({ form, fieldArray }: ExperienceStepProps) {
                     </div>
                 ))}
 
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() =>
-                        append({
-                            company: "",
-                            role: "",
-                            description: "",
-                            start_date: "",
-                            end_date: "",
-                            is_current: false,
-                        })
-                    }
-                    className={nb({
-                        border: 3,
-                        shadow: "md",
-                        hover: "lift",
-                        active: "push",
-                        className: "w-full md:w-auto",
-                    })}
-                >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Experience
-                </Button>
+                <div className="flex flex-col md:flex-row gap-4 pt-4 border-t-2 border-zinc-100">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() =>
+                            append({
+                                company: "",
+                                role: "",
+                                description: "",
+                                start_date: "",
+                                end_date: "",
+                                is_current: false,
+                            })
+                        }
+                        className={nb({
+                            border: 3,
+                            shadow: "md",
+                            hover: "lift",
+                            active: "push",
+                            className: "w-full md:w-auto",
+                        })}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Experience
+                    </Button>
+
+                    <Button
+                        type="button"
+                        onClick={() => onSave?.(false)}
+                        disabled={isSaving}
+                        className={nb({
+                            border: 3,
+                            shadow: "md",
+                            hover: "lift",
+                            active: "push",
+                            className: "w-full md:w-auto bg-blue-500 text-white hover:bg-blue-600 ml-auto",
+                        })}
+                    >
+                        {isSaving ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                            <Save className="mr-2 h-4 w-4" />
+                        )}
+                        Save Progress
+                    </Button>
+                </div>
             </CardContent>
         </Card>
     );

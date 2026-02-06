@@ -7,6 +7,7 @@ import {
   Instagram,
   Mail,
   Globe,
+  Youtube,
   LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -35,6 +36,7 @@ const socialIconMap: Record<string, LucideIcon> = {
   instagram: Instagram,
   email: Mail,
   website: Globe,
+  youtube: Youtube,
 };
 
 const Footer: React.FC<FooterProps> = ({

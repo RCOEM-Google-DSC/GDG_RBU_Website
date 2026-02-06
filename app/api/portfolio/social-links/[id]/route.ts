@@ -20,36 +20,60 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body: Partial<SocialLinkFormData> & { portfolio_id?: string } = await request.json();
+    const body = await request.json();
+    
+    // Strip fields that shouldn't be updated
+    const { id: bodyId, created_at, portfolio_id, ...updateData } = body;
 
     // Verify ownership
     const { data: linkCheck, error: checkError } = await supabase
       .from("portfolio_social_links")
-      .select("portfolios!inner(user_id)")
+      .select("id, portfolio_id, portfolios!inner(user_id)")
       .eq("id", id)
       .eq("portfolios.user_id", user.id)
       .maybeSingle();
 
     if (checkError || !linkCheck) {
+      console.error("Ownership check error:", checkError);
       return NextResponse.json(
         { error: "Social link not found or unauthorized" },
         { status: 404 },
       );
     }
 
+    // Check for platform uniqueness if platform is being changed
+    if (updateData.platform) {
+      const { data: existing } = await supabase
+        .from("portfolio_social_links")
+        .select("id")
+        .eq("portfolio_id", linkCheck.portfolio_id)
+        .eq("platform", updateData.platform)
+        .neq("id", id)
+        .maybeSingle();
+
+      if (existing) {
+        return NextResponse.json(
+          { error: `A link for ${updateData.platform} already exists.` },
+          { status: 409 },
+        );
+      }
+    }
+
     const { data: social_link, error } = await supabase
       .from("portfolio_social_links")
-      .update(body)
+      .update(updateData)
       .eq("id", id)
       .select()
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error("Supabase update error:", error);
+      return NextResponse.json({ error: error.message || "Failed to update" }, { status: 500 });
     }
 
     return NextResponse.json({ social_link }, { status: 200 });
   } catch (error: unknown) {
+    console.error("PUT /api/portfolio/social-links/[id] error:", error);
     const message =
       error instanceof Error ? error.message : "Failed to update social link";
     return NextResponse.json({ error: message }, { status: 500 });

@@ -17,16 +17,19 @@ import {
     FormDescription,
 } from "@/components/ui/form";
 import { nb } from "@/components/ui/neo-brutalism";
-import { Code2, Layers, Wrench } from "lucide-react";
+import { Code2, Layers, Wrench, Save, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 import { SkillsCombobox } from "../SkillsCombobox";
 import type { FormData } from "../helpers/schema";
 
 interface SkillsStepProps {
     form: UseFormReturn<FormData>;
+    onSave?: (publish?: boolean) => void;
+    isSaving?: boolean;
 }
 
-export function SkillsStep({ form }: SkillsStepProps) {
+export function SkillsStep({ form, onSave, isSaving }: SkillsStepProps) {
     return (
         <Card className={nb({ border: 4, shadow: "lg", className: "bg-white" })}>
             <CardHeader>
@@ -113,6 +116,28 @@ export function SkillsStep({ form }: SkillsStepProps) {
                         </FormItem>
                     )}
                 />
+
+                <div className="flex justify-end pt-4 border-t-2 border-zinc-100">
+                    <Button
+                        type="button"
+                        onClick={() => onSave?.(false)}
+                        disabled={isSaving}
+                        className={nb({
+                            border: 3,
+                            shadow: "md",
+                            hover: "lift",
+                            active: "push",
+                            className: "bg-blue-500 text-white hover:bg-blue-600",
+                        })}
+                    >
+                        {isSaving ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                            <Save className="mr-2 h-4 w-4" />
+                        )}
+                        Save Progress
+                    </Button>
+                </div>
             </CardContent>
         </Card>
     );

@@ -124,11 +124,13 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error("Supabase insert error:", error);
+      return NextResponse.json({ error: error.message || "Failed to create" }, { status: 500 });
     }
 
     return NextResponse.json({ social_link }, { status: 201 });
   } catch (error: unknown) {
+    console.error("POST /api/portfolio/social-links error:", error);
     const message =
       error instanceof Error ? error.message : "Failed to create social link";
     return NextResponse.json({ error: message }, { status: 500 });

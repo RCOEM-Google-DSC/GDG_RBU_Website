@@ -26,6 +26,10 @@ export function usePortfolioForm({
   const [showPublishDialog, setShowPublishDialog] = React.useState(false);
   const [isPendingPublish, setIsPendingPublish] = React.useState(false);
 
+  const [activePortfolioId, setActivePortfolioId] = React.useState<
+    string | undefined
+  >(existingPortfolio?.id);
+
   // Transform existing portfolio data to convert null to undefined for form compatibility
   const transformedProjects =
     existingPortfolio?.projects?.map((p) => ({
@@ -100,7 +104,7 @@ export function usePortfolioForm({
       if (
         portfolio &&
         portfolio.is_published &&
-        portfolio.id !== existingPortfolio?.id
+        portfolio.id !== activePortfolioId
       ) {
         setShowPublishDialog(true);
       } else {
@@ -113,18 +117,41 @@ export function usePortfolioForm({
   };
 
   const handleSave = async (publish: boolean = false) => {
+    // Trigger validation
+    const isValid = await form.trigger();
+    if (!isValid) {
+      if (publish) {
+        toast.error("Please fix the errors in the form before publishing.");
+        return;
+      } else {
+        toast.error(
+          "Some fields have errors, but progress will be saved where possible.",
+        );
+      }
+    }
+
     setIsSaving(true);
     try {
       const data = form.getValues();
 
+      // Fetch current state to handle deletions
+      let currentPortfolio = null;
+      if (activePortfolioId) {
+        const res = await fetch(`/api/portfolio?id=${activePortfolioId}`);
+        if (res.ok) {
+          const json = await res.json();
+          currentPortfolio = json.portfolio;
+        }
+      }
+
       // Save/update portfolio
-      const portfolioMethod = existingPortfolio ? "PUT" : "POST";
+      const portfolioMethod = activePortfolioId ? "PUT" : "POST";
       const portfolioRes = await fetch("/api/portfolio", {
         method: portfolioMethod,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data.portfolio,
-          id: existingPortfolio?.id, // Pass ID for PUT
+          id: activePortfolioId,
           is_published: publish,
         }),
       });
@@ -136,62 +163,185 @@ export function usePortfolioForm({
 
       const { portfolio: savedPortfolio } = await portfolioRes.json();
       const portfolioId = savedPortfolio.id;
+      setActivePortfolioId(portfolioId);
+
+      // Handle project deletions
+      if (currentPortfolio?.projects) {
+        const currentIds = data.projects.map((p) => p.id).filter(Boolean);
+        const toDelete = currentPortfolio.projects.filter(
+          (p: any) => !currentIds.includes(p.id),
+        );
+        for (const p of toDelete) {
+          await fetch(`/api/portfolio/projects/${p.id}`, { method: "DELETE" });
+        }
+      }
 
       // Save projects
-      for (const project of data.projects) {
-        const projectData = { ...project, portfolio_id: portfolioId };
-        if (project.id) {
-          await fetch(`/api/portfolio/projects/${project.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(projectData),
-          });
-        } else {
-          await fetch("/api/portfolio/projects", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(projectData),
+      for (let i = 0; i < data.projects.length; i++) {
+        const project = data.projects[i];
+        const projectData = {
+          ...project,
+          portfolio_id: portfolioId,
+          display_order: i + 1,
+        };
+        const res = project.id
+          ? await fetch(`/api/portfolio/projects/${project.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(projectData),
+            })
+          : await fetch("/api/portfolio/projects", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(projectData),
+            });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          const errMsg = err.error || "Unknown error";
+          console.error(`Project save error (${res.status}):`, errMsg);
+          toast.error(`Failed to save project: ${errMsg}`);
+        }
+      }
+
+      // Handle experience deletions
+      if (currentPortfolio?.experience) {
+        const currentIds = data.experience.map((e) => e.id).filter(Boolean);
+        const toDelete = currentPortfolio.experience.filter(
+          (e: any) => !currentIds.includes(e.id),
+        );
+        for (const e of toDelete) {
+          await fetch(`/api/portfolio/experience/${e.id}`, {
+            method: "DELETE",
           });
         }
       }
 
       // Save experience
-      for (const exp of data.experience) {
-        const expData = { ...exp, portfolio_id: portfolioId };
-        if (exp.id) {
-          await fetch(`/api/portfolio/experience/${exp.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(expData),
-          });
-        } else {
-          await fetch("/api/portfolio/experience", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(expData),
+      for (let i = 0; i < data.experience.length; i++) {
+        const exp = data.experience[i];
+        const expData = {
+          ...exp,
+          portfolio_id: portfolioId,
+          display_order: i + 1,
+        };
+        const res = exp.id
+          ? await fetch(`/api/portfolio/experience/${exp.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(expData),
+            })
+          : await fetch("/api/portfolio/experience", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(expData),
+            });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          const errMsg = err.error || "Unknown error";
+          console.error(`Experience save error (${res.status}):`, errMsg);
+          toast.error(`Failed to save experience: ${errMsg}`);
+        }
+      }
+
+      // Handle social link deletions
+      if (currentPortfolio?.social_links) {
+        const currentIds = data.social_links.map((s) => s.id).filter(Boolean);
+        const toDelete = currentPortfolio.social_links.filter(
+          (s: any) => !currentIds.includes(s.id),
+        );
+        for (const s of toDelete) {
+          await fetch(`/api/portfolio/social-links/${s.id}`, {
+            method: "DELETE",
           });
         }
       }
 
       // Save social links
-      for (const link of data.social_links) {
-        const linkData = { ...link, portfolio_id: portfolioId };
-        if (link.id) {
-          await fetch(`/api/portfolio/social-links/${link.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(linkData),
-          });
-        } else {
-          await fetch("/api/portfolio/social-links", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(linkData),
-          });
+      for (let i = 0; i < data.social_links.length; i++) {
+        const link = data.social_links[i];
+        const linkData = {
+          ...link,
+          portfolio_id: portfolioId,
+          display_order: i + 1,
+        };
+        const res = link.id
+          ? await fetch(`/api/portfolio/social-links/${link.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(linkData),
+            })
+          : await fetch("/api/portfolio/social-links", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(linkData),
+            });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          const errMsg = err.error || "Unknown error";
+          console.error(`Social link save error (${res.status}):`, errMsg);
+          toast.error(`Failed to save social link: ${errMsg}`);
         }
       }
 
       toast.success(publish ? "Portfolio published!" : "Portfolio saved!");
+
+      // Fetch the updated portfolio using the specific ID to get new IDs for projects/experience/social_links
+      const refreshRes = await fetch(`/api/portfolio?id=${portfolioId}`);
+      if (refreshRes.ok) {
+        const { portfolio: refreshedPortfolio } = await refreshRes.json();
+        if (refreshedPortfolio) {
+          // Update projects with new IDs using a safe merge
+          if (refreshedPortfolio.projects) {
+            const currentProjects = form.getValues("projects");
+            const updatedProjects = currentProjects.map((p, idx) => {
+              // Try to find matching project from DB to get its ID
+              const saved = refreshedPortfolio.projects.find(
+                (sp: any) =>
+                  (p.id && sp.id === p.id) ||
+                  (sp.title === p.title && sp.display_order === idx + 1),
+              );
+              return saved
+                ? {
+                    ...p,
+                    id: saved.id,
+                    description: saved.description ?? p.description,
+                    image_url: saved.image_url ?? p.image_url,
+                  }
+                : p;
+            });
+            form.setValue("projects", updatedProjects);
+          }
+
+          // Update experience with new IDs using a safe merge
+          if (refreshedPortfolio.experience) {
+            const currentExp = form.getValues("experience");
+            const updatedExp = currentExp.map((e, idx) => {
+              const saved = refreshedPortfolio.experience.find(
+                (se: any) =>
+                  (e.id && se.id === e.id) ||
+                  (se.company === e.company && se.display_order === idx + 1),
+              );
+              return saved ? { ...e, id: saved.id } : e;
+            });
+            form.setValue("experience", updatedExp);
+          }
+
+          // Update social links with new IDs using a safe merge
+          if (refreshedPortfolio.social_links) {
+            const currentLinks = form.getValues("social_links");
+            const updatedLinks = currentLinks.map((l) => {
+              const saved = refreshedPortfolio.social_links.find(
+                (sl: any) => (l.id && sl.id === l.id) || sl.platform === l.platform,
+              );
+              return saved ? { ...l, id: saved.id } : l;
+            });
+            form.setValue("social_links", updatedLinks);
+          }
+        }
+      }
 
       if (publish) {
         const templateId = data.portfolio.template_id;

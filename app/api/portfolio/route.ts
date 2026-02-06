@@ -3,7 +3,7 @@ import { createClient } from "@/supabase/server";
 import type { Portfolio } from "@/lib/types";
 
 // GET - Fetch current user's portfolio with all relations
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
 
@@ -15,7 +15,10 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data: portfolio, error } = await supabase
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    let query = supabase
       .from("portfolios")
       .select(
         `
@@ -25,12 +28,19 @@ export async function GET() {
         experience:portfolio_experience(*),
         social_links:portfolio_social_links(*)
       `,
-      )
-      .eq("user_id", user.id)
-      .order("is_published", { ascending: false })
-      .order("updated_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      );
+
+    if (id) {
+      query = query.eq("id", id).eq("user_id", user.id);
+    } else {
+      query = query
+        .eq("user_id", user.id)
+        .order("is_published", { ascending: false })
+        .order("updated_at", { ascending: false })
+        .limit(1);
+    }
+
+    const { data: portfolio, error } = await query.maybeSingle();
 
     if (error && error.code !== "PGRST116") {
       return NextResponse.json({ error: error.message }, { status: 500 });

@@ -28,6 +28,7 @@ import {
     User,
     Image as ImageIcon,
     FileText,
+    Save,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -35,9 +36,11 @@ import type { FormData } from "../helpers/schema";
 
 interface BasicInfoStepProps {
     form: UseFormReturn<FormData>;
+    onSave?: (publish?: boolean) => void;
+    isSaving?: boolean;
 }
 
-export function BasicInfoStep({ form }: BasicInfoStepProps) {
+export function BasicInfoStep({ form, onSave, isSaving }: BasicInfoStepProps) {
     const [isUploading, setIsUploading] = useState(false);
     const [uploadError, setUploadError] = useState<string | null>(null);
 
@@ -239,6 +242,28 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
                         </FormItem>
                     )}
                 />
+
+                <div className="flex justify-end pt-4 border-t-2 border-zinc-100">
+                    <Button
+                        type="button"
+                        onClick={() => onSave?.(false)}
+                        disabled={isSaving}
+                        className={nb({
+                            border: 3,
+                            shadow: "md",
+                            hover: "lift",
+                            active: "push",
+                            className: "bg-blue-500 text-white hover:bg-blue-600",
+                        })}
+                    >
+                        {isSaving ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                            <Save className="mr-2 h-4 w-4" />
+                        )}
+                        Save Progress
+                    </Button>
+                </div>
             </CardContent>
         </Card>
     );

@@ -92,23 +92,50 @@ export function PortfolioBuilderForm({
                         <form className="space-y-6">
                             {/* Step 1: Template Selection */}
                             {currentStep === 1 && (
-                                <TemplateStep form={form} templates={templates} />
+                                <TemplateStep
+                                    form={form}
+                                    templates={templates}
+                                    onSave={handleSave}
+                                    isSaving={isSaving}
+                                />
                             )}
 
                             {/* Step 2: Basic Info */}
-                            {currentStep === 2 && <BasicInfoStep form={form} />}
+                            {currentStep === 2 && (
+                                <BasicInfoStep
+                                    form={form}
+                                    onSave={handleSave}
+                                    isSaving={isSaving}
+                                />
+                            )}
 
                             {/* Step 3: Skills */}
-                            {currentStep === 3 && <SkillsStep form={form} />}
+                            {currentStep === 3 && (
+                                <SkillsStep
+                                    form={form}
+                                    onSave={handleSave}
+                                    isSaving={isSaving}
+                                />
+                            )}
 
                             {/* Step 4: Projects */}
                             {currentStep === 4 && (
-                                <ProjectsStep form={form} fieldArray={projectsFieldArray} />
+                                <ProjectsStep
+                                    form={form}
+                                    fieldArray={projectsFieldArray}
+                                    onSave={handleSave}
+                                    isSaving={isSaving}
+                                />
                             )}
 
                             {/* Step 5: Experience */}
                             {currentStep === 5 && (
-                                <ExperienceStep form={form} fieldArray={experienceFieldArray} />
+                                <ExperienceStep
+                                    form={form}
+                                    fieldArray={experienceFieldArray}
+                                    onSave={handleSave}
+                                    isSaving={isSaving}
+                                />
                             )}
 
                             {/* Step 6: Social Links */}
@@ -117,6 +144,8 @@ export function PortfolioBuilderForm({
                                     form={form}
                                     fieldArray={socialLinksFieldArray}
                                     usedPlatforms={usedPlatforms}
+                                    onSave={handleSave}
+                                    isSaving={isSaving}
                                 />
                             )}
 

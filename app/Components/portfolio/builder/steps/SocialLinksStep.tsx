@@ -1,7 +1,7 @@
 "use client";
 
 import { UseFormReturn, UseFieldArrayReturn } from "react-hook-form";
-import { Plus, Trash2, Share2, Link } from "lucide-react";
+import { Plus, Trash2, Share2, Link, Save, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -26,12 +26,16 @@ interface SocialLinksStepProps {
     form: UseFormReturn<FormData>;
     fieldArray: UseFieldArrayReturn<FormData, "social_links">;
     usedPlatforms: string[];
+    onSave?: (publish?: boolean) => void;
+    isSaving?: boolean;
 }
 
 export function SocialLinksStep({
     form,
     fieldArray,
     usedPlatforms,
+    onSave,
+    isSaving,
 }: SocialLinksStepProps) {
     const { fields, append, remove } = fieldArray;
 
@@ -107,26 +111,48 @@ export function SocialLinksStep({
                     </div>
                 ))}
 
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() =>
-                        append({
-                            platform: "",
-                            url: "",
-                        })
-                    }
-                    className={nb({
-                        border: 3,
-                        shadow: "md",
-                        hover: "lift",
-                        active: "push",
-                        className: "w-full md:w-auto",
-                    })}
-                >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Social Link
-                </Button>
+                <div className="flex flex-col md:flex-row gap-4 pt-4 border-t-2 border-zinc-100">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() =>
+                            append({
+                                platform: "",
+                                url: "",
+                            })
+                        }
+                        className={nb({
+                            border: 3,
+                            shadow: "md",
+                            hover: "lift",
+                            active: "push",
+                            className: "w-full md:w-auto",
+                        })}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Social Link
+                    </Button>
+
+                    <Button
+                        type="button"
+                        onClick={() => onSave?.(false)}
+                        disabled={isSaving}
+                        className={nb({
+                            border: 3,
+                            shadow: "md",
+                            hover: "lift",
+                            active: "push",
+                            className: "w-full md:w-auto bg-blue-500 text-white hover:bg-blue-600 ml-auto",
+                        })}
+                    >
+                        {isSaving ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                            <Save className="mr-2 h-4 w-4" />
+                        )}
+                        Save Progress
+                    </Button>
+                </div>
             </CardContent>
         </Card>
     );
