@@ -23,15 +23,17 @@ export async function POST(req: Request) {
     const apiSecret = process.env["CLOUDINARY_API_SECRET"];
 
     if (!cloudName || !apiKey || !apiSecret) {
+      const availableKeys = Object.keys(process.env).filter(k => k.startsWith("CLOUDINARY_"));
       console.error("Cloudinary env vars missing in portfolio upload:", {
         hasCloudName: !!cloudName,
         hasApiKey: !!apiKey,
         hasApiSecret: !!apiSecret,
+        availableKeys
       });
       return NextResponse.json(
         { 
             error: "Cloudinary env vars missing", 
-            details: `Missing: ${!cloudName ? 'cloud_name ' : ''}${!apiKey ? 'api_key ' : ''}${!apiSecret ? 'api_secret' : ''}`.trim()
+            details: `Missing: ${!cloudName ? 'cloud_name ' : ''}${!apiKey ? 'api_key ' : ''}${!apiSecret ? 'api_secret' : ''}. Available Cloudinary keys: ${availableKeys.join(", ")}`
         },
         { status: 500 },
       );

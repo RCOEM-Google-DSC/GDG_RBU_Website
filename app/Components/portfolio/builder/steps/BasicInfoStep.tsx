@@ -80,7 +80,10 @@ export function BasicInfoStep({ form, onSave, isSaving }: BasicInfoStepProps) {
 
             if (!response.ok) {
                 const error = await response.json();
-                throw new Error(error.error || "Upload failed");
+                const errorMessage = error.details 
+                    ? `${error.error}: ${error.details}`
+                    : (error.error || "Upload failed");
+                throw new Error(errorMessage);
             }
 
             const data = await response.json();
