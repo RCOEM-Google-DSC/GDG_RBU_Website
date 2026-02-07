@@ -18,12 +18,18 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# For Supabase keys (passed via --build-arg)
+# For Supabase and Cloudinary keys (passed via --build-arg)
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ARG CLOUDINARY_CLOUD_NAME
+ARG CLOUDINARY_API_KEY
+ARG CLOUDINARY_API_SECRET
 
 ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME
+ENV CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY
+ENV CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -59,7 +65,7 @@ CMD ["node", "server.js"]
 
 
 #  To build the image
-# docker build --build-arg NEXT_PUBLIC_SUPABASE_URL=your_url --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key -t gdg-rbu-website .
+# docker build --build-arg NEXT_PUBLIC_SUPABASE_URL=your_url --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key --build-arg CLOUDINARY_CLOUD_NAME=your_name --build-arg CLOUDINARY_API_KEY=your_key --build-arg CLOUDINARY_API_SECRET=your_secret -t gdg-rbu-website .
 
 # To run the image
 # docker run -p 3000:3000 gdg-rbu-website
