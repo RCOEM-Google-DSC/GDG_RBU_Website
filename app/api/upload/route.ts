@@ -4,21 +4,22 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 
-// Configure Cloudinary
+// Configure Cloudinary using bracket notation to avoid static inlining issues
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
-  api_key: process.env.CLOUDINARY_API_KEY!,
-  api_secret: process.env.CLOUDINARY_API_SECRET!,
+  cloud_name: process.env["CLOUDINARY_CLOUD_NAME"],
+  api_key: process.env["CLOUDINARY_API_KEY"],
+  api_secret: process.env["CLOUDINARY_API_SECRET"],
 });
 
 export async function POST(req: Request) {
   try {
     // Safety check
     if (
-      !process.env.CLOUDINARY_CLOUD_NAME ||
-      !process.env.CLOUDINARY_API_KEY ||
-      !process.env.CLOUDINARY_API_SECRET
+      !process.env["CLOUDINARY_CLOUD_NAME"] ||
+      !process.env["CLOUDINARY_API_KEY"] ||
+      !process.env["CLOUDINARY_API_SECRET"]
     ) {
+      console.error("Cloudinary env vars missing in upload route");
       return NextResponse.json(
         { error: "Cloudinary env vars missing" },
         { status: 500 },

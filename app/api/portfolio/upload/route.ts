@@ -4,16 +4,9 @@ import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { createClient } from "@/supabase/server";
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
-  api_key: process.env.CLOUDINARY_API_KEY!,
-  api_secret: process.env.CLOUDINARY_API_SECRET!,
-});
-
 export async function POST(req: Request) {
   try {
-    // Authenticate user
+    // Authenticate user first
     const supabase = await createClient();
     const {
       data: { user },
@@ -24,17 +17,32 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Safety check for Cloudinary credentials
-    if (
-      !process.env.CLOUDINARY_CLOUD_NAME ||
-      !process.env.CLOUDINARY_API_KEY ||
-      !process.env.CLOUDINARY_API_SECRET
-    ) {
+    // Safety check for Cloudinary credentials using bracket notation to avoid static inlining issues
+    const cloudName = process.env["CLOUDINARY_CLOUD_NAME"];
+    const apiKey = process.env["CLOUDINARY_API_KEY"];
+    const apiSecret = process.env["CLOUDINARY_API_SECRET"];
+
+    if (!cloudName || !apiKey || !apiSecret) {
+      console.error("Cloudinary env vars missing in portfolio upload:", {
+        hasCloudName: !!cloudName,
+        hasApiKey: !!apiKey,
+        hasApiSecret: !!apiSecret,
+      });
       return NextResponse.json(
-        { error: "Cloudinary env vars missing" },
+        { 
+            error: "Cloudinary env vars missing", 
+            details: `Missing: ${!cloudName ? 'cloud_name ' : ''}${!apiKey ? 'api_key ' : ''}${!apiSecret ? 'api_secret' : ''}`.trim()
+        },
         { status: 500 },
       );
     }
+
+    // Configure Cloudinary
+    cloudinary.config({
+      cloud_name: cloudName,
+      api_key: apiKey,
+      api_secret: apiSecret,
+    });
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
