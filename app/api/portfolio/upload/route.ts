@@ -1,12 +1,34 @@
+// app/api/portfolio/upload/route.ts
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { createClient } from "@/supabase/server";
 
+// Configure Cloudinary using bracket notation
+cloudinary.config({
+  cloud_name: process.env["CLOUDINARY_CLOUD_NAME"],
+  api_key: process.env["CLOUDINARY_API_KEY"],
+  api_secret: process.env["CLOUDINARY_API_SECRET"],
+});
+
 export async function POST(req: Request) {
   try {
-    // Authenticate user first
+    // Safety check using bracket notation
+    if (
+      !process.env["CLOUDINARY_CLOUD_NAME"] ||
+      !process.env["CLOUDINARY_API_KEY"] ||
+      !process.env["CLOUDINARY_API_SECRET"]
+    ) {
+      console.error("Cloudinary env vars missing in portfolio upload");
+      return NextResponse.json(
+        { error: "Cloudinary env vars missing", details: "Check server environment variables" },
+        { status: 500 },
+      );
+    }
+
+    // Authenticate user
     const supabase = await createClient();
     const {
       data: { user },
@@ -17,35 +39,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Safety check for Cloudinary credentials using bracket notation to avoid static inlining issues
-    const cloudName = process.env["CLOUDINARY_CLOUD_NAME"];
-    const apiKey = process.env["CLOUDINARY_API_KEY"];
-    const apiSecret = process.env["CLOUDINARY_API_SECRET"];
-
-    if (!cloudName || !apiKey || !apiSecret) {
-      const availableKeys = Object.keys(process.env).filter(k => k.startsWith("CLOUDINARY_"));
-      console.error("Cloudinary env vars missing in portfolio upload:", {
-        hasCloudName: !!cloudName,
-        hasApiKey: !!apiKey,
-        hasApiSecret: !!apiSecret,
-        availableKeys
-      });
-      return NextResponse.json(
-        { 
-            error: "Cloudinary env vars missing", 
-            details: `Missing: ${!cloudName ? 'cloud_name ' : ''}${!apiKey ? 'api_key ' : ''}${!apiSecret ? 'api_secret' : ''}. Available Cloudinary keys: ${availableKeys.join(", ")}`
-        },
-        { status: 500 },
-      );
-    }
-
-    // Configure Cloudinary
-    cloudinary.config({
-      cloud_name: cloudName,
-      api_key: apiKey,
-      api_secret: apiSecret,
-    });
-
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
 
@@ -53,57 +46,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Validate file type
-    const validTypes = ["image/jpeg", "image/png", "image/webp", "image/heic"];
-    if (!validTypes.includes(file.type)) {
-      return NextResponse.json(
-        {
-          error:
-            "Invalid file type. Only JPEG, PNG, WEBP, and HEIC are allowed.",
-        },
-        { status: 400 },
-      );
-    }
-
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      return NextResponse.json(
-        { error: "File size exceeds 5MB limit" },
-        { status: 400 },
-      );
-    }
-
     // Convert file to buffer
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // Upload to Cloudinary with user-specific public_id
+    // Upload to Cloudinary
     const uploadResult: any = await new Promise((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream(
-          {
-            folder: "GDG_Portfolio",
-            public_id: `profile_${user.id}`, // Use user ID as filename
-            resource_type: "auto",
-            overwrite: true, // Overwrite existing image for this user
-            eager: [
-              {
-                width: 400,
-                height: 400,
-                crop: "fill",
-                gravity: "face",
-                fetch_format: "auto",
-                quality: "auto",
-              },
-            ],
-            eager_async: false,
-          },
-          (err, result) => {
-            if (err) reject(err);
-            else resolve(result);
-          },
-        )
-        .end(buffer);
+      cloudinary.uploader.upload_stream(
+        {
+          folder: "GDG_Portfolio",
+          public_id: `profile_${user.id}`,
+          resource_type: "auto",
+          overwrite: true,
+          eager: [{ width: 400, height: 400, crop: "fill", gravity: "face", fetch_format: "auto", quality: "auto" }],
+          eager_async: false,
+        },
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        },
+      ).end(buffer);
     });
 
     const transformedUrl = uploadResult?.eager?.[0]?.secure_url ?? null;
