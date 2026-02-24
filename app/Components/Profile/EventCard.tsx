@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Calendar, Share2 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UIEvent } from "@/lib/types";
 import { createClient } from "@/supabase/client";
 import Image from "next/image";

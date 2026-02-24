@@ -3,7 +3,6 @@
 import React from "react";
 import { Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface GitHubRepoCardProps {
   repoUrl?: string;

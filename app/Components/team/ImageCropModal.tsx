@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
+import { nb } from "@/components/ui/neo-brutalism";
 
 interface ImageCropModalProps {
   open: boolean;

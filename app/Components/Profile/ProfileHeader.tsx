@@ -2,7 +2,7 @@
 
 import { Mail, Phone, MapPin, Github, Linkedin } from "lucide-react";
 import { FaXTwitter } from "react-icons/fa6";
-import { UIUser } from "../../../lib/types";
+import { UIUser } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";

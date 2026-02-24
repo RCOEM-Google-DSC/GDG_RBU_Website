@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Loader2 } from "lucide-react";
+import { X } from "lucide-react";
 import Image from "next/image"
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 type LightboxProps = {
     open: boolean;
     src: string;
-    onClose: () => void;
+    onCloseAction: () => void;
 };
 
-export const Lightbox: React.FC<LightboxProps> = ({ open, src, onClose }) => {
+export const Lightbox: React.FC<LightboxProps> = ({ open, src, onCloseAction }) => {
     const [imageLoaded, setImageLoaded] = useState(false);
 
     // Reset loading state when lightbox opens with new image
@@ -25,7 +25,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ open, src, onClose }) => {
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 cursor-zoom-out"
-            onClick={onClose}
+            onClick={onCloseAction}
         >
             <div className="absolute inset-0 bg-black/90 backdrop-blur-sm"></div>
 
@@ -37,7 +37,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ open, src, onClose }) => {
                 style={{ minWidth: imageLoaded ? 'auto' : '300px', minHeight: imageLoaded ? 'auto' : '300px' }}
             >
                 <button
-                    onClick={onClose}
+                    onClick={onCloseAction}
                     className={nb({
                         border: 4,
                         shadow: "lg",

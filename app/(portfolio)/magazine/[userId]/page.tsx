@@ -9,7 +9,6 @@ import Philosophy from '../components/Philosophy';
 import Footer from '../components/Footer';
 import { getPortfolioData } from '../lib/getPortfolioData';
 import { notFound } from 'next/navigation';
-import type { Metadata } from 'next';
 
 interface PageProps {
 

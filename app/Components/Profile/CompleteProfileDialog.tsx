@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { UIUser } from "../../../lib/types";
+import { UIUser } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { supabase, getCurrentUserId } from "../../../supabase/supabase";
+import { supabase, getCurrentUserId } from "@/supabase/supabase";
 import { Camera } from "lucide-react";
 import ImageCropModal from "../team/ImageCropModal";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";

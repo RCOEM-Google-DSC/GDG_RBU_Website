@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { Save, Eye, Loader2, CircleCheckBig } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { nb } from "@/components/ui/neo-brutalism";
-import { toast } from "sonner";
 
 import type { FormData } from "./helpers/schema";
 

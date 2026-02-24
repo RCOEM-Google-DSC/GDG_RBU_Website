@@ -6,12 +6,12 @@ export interface Blog {
   title: string;
   image_url: string;
   published_at: string;
-  likes_count: number;
   markdown: string;
   writer: {
     name: string;
     image_url: string;
   };
+  comments?: Comment[];
 }
 
 export interface BlogAuthorProps {
@@ -26,7 +26,6 @@ export interface BlogCardProps {
   title: string;
   imageUrl: string;
   publishedAt: string;
-  likesCount: number;
   writerName: string;
   writerImage: string;
   markdownPreview: string;

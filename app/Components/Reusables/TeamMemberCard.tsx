@@ -3,10 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { Github, Linkedin, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/supabase/client";
 import Link from "next/link";
-import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
+import { nb } from "@/components/ui/neo-brutalism";
 
 interface TeamMemberCardProps {
   id: string;

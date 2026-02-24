@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { UIBadge } from "../../../lib/types";
+import { UIBadge } from "@/lib/types";
 
 interface BadgeCardProps {
   badge: UIBadge;

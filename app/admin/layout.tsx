@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { redirect } from "next/navigation";
 import SideBar from "../Components/Admin/SideBar";
 import {
   SidebarInset,

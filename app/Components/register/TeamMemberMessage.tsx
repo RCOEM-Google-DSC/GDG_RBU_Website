@@ -1,7 +1,6 @@
 import React from "react";
 import { Check, Mail, User, Users } from "lucide-react";
 import { THEME } from "./utils";
-import { NeoBrutalism } from "@/components/ui/neo-brutalism";
 
 interface TeamMemberMessageProps {
   info: {

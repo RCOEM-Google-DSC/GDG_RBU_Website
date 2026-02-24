@@ -5,7 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/supabase/client";
 import ProfileDropdown from "../Common/ProfileDropdown";
 import MobileProfileDropdown from "../Common/MobileProfileDropdown";
-import { Menu, X, Terminal, User as UserIcon } from "lucide-react";
+import { Menu, X, Terminal} from "lucide-react";
 import Image from "next/image";
 import { nb } from "@/components/ui/neo-brutalism";
 

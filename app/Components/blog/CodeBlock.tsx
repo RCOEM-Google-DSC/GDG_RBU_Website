@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import hljs from "highlight.js";
 import "highlight.js/styles/atom-one-dark.css";
 

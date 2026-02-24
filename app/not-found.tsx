@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Home, ArrowLeft, Search, Terminal } from "lucide-react";
+import { Home, ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 

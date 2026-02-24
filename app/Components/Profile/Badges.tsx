@@ -7,7 +7,7 @@ import {
   UIBadge,
   Registration,
   EventRow,
-} from "../../../lib/types";
+} from "@/lib/types";
 
 // ---------- CONSTANTS ----------
 

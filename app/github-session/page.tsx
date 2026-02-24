@@ -13,7 +13,7 @@ import {
   Rocket,
 } from "lucide-react";
 import Image from "next/image";
-import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
+import { NeoBrutalism } from "@/components/ui/neo-brutalism";
 import { DecoCross } from "@/app/Components/session-docs/DecoCross";
 import { DecoZigZag } from "@/app/Components/session-docs/DecoZigZag";
 import { DecoCircle } from "@/app/Components/session-docs/DecoCircle";

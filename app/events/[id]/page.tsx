@@ -109,7 +109,6 @@ export default function EventPage({
     ? `${event.max_participants}+`
     : "∞";
 
-  const price = event.is_paid ? `₹${event.fee}` : "FREE";
 
   /* ---------------- STYLES ---------------- */
   // small helper to normalize partner data and image urls
@@ -239,7 +238,7 @@ export default function EventPage({
                 shadow: "lg",
                 hover: "shadowGrow",
                 className:
-                  "block bg-[#ffbe0b] p-6 md:p-8 rotate-0 md:-rotate-2 text-center text-black font-black uppercase text-lg md:text-xl flex flex-col items-center justify-center gap-3 cursor-pointer",
+                  "bg-[#ffbe0b] p-6 md:p-8 rotate-0 md:-rotate-2 text-center text-black font-black uppercase text-lg md:text-xl flex flex-col items-center justify-center gap-3 cursor-pointer",
               })}
             >
               <Ticket size={40} className="md:w-12 md:h-12" />

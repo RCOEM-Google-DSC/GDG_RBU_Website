@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import * as fs from "fs";
 import * as path from "path";
 import * as dotenv from "dotenv";
 
@@ -15,7 +14,7 @@ if (!supabaseUrl) {
 
 if (!supabaseServiceKey) {
   console.error("Missing SUPABASE_SERVICE_ROLE_KEY in .env.local");
-  console.error(
+  console
     "You can find this in your Supabase Dashboard under Settings > API",
   );
   process.exit(1);
@@ -96,7 +95,6 @@ async function createBlogPost(post: BlogPost) {
       title: post.title,
       markdown: markdownContent,
       published_at: post.publishedAt || new Date().toISOString(),
-      likes_count: 0,
     })
     .select()
     .single();

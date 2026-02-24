@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Trash2, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { createClient } from "@/supabase/client";
 import DataTable from "@/app/Components/Reusables/DataTable";
 import ConfirmDialog from "@/app/Components/Reusables/ConfirmDialog";

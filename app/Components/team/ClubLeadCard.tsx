@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { Github, Instagram, Linkedin, ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";

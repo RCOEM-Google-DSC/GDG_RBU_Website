@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { createClient } from "@/supabase/client";
 import { useRBAC } from "@/hooks/useRBAC";
 import { Registration } from "@/lib/types";

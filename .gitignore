@@ -46,3 +46,4 @@ gha-creds-*.json
 conductor/*
 db/*
 db/schema.sql
+/qodana.yaml

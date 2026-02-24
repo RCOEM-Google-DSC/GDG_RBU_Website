@@ -1,7 +1,7 @@
 "use client";
 import { ProfileHeader } from "../Components/Profile/ProfileHeader";
 import { EventCard } from "../Components/Profile/EventCard";
-import { useProfileData } from "../../hooks/useProfileData";
+import { useProfileData } from "@/hooks/useProfileData";
 import { NeoBrutalism } from "@/components/ui/neo-brutalism";
 import NeoLoader from "../Components/Common/NeoLoader";
 

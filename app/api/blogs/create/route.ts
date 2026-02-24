@@ -63,7 +63,6 @@ export async function POST(request: NextRequest) {
         title,
         markdown,
         published_at: publishedAt || new Date().toISOString(),
-        likes_count: 0,
       })
       .select()
       .single();

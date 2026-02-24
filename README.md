@@ -15,7 +15,7 @@ Official website for Google Developer Groups on Campus - RBU
 
 - Event management and registration
 - Member profiles and portfolios
-- Blog system with likes and filters
+- Blog system filters
 - Badge generation for events
 - Authentication and role-based access
 - Responsive design with neo-brutalism theme

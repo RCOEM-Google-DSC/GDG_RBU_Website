@@ -11,16 +11,12 @@ interface BlogPreviewProps {
     markdown: string;
     authorName?: string;
     authorImageUrl?: string;
-    likesCount?: number;
-}
-
 export function BlogPreview({
     title,
     imageUrl,
     markdown,
     authorName,
     authorImageUrl,
-    likesCount = 0,
 }: BlogPreviewProps) {
     return (
         <div className="space-y-8">
@@ -65,13 +61,6 @@ export function BlogPreview({
                             </div>
                         </div>
 
-                        {/* Likes Preview */}
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1 px-4 py-2 border-4 border-black bg-white">
-                                <span className="text-xl">❤️</span>
-                                <span className="font-black text-lg">{likesCount}</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </NeoBrutalism>

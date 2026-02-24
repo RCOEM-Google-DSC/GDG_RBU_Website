@@ -384,7 +384,6 @@ console.log(greeting);
                         markdown={formData.markdown}
                         authorName={currentUser.name}
                         authorImageUrl={currentUser.image_url}
-                        likesCount={0}
                     />
                 </div>
             )}

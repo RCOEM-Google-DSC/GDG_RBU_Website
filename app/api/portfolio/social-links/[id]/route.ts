@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/supabase/server";
-import type { SocialLinkFormData } from "@/lib/types";
 
 interface RouteParams {
   params: Promise<{ id: string }>;

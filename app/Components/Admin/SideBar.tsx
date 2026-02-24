@@ -1,7 +1,5 @@
 import { BiCalendarEvent } from "react-icons/bi";
 import {
-  Calendar,
-  Handshake,
   Users2,
   UserCog,
   FileText,

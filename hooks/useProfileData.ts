@@ -6,7 +6,7 @@ import {
   buildUIUser,
   buildUIEvents,
   buildUIBadges,
-} from "../app/Components/Profile/Badges";
+} from "@/app/Components/Profile/Badges";
 import {
   SupabaseUserRow,
   UIUser,
@@ -14,7 +14,7 @@ import {
   UIBadge,
   Registration,
   EventRow,
-} from "../lib/types";
+} from "@/lib/types";
 
 interface UseProfileDataReturn {
   user: UIUser | null;

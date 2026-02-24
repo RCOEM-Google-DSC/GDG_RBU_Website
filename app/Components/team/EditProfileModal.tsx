@@ -6,13 +6,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
-import Link from "next/link";
 import { createClient } from "@/supabase/client";
 import {
   Github,
   Linkedin,
   Instagram,
-  Code,
   FileText,
   Type,
   Phone,
@@ -241,7 +239,6 @@ export default function EditProfileModal({
           .insert({ userid: userId, ...memberUpdate })
           .select();
 
-        updateData = insertResult.data;
         memberError = insertResult.error;
       } else {
         // Update existing record
@@ -251,7 +248,6 @@ export default function EditProfileModal({
           .eq("userid", userId)
           .select();
 
-        updateData = updateResult.data;
         memberError = updateResult.error;
       }
 

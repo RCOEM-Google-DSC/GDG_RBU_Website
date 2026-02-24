@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Brain } from "lucide-react";
 
 interface HeroProps {
   personalInfo: {
