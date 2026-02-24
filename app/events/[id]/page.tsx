@@ -415,12 +415,6 @@ export default function EventPage({
         </NeoBrutalism>
       </section>
 
-      {/* Lightbox */}
-      <Lightbox
-        open={lightbox.open}
-        src={lightbox.src}
-        onClose={() => setLightbox({ open: false, src: "" })}
-      />
 
     </div>
   );

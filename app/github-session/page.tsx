@@ -381,11 +381,8 @@ export default function GithubGuide() {
         </section>
       </div>
 
-      <Lightbox
-        open={lightbox.open}
-        src={lightbox.src}
-        onClose={() => setLightbox({ open: false, src: "" })}
-      />
     </div>
   );
 }
+
+

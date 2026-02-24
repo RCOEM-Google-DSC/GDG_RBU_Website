@@ -11,6 +11,7 @@ interface BlogPreviewProps {
     markdown: string;
     authorName?: string;
     authorImageUrl?: string;
+}
 export function BlogPreview({
     title,
     imageUrl,
