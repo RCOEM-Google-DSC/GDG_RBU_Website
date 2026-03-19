@@ -26,7 +26,7 @@ const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop";
 
 const REGISTER_URL =
-  "https://vision.hack2skill.com/event/gdgoc-25-techsprint-rbu?utm_source=hack2skill&utm_medium=homepage";
+  "https://unstop.com/o/Sfn1QNc";
 
 const cloudinarySafe = (url?: string | null) => {
   if (!url) return FALLBACK_IMAGE;
