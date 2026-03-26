@@ -29,7 +29,7 @@ const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop";
 
 const REGISTER_URL =
-  "https://unstop.com/o/Sfn1QNc";
+  "https://pixtopia.vercel.app/";
 
 const cloudinarySafe = (url?: string | null) => {
   if (!url) return FALLBACK_IMAGE;
@@ -69,11 +69,11 @@ export default function Home() {
           backgroundImage:
             'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
           backgroundSize: "80px 80px",
-        }}
+        }} 
       />
 
       {/* hero section */}
-      <section className="w-full relative z-10 md:-mt-20 ">
+      <section className="w-full relative z-10 md:-mt-8 ">
         <Hero />
       </section>
 

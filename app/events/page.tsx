@@ -26,7 +26,7 @@ const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop";
 
 const REGISTER_URL =
-  "https://unstop.com/o/Sfn1QNc";
+  "https://pixtopia.vercel.app/";
 
 const cloudinarySafe = (url?: string | null) => {
   if (!url) return FALLBACK_IMAGE;

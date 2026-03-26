@@ -89,10 +89,10 @@ export default function AdminPage() {
       </div>
 
       {/* logs */}
-      <div>
-        <h2 className="text-2xl">Logs</h2>
-        <p>in work</p>
-      </div>
+      {/* <div> */}
+      {/*   <h2 className="text-2xl">Logs</h2> */}
+      {/*   <p>in work</p> */}
+      {/* </div> */}
     </div>
   );
 }

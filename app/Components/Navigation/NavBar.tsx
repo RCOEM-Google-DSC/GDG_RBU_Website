@@ -5,7 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/supabase/client";
 import ProfileDropdown from "../Common/ProfileDropdown";
 import MobileProfileDropdown from "../Common/MobileProfileDropdown";
-import { Menu, X, Terminal} from "lucide-react";
+import { Menu, X, Terminal } from "lucide-react";
 import Image from "next/image";
 import { nb } from "@/components/ui/neo-brutalism";
 
@@ -17,18 +17,25 @@ const LINK_STYLES = [
   { color: "bg-indigo-400", hover: "hover:bg-indigo-500/90" },
 ];
 
+const MORE_LINKS = [
+  { href: "/docs", label: "Docs" },
+  { href: "/links", label: "Links" },
+];
+
 const NAV_ROUND = "rounded-md";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/team", label: "Team" },
   { href: "/events", label: "Events" },
-  { href: "/blogs", label: "Blogs" },
-  { href: "/links", label: "Links" },
-  { href: "/docs", label: "Docs" },
+  // { href: "/blogs", label: "Blogs" },
+  { href: "/portfolio-builder", label: "Portfolio" },
+  // { href: "/links", label: "Links" }f,
+  // { href: "/docs", label: "Docs" },
 ];
 
 export default function NavBar() {
+  const [showMore, setShowMore] = useState(false);
   const [user, setUser] = useState<any | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -133,27 +140,80 @@ export default function NavBar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center space-x-6">
-          {NAV_LINKS.map((link, idx) => {
-            const style = LINK_STYLES[idx % LINK_STYLES.length];
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={nb({
-                  border: 2,
-                  shadow: "md",
-                  hover: "shadowGrow",
-                  active: "push",
-                  className: `px-5 py-2 font-black text-black ${style.color} hover:scale-110 ${style.hover} ${NAV_ROUND}`,
-                })}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </div>
+        <div className="hidden md:flex items-center w-full">
+          {/* LEFT (empty spacer to balance right side) */}
+          <div className="flex-1" />
 
+          {/* CENTER NAV */}
+          <div className="flex items-center space-x-6">
+            {NAV_LINKS.map((link, idx) => {
+              const style = LINK_STYLES[idx % LINK_STYLES.length];
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={nb({
+                    border: 2,
+                    shadow: "md",
+                    hover: "shadowGrow",
+                    active: "push",
+                    className: `px-5 py-2 font-black text-black ${style.color} hover:scale-110 ${style.hover} ${NAV_ROUND}`,
+                  })}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+
+            {/* MORE BUTTON */}
+            <button
+              onClick={() => setShowMore((prev) => !prev)}
+              className={nb({
+                border: 2,
+                shadow: "md",
+                active: "push",
+                className: `px-5 py-2 font-black text-black ${
+                  LINK_STYLES[NAV_LINKS.length % LINK_STYLES.length].color
+                } ${
+                  LINK_STYLES[NAV_LINKS.length % LINK_STYLES.length].hover
+                } ${NAV_ROUND}`,
+              })}
+            >
+              More
+            </button>
+          </div>
+
+          {/* RIGHT SIDE (expandable) */}
+          <div className="flex-1 flex justify-start ml-4">
+            <div
+              className={`flex items-center space-x-4 transition-all duration-300
+      ${showMore ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 pointer-events-none"}`}
+            >
+              {MORE_LINKS.map((link, idx) => {
+                const style =
+                  LINK_STYLES[
+                    (NAV_LINKS.length + 1 + idx) % LINK_STYLES.length
+                  ];
+
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={nb({
+                      border: 2,
+                      shadow: "md",
+                      hover: "shadowGrow",
+                      active: "push",
+                      className: `px-5 py-2 font-black text-black ${style.color} hover:scale-110 ${style.hover} ${NAV_ROUND}`,
+                    })}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
         {/* Desktop profile / join */}
         <div className="hidden md:block">
           {user ? (
@@ -224,8 +284,9 @@ export default function NavBar() {
           </h2>
 
           <div className="flex flex-col space-y-5">
-            {NAV_LINKS.map((link, idx) => {
+            {[...NAV_LINKS, ...MORE_LINKS].map((link, idx) => {
               const style = LINK_STYLES[idx % LINK_STYLES.length];
+
               return (
                 <Link
                   key={link.href}
@@ -243,7 +304,6 @@ export default function NavBar() {
               );
             })}
           </div>
-
           <div className="mt-auto mb-10 pt-6 border-t-2 border-black">
             {user ? (
               <MobileProfileDropdown

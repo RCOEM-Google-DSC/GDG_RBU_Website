@@ -122,11 +122,11 @@ const Footer = () => {
                   className={nb({
                       border: 3,
                       shadow: "md",
-                      className: "w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1 shrink-0 bg-[#f87171]"
+                      className: "w-20 h-20 sm:w-14 sm:h-14 flex items-center justify-center transition-all duration-200 hover:translate-x-1 hover:translate-y-1 shrink-0 bg-[#f87171]"
                   })}
                   aria-label="Instagram"
                 >
-                  <AiOutlineInstagram size={18} style={{ color: "#000000" }} />
+                  <AiOutlineInstagram size={24} style={{ color: "#000000" }} />
                 </Link>
 
                 {/* LinkedIn */}
@@ -140,7 +140,7 @@ const Footer = () => {
                   })}
                   aria-label="LinkedIn"
                 >
-                  <FaLinkedinIn size={18} style={{ color: "#000000" }} />
+                  <FaLinkedinIn size={22} style={{ color: "#000000" }} />
                 </Link>
 
                 {/* X (Twitter) */}
