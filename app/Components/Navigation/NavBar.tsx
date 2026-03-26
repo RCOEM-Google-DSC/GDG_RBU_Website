@@ -140,7 +140,7 @@ export default function NavBar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center w-full">
+        <div className="hidden md:flex items-center flex-1 min-w-0 px-4">
           {/* LEFT (empty spacer to balance right side) */}
           <div className="flex-1" />
 
@@ -215,7 +215,7 @@ export default function NavBar() {
           </div>
         </div>
         {/* Desktop profile / join */}
-        <div className="hidden md:block">
+        <div className="hidden md:flex shrink-0">
           {user ? (
             <ProfileDropdown />
           ) : (
