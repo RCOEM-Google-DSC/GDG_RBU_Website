@@ -28,6 +28,7 @@ const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/team", label: "Team" },
   { href: "/events", label: "Events" },
+  { href: "/gallery", label: "Gallery" },
   // { href: "/blogs", label: "Blogs" },
   { href: "/portfolio-builder", label: "Portfolio" },
   // { href: "/links", label: "Links" }f,

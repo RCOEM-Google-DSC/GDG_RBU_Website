@@ -218,6 +218,26 @@ export type UIEvent = {
   has_badge_template: boolean; // Event has a badge template
 };
 
+// ---------- GALLERY TYPES ----------
+
+export type GalleryPhotoItem = {
+  id: string;
+  photoUrl: string;
+  eventId: string;
+  eventTitle: string;
+  eventDate: string | null;
+  eventDateLabel: string;
+  figureNumber: number;
+  isTeamPhoto?: boolean;
+};
+
+export type GalleryFilterOption = {
+  eventId: string;
+  eventTitle: string;
+  eventDateLabel: string;
+  totalPhotos: number;
+};
+
 // ---------- BADGE TYPES ----------
 
 export type UIBadge = {
