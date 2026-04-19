@@ -455,7 +455,7 @@ export default function TeamPage() {
       {/* footer */}
       <section className="mt-20">
         <Footer />
-      </section>
+      </section> 
     </div>
   );
 }

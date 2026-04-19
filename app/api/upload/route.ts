@@ -2,23 +2,28 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
-import { v2 as cloudinary } from "cloudinary";
 
-// Configure Cloudinary using bracket notation to avoid static inlining issues
-cloudinary.config({
-  cloud_name: process.env["CLOUDINARY_CLOUD_NAME"],
-  api_key: process.env["CLOUDINARY_API_KEY"],
-  api_secret: process.env["CLOUDINARY_API_SECRET"],
-});
+interface CloudinaryUploadSuccess {
+  secure_url?: string;
+  public_id?: string;
+}
+
+interface CloudinaryUploadError {
+  error?: {
+    message?: string;
+    http_code?: number;
+    name?: string;
+  };
+}
 
 export async function POST(req: Request) {
   try {
     // Safety check
-    if (
-      !process.env["CLOUDINARY_CLOUD_NAME"] ||
-      !process.env["CLOUDINARY_API_KEY"] ||
-      !process.env["CLOUDINARY_API_SECRET"]
-    ) {
+    const cloudName = process.env["CLOUDINARY_CLOUD_NAME"];
+    const apiKey = process.env["CLOUDINARY_API_KEY"];
+    const apiSecret = process.env["CLOUDINARY_API_SECRET"];
+
+    if (!cloudName || !apiKey || !apiSecret) {
       console.error("Cloudinary env vars missing in upload route");
       return NextResponse.json(
         { error: "Cloudinary env vars missing" },
@@ -28,43 +33,114 @@ export async function POST(req: Request) {
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
+    const requestedFolder = formData.get("folder");
+    const folder =
+      typeof requestedFolder === "string" && requestedFolder.trim()
+        ? requestedFolder.trim()
+        : "GDG_PFP";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
+    if (!file.type.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "Only image files are allowed" },
+        { status: 400 },
+      );
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "Image is too large. Maximum size is 10MB." },
+        { status: 413 },
+      );
+    }
+
     // Convert file → buffer (Node only)
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    const uploadResult: any = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        {
-          folder: "GDG_PFP",
-          resource_type: "auto", // supports HEIC / PNG / JPG / WEBP etc
-          eager: [{ fetch_format: "auto", quality: "auto" }],
-          eager_async: false,
-        },
-        (err, result) => {
-          if (err) reject(err);
-          else resolve(result);
-        },
-      ).end(buffer);
-    });
+    const cloudinaryForm = new FormData();
+    cloudinaryForm.append(
+      "file",
+      new Blob([buffer], { type: file.type }),
+      file.name || "upload-image",
+    );
+    cloudinaryForm.append("folder", folder);
+    cloudinaryForm.append("use_filename", "true");
+    cloudinaryForm.append("unique_filename", "true");
 
-    const transformedUrl =
-      uploadResult?.eager?.[0]?.secure_url ?? null;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+    let uploadResponse: Response;
+    try {
+      uploadResponse = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${Buffer.from(`${apiKey}:${apiSecret}`).toString("base64")}`,
+          },
+          body: cloudinaryForm,
+          signal: controller.signal,
+        },
+      );
+    } finally {
+      clearTimeout(timeoutId);
+    }
+
+    const responseText = await uploadResponse.text();
+    let parsed: CloudinaryUploadSuccess | CloudinaryUploadError | null = null;
+
+    try {
+      parsed = responseText
+        ? (JSON.parse(responseText) as
+            | CloudinaryUploadSuccess
+            | CloudinaryUploadError)
+        : null;
+    } catch {
+      parsed = null;
+    }
+
+    if (!uploadResponse.ok) {
+      const details =
+        (parsed as CloudinaryUploadError | null)?.error?.message ||
+        `Cloudinary upload failed with status ${uploadResponse.status}`;
+      return NextResponse.json(
+        { error: "Upload failed", details },
+        { status: uploadResponse.status },
+      );
+    }
+
+    const uploadResult = parsed as CloudinaryUploadSuccess | null;
+    if (!uploadResult?.secure_url) {
+      return NextResponse.json(
+        { error: "Upload failed", details: "No secure URL returned by Cloudinary" },
+        { status: 502 },
+      );
+    }
 
     return NextResponse.json({
-      url: transformedUrl ?? uploadResult.secure_url,
+      url: uploadResult.secure_url,
       secure_url: uploadResult.secure_url,
-      transformed_url: transformedUrl,
-      public_id: uploadResult.public_id,
+      transformed_url: null,
+      public_id: uploadResult.public_id ?? null,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const fallbackMessage =
+      err instanceof Error ? err.message : "Unknown upload error";
+    const isTimeout =
+      (err instanceof DOMException && err.name === "AbortError") ||
+      fallbackMessage.toLowerCase().includes("timeout");
+
+    const message = isTimeout
+      ? "Cloudinary upload timed out. Please retry with a smaller image."
+      : fallbackMessage;
     console.error("UPLOAD ERROR:", err);
     return NextResponse.json(
-      { error: "Upload failed", details: err?.message },
-      { status: 500 },
+      { error: "Upload failed", details: message },
+      { status: isTimeout ? 504 : 500 },
     );
   }
 }

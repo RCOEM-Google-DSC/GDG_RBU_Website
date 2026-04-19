@@ -21,6 +21,14 @@ interface CurrentUser {
     image_url?: string;
 }
 
+interface UploadResponse {
+    url?: string;
+    secure_url?: string;
+    transformed_url?: string | null;
+    error?: string;
+    details?: string;
+}
+
 export default function CreateBlogPage() {
     const router = useRouter();
     const { user, loading: authLoading } = useRBAC();
@@ -87,24 +95,40 @@ export default function CreateBlogPage() {
 
         setUploadingImage(true);
         try {
-            const formData = new FormData();
-            formData.append("file", file);
+            const uploadFormData = new FormData();
+            uploadFormData.append("file", file);
+            uploadFormData.append("folder", "GDG_BLOG_COVERS");
 
             const response = await fetch("/api/upload", {
                 method: "POST",
-                body: formData,
+                body: uploadFormData,
             });
 
-            if (!response.ok) throw new Error("Upload failed");
+            const data = (await response.json().catch(() => ({}))) as UploadResponse;
 
-            const data = await response.json();
-            setFormData((prev) => ({ ...prev, imageUrl: data.url }));
+            if (!response.ok) {
+                throw new Error(
+                    data.details ||
+                        data.error ||
+                        `Upload failed (HTTP ${response.status})`,
+                );
+            }
+
+            const uploadedUrl = data.url || data.secure_url || data.transformed_url;
+            if (!uploadedUrl) {
+                throw new Error("Upload did not return a valid image URL");
+            }
+
+            setFormData((prev) => ({ ...prev, imageUrl: uploadedUrl }));
             toast.success("Image uploaded successfully!");
-        } catch (error) {
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error ? error.message : "Failed to upload image.";
             console.error("Image upload error:", error);
-            toast.error("Failed to upload image. Please try again.");
+            toast.error(message);
         } finally {
             setUploadingImage(false);
+            e.target.value = "";
         }
     };
 
@@ -150,9 +174,13 @@ export default function CreateBlogPage() {
 
             toast.success("Blog post created successfully!");
             router.push("/blogs");
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : "Failed to create blog post";
             console.error("Error creating blog:", error);
-            toast.error(error.message || "Failed to create blog post");
+            toast.error(message);
         } finally {
             setLoading(false);
         }
@@ -239,7 +267,7 @@ export default function CreateBlogPage() {
 
                     {/* Cover Image */}
                     <div className="space-y-2">
-                        <Label htmlFor="imageUrl">Cover Image</Label>
+                        <Label htmlFor="coverImage">Cover Image</Label>
                         <div className="flex items-center gap-4">
                             <Input
                                 id="coverImage"

@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { createClient } from "@/supabase/client";
@@ -19,6 +18,7 @@ const LINK_STYLES = [
 
 const MORE_LINKS = [
   { href: "/docs", label: "Docs" },
+  { href: "/blogs", label: "Blogs" },
   { href: "/links", label: "Links" },
 ];
 

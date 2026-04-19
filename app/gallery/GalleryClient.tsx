@@ -106,7 +106,7 @@ export default function GalleryClient({ photos, filters }: GalleryClientProps) {
   };
 
   return (
-    <div className="min-h-screen font-mono pt-10 text-black selection:bg-[#8338ec] selection:text-white relative overflow-x-hidden bg-[#FDFCF8]">
+    <div className="min-h-screen font-mono pt-6 sm:pt-8 md:pt-10 text-black selection:bg-[#8338ec] selection:text-white relative overflow-x-hidden bg-[#FDFCF8]">
       <div
         className="fixed inset-0 -z-10 pointer-events-none"
         style={{
@@ -116,38 +116,38 @@ export default function GalleryClient({ photos, filters }: GalleryClientProps) {
         }}
       />
 
-      <section className="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 pt-10 md:pt-14">
+      <section className="max-w-7xl mx-auto px-4 py-6 md:px-6 md:py-8 lg:px-8 lg:py-10">
         <NeoBrutalism
           border={4}
           shadow="xl"
-          className="bg-white p-5 md:p-8 rotate-0 md:-rotate-1"
+          className="bg-white p-4 sm:p-5 md:p-8 rotate-0 md:-rotate-1"
         >
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
-              <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl font-black uppercase tracking-tight">
                 Evidence
               </h1>
-              {/* <p className="text-sm md:text-base font-bold text-gray-700 mt-2 uppercase tracking-wide"> */}
-              {/*   Global Event Gallery */}
-              {/* </p> */}
+              <p className="text-xs sm:text-sm md:text-base font-bold text-gray-700 mt-1 sm:mt-2 uppercase tracking-wide">
+                Global Event Gallery
+              </p>
             </div>
 
             <NeoBrutalism
               border={4}
               shadow="md"
-              className="bg-[#ffbe0b] px-4 py-5 text-xs md:text-sm font-black uppercase"
+              className="bg-[#ffbe0b] px-3 py-3 sm:px-4 sm:py-4 text-[11px] sm:text-xs md:text-sm font-black uppercase"
             >
               {photos.length} Photo{photos.length === 1 ? "" : "s"}
             </NeoBrutalism>
           </div>
 
-          {/* <p className="text-xs md:text-sm font-bold uppercase tracking-wide text-gray-700 mb-4"> */}
-          {/*   {activeFilter */}
-          {/*     ? `Showing ${filteredPhotos.length} photos from ${activeFilter.eventTitle} (${activeFilter.eventDateLabel})` */}
-          {/*     : `No filter selected. Showing all ${filteredPhotos.length} photos across ${filters.length} events.`} */}
-          {/* </p> */}
+          <p className="text-xs sm:text-sm font-bold uppercase tracking-wide text-gray-700 mt-4 mb-3">
+            {selectedEventId
+              ? `Showing ${filteredPhotos.length} photos`
+              : `Showing all ${filteredPhotos.length} photos across ${filters.length} events`}
+          </p>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 md:flex-wrap">
             {filters.map((filter, index) => {
               const isSelected = selectedEventId === filter.eventId;
               const bgColor = FILTER_COLORS[index % FILTER_COLORS.length];
@@ -161,7 +161,7 @@ export default function GalleryClient({ photos, filters }: GalleryClientProps) {
                     shadow: isSelected ? "xl" : "md",
                     hover: "liftSmall",
                     active: "push",
-                    className: `px-3 py-2 md:px-4 md:py-2 font-black text-xs md:text-sm uppercase tracking-wide transition-transform ${
+                    className: `shrink-0 px-3 py-2 md:px-4 md:py-2 font-black text-[11px] sm:text-xs md:text-sm uppercase tracking-wide transition-transform ${
                       isSelected
                         ? "bg-black text-white"
                         : `${bgColor} text-black`
@@ -186,7 +186,7 @@ export default function GalleryClient({ photos, filters }: GalleryClientProps) {
                   hover: "liftSmall",
                   active: "push",
                   className:
-                    "px-3 py-2 md:px-4 md:py-2 bg-white text-black font-black text-xs md:text-sm uppercase tracking-wide",
+                    "shrink-0 px-3 py-2 md:px-4 md:py-2 bg-white text-black font-black text-[11px] sm:text-xs md:text-sm uppercase tracking-wide",
                 })}
               >
                 Clear Filter
@@ -196,7 +196,7 @@ export default function GalleryClient({ photos, filters }: GalleryClientProps) {
         </NeoBrutalism>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 pb-12">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 pb-10 sm:pb-12">
         {photos.length === 0 ? (
           <NeoBrutalism
             border={4}
@@ -231,22 +231,22 @@ export default function GalleryClient({ photos, filters }: GalleryClientProps) {
                 key={group.eventId}
                 border={4}
                 shadow="xl"
-                className="relative bg-white p-4 pt-16 md:p-6 md:pt-20"
+                className="relative bg-white p-4 md:p-6"
               >
                 <NeoBrutalism
                   border={3}
                   shadow="md"
                   rounded="full"
-                  className="absolute top-4 left-4 inline-flex max-w-[95%] items-center bg-[#ffbe0b] px-4 py-2 text-[19px] sm:text-sm font-black uppercase tracking-wide"
+                  className="inline-flex max-w-full items-center bg-[#ffbe0b] px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs md:text-sm font-black uppercase tracking-wide mb-4 md:mb-6"
                 >
-                  <span className="truncate max-w-[220px] sm:max-w-[320px]">
+                  <span className="truncate max-w-[160px] sm:max-w-[260px] md:max-w-[320px]">
                     {group.eventTitle}
                   </span>
-                  <span className="mx-2">•</span>
+                  <span className="mx-1.5 sm:mx-2">•</span>
                   <span>{group.eventDateLabel}</span>
                 </NeoBrutalism>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
                   {group.photos
                     .filter((photo) => !photo.isTeamPhoto)
                     .map((photo, index) => {
@@ -284,7 +284,7 @@ export default function GalleryClient({ photos, filters }: GalleryClientProps) {
                 </div>
 
                 {group.photos.some((photo) => photo.isTeamPhoto) && (
-                  <div className="mt-8">
+                  <div className="mt-6 sm:mt-8">
                     {group.photos
                       .filter((photo) => photo.isTeamPhoto)
                       .map((teamPhoto) => (
@@ -309,12 +309,20 @@ export default function GalleryClient({ photos, filters }: GalleryClientProps) {
                                 loading="lazy"
                                 unoptimized
                                 sizes="100vw"
-                                className="w-full h-auto max-h-[70vh] object-contain md:object-cover group-hover:scale-[1.01] transition-transform duration-300"
+                                className="w-full h-auto max-h-[60vh] sm:max-h-[70vh] object-contain md:object-cover group-hover:scale-[1.01] transition-transform duration-300"
                               />
                             </div>
                           </NeoBrutalism>
 
                           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                            <NeoBrutalism
+                              border={2}
+                              shadow="sm"
+                              rounded="full"
+                              className="inline-flex items-center bg-[#34A853] px-3 py-1 text-[11px] sm:text-xs font-black uppercase tracking-wide text-black"
+                            >
+                              The Team
+                            </NeoBrutalism>
                             <p className="font-black text-gray-700 uppercase tracking-[0.2em] text-xs">
                               FIG.{" "}
                               {String(teamPhoto.figureNumber).padStart(2, "0")}
