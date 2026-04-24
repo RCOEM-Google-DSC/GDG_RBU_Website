@@ -42,13 +42,14 @@ export default async function BlogDetailPage({
         className="bg-white mb-8 overflow-hidden"
       >
         {/* Hero Image */}
-        <div className="relative w-full h-72 md:h-96 border-b-4 border-black">
+        <div className="relative w-full min-h-[260px] md:min-h-[360px] max-h-[70vh] border-b-4 border-black bg-gray-50">
           <Image
             src={blog.image_url || "/blog.png"}
             alt={blog.title}
             fill
-            className="object-cover"
+            className="object-contain"
             priority
+            sizes="(max-width: 768px) 100vw, 1200px"
           />
         </div>
 

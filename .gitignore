@@ -45,6 +45,7 @@ gha-creds-*.json
 
 conductor/*
 db/*
+db/migrations/*
 db/schema.sql
 /qodana.yaml
 .codex
