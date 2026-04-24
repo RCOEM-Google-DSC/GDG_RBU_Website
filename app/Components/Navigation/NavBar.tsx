@@ -194,6 +194,7 @@ export default function NavBar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
+                  type="button"
                   className={nb({
                     border: 2,
                     shadow: "md",
@@ -211,7 +212,7 @@ export default function NavBar() {
               <DropdownMenuContent
                 align="start"
                 sideOffset={10}
-                className="border-2 space-y-3 border-black bg-[#FCFDF8] p-2"
+                className="space-y-4 border-2 border-gray-400 bg-[#FCFDF8] p-4"
               >
                 {MORE_LINKS.map((link, idx) => {
                   const style =
@@ -222,7 +223,13 @@ export default function NavBar() {
                     <DropdownMenuItem
                       key={link.href}
                       asChild
-                      className={`${style.color} ${style.focus} rounded-md px-4 py-2 font-black text-black focus:text-black data-[highlighted]:text-black`}
+                      className={nb({
+                        border: 2,
+                        shadow: "md",
+                        hover: "shadowGrow",
+                        active: "push",
+                        className: `block w-full ${style.color} ${style.hover} ${style.focus} px-5 py-2.5 font-black text-black ${NAV_ROUND} focus:text-black data-[highlighted]:text-black`,
+                      })}
                     >
                       <Link href={link.href}>{link.label}</Link>
                     </DropdownMenuItem>
