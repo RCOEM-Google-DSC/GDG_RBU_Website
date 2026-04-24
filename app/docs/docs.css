@@ -159,3 +159,21 @@ body:has(nav.-translate-y-full) #gdg-docs-wrapper [data-search-toggle],
 body:has(nav.-translate-y-full) #gdg-docs-wrapper button[aria-label="Search"] {
   top: 1rem !important;
 }
+
+/* Restore Fumadocs code block rendering on docs pages.
+   Global highlight overrides in app/globals.css were styling <pre><code> too broadly. */
+#gdg-docs-wrapper figure.shiki pre,
+#gdg-docs-wrapper figure.shiki pre code,
+#gdg-docs-wrapper figure.shiki pre code span,
+#gdg-docs-wrapper figure.shiki code span {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+#gdg-docs-wrapper figure.shiki > [role="region"] {
+  background: var(--shiki-light-bg, #0f172a) !important;
+}
+
+.dark #gdg-docs-wrapper figure.shiki > [role="region"] {
+  background: var(--shiki-dark-bg, #0f172a) !important;
+}
