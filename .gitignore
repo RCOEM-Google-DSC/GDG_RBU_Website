@@ -47,3 +47,4 @@ conductor/*
 db/*
 db/schema.sql
 /qodana.yaml
+.codex

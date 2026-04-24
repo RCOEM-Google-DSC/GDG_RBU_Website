@@ -17,6 +17,35 @@ type UploadResult = {
   eager?: Array<{ secure_url?: string }>;
 };
 
+type ErrorInfo = {
+  message: string;
+  name: string | null;
+  httpCode: number | null;
+};
+
+const getErrorInfo = (err: unknown): ErrorInfo => {
+  const maybeObj = typeof err === "object" && err !== null ? err : null;
+  const message =
+    maybeObj &&
+    "message" in maybeObj &&
+    typeof (maybeObj as { message?: unknown }).message === "string"
+      ? (maybeObj as { message: string }).message
+      : "Unknown upload error";
+  const name =
+    maybeObj &&
+    "name" in maybeObj &&
+    typeof (maybeObj as { name?: unknown }).name === "string"
+      ? (maybeObj as { name: string }).name
+      : null;
+  const httpCode =
+    maybeObj &&
+    "http_code" in maybeObj &&
+    typeof (maybeObj as { http_code?: unknown }).http_code === "number"
+      ? (maybeObj as { http_code: number }).http_code
+      : null;
+  return { message, name, httpCode };
+};
+
 const uploadWithSdk = async (buffer: Buffer, folder: string): Promise<UploadResult> =>
   new Promise<UploadResult>((resolve, reject) => {
     cloudinary.uploader
@@ -148,33 +177,13 @@ export async function POST(req: Request) {
     try {
       uploadResult = await uploadWithSdk(buffer, folder);
     } catch (sdkError: unknown) {
-      const sdkMessage =
-        typeof sdkError === "object" &&
-        sdkError !== null &&
-        "message" in sdkError &&
-        typeof (sdkError as { message?: unknown }).message === "string"
-          ? (sdkError as { message: string }).message
-          : "";
-      const sdkName =
-        typeof sdkError === "object" &&
-        sdkError !== null &&
-        "name" in sdkError &&
-        typeof (sdkError as { name?: unknown }).name === "string"
-          ? (sdkError as { name: string }).name
-          : "";
-      const sdkHttpCode =
-        typeof sdkError === "object" &&
-        sdkError !== null &&
-        "http_code" in sdkError &&
-        typeof (sdkError as { http_code?: unknown }).http_code === "number"
-          ? (sdkError as { http_code: number }).http_code
-          : 0;
+      const sdkInfo = getErrorInfo(sdkError);
 
       const isTimeout =
-        sdkName.toLowerCase().includes("timeout") ||
-        sdkMessage.toLowerCase().includes("timeout") ||
-        sdkMessage.toLowerCase().includes("request timeout") ||
-        sdkHttpCode === 499;
+        (sdkInfo.name ?? "").toLowerCase().includes("timeout") ||
+        sdkInfo.message.toLowerCase().includes("timeout") ||
+        sdkInfo.message.toLowerCase().includes("request timeout") ||
+        sdkInfo.httpCode === 499;
 
       if (!isTimeout) {
         throw sdkError;
@@ -198,24 +207,19 @@ export async function POST(req: Request) {
       public_id: uploadResult.public_id ?? null,
     });
   } catch (err: unknown) {
+    const info = getErrorInfo(err);
     const status =
-      typeof err === "object" &&
-      err !== null &&
-      "name" in err &&
-      typeof (err as { name?: unknown }).name === "string" &&
-      (err as { name: string }).name === "AbortError"
+      info.name === "AbortError" || info.httpCode === 499
         ? 504
         : 500;
-    const message =
-      typeof err === "object" &&
-      err !== null &&
-      "message" in err &&
-      typeof (err as { message?: unknown }).message === "string"
-        ? ((err as { message: string }).message)
-        : "Unknown upload error";
     console.error("UPLOAD ERROR:", err);
     return NextResponse.json(
-      { error: "Upload failed", details: message },
+      {
+        error: "Upload failed",
+        details: info.message,
+        code: info.name,
+        http_code: info.httpCode,
+      },
       { status },
     );
   }
