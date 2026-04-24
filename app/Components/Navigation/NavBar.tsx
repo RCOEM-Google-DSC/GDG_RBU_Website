@@ -7,13 +7,39 @@ import MobileProfileDropdown from "../Common/MobileProfileDropdown";
 import { Menu, X, Terminal } from "lucide-react";
 import Image from "next/image";
 import { nb } from "@/components/ui/neo-brutalism";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const LINK_STYLES = [
-  { color: "bg-blue-400", hover: "hover:bg-blue-500/90" },
-  { color: "bg-red-400", hover: "hover:bg-red-500/90" },
-  { color: "bg-yellow-400", hover: "hover:bg-yellow-500/90" },
-  { color: "bg-green-400", hover: "hover:bg-green-500/90" },
-  { color: "bg-indigo-400", hover: "hover:bg-indigo-500/90" },
+  {
+    color: "bg-blue-400",
+    hover: "hover:bg-blue-500/90",
+    focus: "focus:bg-blue-500 data-[highlighted]:bg-blue-500",
+  },
+  {
+    color: "bg-red-400",
+    hover: "hover:bg-red-500/90",
+    focus: "focus:bg-red-500 data-[highlighted]:bg-red-500",
+  },
+  {
+    color: "bg-yellow-400",
+    hover: "hover:bg-yellow-500/90",
+    focus: "focus:bg-yellow-500 data-[highlighted]:bg-yellow-500",
+  },
+  {
+    color: "bg-green-400",
+    hover: "hover:bg-green-500/90",
+    focus: "focus:bg-green-500 data-[highlighted]:bg-green-500",
+  },
+  {
+    color: "bg-indigo-400",
+    hover: "hover:bg-indigo-500/90",
+    focus: "focus:bg-indigo-500 data-[highlighted]:bg-indigo-500",
+  },
 ];
 
 const MORE_LINKS = [
@@ -36,7 +62,6 @@ const NAV_LINKS = [
 ];
 
 export default function NavBar() {
-  const [showMore, setShowMore] = useState(false);
   const [user, setUser] = useState<any | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -166,56 +191,49 @@ export default function NavBar() {
               );
             })}
 
-            {/* MORE BUTTON */}
-            <button
-              onClick={() => setShowMore((prev) => !prev)}
-              className={nb({
-                border: 2,
-                shadow: "md",
-                active: "push",
-                className: `px-5 py-2 font-black text-black ${
-                  LINK_STYLES[NAV_LINKS.length % LINK_STYLES.length].color
-                } ${
-                  LINK_STYLES[NAV_LINKS.length % LINK_STYLES.length].hover
-                } ${NAV_ROUND}`,
-              })}
-            >
-              More
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className={nb({
+                    border: 2,
+                    shadow: "md",
+                    active: "push",
+                    className: `px-5 py-2 font-black text-black ${
+                      LINK_STYLES[NAV_LINKS.length % LINK_STYLES.length].color
+                    } ${
+                      LINK_STYLES[NAV_LINKS.length % LINK_STYLES.length].hover
+                    } ${NAV_ROUND}`,
+                  })}
+                >
+                  More
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                sideOffset={10}
+                className="border-2 space-y-3 border-black bg-[#FCFDF8] p-2"
+              >
+                {MORE_LINKS.map((link, idx) => {
+                  const style =
+                    LINK_STYLES[
+                      (NAV_LINKS.length + 1 + idx) % LINK_STYLES.length
+                    ];
+                  return (
+                    <DropdownMenuItem
+                      key={link.href}
+                      asChild
+                      className={`${style.color} ${style.focus} rounded-md px-4 py-2 font-black text-black focus:text-black data-[highlighted]:text-black`}
+                    >
+                      <Link href={link.href}>{link.label}</Link>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
-          {/* RIGHT SIDE (expandable) */}
-          <div className="flex-1 flex justify-start ml-4">
-            <div
-              className={`flex items-center space-x-4 transition-all duration-300
-      ${showMore ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 pointer-events-none"}`}
-            >
-              {MORE_LINKS.map((link, idx) => {
-                const style =
-                  LINK_STYLES[
-                    (NAV_LINKS.length + 1 + idx) % LINK_STYLES.length
-                  ];
-
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={nb({
-                      border: 2,
-                      shadow: "md",
-                      hover: "shadowGrow",
-                      active: "push",
-                      className: `px-5 py-2 font-black text-black ${style.color} hover:scale-110 ${style.hover} ${NAV_ROUND}`,
-                    })}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
+          <div className="flex-1 ml-4" />
         </div>
-        {/* Desktop profile / join */}
         <div className="hidden md:flex shrink-0">
           {user ? (
             <ProfileDropdown />
