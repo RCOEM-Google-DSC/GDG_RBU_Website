@@ -113,19 +113,26 @@ export function CompleteProfileDialog({
         body: formData,
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        throw new Error(data?.error || "Image upload failed");
+        throw new Error(
+          data?.details || data?.error || `Image upload failed (HTTP ${res.status})`,
+        );
+      }
+
+      if (!data?.url) {
+        throw new Error("Image upload failed: missing URL in response");
       }
 
       setImageUrl(data.url);
       setStatus({ type: "success", message: "Image uploaded successfully!" });
       setShowCropModal(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Image upload failed";
       setStatus({
         type: "error",
-        message: err.message || "Image upload failed",
+        message,
       });
     } finally {
       setUploading(false);
@@ -171,10 +178,11 @@ export function CompleteProfileDialog({
         setDialogOpen(false);
         window.location.reload();
       }, 1500);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Profile update failed";
       setStatus({
         type: "error",
-        message: err.message || "Profile update failed",
+        message,
       });
     } finally {
       setLoading(false);

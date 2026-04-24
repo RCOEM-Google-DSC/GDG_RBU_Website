@@ -40,7 +40,6 @@ const uploadWithSdk = async (buffer: Buffer, folder: string): Promise<UploadResu
   });
 
 const uploadWithSignedFetch = async (
-  buffer: Buffer,
   file: File,
   folder: string,
 ): Promise<UploadResult> => {
@@ -57,7 +56,7 @@ const uploadWithSignedFetch = async (
   const signature = cloudinary.utils.api_sign_request(paramsToSign, apiSecret);
 
   const formData = new FormData();
-  formData.append("file", new Blob([buffer], { type: file.type }), file.name || "upload-image");
+  formData.append("file", file, file.name || "upload-image");
   formData.append("api_key", apiKey);
   formData.append("timestamp", String(timestamp));
   formData.append("signature", signature);
@@ -182,7 +181,7 @@ export async function POST(req: Request) {
       }
 
       console.warn("Cloudinary SDK upload timed out, retrying via signed fetch");
-      uploadResult = await uploadWithSignedFetch(buffer, file, folder);
+      uploadResult = await uploadWithSignedFetch(file, folder);
     }
 
     if (!uploadResult.secure_url) {

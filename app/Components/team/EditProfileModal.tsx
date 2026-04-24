@@ -164,9 +164,13 @@ export default function EditProfileModal({
       body.append("file", croppedImageBlob, "profile-image.jpg");
 
       const res = await fetch("/api/upload", { method: "POST", body });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
-      if (!data?.url) throw new Error("Upload failed");
+      if (!res.ok || !data?.url) {
+        throw new Error(
+          data?.details || data?.error || `Upload failed (HTTP ${res.status})`,
+        );
+      }
 
       setImagePreview(data.url);
       form.setValue("image_url", data.url);
