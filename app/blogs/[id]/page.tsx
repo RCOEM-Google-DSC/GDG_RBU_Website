@@ -47,7 +47,7 @@ export default async function BlogDetailPage({
             src={blog.image_url || "/blog.png"}
             alt={blog.title}
             fill
-            className="object-contain"
+            className="object-cover"
             priority
             sizes="(max-width: 768px) 100vw, 1200px"
           />

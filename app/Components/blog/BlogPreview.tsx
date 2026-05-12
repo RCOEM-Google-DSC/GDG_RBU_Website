@@ -29,7 +29,7 @@ export function BlogPreview({
             src={imageUrl || "/blog.png"}
             alt={title || "Blog cover"}
             fill
-            className="object-contain"
+            className="object-cover"
             sizes="(max-width: 768px) 100vw, 1200px"
           />
         </div>

@@ -303,21 +303,19 @@ export default function TeamPage() {
       {mentors.length > 0 && (
         <section
           id="mentors-section"
-          className="flex flex-col md:flex-row relative min-h-screen px-8 border-b-[3px] border-black"
+          className="grid grid-cols-1 md:grid-cols-[35%_1px_minmax(0,1fr)] xl:grid-cols-[30%_1px_minmax(0,1fr)] relative min-h-screen px-8 border-b-[3px] border-black"
         >
           {/* left: Mentors title */}
-          <div className="w-full md:w-[35%] xl:w-[30%] p-4 sm:p-6 md:p-8 lg:p-12">
-            <div className="md:sticky md:top-24">
-              <h1 className="text-3xl sm:text-5xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] font-retron">
-                Mentors
-              </h1>
-            </div>
+          <div className="p-4 sm:p-6 md:p-8 lg:p-12 md:sticky md:top-24 md:self-start">
+            <h1 className="text-3xl sm:text-5xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] font-retron">
+              Mentors
+            </h1>
           </div>
 
-          <div className="hidden md:block md:ml-4 lg:ml-10 w-px bg-black md:mt-16 md:mb-0" />
+          <div className="hidden md:block w-px bg-black h-full" />
 
           {/* right: Mentor cards */}
-          <div className="flex-1 relative">
+          <div className="relative">
             <div className="p-4 sm:p-6 md:p-12 lg:p-16 xl:p-24 relative z-10">
               <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12 justify-items-center">
                 {mentors.map((mentor) =>
@@ -381,20 +379,18 @@ export default function TeamPage() {
             <section
               key={domain}
               id={`domain-${domain}`}
-              className="flex flex-col md:flex-row relative min-h-screen border-b-[3px] border-black"
+              className="grid grid-cols-1 md:grid-cols-[35%_1px_minmax(0,1fr)] xl:grid-cols-[30%_1px_minmax(0,1fr)] relative min-h-screen border-b-[3px] border-black"
             >
               {/* left domain name */}
-              <div className="w-full md:w-[35%] xl:w-[30%] p-4 sm:p-6 md:p-8 lg:p-12">
-                <div className="md:sticky md:top-24">
-                  <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] font-retron">
-                    {domain}
-                  </h1>
-                </div>
+              <div className="p-4 sm:p-6 md:p-8 lg:p-12 md:sticky md:top-24 md:self-start">
+                <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] font-retron">
+                  {domain}
+                </h1>
               </div>
 
-              <div className="hidden md:block md:ml-4 lg:ml-10 w-px bg-black md:mt-16 md:mb-0" />
+              <div className="hidden md:block w-px bg-black h-full" />
 
-              <div className="flex-1 relative">
+              <div className="relative">
                 <div className="p-4 sm:p-6 md:p-12 lg:p-16 xl:p-24 relative z-10">
                   <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12 justify-items-center">
                     {/* Render ALL domain leads first (sorted: domain lead -> core -> others) */}
