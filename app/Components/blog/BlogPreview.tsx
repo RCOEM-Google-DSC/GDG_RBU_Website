@@ -24,12 +24,12 @@ export function BlogPreview({
       {/* Blog Header Preview */}
       <NeoBrutalism border={4} shadow="2xl" className="bg-white">
         {/* Cover Image */}
-        <div className="relative w-full min-h-[260px] md:min-h-[360px] max-h-[70vh] overflow-hidden border-b-4 border-black bg-gray-50">
+        <div className="relative w-full min-h-[400px] md:min-h-[600px] max-h-[80vh] overflow-hidden border-b-4 border-black bg-white">
           <Image
             src={imageUrl || "/blog.png"}
             alt={title || "Blog cover"}
             fill
-            className="object-cover"
+            className="object-contain"
             sizes="(max-width: 768px) 100vw, 1200px"
           />
         </div>

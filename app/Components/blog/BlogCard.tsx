@@ -23,7 +23,7 @@ export function BlogCard({
 				className="bg-white overflow-hidden group cursor-pointer h-full flex flex-col"
 			>
 				{/* Blog Image */}
-				<div className="relative h-48 w-full overflow-hidden border-b-4 border-black shrink-0">
+				<div className="relative h-64 w-full overflow-hidden border-b-4 border-black shrink-0">
 					<Image
 						src={imageUrl || "/blog.png"}
 						alt={title}
