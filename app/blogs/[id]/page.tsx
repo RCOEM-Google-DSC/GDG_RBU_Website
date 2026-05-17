@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { NeoBrutalism } from "@/components/ui/neo-brutalism";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
@@ -5,10 +6,55 @@ import ReactMarkdown from "react-markdown";
 import { getBlog } from "@/supabase/blogs-server";
 import { BlogComments } from "@/app/Components/blog/BlogComments";
 import { CodeBlock } from "@/app/Components/blog/CodeBlock";
+import { absoluteUrl, getArticleJsonLd, stripMarkdown } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 export const revalidate = 0;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+
+  try {
+    const blog = await getBlog(id);
+    const description = stripMarkdown(blog.markdown || blog.title);
+    const image = blog.image_url || absoluteUrl("/blog.png");
+
+    return {
+      title: blog.title,
+      description,
+      alternates: {
+        canonical: `/blogs/${id}`,
+      },
+      openGraph: {
+        title: blog.title,
+        description,
+        type: "article",
+        url: `/blogs/${id}`,
+        publishedTime: blog.published_at || undefined,
+        images: [image],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: blog.title,
+        description,
+        images: [image],
+      },
+    };
+  } catch {
+    return {
+      title: "Blog",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+}
 
 export default async function BlogDetailPage({
   params,
@@ -33,8 +79,22 @@ export default async function BlogDetailPage({
     };
   }
 
+  const description = stripMarkdown(blog.markdown || blog.title);
+  const articleJsonLd = getArticleJsonLd({
+    title: blog.title,
+    description,
+    path: `/blogs/${id}`,
+    image: blog.image_url || absoluteUrl("/blog.png"),
+    publishedAt: blog.published_at,
+    authorName: blog.writer?.name || null,
+  });
+
   return (
     <div className="container mx-auto py-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       {/* Blog Content */}
       <NeoBrutalism
         border={4}

@@ -1,11 +1,22 @@
 // app/layout.tsx
 import "./globals.css";
+import type { Metadata } from "next";
 import { Toaster } from "sonner";
 import ConditionalLayout from "./Components/ConditionalLayout";
 
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import localFont from "next/font/local";
+import {
+  DEFAULT_OG_IMAGE,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TITLE,
+  absoluteUrl,
+  getOrganizationJsonLd,
+  getSiteUrl,
+  getWebsiteJsonLd,
+} from "@/lib/seo";
 
 const retron = localFont({
   src: "../lib/Retron2000.ttf",
@@ -13,10 +24,17 @@ const retron = localFont({
   display: "swap",
 });
 
-export const metadata = {
-  title: "GDG RBU | Google Developer Group at RBU",
-  description:
-    "Official website of Google Developer Group at RBU. Join us for tech talks, workshops, hackathons, and developer events. Learn, build, and connect with the tech community.",
+export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: SITE_TITLE,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  alternates: {
+    canonical: "/",
+  },
   keywords: [
     "GDG",
     "GDG RBU",
@@ -44,11 +62,40 @@ export const metadata = {
     "developer networking",
   ],
   authors: [{ name: "GDG RBU" }],
+  creator: "GDG RBU",
+  publisher: "GDG RBU",
+  category: "technology",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
-    title: "GDG RBU | Google Developer Group at RBU",
-    description:
-      "Join the official Google Developer Group at RBU for tech events, workshops, and community learning.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     type: "website",
+    url: "/",
+    siteName: SITE_NAME,
+    images: [
+      {
+        url: absoluteUrl(DEFAULT_OG_IMAGE),
+        width: 1200,
+        height: 630,
+        alt: SITE_TITLE,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [absoluteUrl(DEFAULT_OG_IMAGE)],
   },
 };
 
@@ -72,6 +119,15 @@ export default function RootLayout({
           font-sans antialiased flex flex-col min-h-screen
         `}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([
+              getOrganizationJsonLd(),
+              getWebsiteJsonLd(),
+            ]),
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function () {
