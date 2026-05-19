@@ -49,3 +49,4 @@ db/migrations/*
 db/schema.sql
 /qodana.yaml
 .codex
+supabase/.temp/
