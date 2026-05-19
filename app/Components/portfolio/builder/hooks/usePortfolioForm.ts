@@ -8,7 +8,12 @@ import { toast } from "sonner";
 
 import { formSchema, type FormData } from "../helpers/schema";
 import { STEPS } from "../helpers/constants";
-import type { Portfolio } from "@/lib/types";
+import type {
+  Portfolio,
+  PortfolioExperience,
+  PortfolioProject,
+  PortfolioSocialLink,
+} from "@/lib/types";
 
 interface UsePortfolioFormProps {
   existingPortfolio?: Portfolio;
@@ -22,14 +27,12 @@ export function usePortfolioForm({
   const router = useRouter();
   const [currentStep, setCurrentStep] = React.useState(1);
   const [isSaving, setIsSaving] = React.useState(false);
-  const [isGeneratingPreview, setIsGeneratingPreview] = React.useState(false);
+  const [isGeneratingPreview] = React.useState(false);
   const [showPublishDialog, setShowPublishDialog] = React.useState(false);
-  const [isPendingPublish, setIsPendingPublish] = React.useState(false);
 
   const [activePortfolioId, setActivePortfolioId] = React.useState<
     string | undefined
   >(existingPortfolio?.id);
-
 
   const transformedProjects =
     existingPortfolio?.projects?.map((p) => ({
@@ -135,11 +138,11 @@ export function usePortfolioForm({
       const data = form.getValues();
 
       // Fetch current state to handle deletions
-      let currentPortfolio = null;
+      let currentPortfolio: Portfolio | null = null;
       if (activePortfolioId) {
         const res = await fetch(`/api/portfolio?id=${activePortfolioId}`);
         if (res.ok) {
-          const json = await res.json();
+          const json: { portfolio: Portfolio | null } = await res.json();
           currentPortfolio = json.portfolio;
         }
       }
@@ -169,7 +172,7 @@ export function usePortfolioForm({
       if (currentPortfolio?.projects) {
         const currentIds = data.projects.map((p) => p.id).filter(Boolean);
         const toDelete = currentPortfolio.projects.filter(
-          (p: any) => !currentIds.includes(p.id),
+          (p: PortfolioProject) => !currentIds.includes(p.id),
         );
         for (const p of toDelete) {
           await fetch(`/api/portfolio/projects/${p.id}`, { method: "DELETE" });
@@ -184,7 +187,7 @@ export function usePortfolioForm({
           portfolio_id: portfolioId,
           display_order: i + 1,
         };
-        const res = project.id
+        let res = project.id
           ? await fetch(`/api/portfolio/projects/${project.id}`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -195,6 +198,16 @@ export function usePortfolioForm({
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(projectData),
             });
+
+        if (project.id && res.status === 404) {
+          const newProjectData = { ...projectData };
+          delete newProjectData.id;
+          res = await fetch("/api/portfolio/projects", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newProjectData),
+          });
+        }
 
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
@@ -208,7 +221,7 @@ export function usePortfolioForm({
       if (currentPortfolio?.experience) {
         const currentIds = data.experience.map((e) => e.id).filter(Boolean);
         const toDelete = currentPortfolio.experience.filter(
-          (e: any) => !currentIds.includes(e.id),
+          (e: PortfolioExperience) => !currentIds.includes(e.id),
         );
         for (const e of toDelete) {
           await fetch(`/api/portfolio/experience/${e.id}`, {
@@ -249,7 +262,7 @@ export function usePortfolioForm({
       if (currentPortfolio?.social_links) {
         const currentIds = data.social_links.map((s) => s.id).filter(Boolean);
         const toDelete = currentPortfolio.social_links.filter(
-          (s: any) => !currentIds.includes(s.id),
+          (s: PortfolioSocialLink) => !currentIds.includes(s.id),
         );
         for (const s of toDelete) {
           await fetch(`/api/portfolio/social-links/${s.id}`, {
@@ -259,12 +272,10 @@ export function usePortfolioForm({
       }
 
       // Save social links
-      for (let i = 0; i < data.social_links.length; i++) {
-        const link = data.social_links[i];
+      for (const link of data.social_links) {
         const linkData = {
           ...link,
           portfolio_id: portfolioId,
-          display_order: i + 1,
         };
         const res = link.id
           ? await fetch(`/api/portfolio/social-links/${link.id}`, {
@@ -291,15 +302,18 @@ export function usePortfolioForm({
       // Fetch the updated portfolio using the specific ID to get new IDs for projects/experience/social_links
       const refreshRes = await fetch(`/api/portfolio?id=${portfolioId}`);
       if (refreshRes.ok) {
-        const { portfolio: refreshedPortfolio } = await refreshRes.json();
+        const {
+          portfolio: refreshedPortfolio,
+        }: { portfolio: Portfolio | null } = await refreshRes.json();
         if (refreshedPortfolio) {
           // Update projects with new IDs using a safe merge
           if (refreshedPortfolio.projects) {
+            const refreshedProjects = refreshedPortfolio.projects;
             const currentProjects = form.getValues("projects");
             const updatedProjects = currentProjects.map((p, idx) => {
               // Try to find matching project from DB to get its ID
-              const saved = refreshedPortfolio.projects.find(
-                (sp: any) =>
+              const saved = refreshedProjects.find(
+                (sp: PortfolioProject) =>
                   (p.id && sp.id === p.id) ||
                   (sp.title === p.title && sp.display_order === idx + 1),
               );
@@ -317,10 +331,11 @@ export function usePortfolioForm({
 
           // Update experience with new IDs using a safe merge
           if (refreshedPortfolio.experience) {
+            const refreshedExperience = refreshedPortfolio.experience;
             const currentExp = form.getValues("experience");
             const updatedExp = currentExp.map((e, idx) => {
-              const saved = refreshedPortfolio.experience.find(
-                (se: any) =>
+              const saved = refreshedExperience.find(
+                (se: PortfolioExperience) =>
                   (e.id && se.id === e.id) ||
                   (se.company === e.company && se.display_order === idx + 1),
               );
@@ -331,10 +346,12 @@ export function usePortfolioForm({
 
           // Update social links with new IDs using a safe merge
           if (refreshedPortfolio.social_links) {
+            const refreshedSocialLinks = refreshedPortfolio.social_links;
             const currentLinks = form.getValues("social_links");
             const updatedLinks = currentLinks.map((l) => {
-              const saved = refreshedPortfolio.social_links.find(
-                (sl: any) => (l.id && sl.id === l.id) || sl.platform === l.platform,
+              const saved = refreshedSocialLinks.find(
+                (sl: PortfolioSocialLink) =>
+                  (l.id && sl.id === l.id) || sl.platform === l.platform,
               );
               return saved ? { ...l, id: saved.id } : l;
             });

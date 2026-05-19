@@ -20,9 +20,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     const body = await request.json();
-    
+
     // Strip fields that shouldn't be updated
-    const { id: bodyId, created_at, portfolio_id, ...updateData } = body;
+    const updateData = { ...body };
+    delete updateData.id;
+    delete updateData.created_at;
+    delete updateData.portfolio_id;
+    delete updateData.display_order;
 
     // Verify ownership
     const { data: linkCheck, error: checkError } = await supabase
@@ -67,7 +71,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     if (error) {
       console.error("Supabase update error:", error);
-      return NextResponse.json({ error: error.message || "Failed to update" }, { status: 500 });
+      return NextResponse.json(
+        { error: error.message || "Failed to update" },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({ social_link }, { status: 200 });

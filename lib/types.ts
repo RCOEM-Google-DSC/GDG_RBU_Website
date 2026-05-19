@@ -269,7 +269,7 @@ export type Registration = {
     branch: string;
     phone_number?: string | null;
     role?: string | null;
-    profile_links?: any;
+    profile_links?: unknown;
     badges?: string[] | null;
     created_at?: string;
   }[];
@@ -359,7 +359,7 @@ export interface PortfolioSocialLink {
   portfolio_id: string;
   platform: string;
   url: string;
-  display_order: number;
+  display_order?: number;
   created_at: string;
 }
 

@@ -20,7 +20,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body: Partial<ProjectFormData> & { portfolio_id?: string } = await request.json();
+    const body: Partial<ProjectFormData> & {
+      id?: string;
+      portfolio_id?: string;
+    } = await request.json();
+    const updateData = { ...body };
+    delete updateData.id;
+    delete updateData.portfolio_id;
 
     // Verify ownership - find if this project belongs to a portfolio owned by this user
     const { data: projectCheck, error: checkError } = await supabase
@@ -39,9 +45,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const { data: project, error } = await supabase
       .from("portfolio_projects")
-      .update({
-        ...body,
-      })
+      .update(updateData)
       .eq("id", id)
       .select()
       .single();
