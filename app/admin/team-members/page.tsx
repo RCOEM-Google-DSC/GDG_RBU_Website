@@ -1,10 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import { createClient } from "@/supabase/client";
-import DataTable from "@/app/Components/Reusables/DataTable";
-import ConfirmDialog from "@/app/Components/Reusables/ConfirmDialog";
 import {
   Select,
   SelectContent,
@@ -14,6 +13,16 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useRBAC } from "@/hooks/useRBAC";
+
+const DataTable = dynamic(
+  () => import("@/app/Components/Reusables/DataTable"),
+  { ssr: false },
+);
+
+const ConfirmDialog = dynamic(
+  () => import("@/app/Components/Reusables/ConfirmDialog"),
+  { ssr: false },
+);
 
 type TeamMember = {
   id: string;

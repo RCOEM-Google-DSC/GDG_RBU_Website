@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import EventTicket from "../Components/Common/UpcomingEvent";
 import PastEvent from "../Components/Common/PastEvent";
 import { getUpcomingEvents, getPastEvents } from "@/supabase/supabase";

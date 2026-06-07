@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { AlertTriangle } from "lucide-react";
 import { createClient } from "@/supabase/client";
-import DataTable from "@/app/Components/Reusables/DataTable";
-import ConfirmDialog from "@/app/Components/Reusables/ConfirmDialog";
 import {
   Select,
   SelectContent,
@@ -23,6 +22,16 @@ type UserListItem = {
   role: string;
   created_at: string;
 };
+
+const DataTable = dynamic(
+  () => import("@/app/Components/Reusables/DataTable"),
+  { ssr: false },
+);
+
+const ConfirmDialog = dynamic(
+  () => import("@/app/Components/Reusables/ConfirmDialog"),
+  { ssr: false },
+);
 
 export default function UsersPage() {
   const { canManageUsers } = useRBAC();

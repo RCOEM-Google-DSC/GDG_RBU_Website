@@ -142,7 +142,6 @@ export default function TeamPage() {
           }
         });
 
-        // Sort leads so that "domain lead" items come first, then "core", then others (stable)
         const sortedLeads = leads.sort((a, b) => {
           const order = (role?: string) => {
             if (role === "domain lead") return 0;
