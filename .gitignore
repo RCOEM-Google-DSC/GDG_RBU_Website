@@ -50,3 +50,4 @@ db/schema.sql
 /qodana.yaml
 .codex
 supabase/.temp/
+/.idea/

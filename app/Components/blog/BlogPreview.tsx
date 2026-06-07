@@ -132,9 +132,9 @@ export function BlogPreview({
                   <hr className="border-2 border-black my-8" {...props} />
                 ),
                 table: ({ node, ...props }) => (
-                  <div className="overflow-x-auto my-6">
+                  <div className="overflow-x-auto my-8 rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
                     <table
-                      className="w-full border-4 border-black"
+                      className="w-full text-left border-collapse"
                       {...props}
                     />
                   </div>
@@ -144,12 +144,18 @@ export function BlogPreview({
                 ),
                 th: ({ node, ...props }) => (
                   <th
-                    className="px-4 py-2 font-black text-left border-2 border-black"
+                    className="px-6 py-4 font-black text-lg"
+                    {...props}
+                  />
+                ),
+                tr: ({ node, ...props }) => (
+                  <tr
+                    className="border-b-2 border-black/10 last:border-0 hover:bg-gray-50 transition-colors"
                     {...props}
                   />
                 ),
                 td: ({ node, ...props }) => (
-                  <td className="px-4 py-2 border-2 border-black" {...props} />
+                  <td className="px-6 py-4 font-medium text-gray-800" {...props} />
                 ),
                 img: ({ node, ...props }) => (
                   <img

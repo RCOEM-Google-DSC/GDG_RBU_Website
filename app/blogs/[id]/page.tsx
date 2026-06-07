@@ -3,6 +3,7 @@ import { NeoBrutalism } from "@/components/ui/neo-brutalism";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { getBlog } from "@/supabase/blogs-server";
 import { BlogComments } from "@/app/Components/blog/BlogComments";
 import { CodeBlock } from "@/app/Components/blog/CodeBlock";
@@ -141,6 +142,7 @@ export default async function BlogDetailPage({
 
           <article className="prose prose-lg max-w-none">
             <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
               components={{
                 h1: ({ node, ...props }) => (
                   <h1 className="text-4xl font-black mb-4" {...props} />
@@ -170,6 +172,32 @@ export default async function BlogDetailPage({
                     className="list-decimal list-inside mb-6 space-y-2 ml-4 font-medium"
                     {...props}
                   />
+                ),
+                table: ({ node, ...props }) => (
+                  <div className="overflow-x-auto my-8 rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
+                    <table
+                      className="w-full text-left border-collapse"
+                      {...props}
+                    />
+                  </div>
+                ),
+                thead: ({ node, ...props }) => (
+                  <thead className="bg-black text-white" {...props} />
+                ),
+                th: ({ node, ...props }) => (
+                  <th
+                    className="px-6 py-4 font-black text-lg"
+                    {...props}
+                  />
+                ),
+                tr: ({ node, ...props }) => (
+                  <tr
+                    className="border-b-2 border-black/10 last:border-0 hover:bg-gray-50 transition-colors"
+                    {...props}
+                  />
+                ),
+                td: ({ node, ...props }) => (
+                  <td className="px-6 py-4 font-medium text-gray-800" {...props} />
                 ),
               }}
             >
