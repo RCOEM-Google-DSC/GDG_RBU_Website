@@ -4,6 +4,7 @@ import { Check, Copy } from "lucide-react";
 import { useState, useEffect } from "react";
 import hljs from "highlight.js";
 import "highlight.js/styles/atom-one-dark.css";
+import { Mermaid } from "./Mermaid";
 
 export const CodeBlock = ({
     node,
@@ -52,6 +53,10 @@ export const CodeBlock = ({
     }, [codeContent, language, inline]);
 
     const lines = highlightedCode.split("\n");
+
+    if (!inline && language === "mermaid") {
+        return <Mermaid chart={codeContent} />;
+    }
 
     return !inline && match ? (
         <div className="relative group my-8">
