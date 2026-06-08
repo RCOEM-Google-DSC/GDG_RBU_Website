@@ -499,12 +499,30 @@ export default function CreateBlogPage() {
 - \`inline code\`
 - Code blocks with syntax highlighting
 - Lists (ordered and unordered)
-- And more!
+- Tables
+- Mermaid diagrams
 
 \`\`\`javascript
 // Code blocks are fully supported!
 const greeting = "Hello World!";
 console.log(greeting);
+\`\`\`
+
+### Table Example
+
+| Header 1 | Header 2 |
+| -------- | -------- |
+| Cell 1   | Cell 2   |
+| Cell 3   | Cell 4   |
+
+### Mermaid Example
+
+\`\`\`mermaid
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
 \`\`\`
 `}
                 rows={20}
