@@ -132,7 +132,7 @@ export function BlogPreview({
                   <hr className="border-2 border-black my-8" {...props} />
                 ),
                 table: ({ node, ...props }) => (
-                  <div className="overflow-x-auto my-8 rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
+                  <div className="overflow-x-auto my-8 rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white [&_tbody_tr:hover]:bg-gray-50">
                     <table
                       className="w-full text-left border-collapse"
                       {...props}
@@ -150,7 +150,7 @@ export function BlogPreview({
                 ),
                 tr: ({ node, ...props }) => (
                   <tr
-                    className="border-b-2 border-black/10 last:border-0 hover:bg-gray-50 transition-colors"
+                    className="border-b-2 border-black/10 last:border-0 transition-colors"
                     {...props}
                   />
                 ),
