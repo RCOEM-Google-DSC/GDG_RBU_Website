@@ -38,7 +38,7 @@ export default function BlogsPage() {
 	}, []);
 
 	useEffect(() => {
-		const sorted = [...blogs];
+		let sorted = [...blogs];
 
 		switch (filter) {
 			case "recent":
@@ -47,6 +47,7 @@ export default function BlogsPage() {
 						new Date(b.published_at).getTime() -
 						new Date(a.published_at).getTime(),
 				);
+				sorted = sorted.slice(0, 5);
 				break;
 			case "all":
 			default:

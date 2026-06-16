@@ -15,6 +15,7 @@ const InfoCard = ({ title, data, icon, description }: InfoCardProps) => {
         <CardTitle className="text-sm text-muted-foreground">{title}</CardTitle>
         <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
           {icon}
+
         </div>
       </CardHeader>
       <CardContent>
