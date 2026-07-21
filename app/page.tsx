@@ -38,7 +38,7 @@ const cloudinarySafe = (url?: string | null) => {
 };
 
 export default function Home() {
-	const [events, setEvents] = useState<Event[]>([]);
+	const [ events, setEvents ] = useState<Event[]>([]);
 
 	/* Fetch events */
 	useEffect(() => {
@@ -56,40 +56,40 @@ export default function Home() {
 	return (
 		<motion.div
 			className="w-full relative"
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			transition={{ duration: 0.1, ease: "easeInOut" }}
+			initial={ { opacity: 0 } }
+			animate={ { opacity: 1 } }
+			transition={ { duration: 0.1, ease: "easeInOut" } }
 		>
-			<GDGPreloader />
+			<GDGPreloader/>
 
 			<div
 				className="fixed inset-0 -z-10 pointer-events-none"
-				style={{
+				style={ {
 					backgroundImage:
 						"linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)",
 					backgroundSize: "80px 80px",
-				}}
+				} }
 			/>
 
-			{/* hero section */}
+			{/* hero section */ }
 			<section className="w-full relative z-10 md:-mt-8 ">
-				<Hero />
+				<Hero/>
 			</section>
 
-			{/* upcoming events section */}
+			{/* upcoming events section */ }
 			<section className="w-full px-6 md:px-10 lg:px-20 sm:-mt-20 relative z-10">
 				<motion.div
 					className="w-full flex flex-col items-center justify-center pt-0 pb-12 sm:pt-0 sm:pb-14 text-foreground px-4"
-					initial={{ opacity: 0, y: 20 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					viewport={{ amount: 0.3 }}
-					transition={{ duration: 0.1, ease: "easeInOut", delay: 0.1 }}
+					initial={ { opacity: 0, y: 20 } }
+					whileInView={ { opacity: 1, y: 0 } }
+					viewport={ { amount: 0.3 } }
+					transition={ { duration: 0.1, ease: "easeInOut", delay: 0.1 } }
 				>
 					<h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-bold my-8 sm:my-10 font-retron ">
 						Upcoming Event
 					</h2>
 
-					{events.length > 0 ? (
+					{ events.length > 0 ? (
 						events.map((event) => {
 							const registerUrl = event.register_url ?? REGISTER_URL;
 							const imageSrc = cloudinarySafe(
@@ -97,9 +97,9 @@ export default function Home() {
 							);
 							return (
 								<EventTicket
-									key={event.id}
-									id={event.id}
-									title={event.title}
+									key={ event.id }
+									id={ event.id }
+									title={ event.title }
 									date={
 										event.date
 											? new Date(event.date)
@@ -112,35 +112,35 @@ export default function Home() {
 											minute: "2-digit",
 										})
 									}
-									image={imageSrc}
-									tags={[event.status]}
+									image={ imageSrc }
+									tags={ [ event.status ] }
 									tagColor="#FBBC04"
-									description={event.description}
-									registerUrl={registerUrl}
+									description={ event.description }
+									registerUrl={ registerUrl }
 								/>
 							);
 						})
 					) : (
 						<div className="w-full max-w-4xl mx-auto">
 							<div className="relative w-full">
-								{/* Shadow layer */}
-								<div className="absolute top-3 left-3 right-0 bottom-0 bg-black rounded-3xl" />
+								{/* Shadow layer */ }
+								<div className="absolute top-3 left-3 right-0 bottom-0 bg-black rounded-3xl"/>
 
-								{/* Main card */}
+								{/* Main card */ }
 								<NeoBrutalism
-									border={4}
+									border={ 4 }
 									shadow="xl"
 									rounded="3xl"
 									className="relative bg-white overflow-hidden"
 								>
-									{/* Top accent bar */}
-									<div className="h-3 bg-[#FFC20E]" />
+									{/* Top accent bar */ }
+									<div className="h-3 bg-[#FFC20E]"/>
 
-									{/* Content */}
+									{/* Content */ }
 									<div className="p-8 sm:p-12 text-center">
-										{/* Icon */}
+										{/* Icon */ }
 										<NeoBrutalism
-											border={4}
+											border={ 4 }
 											shadow="lg"
 											rounded="2xl"
 											className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-[#FFC20E] mb-6"
@@ -154,28 +154,28 @@ export default function Home() {
 												<path
 													strokeLinecap="round"
 													strokeLinejoin="round"
-													strokeWidth={2.5}
+													strokeWidth={ 2.5 }
 													d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
 												/>
 											</svg>
 										</NeoBrutalism>
 
-										{/* Heading */}
+										{/* Heading */ }
 										<h3 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4 font-product-sans">
 											No Events Right Now
 										</h3>
 
-										{/* Description */}
+										{/* Description */ }
 										<p className="text-base sm:text-lg text-gray-700 mb-8 max-w-xl mx-auto leading-relaxed">
 											We&apos;re cooking up something amazing! Stay tuned for
 											our next event announcement. In the meantime, check out
 											what we&apos;ve done before.
 										</p>
 
-										{/* CTA Button */}
+										{/* CTA Button */ }
 										<Link
 											href="/events"
-											className={nb({
+											className={ nb({
 												border: 4,
 												shadow: "lg",
 												rounded: "xl",
@@ -183,7 +183,7 @@ export default function Home() {
 												active: "pushWithShadow",
 												className:
 													"inline-flex items-center gap-2 px-8 py-4 bg-black text-white font-bold text-lg hover:-translate-x-0.5 hover:-translate-y-0.5",
-											})}
+											}) }
 										>
 											View Past Events
 											<svg
@@ -195,39 +195,40 @@ export default function Home() {
 												<path
 													strokeLinecap="round"
 													strokeLinejoin="round"
-													strokeWidth={2.5}
+													strokeWidth={ 2.5 }
 													d="M13 7l5 5m0 0l-5 5m5-5H6"
 												/>
 											</svg>
 										</Link>
 									</div>
 
-									{/* Bottom decorative elements */}
+									{/* Bottom decorative elements */ }
 									<div className="flex gap-2 px-8 pb-8">
-										<div className="flex-1 h-2 bg-[#4285F4] rounded-full border border-black" />
-										<div className="flex-1 h-2 bg-[#EA4335] rounded-full border border-black" />
-										<div className="flex-1 h-2 bg-[#FBBC04] rounded-full border border-black" />
-										<div className="flex-1 h-2 bg-[#34A853] rounded-full border border-black" />
+										<div className="flex-1 h-2 bg-[#4285F4] rounded-full border border-black"/>
+										<div className="flex-1 h-2 bg-[#EA4335] rounded-full border border-black"/>
+										<div className="flex-1 h-2 bg-[#FBBC04] rounded-full border border-black"/>
+										<div className="flex-1 h-2 bg-[#34A853] rounded-full border border-black"/>
 									</div>
 								</NeoBrutalism>
 							</div>
 						</div>
-					)}
+					) }
 				</motion.div>
 			</section>
 
-			{/* team section */}
-			<section className="w-full sm:px-6 md:px-10 lg:px-20 py-8 max-h-screen/20 sm:py-10 md:py-12 lg:py-16 relative z-10">
-				<MeetOurTeam />
+			{/* team section */ }
+			<section
+				className="w-full sm:px-6 md:px-10 lg:px-20 py-8 max-h-screen/20 sm:py-10 md:py-12 lg:py-16 relative z-10">
+				<MeetOurTeam/>
 			</section>
 
-			{/* faq section */}
+			{/* faq section */ }
 			<section className="w-full relative bg-none">
-				<Faq />
+				<Faq/>
 			</section>
 
-			{/* footer */}
-			<Footer />
+			{/* footer */ }
+			<Footer/>
 		</motion.div>
 	);
 }

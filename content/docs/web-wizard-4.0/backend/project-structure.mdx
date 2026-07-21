@@ -1,0 +1,252 @@
+---
+title: Project Structure & Live Build
+description: How to organize the code, and the live-coded Student Directory API.
+---
+
+## Folder structure
+
+A clean folder structure separates concerns so each file has one job:
+
+```
+backend/
+├── .env                  # secrets (never commit this)
+├── .gitignore            # files to exclude from git
+├── package.json
+├── server.js             # entry point — minimal, just app.listen
+└── src/
+    ├── routes/
+    │   └── students.js   # route definitions for /students
+    ├── db/
+    │   └── supabase.js   # Supabase client setup
+    └── middleware/
+        └── logger.js     # custom middleware (optional)
+```
+
+### Why separate files?
+
+As your app grows from 5 routes to 50, having everything in one file becomes
+unmanageable. Separating by concern means:
+
+- **Routes** know about HTTP — methods, URLs, status codes
+- **Database** knows about data — queries, connections
+- **Middleware** knows about request processing — auth, logging, validation
+- **Server** knows about startup — port, top-level middleware
+
+### File-by-file walkthrough
+
+**`.env`** — environment variables:
+
+```bash
+SUPABASE_URL=https://xxxxx.supabase.co
+SUPABASE_KEY=eyJhbGciOiJI...
+PORT=3000
+```
+
+**`.gitignore`**:
+
+```
+node_modules/
+.env
+```
+
+**`src/db/supabase.js`** — database client:
+
+```js
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
+dotenv.config();
+
+export const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
+```
+
+**`src/routes/students.js`** — student routes:
+
+```js
+import { Router } from "express";
+import { supabase } from "../db/supabase.js";
+
+const router = Router();
+
+// GET /students
+router.get("/", async (req, res) => {
+  const { data, error } = await supabase
+    .from("students")
+    .select("*")
+    .order("id");
+
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
+});
+
+// GET /students/:id
+router.get("/:id", async (req, res) => {
+  const { data, error } = await supabase
+    .from("students")
+    .select("*")
+    .eq("id", req.params.id)
+    .single();
+
+  if (error) return res.status(404).json({ error: "Not found" });
+  res.json(data);
+});
+
+// POST /students
+router.post("/", async (req, res) => {
+  const { name, email, department } = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ error: "Name and email required" });
+  }
+
+  const { data, error } = await supabase
+    .from("students")
+    .insert({ name, email, department })
+    .select();
+
+  if (error) return res.status(500).json({ error: error.message });
+  res.status(201).json(data[0]);
+});
+
+// PATCH /students/:id
+router.patch("/:id", async (req, res) => {
+  const { data, error } = await supabase
+    .from("students")
+    .update(req.body)
+    .eq("id", req.params.id)
+    .select();
+
+  if (error) return res.status(500).json({ error: error.message });
+  if (!data.length) return res.status(404).json({ error: "Not found" });
+  res.json(data[0]);
+});
+
+// DELETE /students/:id
+router.delete("/:id", async (req, res) => {
+  const { error } = await supabase
+    .from("students")
+    .delete()
+    .eq("id", req.params.id);
+
+  if (error) return res.status(500).json({ error: error.message });
+  res.status(204).end();
+});
+
+export default router;
+```
+
+**`server.js`** — entry point:
+
+```js
+import express from "express";
+import cors from "cors";
+import studentsRouter from "./src/routes/students.js";
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(cors());
+app.use(express.json());
+
+// Routes
+app.use("/students", studentsRouter);
+
+// Health check
+app.get("/", (req, res) => {
+  res.json({ status: "ok", message: "Student Directory API" });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Something went wrong!" });
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
+});
+```
+
+## Live coding: Student Directory API
+
+Build this step by step during the session. Follow along!
+
+<Steps>
+
+### 1. Create the project
+
+```bash
+mkdir student-directory && cd student-directory
+npm init -y
+```
+
+### 2. Install dependencies
+
+```bash
+npm install express cors @supabase/supabase-js dotenv
+```
+
+### 3. Create the folder structure
+
+```bash
+mkdir -p src/routes src/db
+touch server.js src/db/supabase.js src/routes/students.js .env .gitignore
+```
+
+### 4. Set up environment variables
+
+Write your Supabase credentials into `.env`:
+
+```bash
+SUPABASE_URL=https://xxxxx.supabase.co
+SUPABASE_KEY=eyJhbGciOiJI...
+PORT=3000
+```
+
+### 5. Create the Supabase client
+
+Write `src/db/supabase.js` (see code above).
+
+### 6. Create the students table
+
+Run this SQL in the Supabase SQL Editor:
+
+```sql
+CREATE TABLE students (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  department VARCHAR(50),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE POLICY "Allow all" ON students
+  FOR ALL USING (true) WITH CHECK (true);
+```
+
+### 7. Write the route handler
+
+Write `src/routes/students.js` (see code above).
+
+### 8. Wire everything in server.js
+
+Write `server.js` (see code above).
+
+### 9. Start the server
+
+```bash
+node --watch server.js
+```
+
+### 10. Test with Postman or Bruno
+
+- `GET http://localhost:3000/` → health check
+- `GET http://localhost:3000/students` → empty array
+- `POST http://localhost:3000/students` → create first student
+- `GET http://localhost:3000/students` → shows the student
+- `PATCH http://localhost:3000/students/1` → update
+- `DELETE http://localhost:3000/students/1` → delete
+
+</Steps>
+

@@ -1,0 +1,13 @@
+{
+  "title": "Backend",
+  "pages": [
+    "backend-overview",
+    "backend-basics",
+    "http-and-rest",
+    "express-basics",
+    "middleware",
+    "database-and-supabase",
+    "project-structure",
+    "assignment"
+  ]
+}

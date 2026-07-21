@@ -1,0 +1,53 @@
+---
+title: Assignment
+description: Build your own CRUD API.
+---
+
+## Build one of the following APIs
+
+Choose any theme — each one needs full CRUD with Express + Supabase:
+
+- **Book Directory** — title, author, genre, year, ISBN
+- **Movie Database** — title, director, release year, rating, genre
+- **Todo Manager** — title, description, priority, completed status
+- **Event Tracker** — name, date, venue, organizer, capacity
+- **Product Catalog** — name, price, category, stock count
+
+Or pick your own idea. Anything with at least 4 fields works.
+
+## Requirements
+
+Your API must have these endpoints:
+
+| Method | Endpoint | What it does |
+| --- | --- | --- |
+| `GET` | `/items` | List all items (with optional filtering) |
+| `GET` | `/items/:id` | Get one item by ID |
+| `POST` | `/items` | Create a new item (validate required fields) |
+| `PATCH` | `/items/:id` | Update an item |
+| `DELETE` | `/items/:id` | Delete an item |
+
+### Must include:
+
+- Data persisted in a **Supabase table** (not in-memory arrays)
+- **Input validation** for POST and PATCH (reject missing required fields)
+- **Proper HTTP status codes** (200, 201, 204, 400, 404, 500)
+- **Error handling** for all database operations
+- A `.env` file (not committed to git)
+
+### Code structure:
+
+- Follow the folder structure from the session:
+  ```
+  server.js
+  src/
+    routes/
+    db/
+  ```
+- Use Express Router for routes
+- Keep database logic separate from route logic
+
+---
+
+Need help? Reference the session notes, ask in the GDG group, or check the
+[Supabase docs](https://supabase.com/docs).

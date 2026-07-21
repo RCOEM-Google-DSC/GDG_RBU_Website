@@ -1,0 +1,214 @@
+---
+title: HTTP Methods & REST
+description: The verbs and URL conventions every API uses.
+---
+
+## HTTP methods — the verbs of the web
+
+Every HTTP request includes a **method** (also called a verb) that tells the
+server what you want to do:
+
+| Method | Purpose | Safe? | Idempotent? |
+| --- | --- | --- | --- |
+| `GET` | Read data | Yes | Yes |
+| `POST` | Create data | No | No |
+| `PUT` | Replace a resource | No | Yes |
+| `PATCH` | Update part of a resource | No | No |
+| `DELETE` | Remove a resource | No | Yes |
+
+- **Safe** means the request doesn't change anything on the server
+- **Idempotent** means making the same request multiple times has the same
+effect as making it once
+
+### GET — fetch data
+
+```js
+// Request
+GET /students HTTP/1.1
+Host: localhost:3000
+
+// Response
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+  { "id": 1, "name": "Alex" },
+  { "id": 2, "name": "Priya" }
+]
+```
+
+```js
+// Fetch a single resource by ID
+GET /students/1 HTTP/1.1
+
+// Response
+{ "id": 1, "name": "Alex", "email": "alex@example.com" }
+```
+
+### POST — create data
+
+```js
+// Request
+POST /students HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Rohan",
+  "email": "rohan@example.com",
+  "department": "CSE"
+}
+
+// Response
+HTTP/1.1 201 Created
+{ "id": 3, "name": "Rohan", "email": "rohan@example.com" }
+```
+
+### PATCH — update data
+
+```js
+// Request — only send the fields you want to change
+PATCH /students/1 HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "alex.new@example.com"
+}
+
+// Response
+HTTP/1.1 200 OK
+{ "id": 1, "name": "Alex", "email": "alex.new@example.com" }
+```
+
+### DELETE — remove data
+
+```js
+// Request
+DELETE /students/1 HTTP/1.1
+
+// Response
+HTTP/1.1 204 No Content
+```
+
+## HTTP Status Codes
+
+The server uses status codes to tell the client what happened:
+
+| Code | Meaning | When |
+| --- | --- | --- |
+| **200** | OK | Request succeeded |
+| **201** | Created | Resource created successfully |
+| **204** | No Content | Request succeeded, nothing to return |
+| **400** | Bad Request | Client sent invalid data |
+| **404** | Not Found | Resource doesn't exist |
+| **500** | Server Error | Something broke on the server |
+
+```js
+// Example: Express sending different status codes
+app.get("/students", async (req, res) => {
+  const { data, error } = await supabase.from("students").select("*");
+
+  if (error) return res.status(500).json({ error: "Database error" });
+  if (!data.length) return res.status(404).json({ error: "No students found" });
+
+  res.status(200).json(data);
+});
+```
+
+## REST: URLs instead of function names
+
+**REST** (Representational State Transfer) is a convention for designing APIs.
+Instead of calling functions like `getUsers()` or `deleteUser()`, REST maps
+actions to URLs + HTTP methods.
+
+The key idea: **resources** (like students, books, movies) have URLs, and HTTP
+methods define what you do with them.
+
+```
+GET    /students        → list all students
+POST   /students        → create a student
+GET    /students/1      → get student with ID 1
+PATCH  /students/1      → update student 1
+DELETE /students/1      → delete student 1
+```
+
+## CRUD mapping
+
+Every REST API follows this mapping between operations and endpoints:
+
+| Action | Method | Endpoint | Body? |
+| --- | --- | --- | --- |
+| Create | `POST` | `/students` | Yes (the new record) |
+| Read all | `GET` | `/students` | No |
+| Read one | `GET` | `/students/:id` | No |
+| Update | `PATCH` | `/students/:id` | Yes (fields to change) |
+| Delete | `DELETE` | `/students/:id` | No |
+
+This mapping is the industry standard — once you know it, every REST API looks
+familiar.
+
+## Query parameters vs Route parameters
+
+```js
+// Route parameter — part of the URL path, identifies a specific resource
+GET /students/1
+
+// Query parameters — after ?, used for filtering, sorting, pagination
+GET /students?department=CSE&sort=name&limit=10
+```
+
+In Express, you access them differently:
+
+```js
+// Route parameter
+app.get("/students/:id", (req, res) => {
+  console.log(req.params.id);  // "1"
+});
+
+// Query parameters
+app.get("/students", (req, res) => {
+  console.log(req.query.department);  // "CSE"
+  console.log(req.query.sort);        // "name"
+  console.log(req.query.limit);       // "10"
+});
+```
+
+## A real REST request flow
+
+```js
+// 1. Frontend wants students from CSE department, sorted by name
+const res = await fetch("http://localhost:3000/students?department=CSE&sort=name");
+const students = await res.json();
+
+// 2. Backend receives the request
+app.get("/students", async (req, res) => {
+  const { department, sort } = req.query;
+
+  let query = supabase.from("students").select("*");
+
+  if (department) query = query.eq("department", department);
+  if (sort) query = query.order(sort);
+
+  const { data, error } = await query;
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.status(200).json(data);
+});
+```
+
+## REST naming conventions
+
+Do's and don'ts for naming your API endpoints:
+
+| Do (good) | Don't (bad) | Why |
+| --- | --- | --- |
+| `/students` | `/getStudents` | HTTP method already says what |
+| `/students/1` | `/students?id=1` | ID identifies a specific resource |
+| `/students` (plural) | `/student` (singular) | Collections should be plural |
+| `/students/1/courses` | `/getStudentCourses?studentId=1` | Nest related resources |
+
+<Callout title="The QUERY method">
+`QUERY` is a newly standardized HTTP method for structured, safe read requests —
+useful when a `GET` URL would get too long or complex. Browser and framework
+support is still limited, so today we'll stick to `GET`, `POST`, `PATCH`, and
+`DELETE`.
+</Callout>
