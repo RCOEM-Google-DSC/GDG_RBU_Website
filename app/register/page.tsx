@@ -139,12 +139,19 @@ function RegisterPageContent() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
-      toast.success(
-        "Sign-up successful. You can complete your profile in the profile section.",
-      );
-      router.push(redirectTo);
+      
+      if (data.session) {
+        toast.success(
+          "Sign-up successful. You can complete your profile in the profile section.",
+        );
+        router.push(redirectTo);
+      } else {
+        toast.success(
+          "Sign-up successful! Please check your email to verify your account.",
+        );
+      }
     } catch (err) {
       console.error(err);
       toast.error((err as Error)?.message || "Sign-up error");
