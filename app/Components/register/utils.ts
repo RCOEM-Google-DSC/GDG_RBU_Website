@@ -20,6 +20,12 @@ export const THEME = {
 export const isProfileComplete = (u: any) =>
   !!(u?.name && u?.email && u?.phone_number && u?.section && u?.branch);
 
+export const isValidGithubUrl = (url: string): boolean => {
+  if (!url?.trim()) return false;
+  const pattern = /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\/?$/i;
+  return pattern.test(url.trim());
+};
+
 export function generateRandomPassword(length = 8) {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
