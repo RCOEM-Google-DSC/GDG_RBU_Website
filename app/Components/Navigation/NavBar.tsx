@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/supabase/client";
 import ProfileDropdown from "../Common/ProfileDropdown";
 import MobileProfileDropdown from "../Common/MobileProfileDropdown";
@@ -67,6 +68,7 @@ export default function NavBar() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const supabase = createClient();
+  const router = useRouter();
 
   // keep scroll position when locking body
   const scrollRef = useRef<number>(0);
@@ -81,7 +83,15 @@ export default function NavBar() {
     fetchUser();
 
     const { data: sub } = supabase.auth.onAuthStateChange((ev, sess) => {
-      if (ev === "SIGNED_IN") setUser(sess?.user ?? null);
+      if (ev === "SIGNED_IN") {
+        setUser(sess?.user ?? null);
+        // Redirect back to the page user came from (e.g., event registration)
+        const authRedirect = localStorage.getItem("authRedirect");
+        if (authRedirect) {
+          localStorage.removeItem("authRedirect");
+          router.push(authRedirect);
+        }
+      }
       if (ev === "SIGNED_OUT") setUser(null);
     });
 

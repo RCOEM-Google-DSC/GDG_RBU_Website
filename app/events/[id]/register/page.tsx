@@ -65,10 +65,10 @@ export default function EventRegisterPage() {
     const load = async () => {
       const uid = await getCurrentUserId();
 
-      // if not logged in -> show toast + redirect to /register
+      // if not logged in -> show toast + redirect to /register with return URL
       if (!uid) {
         toast.error("Please log in to register for this event.");
-        router.push("/register");
+        router.push(`/register?redirect=/events/${id}/register`);
         return;
       }
 

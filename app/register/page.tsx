@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, User, ArrowRight, ClipboardList } from "lucide-react";
@@ -14,6 +14,8 @@ import { nb } from "@/components/ui/neo-brutalism";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -122,7 +124,7 @@ export default function RegisterPage() {
       });
       if (error) throw error;
       toast.success("You are logged in");
-      router.push("/");
+      router.push(redirectTo);
     } catch (err) {
       console.error(err);
       toast.error((err as Error)?.message || "Login error");
@@ -142,7 +144,7 @@ export default function RegisterPage() {
       toast.success(
         "Sign-up successful. You can complete your profile in the profile section.",
       );
-      router.push("/");
+      router.push(redirectTo);
     } catch (err) {
       console.error(err);
       toast.error((err as Error)?.message || "Sign-up error");
@@ -154,7 +156,20 @@ export default function RegisterPage() {
   async function handleOAuth(provider: "github" | "google") {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signInWithOAuth({ provider });
+      // Store redirect URL for after OAuth callback
+      if (redirectTo !== "/") {
+        localStorage.setItem("authRedirect", redirectTo);
+      }
+      const callbackUrl = new URL(`${window.location.origin}/api/auth/callback`);
+      if (redirectTo !== "/") {
+        callbackUrl.searchParams.set("redirect", redirectTo);
+      }
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: callbackUrl.toString(),
+        },
+      });
       if (error) throw error;
     } catch (err) {
       console.error(err);
