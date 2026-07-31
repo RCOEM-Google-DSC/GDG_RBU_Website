@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { nb } from "@/components/ui/neo-brutalism";
 
-export default function RegisterPage() {
+function RegisterPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/";
@@ -537,5 +537,13 @@ export default function RegisterPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="h-screen w-full flex items-center justify-center font-bold text-2xl">Loading...</div>}>
+      <RegisterPageContent />
+    </Suspense>
   );
 }
