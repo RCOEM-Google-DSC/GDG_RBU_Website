@@ -6,8 +6,9 @@ import { generateProfileImageUrl } from "@/lib/utils";
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
+  const customRedirect = requestUrl.searchParams.get("redirect");
 
-  let redirectUrl = "/profile";
+  let redirectUrl = customRedirect || "/profile";
 
   if (code) {
     const cookieStore = await cookies();
@@ -107,11 +108,13 @@ export async function GET(request: Request) {
         }
       }
 
-      // Redirect admins and members to team profile page
-      if (role === "admin" || role === "member") {
-        redirectUrl = `/team/profile/${userId}`;
-      } else {
-        redirectUrl = "/profile";
+      // Only apply role-based redirects if no custom redirect was requested
+      if (!customRedirect) {
+        if (role === "admin" || role === "member") {
+          redirectUrl = `/team/profile/${userId}`;
+        } else {
+          redirectUrl = "/profile";
+        }
       }
     }
   }
