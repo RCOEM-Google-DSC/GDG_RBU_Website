@@ -7,6 +7,7 @@ import {
   Briefcase,
   Loader2,
   ArrowRight,
+  Github,
 } from "lucide-react";
 import { InputField } from "./InputField";
 import { StackCard } from "./StackCard";
@@ -20,6 +21,7 @@ interface TeamRegistrationFormProps {
   addMember: () => void;
   validateMember: (id: string) => void;
   onMemberEmailChange: (id: string, email: string) => void;
+  onMemberGithubChange: (id: string, github: string) => void;
   user: any;
   setUser: (u: any) => void;
   saveLeaderEditsLocal: () => void;
@@ -37,6 +39,7 @@ export default function TeamRegistrationForm({
   addMember,
   validateMember,
   onMemberEmailChange,
+  onMemberGithubChange,
   user,
   setUser,
   saveLeaderEditsLocal,
@@ -108,6 +111,15 @@ export default function TeamRegistrationForm({
                     }
                     icon={Briefcase}
                   />
+                  <InputField
+                    label="GITHUB"
+                    value={user.profile_links?.github || ""}
+                    onChange={(e: any) =>
+                      setUser({ ...user, profile_links: { ...user.profile_links, github: e.target.value } })
+                    }
+                    icon={Github}
+                    placeholder="https://github.com/username"
+                  />
                   <div className="flex gap-3">
                     <button
                       onClick={saveLeaderEditsLocal}
@@ -154,7 +166,27 @@ export default function TeamRegistrationForm({
                   ) : (
                     <div className="py-3">
                       <div className="font-mono">{card.email}</div>
-                      <div className="text-xs text-gray-500">Validated</div>
+                      {card.githubMissing ? (
+                        <div className="mt-2">
+                          <div className="text-xs text-amber-600 font-mono mb-1">⚠ GitHub not on profile — please add it</div>
+                          <InputField
+                            label="GITHUB"
+                            value={card.github || ""}
+                            onChange={(e: any) =>
+                              onMemberGithubChange(card.id, e.target.value)
+                            }
+                            icon={Github}
+                            placeholder="https://github.com/username"
+                            required
+                          />
+                        </div>
+                      ) : card.github ? (
+                        <div className="font-mono text-sm text-gray-600 mt-1">
+                          <Github size={14} className="inline mr-1" />
+                          {card.github}
+                        </div>
+                      ) : null}
+                      <div className="text-xs text-gray-500 mt-1">Validated</div>
                     </div>
                   )}
                 </>

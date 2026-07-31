@@ -41,6 +41,8 @@ export default function EventRegisterPage() {
       validated?: boolean;
       email?: string;
       userId?: string | null;
+      github?: string | null;
+      githubMissing?: boolean;
     }>
   >([]);
 
@@ -76,7 +78,7 @@ export default function EventRegisterPage() {
         .single();
       const { data: userData } = await supabase
         .from("users")
-        .select("id,name,email,phone_number,section,branch")
+        .select("id,name,email,phone_number,section,branch,profile_links")
         .eq("id", uid)
         .single();
 
@@ -261,7 +263,7 @@ export default function EventRegisterPage() {
     // find account
     const { data: member, error: findErr } = await supabase
       .from("users")
-      .select("id,name,email,phone_number,section,branch")
+      .select("id,name,email,phone_number,section,branch,profile_links")
       .eq("email", email)
       .maybeSingle();
 
@@ -308,7 +310,14 @@ export default function EventRegisterPage() {
       reindexMembers(
         prev.map((c) =>
           c.id === cardId
-            ? { ...c, validated: true, expanded: false, userId: member.id }
+            ? {
+                ...c,
+                validated: true,
+                expanded: !member.profile_links?.github,
+                userId: member.id,
+                github: member.profile_links?.github || "",
+                githubMissing: !member.profile_links?.github,
+              }
             : c
         )
       )
@@ -339,6 +348,7 @@ export default function EventRegisterPage() {
         phone_number: user.phone_number,
         section: user.section,
         branch: user.branch,
+        profile_links: user.profile_links,
       })
       .eq("id", user.id);
     setLoading(false);
@@ -384,7 +394,18 @@ export default function EventRegisterPage() {
       return;
     }
 
-    // check unique team name for this event (preserve your previous check)
+    // all members (and leader) must have GitHub
+    if (!user.profile_links?.github?.trim()) {
+      toast.error("Leader must have a GitHub profile");
+      return;
+    }
+    const missingGithub = members.find((m) => !m.github?.trim());
+    if (missingGithub) {
+      toast.error(`GitHub is required for ${missingGithub.email || "all members"}`);
+      return;
+    }
+
+    // check unique team name for this event
     const { data: existingTeam } = await supabase
       .from("registrations")
       .select("id")
@@ -396,6 +417,36 @@ export default function EventRegisterPage() {
     if (existingTeam) {
       toast.error(
         "Team name already taken for this event — choose another name"
+      );
+      return;
+    }
+
+    // also check teams table for duplicate team name
+    const { data: existingTeamName } = await supabase
+      .from("teams")
+      .select("team_id")
+      .eq("team_name", teamName)
+      .limit(1)
+      .maybeSingle();
+
+    if (existingTeamName) {
+      toast.error(
+        "This team name is already taken — please choose a different name"
+      );
+      return;
+    }
+
+    // check if leader already has a team
+    const { data: existingLeaderTeam } = await supabase
+      .from("teams")
+      .select("team_id")
+      .eq("leader_user_id", user.id)
+      .limit(1)
+      .maybeSingle();
+
+    if (existingLeaderTeam) {
+      toast.error(
+        "You already have a team registered. Please contact the organizers if you need to re-register."
       );
       return;
     }
@@ -447,6 +498,7 @@ export default function EventRegisterPage() {
     const membersJson = members.map((m) => ({
       user_id: m.userId,
       email: m.email,
+      github: m.github || null,
     }));
 
     const { data: teamInsert, error: teamErr } = await supabase
@@ -468,7 +520,12 @@ export default function EventRegisterPage() {
 
     if (teamErr) {
       setLoading(false);
-      toast.error(teamErr.message || "Failed to create team (teams table)");
+      if (teamErr.message?.includes("unique constraint") || teamErr.message?.includes("duplicate key")) {
+        toast.error("This team name or leader is already registered. Please choose a different team name or contact the organizers.");
+      } else {
+        toast.error("Something went wrong while creating the team. Please try again.");
+      }
+      console.error("Team creation error:", teamErr.message);
       return;
     }
 
@@ -572,6 +629,11 @@ export default function EventRegisterPage() {
     setCards((prev) => prev.map((c) => (c.id === id ? { ...c, email } : c)));
   };
 
+  /* ---------- handler for github change in components ---------- */
+  const onMemberGithubChange = (id: string, github: string) => {
+    setCards((prev) => prev.map((c) => (c.id === id ? { ...c, github } : c)));
+  };
+
   /* ---------- UI ---------- */
 
   return (
@@ -630,6 +692,7 @@ export default function EventRegisterPage() {
                       addMember={addMember}
                       validateMember={validateMember}
                       onMemberEmailChange={onMemberEmailChange}
+                      onMemberGithubChange={onMemberGithubChange}
                       user={user}
                       setUser={setUser}
                       saveLeaderEditsLocal={saveLeaderEditsLocal}

@@ -116,7 +116,7 @@ export default function UpcomingEventPage({
   // ---------------- helpers ----------------
   const safeImg = (url?: string | null, fallback = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop") =>
     url ? String(url).replace("/upload/", "/upload/f_auto,q_auto/") : fallback;
-  const resigerUrl = "https://vision.hack2skill.com/event/gdgoc-25-techsprint-rbu?utm_source=hack2skill&utm_medium=homepage" 
+  const resigerUrl = `/events/${event.id}/register`;
 
   // partner may come as object or array depending on how the join returns
   const partnerData = (() => {

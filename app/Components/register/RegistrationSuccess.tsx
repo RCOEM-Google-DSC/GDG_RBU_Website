@@ -45,8 +45,8 @@ export default function RegistrationSuccess({
             </a>
           )}
 
-          {/* Show team credentials (if available) */}
-          {teamCreds && (
+          {/* Team credentials hidden for this event */}
+          {/* {teamCreds && (
             <div className="mt-6 inline-block text-left border-2 border-black p-4">
               <div className="font-mono text-xs">Event Login</div>
               <div className="font-bold">{teamCreds.userId}</div>
@@ -57,7 +57,7 @@ export default function RegistrationSuccess({
                 Save These Credentials For The Event
               </div>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>

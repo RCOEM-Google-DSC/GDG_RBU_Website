@@ -1,5 +1,5 @@
 import React from "react";
-import { Loader2, User, Mail, Phone, Briefcase } from "lucide-react";
+import { Loader2, User, Mail, Phone, Briefcase, Github } from "lucide-react";
 import { InputField } from "./InputField";
 
 interface SoloRegistrationFormProps {
@@ -53,6 +53,15 @@ export default function SoloRegistrationForm({
           value={user.branch || ""}
           onChange={(e: any) => setUser({ ...user, branch: e.target.value })}
           icon={Briefcase}
+        />
+        <InputField
+          label="GITHUB"
+          value={user.profile_links?.github || ""}
+          onChange={(e: any) =>
+            setUser({ ...user, profile_links: { ...user.profile_links, github: e.target.value } })
+          }
+          icon={Github}
+          placeholder="https://github.com/username"
         />
       </div>
 

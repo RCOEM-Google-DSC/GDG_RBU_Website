@@ -156,7 +156,7 @@ const EventsPage = () => {
           ) : (
             <div className="space-y-6">
               {upcomingEvents.map((event) => {
-                const registerUrl = event.register_url ?? REGISTER_URL;
+                const registerUrl = event.register_url ?? `/events/${event.id}/register`;
                 const imageSrc = cloudinarySafe(
                   event.image_url ?? FALLBACK_IMAGE,
                 );
