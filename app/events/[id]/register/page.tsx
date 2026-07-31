@@ -9,6 +9,7 @@ import { NeoBrutalism } from "@/components/ui/neo-brutalism";
 import {
   THEME,
   isProfileComplete,
+  isValidGithubUrl,
   generateRandomPassword,
 } from "@/app/Components/register/utils";
 
@@ -230,6 +231,26 @@ export default function EventRegisterPage() {
       return;
     }
 
+    // don't allow adding another member until all existing members are validated
+    const existingMembers = cards.filter((c) => c.type === "member");
+    const unvalidated = existingMembers.find((m) => !m.validated);
+    if (unvalidated) {
+      toast.error("Validate the current member before adding another");
+      return;
+    }
+
+    // don't allow adding another member until all validated members have a valid GitHub
+    const missingGithub = existingMembers.find((m) => m.validated && !m.github?.trim());
+    if (missingGithub) {
+      toast.error(`Add GitHub for ${missingGithub.email || "the current member"} before adding another`);
+      return;
+    }
+    const invalidGithub = existingMembers.find((m) => m.validated && m.github?.trim() && !isValidGithubUrl(m.github));
+    if (invalidGithub) {
+      toast.error(`Invalid GitHub URL for ${invalidGithub.email || "a member"} — use github.com/username format`);
+      return;
+    }
+
     // collapse all existing cards and append new member expanded
     const nextId = `member-${Date.now().toString(36).slice(-6)}`;
     const next = [
@@ -257,6 +278,12 @@ export default function EventRegisterPage() {
     const email = (card.email || "").trim().toLowerCase();
     if (!email) {
       toast.error("Enter member email");
+      return;
+    }
+
+    // prevent leader from adding themselves as a member
+    if (email === user.email?.toLowerCase()) {
+      toast.error("You can't add yourself as a team member — you're already the leader");
       return;
     }
 
@@ -394,14 +421,23 @@ export default function EventRegisterPage() {
       return;
     }
 
-    // all members (and leader) must have GitHub
+    // all members (and leader) must have valid GitHub
     if (!user.profile_links?.github?.trim()) {
       toast.error("Leader must have a GitHub profile");
+      return;
+    }
+    if (!isValidGithubUrl(user.profile_links.github)) {
+      toast.error("Leader's GitHub URL is invalid — use github.com/username format");
       return;
     }
     const missingGithub = members.find((m) => !m.github?.trim());
     if (missingGithub) {
       toast.error(`GitHub is required for ${missingGithub.email || "all members"}`);
+      return;
+    }
+    const invalidGithub = members.find((m) => !isValidGithubUrl(m.github || ""));
+    if (invalidGithub) {
+      toast.error(`Invalid GitHub URL for ${invalidGithub.email || "a member"} — use github.com/username format`);
       return;
     }
 
