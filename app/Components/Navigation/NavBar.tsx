@@ -314,7 +314,7 @@ export default function NavBar() {
           <X size={20} />
         </button>
 
-        <div className="pt-28 px-6 flex flex-col h-full">
+        <div className="pt-28 px-6 flex flex-col h-full overflow-y-auto">
           <h2 className="mb-6 pb-4 border-b-2 border-black font-black text-2xl uppercase">
             Menu
           </h2>

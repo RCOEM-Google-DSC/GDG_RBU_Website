@@ -48,9 +48,10 @@ export default function EventRegisterPage() {
   >([]);
 
   // team credentials (filled after team creation or if already existing)
-  const [teamCreds, setTeamCreds] = useState<
-    { userId: string; password: string } | null
-  >(null);
+  const [teamCreds, setTeamCreds] = useState<{
+    userId: string;
+    password: string;
+  } | null>(null);
 
   // New state for member view: details of their team leader
   const [memberInfo, setMemberInfo] = useState<{
@@ -112,7 +113,7 @@ export default function EventRegisterPage() {
           ? { e: id, leader: uid }
           : { e: id, u: uid };
         setQrValue(
-          `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`
+          `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`,
         );
 
         // if team registration, also set team name hint (optional)
@@ -210,7 +211,7 @@ export default function EventRegisterPage() {
         } else {
           return { ...c, expanded: false };
         }
-      })
+      }),
     );
   };
 
@@ -240,14 +241,22 @@ export default function EventRegisterPage() {
     }
 
     // don't allow adding another member until all validated members have a valid GitHub
-    const missingGithub = existingMembers.find((m) => m.validated && !m.github?.trim());
+    const missingGithub = existingMembers.find(
+      (m) => m.validated && !m.github?.trim(),
+    );
     if (missingGithub) {
-      toast.error(`Add GitHub for ${missingGithub.email || "the current member"} before adding another`);
+      toast.error(
+        `Add GitHub for ${missingGithub.email || "the current member"} before adding another`,
+      );
       return;
     }
-    const invalidGithub = existingMembers.find((m) => m.validated && m.github?.trim() && !isValidGithubUrl(m.github));
+    const invalidGithub = existingMembers.find(
+      (m) => m.validated && m.github?.trim() && !isValidGithubUrl(m.github),
+    );
     if (invalidGithub) {
-      toast.error(`Invalid GitHub URL for ${invalidGithub.email || "a member"} — use github.com/username format`);
+      toast.error(
+        `Invalid GitHub URL for ${invalidGithub.email || "a member"} — use github.com/username format`,
+      );
       return;
     }
 
@@ -283,7 +292,9 @@ export default function EventRegisterPage() {
 
     // prevent leader from adding themselves as a member
     if (email === user.email?.toLowerCase()) {
-      toast.error("You can't add yourself as a team member — you're already the leader");
+      toast.error(
+        "You can't add yourself as a team member — you're already the leader",
+      );
       return;
     }
 
@@ -327,7 +338,7 @@ export default function EventRegisterPage() {
       existingReg.team_name !== teamName
     ) {
       toast.error(
-        `${email} is already registered in another team (${existingReg.team_name})`
+        `${email} is already registered in another team (${existingReg.team_name})`,
       );
       return;
     }
@@ -345,9 +356,9 @@ export default function EventRegisterPage() {
                 github: member.profile_links?.github || "",
                 githubMissing: !member.profile_links?.github,
               }
-            : c
-        )
-      )
+            : c,
+        ),
+      ),
     );
 
     toast.success(`${email} validated`);
@@ -386,8 +397,8 @@ export default function EventRegisterPage() {
     toast.success("Leader saved");
     setCards((prev) =>
       reindexMembers(
-        prev.map((c) => (c.type === "leader" ? { ...c, expanded: false } : c))
-      )
+        prev.map((c) => (c.type === "leader" ? { ...c, expanded: false } : c)),
+      ),
     );
   }
 
@@ -427,17 +438,25 @@ export default function EventRegisterPage() {
       return;
     }
     if (!isValidGithubUrl(user.profile_links.github)) {
-      toast.error("Leader's GitHub URL is invalid — use github.com/username format");
+      toast.error(
+        "Leader's GitHub URL is invalid — use github.com/username format",
+      );
       return;
     }
     const missingGithub = members.find((m) => !m.github?.trim());
     if (missingGithub) {
-      toast.error(`GitHub is required for ${missingGithub.email || "all members"}`);
+      toast.error(
+        `GitHub is required for ${missingGithub.email || "all members"}`,
+      );
       return;
     }
-    const invalidGithub = members.find((m) => !isValidGithubUrl(m.github || ""));
+    const invalidGithub = members.find(
+      (m) => !isValidGithubUrl(m.github || ""),
+    );
     if (invalidGithub) {
-      toast.error(`Invalid GitHub URL for ${invalidGithub.email || "a member"} — use github.com/username format`);
+      toast.error(
+        `Invalid GitHub URL for ${invalidGithub.email || "a member"} — use github.com/username format`,
+      );
       return;
     }
 
@@ -452,7 +471,7 @@ export default function EventRegisterPage() {
 
     if (existingTeam) {
       toast.error(
-        "Team name already taken for this event — choose another name"
+        "Team name already taken for this event — choose another name",
       );
       return;
     }
@@ -467,7 +486,7 @@ export default function EventRegisterPage() {
 
     if (existingTeamName) {
       toast.error(
-        "This team name is already taken — please choose a different name"
+        "This team name is already taken — please choose a different name",
       );
       return;
     }
@@ -482,7 +501,7 @@ export default function EventRegisterPage() {
 
     if (existingLeaderTeam) {
       toast.error(
-        "You already have a team registered. Please contact the organizers if you need to re-register."
+        "You already have a team registered. Please contact the organizers if you need to re-register.",
       );
       return;
     }
@@ -521,7 +540,7 @@ export default function EventRegisterPage() {
       console.warn(
         "local user.id differs from auth session uid",
         user.id,
-        authUid
+        authUid,
       );
     }
     // === end RLS fix ===
@@ -556,10 +575,17 @@ export default function EventRegisterPage() {
 
     if (teamErr) {
       setLoading(false);
-      if (teamErr.message?.includes("unique constraint") || teamErr.message?.includes("duplicate key")) {
-        toast.error("This team name or leader is already registered. Please choose a different team name or contact the organizers.");
+      if (
+        teamErr.message?.includes("unique constraint") ||
+        teamErr.message?.includes("duplicate key")
+      ) {
+        toast.error(
+          "This team name or leader is already registered. Please choose a different team name or contact the organizers.",
+        );
       } else {
-        toast.error("Something went wrong while creating the team. Please try again.");
+        toast.error(
+          "Something went wrong while creating the team. Please try again.",
+        );
       }
       console.error("Team creation error:", teamErr.message);
       return;
@@ -601,7 +627,7 @@ export default function EventRegisterPage() {
     // show QR (leader-based QR)
     const payload = { e: id, leader: user.id };
     setQrValue(
-      `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`
+      `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`,
     );
 
     // set credentials so UI shows them below the QR
@@ -636,13 +662,13 @@ export default function EventRegisterPage() {
 
     if (event?.whatsapp_url) {
       toast.success(
-        "You're registered — join the WhatsApp group from the link below."
+        "You're registered — join the WhatsApp group from the link below.",
       );
     }
 
     const payload = { e: id, u: user.id };
     setQrValue(
-      `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`
+      `${window.location.origin}/checkin?d=${btoa(JSON.stringify(payload))}`,
     );
   };
 
@@ -682,7 +708,7 @@ export default function EventRegisterPage() {
           <EventDetails event={event} />
 
           {/* RIGHT: Form / cards / QR */}
-          <div className="lg:col-span-7 order-first lg:order-none">
+          <div className="lg:col-span-7">
             <NeoBrutalism
               border={2}
               shadow="xl"
@@ -692,7 +718,9 @@ export default function EventRegisterPage() {
               <div className="mb-8 border-b-2 border-black pb-6 flex items-center gap-3">
                 <CodeIcon />
                 <div>
-                  <h2 className={`${THEME.fonts.heading} text-3xl leading-none`}>
+                  <h2
+                    className={`${THEME.fonts.heading} text-3xl leading-none`}
+                  >
                     Registration
                   </h2>
                   <p className="font-mono text-xs text-gray-500 mt-1">
