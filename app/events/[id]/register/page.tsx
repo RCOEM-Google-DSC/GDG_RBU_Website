@@ -682,7 +682,7 @@ export default function EventRegisterPage() {
           <EventDetails event={event} />
 
           {/* RIGHT: Form / cards / QR */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-7 order-first lg:order-none">
             <NeoBrutalism
               border={2}
               shadow="xl"
