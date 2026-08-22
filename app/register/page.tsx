@@ -4,7 +4,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState, Suspense } from "r
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/supabase/supabase";
 import { Button } from "@/components/ui/button";
-import { Mail, Lock, User, ArrowRight, ClipboardList } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, ClipboardList, Loader2 } from "lucide-react";
 import { BiLogIn } from "react-icons/bi";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
@@ -32,7 +32,6 @@ function RegisterPageContent() {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // NEW: dynamic card height for short viewports
   const [cardHeight, setCardHeight] = useState<number>(520);
 
   const readButtonComp = () => {
@@ -63,7 +62,6 @@ function RegisterPageContent() {
       containerWidthRef.current = fallback;
       setTranslateX(mode === "login" ? computeMaxTranslate(fallback) : 0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -94,8 +92,7 @@ function RegisterPageContent() {
     const updateCardHeight = () => {
       const vh = window.innerHeight;
       if (vh < 795) {
-        // keep sensible minimum so inputs/buttons aren't cramped
-        const safe = Math.max(420, Math.round(vh - 270)); // tweak these numbers to taste
+        const safe = Math.max(420, Math.round(vh - 270)); 
         setCardHeight(safe);
       } else {
         setCardHeight(520);
@@ -370,7 +367,11 @@ function RegisterPageContent() {
                 >
                   <span className="flex items-center gap-2">Login</span>
                   <span className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center">
-                    <ArrowRight size={14} />
+                    {loading ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      <ArrowRight size={14} />
+                    )}
                   </span>
                 </button>
 
@@ -480,7 +481,11 @@ function RegisterPageContent() {
                 >
                   Sign up
                   <span className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center">
-                    <ArrowRight size={14} />
+                    {loading ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      <ArrowRight size={14} />
+                    )}
                   </span>
                 </button>
 

@@ -335,6 +335,49 @@ html.preloader-active .toaster-root {
   display: none !important;
 }
 
+/* Neo-brutalism sonner toasts */
+[data-sonner-toaster] {
+  --normal-bg: #fdfcf8;
+  --normal-border: #000;
+  --normal-text: #000;
+  --success-bg: #c7f9cc;
+  --success-border: #000;
+  --success-text: #000;
+  --info-bg: #bfd8ff;
+  --info-border: #000;
+  --info-text: #000;
+  --warning-bg: #ffe9a8;
+  --warning-border: #000;
+  --warning-text: #000;
+  --error-bg: #ffb4b4;
+  --error-border: #000;
+  --error-text: #000;
+  --border-radius: 0px;
+}
+
+[data-sonner-toaster] [data-sonner-toast][data-styled="true"] {
+  border-width: 3px;
+  border-color: #000;
+  box-shadow: 5px 5px 0 #000;
+  font-weight: 700;
+}
+
+[data-sonner-toaster] [data-sonner-toast][data-styled="true"] [data-title] {
+  font-weight: 700;
+  color: #000;
+}
+
+[data-sonner-toaster] [data-sonner-toast][data-styled="true"] [data-description] {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+[data-sonner-toaster] [data-sonner-toast][data-styled="true"] [data-close-button] {
+  border: 2px solid #000;
+  border-radius: 0;
+  color: #000;
+  background: #fff;
+}
+
 /* optionally hide focus outlines during preload to avoid tiny flicker */
 html.preloader-active *:focus {
   outline: none !important;
