@@ -6,7 +6,7 @@ import type { GalleryFilterOption, GalleryPhotoItem } from "@/lib/types";
 import { Images } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
-import Footer from "../Components/Landing/Footer";
+import Footer from "@/app/Components/Landing/Footer";
 
 type GalleryClientProps = {
   photos: GalleryPhotoItem[];

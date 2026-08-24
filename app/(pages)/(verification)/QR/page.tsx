@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
-import QRCodeWithSvgLogo from "../../Components/checkin/QRCodeWithSvgLogo";
+import QRCodeWithSvgLogo from "@/app/Components/checkin/QRCodeWithSvgLogo";
 
 interface RegistrationData {
   event_id: string;

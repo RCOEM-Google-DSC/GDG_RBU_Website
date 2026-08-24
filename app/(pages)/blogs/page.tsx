@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { BlogHeader } from "@/app/Components/blog/BlogHeader";
 import { BlogList } from "@/app/Components/blog/BlogList";
 import type { Blog } from "@/lib/types";
-import Footer from "../Components/Landing/Footer";
+import Footer from "@/app/Components/Landing/Footer";
 
 type FilterType = "all" | "recent";
 

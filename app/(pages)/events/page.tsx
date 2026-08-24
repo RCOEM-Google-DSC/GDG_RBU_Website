@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import EventTicket from "../Components/Common/UpcomingEvent";
-import PastEvent from "../Components/Common/PastEvent";
+import EventTicket from "@/app/Components/Common/UpcomingEvent";
+import PastEvent from "@/app/Components/Common/PastEvent";
 import { getUpcomingEvents, getPastEvents } from "@/supabase/supabase";
-import Footer from "../Components/Landing/Footer";
+import Footer from "@/app/Components/Landing/Footer";
 import { NeoBrutalism } from "@/components/ui/neo-brutalism";
-import NeoLoader from "../Components/Common/NeoLoader";
+import NeoLoader from "@/app/Components/Common/NeoLoader";
 
 type Event = {
   id: string;

@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TeamMemberCard from "../Components/Reusables/TeamMemberCard";
-import LeaderCard from "../Components/Reusables/LeaderCard";
-import ClubLeadCard from "../Components/team/ClubLeadCard";
+import TeamMemberCard from "@/app/Components/Reusables/TeamMemberCard";
+import LeaderCard from "@/app/Components/Reusables/LeaderCard";
+import ClubLeadCard from "@/app/Components/team/ClubLeadCard";
 import Image from "next/image";
-import Footer from "../Components/Landing/Footer";
+import Footer from "@/app/Components/Landing/Footer";
 import { supabase } from "@/supabase/supabase";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
-import NeoLoader from "../Components/Common/NeoLoader";
+import NeoLoader from "@/app/Components/Common/NeoLoader";
 
 type Member = {
   id: string;

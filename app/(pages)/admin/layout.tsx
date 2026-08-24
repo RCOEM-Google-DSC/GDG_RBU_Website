@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import SideBar from "../Components/Admin/SideBar";
+import SideBar from "@/app/Components/Admin/SideBar";
 import {
   SidebarInset,
   SidebarProvider,

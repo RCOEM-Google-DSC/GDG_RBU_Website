@@ -1,9 +1,9 @@
 "use client";
-import { ProfileHeader } from "../Components/Profile/ProfileHeader";
-import { EventCard } from "../Components/Profile/EventCard";
+import { ProfileHeader } from "@/app/Components/Profile/ProfileHeader";
+import { EventCard } from "@/app/Components/Profile/EventCard";
 import { useProfileData } from "@/hooks/useProfileData";
 import { NeoBrutalism } from "@/components/ui/neo-brutalism";
-import NeoLoader from "../Components/Common/NeoLoader";
+import NeoLoader from "@/app/Components/Common/NeoLoader";
 
 export default function ProfilePage() {
   const { user, events, badges, loading, error } = useProfileData();

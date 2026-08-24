@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { UserCog, Users } from "lucide-react";
 import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
-import InfoCard from "../Components/Admin/InfoCard";
+import InfoCard from "@/app/Components/Admin/InfoCard";
 
 type StatsData = {
   title: string;

@@ -329,7 +329,7 @@ function RegisterPageContent() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   type="email"
-                  placeholder="E-mail"
+                  placeholder="janedoe@gmail.com"
                   aria-label="E-mail"
                   className="w-full pl-12 py-3 bg-[#FDFCF8] border-[3px] border-black shadow-[4px_4px_0_#000] outline-none"
                 />
@@ -340,7 +340,7 @@ function RegisterPageContent() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   type={show ? "text" : "password"}
-                  placeholder="Password"
+                  placeholder="••••••••"
                   aria-label="Password"
                   className="w-full pl-12 py-3 bg-[#FDFCF8] border-[3px] border-black shadow-[4px_4px_0_#000] outline-none"
                 />
@@ -353,7 +353,7 @@ function RegisterPageContent() {
                   {show ? <EyeOff className="text-xl" /> : <Eye className="" />}
                 </Button>
               </div>
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-2 sm:gap-4 mb-6">
                 <button
                   onClick={handleEmailLogin}
                   disabled={loading}
@@ -362,37 +362,37 @@ function RegisterPageContent() {
                     border: 3,
                     shadow: "none",
                     className:
-                      "flex items-center justify-between w-[170px] px-5 py-3 bg-black text-white shadow-[4px_4px_0_red] font-bold",
+                      "flex items-center justify-between gap-2 sm:gap-3 flex-1 px-3 sm:px-5 py-3 bg-black text-white shadow-[4px_4px_0_red] font-bold",
                   })}
                 >
-                  <span className="flex items-center gap-2">Login</span>
-                  <span className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center">
+                  <span className="flex items-center gap-2 whitespace-nowrap text-sm sm:text-base">Login</span>
+                  <span className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 rounded-full border-2 border-white flex items-center justify-center">
                     {loading ? (
-                      <Loader2 size={14} className="animate-spin" />
+                      <Loader2 size={12} className="animate-spin shrink-0 sm:w-[14px] sm:h-[14px]" />
                     ) : (
-                      <ArrowRight size={14} />
+                      <ArrowRight size={12} className="shrink-0 sm:w-[14px] sm:h-[14px]" />
                     )}
                   </span>
                 </button>
 
-                <span className="text-black text-[20px]">or</span>
+                <span className="text-black text-[14px] sm:text-[20px] shrink-0">or</span>
 
-                <div className="flex gap-3">
+                <div className="flex gap-2 sm:gap-3 shrink-0">
                   <button
                     onClick={() => handleOAuth("github")}
                     aria-label="Sign in with GitHub"
-                    className="size-12 rounded-full bg-black text-white flex items-center justify-center border-2 border-black text-lg"
+                    className="size-10 sm:size-12 shrink-0 rounded-full bg-black text-white flex items-center justify-center border-2 border-black"
                     title="Sign in with GitHub"
                   >
-                    <FaGithub size={30} color="white" />
+                    <FaGithub className="text-[20px] sm:text-[26px]" color="white" />
                   </button>
                   <button
                     onClick={() => handleOAuth("google")}
                     aria-label="Sign in with Google"
-                    className="size-12 rounded-full bg-white text-black flex items-center justify-center border-2 border-black font-bold text-lg"
+                    className="size-10 sm:size-12 shrink-0 rounded-full bg-white text-black flex items-center justify-center border-2 border-black"
                     title="Sign in with Google"
                   >
-                    <FcGoogle size={30} />
+                    <FcGoogle className="text-[20px] sm:text-[26px]" />
                   </button>
                 </div>
               </div>
@@ -420,7 +420,7 @@ function RegisterPageContent() {
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 text-black" />
                 <input
                   type="text"
-                  placeholder="Username"
+                  placeholder="janedoe"
                   aria-label="Username"
                   className={nb({
                     border: 3,
@@ -435,7 +435,7 @@ function RegisterPageContent() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   type="email"
-                  placeholder="E-mail"
+                  placeholder="janedoe@gmail.com"
                   aria-label="E-mail"
                   className={nb({
                     border: 3,
@@ -450,7 +450,7 @@ function RegisterPageContent() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   type={show ? "text" : "password"}
-                  placeholder="Password"
+                  placeholder="••••••••"
                   aria-label="Password"
                   className={nb({
                     border: 3,
@@ -467,7 +467,7 @@ function RegisterPageContent() {
                   {show ? <EyeOff className="text-xl" /> : <Eye className="" />}
                 </Button>
               </div>
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-2 sm:gap-4 mb-6">
                 <button
                   onClick={handleEmailSignup}
                   disabled={loading}
@@ -476,37 +476,37 @@ function RegisterPageContent() {
                     border: 4,
                     shadow: "none",
                     className:
-                      "flex items-center justify-between w-[170px] px-5 py-3 bg-black text-white shadow-[4px_4px_0_green] font-bold",
+                      "flex items-center justify-between gap-2 sm:gap-3 flex-1 px-3 sm:px-5 py-3 bg-black text-white shadow-[4px_4px_0_green] font-bold",
                   })}
                 >
-                  Sign up
-                  <span className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center">
+                  <span className="whitespace-nowrap text-sm sm:text-base">Sign up</span>
+                  <span className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 rounded-full border-2 border-white flex items-center justify-center">
                     {loading ? (
-                      <Loader2 size={14} className="animate-spin" />
+                      <Loader2 size={12} className="animate-spin shrink-0 sm:w-[14px] sm:h-[14px]" />
                     ) : (
-                      <ArrowRight size={14} />
+                      <ArrowRight size={12} className="shrink-0 sm:w-[14px] sm:h-[14px]" />
                     )}
                   </span>
                 </button>
 
-                <span className="text-black text-sm">or</span>
+                <span className="text-black text-[14px] sm:text-[20px] shrink-0">or</span>
 
-                <div className="flex gap-3">
+                <div className="flex gap-2 sm:gap-3 shrink-0">
                   <button
                     onClick={() => handleOAuth("github")}
                     aria-label="Sign in with GitHub"
-                    className="size-12 rounded-full bg-black text-white flex items-center justify-center border-2 border-black text-lg"
+                    className="size-10 sm:size-12 shrink-0 rounded-full bg-black text-white flex items-center justify-center border-2 border-black"
                     title="Sign in with GitHub"
                   >
-                    <FaGithub size={30} color="white" />
+                    <FaGithub className="text-[20px] sm:text-[26px]" color="white" />
                   </button>
                   <button
                     onClick={() => handleOAuth("google")}
                     aria-label="Sign in with Google"
-                    className="size-12 rounded-full bg-white text-black flex items-center justify-center border-2 border-black font-bold text-lg"
+                    className="size-10 sm:size-12 shrink-0 rounded-full bg-white text-black flex items-center justify-center border-2 border-black"
                     title="Sign in with Google"
                   >
-                    <FcGoogle size={30} />
+                    <FcGoogle className="text-[20px] sm:text-[26px]" />
                   </button>
                 </div>
               </div>
