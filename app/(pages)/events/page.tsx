@@ -25,7 +25,7 @@ type Event = {
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop";
 
-const REGISTER_URL = "https://www.gdgrbu.app/events/7da78a72-734d-4cd2-9361-63fa9a851d69/register";
+const REGISTER_URL = "https://unstop.com/o/PLQDcER?lb=fJJKdvBn&utm_medium=Share&utm_source=online_coding_challenge&utm_campaign=Jagrabis33270";
 
 const cloudinarySafe = (url?: string | null) => {
   if (!url) return FALLBACK_IMAGE;
