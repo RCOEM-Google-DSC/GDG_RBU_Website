@@ -28,7 +28,7 @@ type Event = {
 const FALLBACK_IMAGE =
 	"https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop";
 
-const REGISTER_URL = "https://pixtopia.vercel.app/";
+const REGISTER_URL = "https://unstop.com/o/PLQDcER?lb=fJJKdvBn&utm_medium=Share&utm_source=online_coding_challenge&utm_campaign=Jagrabis33270";
 
 const cloudinarySafe = (url?: string | null) => {
 	if (!url) return FALLBACK_IMAGE;
@@ -91,7 +91,7 @@ export default function Home() {
 
 					{ events.length > 0 ? (
 						events.map((event) => {
-							const registerUrl = event.register_url ?? `/events/${event.id}/register`;
+							const registerUrl = event.register_url ?? REGISTER_URL;
 							const imageSrc = cloudinarySafe(
 								event.image_url ?? FALLBACK_IMAGE,
 							);
