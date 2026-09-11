@@ -14,6 +14,9 @@ import {
 import { getEventWithPartner } from "@/supabase/supabase";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
+
+  const resigerUrl = `https://unstop.com/o/PLQDcER?lb=fJJKdvBn&utm_medium=Share&utm_source=online_coding_challenge&utm_campaign=Jagrabis33270`;
+
 type EventRecord = {
   id: string;
   title?: string;
@@ -116,7 +119,7 @@ export default function UpcomingEventPage({
   // ---------------- helpers ----------------
   const safeImg = (url?: string | null, fallback = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1800&auto=format&fit=crop") =>
     url ? String(url).replace("/upload/", "/upload/f_auto,q_auto/") : fallback;
-  const resigerUrl = `/events/${event.id}/register`;
+
 
   // partner may come as object or array depending on how the join returns
   const partnerData = (() => {
