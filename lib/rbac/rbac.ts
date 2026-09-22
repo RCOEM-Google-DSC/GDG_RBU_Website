@@ -73,3 +73,12 @@ export function canViewParticipants(userRole: UserRole | string): boolean {
   if (isDevelopmentMode) return true;
   return userRole === "admin" || userRole === "member";
 }
+
+/**
+ * Check if user can manage blogs (create, edit, delete blog posts)
+ * Both admin and member roles can manage blogs
+ */
+export function canManageBlogs(userRole: UserRole | string): boolean {
+  if (isDevelopmentMode) return true;
+  return userRole === "admin" || userRole === "member";
+}

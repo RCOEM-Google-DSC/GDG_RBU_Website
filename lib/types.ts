@@ -1,46 +1,14 @@
 import { ReactNode } from "react";
 
-// Blogs
-export interface Blog {
-  id: string;
-  title: string;
-  image_url: string;
-  published_at: string;
-  markdown: string;
-  writer: {
-    name: string;
-    image_url: string;
-  };
-  comments?: Comment[];
-}
+// Blog types — canonical source is now @/modules/blog
+// These re-exports keep existing consumers working.
+export type {
+  BlogPost as Blog,
+  BlogComment as Comment,
+  BlogCardData as BlogCardProps,
+  BlogAuthorData as BlogAuthorProps,
+} from "@/modules/blog";
 
-export interface BlogAuthorProps {
-  name: string;
-  imageUrl: string;
-  bio?: string;
-  publishedCount?: number;
-}
-
-export interface BlogCardProps {
-  id: string;
-  title: string;
-  imageUrl: string;
-  publishedAt: string;
-  writerName: string;
-  writerImage: string;
-  markdownPreview: string;
-}
-
-// comments
-export interface Comment {
-  id: string;
-  comment: string;
-  created_at: string;
-  user: {
-    name: string;
-    image_url: string;
-  };
-}
 
 // Feedback
 export interface Feedback {

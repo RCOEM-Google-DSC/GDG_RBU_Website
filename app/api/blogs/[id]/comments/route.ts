@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { BlogService, commentSchema } from "@/modules/blog";
+import { createClient as createServerClient } from "@/supabase/server";
+
+const service = new BlogService();
 
 export async function POST(
   request: NextRequest,
@@ -8,44 +10,24 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const body = await request.json();
-    const { comment } = body;
 
-    if (
-      !comment ||
-      typeof comment !== "string" ||
-      comment.trim().length === 0
-    ) {
+    // Validate
+    const body = await request.json();
+    const parsed = commentSchema.safeParse(body);
+
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Comment text is required" },
+        { error: parsed.error.issues[0]?.message || "Invalid input" },
         { status: 400 },
       );
     }
 
-    // Create server-side Supabase client with cookie access
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
-            );
-          },
-        },
-      },
-    );
-
-    // Get authenticated user
+    // Auth
+    const authClient = await createServerClient();
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await authClient.auth.getUser();
 
     if (authError || !user) {
       return NextResponse.json(
@@ -54,42 +36,13 @@ export async function POST(
       );
     }
 
-    // Insert comment
-    const { data, error } = await supabase
-      .from("comments_blogs")
-      .insert({
-        blog_id: id,
-        user_id: user.id,
-        comment,
-        created_at: new Date().toISOString(),
-      })
-      .select(
-        `
-        id,
-        comment,
-        created_at,
-        user:user_id (
-          name,
-          image_url
-        )
-      `,
-      )
-      .single();
+    const comment = await service.addComment(id, user.id, parsed.data.comment);
+    return NextResponse.json({ comment }, { status: 201 });
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Failed to add comment";
 
-    if (error) {
-      console.error("Comment error:", error.message, error.code, error.details);
-      return NextResponse.json(
-        { error: error.message || "Failed to add comment" },
-        { status: 500 },
-      );
-    }
-
-    return NextResponse.json({ comment: data }, { status: 201 });
-  } catch (error: any) {
     console.error("Error adding comment:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to add comment" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

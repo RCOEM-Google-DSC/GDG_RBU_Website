@@ -46,8 +46,8 @@ export function BlogList({ blogs, loading = false }: BlogListProps) {
                     title={blog.title}
                     imageUrl={blog.image_url}
                     publishedAt={blog.published_at}
-                    writerName={blog.writer.name}
-                    writerImage={blog.writer.image_url}
+                    writerName={blog.writer?.name ?? "Unknown"}
+                    writerImage={blog.writer?.image_url ?? "/user.png"}
                     markdownPreview={getPreview(blog.markdown)}
                 />
             ))}

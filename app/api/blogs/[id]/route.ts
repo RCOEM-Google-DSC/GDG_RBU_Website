@@ -1,113 +1,66 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getBlog } from "@/supabase/blogs-server";
+import { BlogService, updateBlogSchema } from "@/modules/blog";
 import { createClient as createServerClient } from "@/supabase/server";
-import { createClient } from "@supabase/supabase-js";
+
+const service = new BlogService();
 
 export async function GET(
-	request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> },
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
-	try {
-		const { id } = await params;
-		const blog = await getBlog(id);
-
-		return NextResponse.json({ blog });
-	} catch (error: unknown) {
-		return NextResponse.json(
-			{
-				error:
-					error instanceof Error ? error.message : "Failed to fetch blog",
-			},
-			{ status: 500 },
-		);
-	}
+  try {
+    const { id } = await params;
+    const blog = await service.getById(id);
+    return NextResponse.json({ blog });
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Failed to fetch blog";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 
 export async function PATCH(
-	request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> },
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
-	try {
-		const { id } = await params;
-		const body = await request.json();
-		const { title, markdown, imageUrl } = body as {
-			title?: string;
-			markdown?: string;
-			imageUrl?: string | null;
-		};
+  try {
+    const { id } = await params;
 
-		if (!title?.trim() || !markdown?.trim()) {
-			return NextResponse.json(
-				{ error: "Missing required fields: title and markdown are required" },
-				{ status: 400 },
-			);
-		}
+    // Auth
+    const authClient = await createServerClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await authClient.auth.getUser();
 
-		const authClient = await createServerClient();
-		const {
-			data: { user },
-			error: authError,
-		} = await authClient.auth.getUser();
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-		if (authError || !user) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
+    // Validate
+    const body = await request.json();
+    const parsed = updateBlogSchema.safeParse(body);
 
-		const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-		const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message || "Invalid input" },
+        { status: 400 },
+      );
+    }
 
-		if (!supabaseUrl || !supabaseServiceKey) {
-			return NextResponse.json(
-				{ error: "Server configuration error" },
-				{ status: 500 },
-			);
-		}
+    const blog = await service.update(id, parsed.data, user.id);
+    return NextResponse.json({ success: true, blog });
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Failed to update blog";
 
-		const adminClient = createClient(supabaseUrl, supabaseServiceKey);
+    // Map known service errors to HTTP status codes
+    const status = message.includes("not found")
+      ? 404
+      : message.includes("only edit your own")
+        ? 403
+        : 500;
 
-		const { data: blog, error: blogError } = await adminClient
-			.from("blogs")
-			.select("id, writer_id")
-			.eq("id", id)
-			.single();
-
-		if (blogError || !blog) {
-			return NextResponse.json({ error: "Blog not found" }, { status: 404 });
-		}
-
-		if (blog.writer_id !== user.id) {
-			return NextResponse.json(
-				{ error: "You can only edit your own blogs" },
-				{ status: 403 },
-			);
-		}
-
-		const { data: updatedBlog, error: updateError } = await adminClient
-			.from("blogs")
-			.update({
-				title: title.trim(),
-				markdown: markdown.trim(),
-				image_url: imageUrl || null,
-			})
-			.eq("id", id)
-			.select()
-			.single();
-
-		if (updateError) {
-			return NextResponse.json(
-				{ error: updateError.message || "Failed to update blog" },
-				{ status: 500 },
-			);
-		}
-
-		return NextResponse.json({ success: true, blog: updatedBlog });
-	} catch (error: unknown) {
-		return NextResponse.json(
-			{
-				error:
-					error instanceof Error ? error.message : "Failed to update blog",
-			},
-			{ status: 500 },
-		);
-	}
+    return NextResponse.json({ error: message }, { status });
+  }
 }
