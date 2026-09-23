@@ -1,7 +1,7 @@
 import { createClient } from "@/supabase/server";
 import { redirect } from "next/navigation";
 import { PortfolioBuilderForm } from "@/app/Components/portfolio/builder/helpers";
-import { PortfolioService } from "@/modules/portfolio";
+import { PortfolioService } from "@/modules/portfolio/portfolio.service";
 import type { Portfolio } from "@/modules/portfolio";
 
 const service = new PortfolioService();

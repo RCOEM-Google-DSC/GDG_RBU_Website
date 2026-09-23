@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/supabase/server";
-import { PortfolioService } from "@/modules/portfolio";
+import { PortfolioService } from "@/modules/portfolio/portfolio.service";
 
 const service = new PortfolioService();
 

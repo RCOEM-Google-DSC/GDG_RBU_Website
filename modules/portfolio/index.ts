@@ -9,7 +9,6 @@
  */
 
 // Service (server-side)
-export { PortfolioService } from "./portfolio.service";
 
 // Client helper (browser-side)
 export { createPortfolioApiClient } from "./portfolio.client";

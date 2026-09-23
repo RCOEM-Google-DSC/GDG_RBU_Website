@@ -98,7 +98,7 @@ CREATE TABLE public.portfolio_social_links (
 **Server-side (API routes, Server Components):**
 
 ```ts
-import { PortfolioService } from '@/modules/portfolio';
+import { PortfolioService } from "@/modules/portfolio/portfolio.service";
 
 const service = new PortfolioService();
 const portfolio = await service.get(userId);
