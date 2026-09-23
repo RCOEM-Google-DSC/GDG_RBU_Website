@@ -1,39 +1,17 @@
-// app/api/portfolio/upload/route.ts
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import { v2 as cloudinary } from "cloudinary";
 import { createClient } from "@/supabase/server";
+import { PortfolioService } from "@/modules/portfolio";
 
-// Configure Cloudinary using bracket notation
-cloudinary.config({
-  cloud_name: process.env["CLOUDINARY_CLOUD_NAME"],
-  api_key: process.env["CLOUDINARY_API_KEY"],
-  api_secret: process.env["CLOUDINARY_API_SECRET"],
-});
+const service = new PortfolioService();
 
 export async function POST(req: Request) {
   try {
-    // Safety check using bracket notation
-    if (
-      !process.env["CLOUDINARY_CLOUD_NAME"] ||
-      !process.env["CLOUDINARY_API_KEY"] ||
-      !process.env["CLOUDINARY_API_SECRET"]
-    ) {
-      console.error("Cloudinary env vars missing in portfolio upload");
-      return NextResponse.json(
-        { error: "Cloudinary env vars missing", details: "Check server environment variables" },
-        { status: 500 },
-      );
-    }
-
     // Authenticate user
     const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -46,35 +24,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Convert file to buffer
-    const buffer = Buffer.from(await file.arrayBuffer());
-
-    // Upload to Cloudinary
-    const uploadResult: any = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        {
-          folder: "GDG_Portfolio",
-          public_id: `profile_${user.id}`,
-          resource_type: "auto",
-          overwrite: true,
-          eager: [{ width: 400, height: 400, crop: "fill", gravity: "face", fetch_format: "auto", quality: "auto" }],
-          eager_async: false,
-        },
-        (err, result) => {
-          if (err) reject(err);
-          else resolve(result);
-        },
-      ).end(buffer);
-    });
-
-    const transformedUrl = uploadResult?.eager?.[0]?.secure_url ?? null;
-
-    return NextResponse.json({
-      url: transformedUrl ?? uploadResult.secure_url,
-      secure_url: uploadResult.secure_url,
-      transformed_url: transformedUrl,
-      public_id: uploadResult.public_id,
-    });
+    const result = await service.uploadImage(user.id, file);
+    return NextResponse.json(result);
   } catch (err: any) {
     console.error("PORTFOLIO UPLOAD ERROR:", err);
     return NextResponse.json(

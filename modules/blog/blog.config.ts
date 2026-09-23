@@ -1,11 +1,5 @@
 import type { BlogConfig } from "./blog.types";
 
-/**
- * Default blog configuration.
- *
- * Override per-deployment by passing a partial config
- * to `getBlogConfig()` or `new BlogService(config)`.
- */
 const DEFAULTS: BlogConfig = {
   tableName: process.env.NEXT_PUBLIC_BLOGS_TABLE || "blogs",
   commentsTable: process.env.NEXT_PUBLIC_BLOG_COMMENTS_TABLE || "comments_blogs",
@@ -19,13 +13,6 @@ const DEFAULTS: BlogConfig = {
   previewLength: Number(process.env.NEXT_PUBLIC_BLOG_PREVIEW_LENGTH) || 150,
 };
 
-/**
- * Merge caller overrides with defaults.
- *
- * ```ts
- * const cfg = getBlogConfig({ allowedRoles: ['editor', 'admin'] });
- * ```
- */
 export function getBlogConfig(
   overrides?: Partial<BlogConfig>,
 ): BlogConfig {

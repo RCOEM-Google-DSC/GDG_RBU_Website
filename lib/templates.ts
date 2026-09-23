@@ -1,27 +1,19 @@
-export const TEMPLATE_IDS = [
-  "architectural",
-  "soft",
-  "minimalist-grid",
-  "magazine",
-  "hyun-barng",
-] as const;
+/**
+ * @deprecated — Import from '@/modules/portfolio' instead.
+ * This file is kept as a backward-compat shim.
+ */
+export {
+  TEMPLATE_IDS,
+  TEMPLATE_FOLDER_MAP,
+  LEGACY_ID_MAP,
+  resolveTemplateId,
+} from "@/modules/portfolio";
+export type { TemplateId } from "@/modules/portfolio";
 
-export type TemplateId = (typeof TEMPLATE_IDS)[number];
+// Legacy maps re-exported under old names
+import { LEGACY_FOLDER_TO_ID, NEW_TO_LEGACY_ID } from "@/modules/portfolio";
 
-// Map folder names in /portfolios/ to template slugs
-export const TEMPLATE_FOLDER_MAP: Record<string, TemplateId> = {
-  "architectural-portfolio": "architectural",
-  "hyun": "hyun-barng",
-  "magzine-portfolio final": "magazine",
-  "minimalist-grid-portfolio final": "minimalist-grid",
-  "soft-portfolio final": "soft",
-};
+/** @deprecated Map folder names to template slugs — use LEGACY_FOLDER_TO_ID */
+export const SLUG_TO_FOLDER_MAP = NEW_TO_LEGACY_ID;
 
-// Map template IDs back to their source folders (for reference)
-export const SLUG_TO_FOLDER_MAP: Record<TemplateId, string> = {
-  architectural: "architectural-portfolio",
-  "hyun-barng": "hyun",
-  magazine: "magzine-portfolio final",
-  "minimalist-grid": "minimalist-grid-portfolio final",
-  soft: "soft-portfolio final",
-};
+export { LEGACY_FOLDER_TO_ID };
