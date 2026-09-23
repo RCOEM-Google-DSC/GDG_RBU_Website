@@ -1,35 +1,61 @@
 -- Portfolio Template Rename Migration
--- Renames template IDs from vague slugs to descriptive design-based names.
---
--- Run this AFTER deploying the new code (which supports both old and new IDs
--- via resolveTemplateId()).
-
--- Step 1: Update portfolio_templates table (id column)
--- Must update child references first due to FK constraint.
 
 BEGIN;
 
--- Update portfolios.template_id references first
+INSERT INTO public.portfolio_templates (id, name, description, preview_image_url, created_at)
+SELECT 'brutalist-dark', 'Brutalist Dark', description, preview_image_url, created_at
+FROM public.portfolio_templates WHERE id = 'architectural'
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.portfolio_templates (id, name, description, preview_image_url, created_at)
+SELECT 'warm-elegance', 'Warm Elegance', description, preview_image_url, created_at
+FROM public.portfolio_templates WHERE id = 'soft'
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.portfolio_templates (id, name, description, preview_image_url, created_at)
+SELECT 'clean-grid', 'Clean Grid', description, preview_image_url, created_at
+FROM public.portfolio_templates WHERE id = 'minimalist-grid'
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.portfolio_templates (id, name, description, preview_image_url, created_at)
+SELECT 'editorial-mono', 'Editorial Mono', description, preview_image_url, created_at
+FROM public.portfolio_templates WHERE id = 'magazine'
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.portfolio_templates (id, name, description, preview_image_url, created_at)
+SELECT 'noir-grain', 'Noir Grain', description, preview_image_url, created_at
+FROM public.portfolio_templates WHERE id = 'hyun-barng'
+ON CONFLICT (id) DO NOTHING;
+
+-- 2. Update portfolios to point to the new templates
 UPDATE public.portfolios SET template_id = 'brutalist-dark'  WHERE template_id = 'architectural';
 UPDATE public.portfolios SET template_id = 'warm-elegance'   WHERE template_id = 'soft';
 UPDATE public.portfolios SET template_id = 'clean-grid'      WHERE template_id = 'minimalist-grid';
 UPDATE public.portfolios SET template_id = 'editorial-mono'  WHERE template_id = 'magazine';
 UPDATE public.portfolios SET template_id = 'noir-grain'      WHERE template_id = 'hyun-barng';
 
--- Update portfolio_templates.id (primary key)
-UPDATE public.portfolio_templates SET id = 'brutalist-dark',  name = 'Brutalist Dark'  WHERE id = 'architectural';
-UPDATE public.portfolio_templates SET id = 'warm-elegance',   name = 'Warm Elegance'   WHERE id = 'soft';
-UPDATE public.portfolio_templates SET id = 'clean-grid',      name = 'Clean Grid'      WHERE id = 'minimalist-grid';
-UPDATE public.portfolio_templates SET id = 'editorial-mono',  name = 'Editorial Mono'  WHERE id = 'magazine';
-UPDATE public.portfolio_templates SET id = 'noir-grain',      name = 'Noir Grain'      WHERE id = 'hyun-barng';
+-- 3. Delete the old templates
+DELETE FROM public.portfolio_templates WHERE id IN ('architectural', 'soft', 'minimalist-grid', 'magazine', 'hyun-barng');
 
 COMMIT;
 
 
 
--- ROLLBACK SCRIPT                                         
+-- ROLLBACK SCRIPT
+
 --
 -- BEGIN;
+--
+-- INSERT INTO public.portfolio_templates (id, name, description, preview_image_url, created_at)
+-- SELECT 'architectural', 'Architectural', description, preview_image_url, created_at FROM public.portfolio_templates WHERE id = 'brutalist-dark' ON CONFLICT DO NOTHING;
+-- INSERT INTO public.portfolio_templates (id, name, description, preview_image_url, created_at)
+-- SELECT 'soft', 'Soft', description, preview_image_url, created_at FROM public.portfolio_templates WHERE id = 'warm-elegance' ON CONFLICT DO NOTHING;
+-- INSERT INTO public.portfolio_templates (id, name, description, preview_image_url, created_at)
+-- SELECT 'minimalist-grid', 'Minimalist Grid', description, preview_image_url, created_at FROM public.portfolio_templates WHERE id = 'clean-grid' ON CONFLICT DO NOTHING;
+-- INSERT INTO public.portfolio_templates (id, name, description, preview_image_url, created_at)
+-- SELECT 'magazine', 'Magazine', description, preview_image_url, created_at FROM public.portfolio_templates WHERE id = 'editorial-mono' ON CONFLICT DO NOTHING;
+-- INSERT INTO public.portfolio_templates (id, name, description, preview_image_url, created_at)
+-- SELECT 'hyun-barng', 'Hyun Barng', description, preview_image_url, created_at FROM public.portfolio_templates WHERE id = 'noir-grain' ON CONFLICT DO NOTHING;
 --
 -- UPDATE public.portfolios SET template_id = 'architectural'  WHERE template_id = 'brutalist-dark';
 -- UPDATE public.portfolios SET template_id = 'soft'           WHERE template_id = 'warm-elegance';
@@ -37,10 +63,6 @@ COMMIT;
 -- UPDATE public.portfolios SET template_id = 'magazine'       WHERE template_id = 'editorial-mono';
 -- UPDATE public.portfolios SET template_id = 'hyun-barng'     WHERE template_id = 'noir-grain';
 --
--- UPDATE public.portfolio_templates SET id = 'architectural',  name = 'Architectural'   WHERE id = 'brutalist-dark';
--- UPDATE public.portfolio_templates SET id = 'soft',           name = 'Soft'            WHERE id = 'warm-elegance';
--- UPDATE public.portfolio_templates SET id = 'minimalist-grid', name = 'Minimalist Grid' WHERE id = 'clean-grid';
--- UPDATE public.portfolio_templates SET id = 'magazine',       name = 'Magazine'        WHERE id = 'editorial-mono';
--- UPDATE public.portfolio_templates SET id = 'hyun-barng',     name = 'Hyun Barng'      WHERE id = 'noir-grain';
+-- DELETE FROM public.portfolio_templates WHERE id IN ('brutalist-dark', 'warm-elegance', 'clean-grid', 'editorial-mono', 'noir-grain');
 --
 -- COMMIT;
