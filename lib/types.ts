@@ -134,6 +134,7 @@ export type SupabaseUserRow = {
   name: string | null;
   email: string | null;
   phone_number: string | null;
+  year: number | null;
   section: string | null;
   branch: string | null;
   image_url: string | null;

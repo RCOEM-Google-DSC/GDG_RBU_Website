@@ -80,7 +80,7 @@ export default function EventRegisterPage() {
         .single();
       const { data: userData } = await supabase
         .from("users")
-        .select("id,name,email,phone_number,section,branch,profile_links")
+        .select("*")
         .eq("id", uid)
         .single();
 
@@ -637,12 +637,48 @@ export default function EventRegisterPage() {
   /* ---------- solo registration ---------- */
 
   const registerSolo = async () => {
-    if (!isProfileComplete(user)) {
-      toast.error("Complete your profile before registering");
+    // Validate required fields
+    if (!user.name?.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+    if (!user.phone_number?.trim()) {
+      toast.error("Phone number is required");
+      return;
+    }
+    if (!user.year) {
+      toast.error("Year is required");
+      return;
+    }
+    if (!user.branch?.trim()) {
+      toast.error("Branch is required");
+      return;
+    }
+    if (!user.section?.trim()) {
+      toast.error("Section is required");
       return;
     }
 
     setLoading(true);
+
+    // Save user profile edits (name, phone, year, branch, section) before registering
+    const { error: profileErr } = await supabase
+      .from("users")
+      .update({
+        name: user.name,
+        phone_number: user.phone_number,
+        year: user.year,
+        section: user.section,
+        branch: user.branch,
+      })
+      .eq("id", user.id);
+
+    if (profileErr) {
+      setLoading(false);
+      toast.error("Failed to save profile details");
+      return;
+    }
+
     const { error } = await supabase.from("registrations").insert([
       {
         event_id: id,

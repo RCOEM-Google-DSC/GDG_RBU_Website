@@ -1,6 +1,7 @@
 import React from "react";
-import { Loader2, User, Mail, Phone, Briefcase, Github } from "lucide-react";
+import { Loader2, User, Mail, Phone, Briefcase, GraduationCap, LayoutGrid } from "lucide-react";
 import { InputField } from "./InputField";
+import { SelectField } from "./SelectField";
 
 interface SoloRegistrationFormProps {
   user: any;
@@ -9,6 +10,13 @@ interface SoloRegistrationFormProps {
   registerSolo: () => void;
   event: any;
 }
+
+const YEAR_OPTIONS = [
+  { label: "1st Year", value: 1 },
+  { label: "2nd Year", value: 2 },
+  { label: "3rd Year", value: 3 },
+  { label: "4th Year", value: 4 },
+];
 
 export default function SoloRegistrationForm({
   user,
@@ -26,6 +34,7 @@ export default function SoloRegistrationForm({
           onChange={(e: any) => setUser({ ...user, name: e.target.value })}
           icon={User}
           required
+          placeholder="e.g. Rahul Sharma"
         />
         <InputField
           label="EMAIL"
@@ -41,27 +50,33 @@ export default function SoloRegistrationForm({
             setUser({ ...user, phone_number: e.target.value })
           }
           icon={Phone}
+          required
+          placeholder="e.g. 9876543210"
         />
-        <InputField
-          label="SECTION"
-          value={user.section || ""}
-          onChange={(e: any) => setUser({ ...user, section: e.target.value })}
-          icon={Briefcase}
+        <SelectField
+          label="YEAR"
+          value={user.year ?? ""}
+          onChange={(e: any) => setUser({ ...user, year: Number(e.target.value) })}
+          icon={GraduationCap}
+          required
+          placeholder="Select your year"
+          options={YEAR_OPTIONS}
         />
         <InputField
           label="BRANCH"
           value={user.branch || ""}
           onChange={(e: any) => setUser({ ...user, branch: e.target.value })}
           icon={Briefcase}
+          required
+          placeholder="e.g. CSE"
         />
         <InputField
-          label="GITHUB"
-          value={user.profile_links?.github || ""}
-          onChange={(e: any) =>
-            setUser({ ...user, profile_links: { ...user.profile_links, github: e.target.value } })
-          }
-          icon={Github}
-          placeholder="https://github.com/username"
+          label="SECTION"
+          value={user.section || ""}
+          onChange={(e: any) => setUser({ ...user, section: e.target.value })}
+          icon={LayoutGrid}
+          required
+          placeholder="e.g. A4"
         />
       </div>
 

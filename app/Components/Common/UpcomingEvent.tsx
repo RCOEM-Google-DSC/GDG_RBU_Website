@@ -20,7 +20,11 @@ const UpcomingEvent = ({
   const imageSrc = image || FALLBACK_IMAGE;
   const handleRegisterClick = () => {
     if (registerUrl) {
-      window.open(registerUrl, "_blank");
+      if (registerUrl.startsWith("/")) {
+        window.location.href = registerUrl;
+      } else {
+        window.open(registerUrl, "_blank");
+      }
     }
   };
 

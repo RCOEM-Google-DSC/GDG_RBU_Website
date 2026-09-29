@@ -15,7 +15,6 @@ import { getEventWithPartner } from "@/supabase/supabase";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 
 
-  const resigerUrl = `https://unstop.com/o/PLQDcER?lb=fJJKdvBn&utm_medium=Share&utm_source=online_coding_challenge&utm_campaign=Jagrabis33270`;
 
 type EventRecord = {
   id: string;
@@ -403,7 +402,7 @@ export default function UpcomingEventPage({
         <div className="fixed bottom-6 md:bottom-8 right-4 md:right-6 z-50">
           <button
             onClick={() => {
-              router.push(resigerUrl);
+              router.push(`/events/${event.id}/register`);
             }}
             className={nb({
               border: 4,
