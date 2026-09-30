@@ -646,6 +646,10 @@ export default function EventRegisterPage() {
       toast.error("Phone number is required");
       return;
     }
+    if (!/^[6-9]\d{9}$/.test(user.phone_number.trim())) {
+      toast.error("Enter a valid 10-digit phone number");
+      return;
+    }
     if (!user.year) {
       toast.error("Year is required");
       return;
