@@ -53,3 +53,4 @@ db/schema.sql
 .codex
 supabase/.temp/
 /.idea/
+.opencode/

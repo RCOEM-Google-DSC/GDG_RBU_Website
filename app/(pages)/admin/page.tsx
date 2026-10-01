@@ -54,10 +54,11 @@ export default function AdminPage() {
 
       if (teamMembersError) throw teamMembersError;
 
-      // Fetch recruitment submissions count
+      // Fetch recruitment counts (split schema: applicants + per-domain tasks).
+      // "Recruitment" card shows applicants (personal details submitted).
       const { count: recruitmentCount, error: recruitmentError } =
         await supabase
-          .from("recruitment_submissions")
+          .from("recruitment_applicants")
           .select("*", { count: "exact", head: true });
 
       if (recruitmentError) throw recruitmentError;

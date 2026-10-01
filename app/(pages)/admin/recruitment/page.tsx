@@ -28,8 +28,9 @@ const DataTable = dynamic(
   { ssr: false },
 );
 
-type Submission = {
+type Applicant = {
   id: string;
+  user_id: string;
   name: string;
   email: string;
   phone: string;
@@ -50,11 +51,29 @@ type Submission = {
   motive: string;
   value_addition: string;
   projects: string;
+  created_at: string;
+};
+
+type TaskRow = {
+  id: string;
+  applicant_id: string;
+  user_id: string;
   task_domain: string;
   task_links: string[];
   task_details: Record<string, unknown>;
   status: string;
   created_at: string;
+};
+
+// Joined view for the table: one row per task submission + applicant details.
+// Applicants without a task yet appear with task_domain = "— (details only)".
+type Submission = Applicant & {
+  task_id: string | null;
+  task_domain: string;
+  task_links: string[];
+  task_details: Record<string, unknown>;
+  status: string;
+  task_created_at: string | null;
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -79,31 +98,82 @@ export default function AdminRecruitmentPage() {
 
   const fetchSubmissions = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("recruitment_submissions")
+    const { data: applicants, error: appError } = await supabase
+      .from("recruitment_applicants")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) {
-      toast.error("Failed to fetch submissions");
-      console.error(error);
-    } else {
-      setSubmissions((data as Submission[]) || []);
+    if (appError) {
+      toast.error("Failed to fetch applicants");
+      console.error(appError);
+      setLoading(false);
+      return;
     }
+
+    const { data: tasks, error: taskError } = await supabase
+      .from("recruitment_task_submissions")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (taskError) {
+      toast.error("Failed to fetch task submissions");
+      console.error(taskError);
+    }
+
+    const tasksByApplicant = new Map<string, TaskRow[]>();
+    for (const t of (tasks as TaskRow[]) || []) {
+      const list = tasksByApplicant.get(t.applicant_id) || [];
+      list.push(t);
+      tasksByApplicant.set(t.applicant_id, list);
+    }
+
+    const joined: Submission[] = [];
+    for (const a of (applicants as Applicant[]) || []) {
+      const applicantTasks = tasksByApplicant.get(a.id) || [];
+      if (applicantTasks.length === 0) {
+        joined.push({
+          ...a,
+          task_id: null,
+          task_domain: "— (details only)",
+          task_links: [],
+          task_details: {},
+          status: "details-only",
+          task_created_at: null,
+        });
+      } else {
+        for (const t of applicantTasks) {
+          joined.push({
+            ...a,
+            task_id: t.id,
+            task_domain: t.task_domain,
+            task_links: t.task_links,
+            task_details: t.task_details,
+            status: t.status,
+            task_created_at: t.created_at,
+          });
+        }
+      }
+    }
+
+    setSubmissions(joined);
     setLoading(false);
   };
 
-  const updateStatus = async (id: string, status: string) => {
+  const updateStatus = async (taskId: string | null, status: string) => {
+    if (!taskId) {
+      toast.error("No task submitted yet for this applicant");
+      return;
+    }
     const { error } = await supabase
-      .from("recruitment_submissions")
+      .from("recruitment_task_submissions")
       .update({ status })
-      .eq("id", id);
+      .eq("id", taskId);
 
     if (error) {
       toast.error("Failed to update status");
     } else {
       setSubmissions((prev) =>
-        prev.map((s) => (s.id === id ? { ...s, status } : s)),
+        prev.map((s) => (s.task_id === taskId ? { ...s, status } : s)),
       );
       toast.success(`Status updated to ${status}`);
     }
@@ -113,8 +183,10 @@ export default function AdminRecruitmentPage() {
     const matchesSearch = `${s.name} ${s.email} ${s.branch}`
       .toLowerCase()
       .includes(search.toLowerCase());
-    const matchesDomain = domainFilter ? s.task_domain === domainFilter : true;
-    const matchesStatus = statusFilter ? s.status === statusFilter : true;
+    const matchesDomain =
+      domainFilter && domainFilter !== "all" ? s.task_domain === domainFilter : true;
+    const matchesStatus =
+      statusFilter && statusFilter !== "all" ? s.status === statusFilter : true;
     return matchesSearch && matchesDomain && matchesStatus;
   });
 
@@ -140,7 +212,7 @@ export default function AdminRecruitmentPage() {
       `"${(s.value_addition || "").replace(/"/g, '""')}"`,
       `"${(s.projects || "").replace(/"/g, '""')}"`,
       s.task_domain, (s.task_links || []).join(" | "), s.status,
-      new Date(s.created_at).toLocaleString(),
+      new Date(s.task_created_at || s.created_at).toLocaleString(),
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -152,17 +224,22 @@ export default function AdminRecruitmentPage() {
     URL.revokeObjectURL(url);
   };
 
+  const rowKey = (s: Submission) => s.task_id || `applicant-${s.id}`;
+
   const columns = [
     {
       header: "Name",
       accessorKey: "name",
       cell: ({ row }: any) => (
         <button
-          onClick={() => setExpandedId(expandedId === row.original.id ? null : row.original.id)}
+          onClick={() => {
+            const key = row.original.task_id || `applicant-${row.original.id}`;
+            setExpandedId(expandedId === key ? null : key);
+          }}
           className="font-semibold text-left hover:text-blue-600 flex items-center gap-1"
         >
           {row.original.name}
-          {expandedId === row.original.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          {expandedId === (row.original.task_id || `applicant-${row.original.id}`) ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </button>
       ),
     },
@@ -190,11 +267,18 @@ export default function AdminRecruitmentPage() {
       header: "Status",
       accessorKey: "status",
       cell: ({ row }: any) => {
-        const s = row.original;
+        const s = row.original as Submission;
+        if (!s.task_id) {
+          return (
+            <span className="px-2 py-0.5 text-xs font-bold uppercase rounded border bg-gray-100 text-gray-600 border-gray-300">
+              details-only
+            </span>
+          );
+        }
         return (
           <Select
             value={s.status}
-            onValueChange={(v) => updateStatus(s.id, v)}
+            onValueChange={(v) => updateStatus(s.task_id, v)}
           >
             <SelectTrigger className="w-[130px]">
               <SelectValue>
@@ -217,7 +301,7 @@ export default function AdminRecruitmentPage() {
       header: "Date",
       accessorKey: "created_at",
       cell: ({ row }: any) =>
-        new Date(row.original.created_at).toLocaleDateString("en-IN", {
+        new Date(row.original.task_created_at || row.original.created_at).toLocaleDateString("en-IN", {
           day: "2-digit",
           month: "short",
         }),
@@ -232,6 +316,7 @@ export default function AdminRecruitmentPage() {
           <h2 className="text-2xl font-bold">Recruitment Submissions</h2>
           <p className="text-sm text-gray-500">
             {filtered.length} of {submissions.length} submissions
+            (applicants + per-domain tasks)
           </p>
         </div>
         <Button onClick={exportCsv} variant="outline" className="flex items-center gap-2">
@@ -268,6 +353,7 @@ export default function AdminRecruitmentPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="details-only">Details Only</SelectItem>
             <SelectItem value="submitted">Submitted</SelectItem>
             <SelectItem value="reviewed">Reviewed</SelectItem>
             <SelectItem value="shortlisted">Shortlisted</SelectItem>
@@ -299,7 +385,7 @@ export default function AdminRecruitmentPage() {
           {/* Expanded Detail Panel */}
           {expandedId && (
             <ExpandedDetail
-              submission={submissions.find((s) => s.id === expandedId)!}
+              submission={submissions.find((s) => rowKey(s) === expandedId)!}
               onClose={() => setExpandedId(null)}
             />
           )}
@@ -377,25 +463,29 @@ function ExpandedDetail({
         </Section>
 
         <Section title={`Task — ${s.task_domain}`}>
-          <div className="space-y-2">
-            {(s.task_links || []).map((link, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <span className="text-gray-500 text-xs font-mono">Link {i + 1}:</span>
-                <a
-                  href={link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1 truncate"
-                >
-                  {link} <ExternalLink size={12} />
-                </a>
-              </div>
-            ))}
-          </div>
+          {s.task_links && s.task_links.length > 0 ? (
+            <div className="space-y-2">
+              {(s.task_links || []).map((link, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="text-gray-500 text-xs font-mono">Link {i + 1}:</span>
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1 truncate"
+                  >
+                    {link} <ExternalLink size={12} />
+                  </a>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">No task submitted yet — personal details only.</p>
+          )}
         </Section>
 
         <div className="text-xs text-gray-400 mt-4">
-          Submitted: {new Date(s.created_at).toLocaleString("en-IN")}
+          Submitted: {new Date(s.task_created_at || s.created_at).toLocaleString("en-IN")}
         </div>
       </div>
     </div>

@@ -3,21 +3,28 @@
 import React from "react";
 import { ArrowLeft, Send, FileText, ExternalLink, ClipboardList } from "lucide-react";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
-import { RecruitmentFormData } from "./constants";
+import { PersonalDetailsData, TaskSubmissionData } from "./constants";
 
 interface SubmissionPreviewProps {
-  form: RecruitmentFormData;
+  personal: PersonalDetailsData;
+  task: TaskSubmissionData;
+  /** @deprecated pass personal + task separately */
+  form?: PersonalDetailsData & TaskSubmissionData;
   onBack: () => void;
   onConfirm: () => void;
   submitting: boolean;
 }
 
 export default function SubmissionPreview({
+  personal,
+  task,
   form,
   onBack,
   onConfirm,
   submitting,
 }: SubmissionPreviewProps) {
+  const p = personal ?? form!;
+  const t = task ?? form!;
   return (
     <div className="space-y-6">
       <NeoBrutalism border={3} shadow="lg" className="bg-white p-6 md:p-8">
@@ -28,47 +35,47 @@ export default function SubmissionPreview({
 
         {/* Personal Details */}
         <Section title="Personal Details" color="#4285F4">
-          <Row label="Name" value={form.name} />
-          <Row label="Email" value={form.email} />
-          <Row label="Phone" value={form.phone} />
-          <Row label="Year" value={form.year ? `${form.year}${getSuffix(form.year)} Year` : "—"} />
-          <Row label="Branch" value={form.branch} />
+          <Row label="Name" value={p.name} />
+          <Row label="Email" value={p.email} />
+          <Row label="Phone" value={p.phone} />
+          <Row label="Year" value={p.year ? `${p.year}${getSuffix(p.year)} Year` : "—"} />
+          <Row label="Branch" value={p.branch} />
         </Section>
 
         {/* Domain Preferences */}
         <Section title="Domain Preferences" color="#FBBC04">
-          <Row label="Preference 1" value={form.domain_pref_1} />
-          <Row label="Preference 2" value={form.domain_pref_2 || "—"} />
-          <Row label="Preference 3" value={form.domain_pref_3 || "—"} />
-          <Row label="Tech Domain" value={form.tech_domain} />
-          <Row label="Socials Domain" value={form.socials_domain} />
+          <Row label="Preference 1" value={p.domain_pref_1} />
+          <Row label="Preference 2" value={p.domain_pref_2 || "—"} />
+          <Row label="Preference 3" value={p.domain_pref_3 || "—"} />
+          <Row label="Tech Domain" value={p.tech_domain} />
+          <Row label="Socials Domain" value={p.socials_domain} />
         </Section>
 
         {/* Profile Links */}
         <Section title="Profile Links" color="#34A853">
-          <Row label="LinkedIn" value={form.linkedin_url} isLink />
-          <Row label="GitHub" value={form.github_url || "—"} isLink={!!form.github_url} />
-          <Row label="Codeforces" value={form.codeforces_url} isLink={form.codeforces_url !== "Nil"} />
-          {form.codechef_url && <Row label="Codechef" value={form.codechef_url} isLink={form.codechef_url !== "Nil"} />}
-          {form.other_cp_url && <Row label="Other CP" value={form.other_cp_url} isLink />}
+          <Row label="LinkedIn" value={p.linkedin_url} isLink />
+          <Row label="GitHub" value={p.github_url || "—"} isLink={!!p.github_url} />
+          <Row label="Codeforces" value={p.codeforces_url} isLink={p.codeforces_url !== "Nil"} />
+          {p.codechef_url && <Row label="Codechef" value={p.codechef_url} isLink={p.codechef_url !== "Nil"} />}
+          {p.other_cp_url && <Row label="Other CP" value={p.other_cp_url} isLink />}
         </Section>
 
         {/* About */}
         <Section title="About You" color="#EA4335">
-          {form.cgpa && <Row label="CGPA" value={form.cgpa} />}
+          {p.cgpa && <Row label="CGPA" value={p.cgpa} />}
           <Row
             label="Resume"
-            value={form.resume_filename || "Uploaded"}
+            value={p.resume_filename || "Uploaded"}
             icon={<FileText size={14} className="text-green-600" />}
           />
-          <LongRow label="Motive to Join" value={form.motive} />
-          <LongRow label="Value Addition" value={form.value_addition} />
-          <LongRow label="Projects/Experience" value={form.projects} />
+          <LongRow label="Motive to Join" value={p.motive} />
+          <LongRow label="Value Addition" value={p.value_addition} />
+          <LongRow label="Projects/Experience" value={p.projects} />
         </Section>
 
         {/* Task Submission */}
-        <Section title={`Task — ${form.task_domain}`} color="#8338EC">
-          {form.task_links
+        <Section title={`Task — ${t.task_domain}`} color="#8338EC">
+          {t.task_links
             .filter((l) => l.trim())
             .map((link, i) => (
               <Row key={i} label={`Link ${i + 1}`} value={link} isLink />

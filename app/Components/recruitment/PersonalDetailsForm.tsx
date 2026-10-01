@@ -8,7 +8,7 @@ import {
 import { nb } from "@/components/ui/neo-brutalism";
 import { toast } from "sonner";
 import {
-  RecruitmentFormData,
+  PersonalDetailsData,
   YEAR_OPTIONS,
   TECH_DOMAIN_OPTIONS,
   SOCIALS_DOMAIN_OPTIONS,
@@ -16,11 +16,13 @@ import {
 } from "./constants";
 
 interface PersonalDetailsFormProps {
-  form: RecruitmentFormData;
-  setForm: (f: RecruitmentFormData) => void;
+  form: PersonalDetailsData;
+  setForm: (f: PersonalDetailsData) => void;
   collapsed: boolean;
   onToggle: () => void;
   onComplete: () => void;
+  saving?: boolean;
+  alreadySaved?: boolean;
 }
 
 export default function PersonalDetailsForm({
@@ -29,11 +31,13 @@ export default function PersonalDetailsForm({
   collapsed,
   onToggle,
   onComplete,
+  saving = false,
+  alreadySaved = false,
 }: PersonalDetailsFormProps) {
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const update = (field: keyof RecruitmentFormData, value: any) => {
+  const update = (field: keyof PersonalDetailsData, value: any) => {
     setForm({ ...form, [field]: value });
   };
 
@@ -363,16 +367,21 @@ export default function PersonalDetailsForm({
           <div className="pt-2 flex justify-end">
             <button
               onClick={validateAndContinue}
+              disabled={saving || uploading}
               className={nb({
                 border: 3,
                 shadow: "md",
                 hover: "lift",
                 active: "push",
                 className:
-                  "flex items-center gap-2 bg-black text-white px-6 py-3 font-bold uppercase tracking-wider text-sm",
+                  "flex items-center gap-2 bg-black text-white px-6 py-3 font-bold uppercase tracking-wider text-sm disabled:opacity-60",
               })}
             >
-              Continue to Task
+              {saving
+                ? "Saving..."
+                : alreadySaved
+                  ? "Update Details & Continue"
+                  : "Save Details & Continue"}
               <ChevronDown size={16} />
             </button>
           </div>

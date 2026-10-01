@@ -13,9 +13,13 @@ import {
 
 import {
   DOMAINS,
-  EMPTY_FORM,
+  EMPTY_PERSONAL_DETAILS,
+  EMPTY_TASK_SUBMISSION,
+  PERSONAL_DETAILS_KEY,
+  TASK_DRAFT_KEY,
   LOCALSTORAGE_KEY,
-  RecruitmentFormData,
+  PersonalDetailsData,
+  TaskSubmissionData,
 } from "@/app/Components/recruitment/constants";
 import PersonalDetailsForm from "@/app/Components/recruitment/PersonalDetailsForm";
 import TaskSubmissionForm from "@/app/Components/recruitment/TaskSubmissionForm";
@@ -39,52 +43,135 @@ export default function TaskPage() {
   const taskFormRef = useRef<HTMLDivElement>(null);
   const formsRef = useRef<HTMLDivElement>(null);
 
-  const [form, setForm] = useState<RecruitmentFormData>(EMPTY_FORM);
+  const [personal, setPersonal] = useState<PersonalDetailsData>(EMPTY_PERSONAL_DETAILS);
+  const [task, setTask] = useState<TaskSubmissionData>(EMPTY_TASK_SUBMISSION);
   const [activeDomain, setActiveDomain] = useState<string>(DOMAINS[0].id);
   const [personalCollapsed, setPersonalCollapsed] = useState(false);
   const [taskCollapsed, setTaskCollapsed] = useState(true);
   const [step, setStep] = useState<Step>("form");
   const [submitting, setSubmitting] = useState(false);
-  const [alreadySubmitted, setAlreadySubmitted] = useState(false);
+  const [savingPersonal, setSavingPersonal] = useState(false);
+  const [applicantId, setApplicantId] = useState<string | null>(null);
+  const [hasPersonal, setHasPersonal] = useState(false);
+  const [submittedDomains, setSubmittedDomains] = useState<string[]>([]);
   const [config, setConfig] = useState<{ whatsapp_url: string; discord_url: string } | null>(null);
 
-  // ---- Load draft from localStorage on mount ----
+  const persistPersonal = useCallback((p: PersonalDetailsData) => {
+    setPersonal(p);
+    try {
+      localStorage.setItem(PERSONAL_DETAILS_KEY, JSON.stringify(p));
+    } catch {}
+  }, []);
+
+  const persistTask = useCallback(
+    (t: TaskSubmissionData) => {
+      setTask(t);
+      try {
+        localStorage.setItem(TASK_DRAFT_KEY, JSON.stringify({ ...t, domainId: activeDomain }));
+      } catch {}
+    },
+    [activeDomain],
+  );
+
+  // ---- Load drafts (new keys + legacy combined key migration) ----
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(LOCALSTORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved) as RecruitmentFormData;
-        setForm(parsed);
-        if (parsed.task_domain) {
-          const dom = DOMAINS.find((d) => d.name === parsed.task_domain);
-          if (dom) setActiveDomain(dom.id);
+      const legacy = localStorage.getItem(LOCALSTORAGE_KEY);
+      if (legacy) {
+        const parsed = JSON.parse(legacy);
+        const { task_domain, task_links, task_details, ...rest } = parsed;
+        if (!localStorage.getItem(PERSONAL_DETAILS_KEY)) {
+          localStorage.setItem(PERSONAL_DETAILS_KEY, JSON.stringify(rest));
         }
+        if (!localStorage.getItem(TASK_DRAFT_KEY) && task_domain) {
+          localStorage.setItem(
+            TASK_DRAFT_KEY,
+            JSON.stringify({ task_domain, task_links, task_details }),
+          );
+        }
+        localStorage.removeItem(LOCALSTORAGE_KEY);
+      }
+
+      const savedPersonal = localStorage.getItem(PERSONAL_DETAILS_KEY);
+      if (savedPersonal) {
+        const parsed = JSON.parse(savedPersonal) as PersonalDetailsData;
+        setPersonal({ ...EMPTY_PERSONAL_DETAILS, ...parsed });
         if (parsed.name && parsed.email && parsed.phone) {
           setPersonalCollapsed(true);
           setTaskCollapsed(false);
         }
-        toast.info("Your draft has been restored");
+      }
+      const savedTask = localStorage.getItem(TASK_DRAFT_KEY);
+      if (savedTask) {
+        const parsed = JSON.parse(savedTask);
+        if (parsed.task_domain) {
+          const dom = DOMAINS.find((d) => d.name === parsed.task_domain);
+          if (dom) setActiveDomain(dom.id);
+        }
+        setTask({
+          task_domain: parsed.task_domain || "",
+          task_links: parsed.task_links || [""],
+          task_details: parsed.task_details || {},
+        });
+        if (parsed.domainId) {
+          setActiveDomain(parsed.domainId);
+        }
       }
     } catch {}
   }, []);
 
-  // ---- Check if user already submitted ----
+  // ---- Load applicant + task submissions for logged-in user ----
   useEffect(() => {
-    const checkExisting = async () => {
+    const loadExisting = async () => {
       const uid = await getCurrentUserId();
       if (!uid) return;
 
-      const { data } = await supabase
-        .from("recruitment_submissions")
-        .select("id")
+      const { data: applicant } = await supabase
+        .from("recruitment_applicants")
+        .select("*")
         .eq("user_id", uid)
         .maybeSingle();
 
-      if (data) {
-        setAlreadySubmitted(true);
+      if (applicant) {
+        setApplicantId(applicant.id);
+        setHasPersonal(true);
+        setPersonal((prev) => ({
+          ...prev,
+          name: applicant.name ?? prev.name,
+          email: applicant.email ?? prev.email,
+          phone: applicant.phone ?? prev.phone,
+          year: applicant.year ?? prev.year,
+          branch: applicant.branch ?? prev.branch,
+          domain_pref_1: applicant.domain_pref_1 ?? prev.domain_pref_1,
+          domain_pref_2: applicant.domain_pref_2 ?? prev.domain_pref_2,
+          domain_pref_3: applicant.domain_pref_3 ?? prev.domain_pref_3,
+          tech_domain: applicant.tech_domain ?? prev.tech_domain,
+          socials_domain: applicant.socials_domain ?? prev.socials_domain,
+          linkedin_url: applicant.linkedin_url ?? prev.linkedin_url,
+          github_url: applicant.github_url ?? prev.github_url,
+          codeforces_url: applicant.codeforces_url ?? prev.codeforces_url,
+          codechef_url: applicant.codechef_url ?? prev.codechef_url,
+          other_cp_url: applicant.other_cp_url ?? prev.other_cp_url,
+          cgpa: applicant.cgpa != null ? String(applicant.cgpa) : prev.cgpa,
+          resume_url: applicant.resume_url ?? prev.resume_url,
+          motive: applicant.motive ?? prev.motive,
+          value_addition: applicant.value_addition ?? prev.value_addition,
+          projects: applicant.projects ?? prev.projects,
+        }));
+        setPersonalCollapsed(true);
+        setTaskCollapsed(false);
+      }
+
+      const { data: tasks } = await supabase
+        .from("recruitment_task_submissions")
+        .select("task_domain")
+        .eq("user_id", uid);
+
+      if (tasks) {
+        setSubmittedDomains(tasks.map((t) => t.task_domain));
       }
     };
-    checkExisting();
+    loadExisting();
   }, []);
 
   // ---- Fetch recruitment config (WhatsApp + Discord links) ----
@@ -100,17 +187,80 @@ export default function TaskPage() {
     fetchConfig();
   }, []);
 
-  // ---- Persist form to localStorage on change ----
-  const persistForm = useCallback((f: RecruitmentFormData) => {
-    setForm(f);
-    try {
-      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(f));
-    } catch {}
-  }, []);
+  // ---- Save personal details to recruitment_applicants (upsert) ----
+  const onPersonalComplete = async () => {
+    const uid = await getCurrentUserId();
+    if (!uid) {
+      localStorage.setItem(PERSONAL_DETAILS_KEY, JSON.stringify(personal));
+      toast.info("Please log in to save your personal details");
+      router.push(`/register?redirect=/recruitment/task`);
+      return;
+    }
 
-  // ---- When personal details complete, collapse and scroll to task form ----
-  const onPersonalComplete = () => {
-    // Calculate the target scroll position BEFORE collapsing
+    // Sync email/name with auth account
+    const { data: userData } = await supabase
+      .from("users")
+      .select("email, name")
+      .eq("id", uid)
+      .single();
+
+    const payload = { ...personal };
+    if (userData?.email && userData.email !== payload.email) {
+      payload.email = userData.email;
+      toast.info("Email updated to match your logged-in account");
+    }
+    if (!payload.name && userData?.name) {
+      payload.name = userData.name;
+    }
+
+    setSavingPersonal(true);
+    try {
+      const { data, error } = await supabase
+        .from("recruitment_applicants")
+        .upsert(
+          [
+            {
+              user_id: uid,
+              name: payload.name.trim(),
+              email: payload.email.trim(),
+              phone: payload.phone.trim(),
+              year: payload.year,
+              branch: payload.branch.trim(),
+              domain_pref_1: payload.domain_pref_1,
+              domain_pref_2: payload.domain_pref_2 || null,
+              domain_pref_3: payload.domain_pref_3 || null,
+              tech_domain: payload.tech_domain,
+              socials_domain: payload.socials_domain,
+              linkedin_url: payload.linkedin_url.trim(),
+              github_url: payload.github_url?.trim() || null,
+              codeforces_url: payload.codeforces_url.trim(),
+              codechef_url: payload.codechef_url?.trim() || null,
+              other_cp_url: payload.other_cp_url?.trim() || null,
+              cgpa: payload.cgpa ? parseFloat(payload.cgpa) : null,
+              resume_url: payload.resume_url,
+              motive: payload.motive.trim(),
+              value_addition: payload.value_addition.trim(),
+              projects: payload.projects.trim(),
+            },
+          ],
+          { onConflict: "user_id" },
+        )
+        .select("id")
+        .single();
+
+      if (error) throw error;
+
+      persistPersonal(payload);
+      setApplicantId(data.id);
+      setHasPersonal(true);
+      toast.success("Personal details saved. Now submit your task.");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save personal details");
+      return;
+    } finally {
+      setSavingPersonal(false);
+    }
+
     const formsTop = formsRef.current
       ? formsRef.current.getBoundingClientRect().top + window.scrollY - 80
       : 0;
@@ -118,7 +268,6 @@ export default function TaskPage() {
     setPersonalCollapsed(true);
     setTaskCollapsed(false);
 
-    // Instantly jump to the forms section so there's no visible jump
     requestAnimationFrame(() => {
       window.scrollTo({ top: formsTop, behavior: "instant" as ScrollBehavior });
     });
@@ -129,47 +278,57 @@ export default function TaskPage() {
     setActiveDomain(domainId);
     const domain = DOMAINS.find((d) => d.id === domainId);
     if (domain) {
-      persistForm({ ...form, task_domain: domain.name });
+      persistTask({ ...task, task_domain: domain.name });
     }
   };
 
-  // ---- Handle "Review & Submit" from task form ----
+  // ---- Handle "Review & Submit" from task form (gate on personal details) ----
   const handleReviewSubmit = async () => {
+    if (!hasPersonal || !applicantId) {
+      // Re-check DB in case applicant was created in another tab
+      const uid = await getCurrentUserId();
+      if (uid) {
+        const { data } = await supabase
+          .from("recruitment_applicants")
+          .select("id")
+          .eq("user_id", uid)
+          .maybeSingle();
+        if (data) {
+          setApplicantId(data.id);
+          setHasPersonal(true);
+        } else {
+          toast.error("Submit your personal details first");
+          setPersonalCollapsed(false);
+          setTaskCollapsed(true);
+          return;
+        }
+      } else {
+        try {
+          localStorage.setItem(TASK_DRAFT_KEY, JSON.stringify(task));
+        } catch {}
+        toast.info("Please log in to submit your task");
+        router.push(`/register?redirect=/recruitment/task`);
+        return;
+      }
+    }
+
     const domain = DOMAINS.find((d) => d.id === activeDomain);
-    const updatedForm = { ...form, task_domain: domain?.name || activeDomain };
+    const updatedTask = { ...task, task_domain: domain?.name || activeDomain || task.task_domain };
 
-    // Check login
     const uid = await getCurrentUserId();
-
     if (!uid) {
-      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(updatedForm));
-      toast.info("Please log in to submit your application");
+      localStorage.setItem(TASK_DRAFT_KEY, JSON.stringify(updatedTask));
+      toast.info("Please log in to submit your task");
       router.push(`/register?redirect=/recruitment/task`);
       return;
     }
 
-    // Get logged-in email and override form email
-    const { data: userData } = await supabase
-      .from("users")
-      .select("email, name")
-      .eq("id", uid)
-      .single();
-
-    if (userData?.email && userData.email !== updatedForm.email) {
-      updatedForm.email = userData.email;
-      toast.info("Email updated to match your logged-in account");
-    }
-
-    if (!updatedForm.name && userData?.name) {
-      updatedForm.name = userData.name;
-    }
-
-    persistForm(updatedForm);
+    persistTask(updatedTask);
     setStep("preview");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ---- Final submit to Supabase ----
+  // ---- Final task submit to recruitment_task_submissions ----
   const handleFinalSubmit = async () => {
     setSubmitting(true);
 
@@ -181,49 +340,56 @@ export default function TaskPage() {
         return;
       }
 
-      const validLinks = form.task_links.filter((l) => l.trim());
-
-      const { error } = await supabase.from("recruitment_submissions").insert([
-        {
-          user_id: uid,
-          name: form.name.trim(),
-          email: form.email.trim(),
-          phone: form.phone.trim(),
-          year: form.year,
-          branch: form.branch.trim(),
-          domain_pref_1: form.domain_pref_1,
-          domain_pref_2: form.domain_pref_2 || null,
-          domain_pref_3: form.domain_pref_3 || null,
-          tech_domain: form.tech_domain,
-          socials_domain: form.socials_domain,
-          linkedin_url: form.linkedin_url.trim(),
-          github_url: form.github_url?.trim() || null,
-          codeforces_url: form.codeforces_url.trim(),
-          codechef_url: form.codechef_url?.trim() || null,
-          other_cp_url: form.other_cp_url?.trim() || null,
-          cgpa: form.cgpa ? parseFloat(form.cgpa) : null,
-          resume_url: form.resume_url,
-          motive: form.motive.trim(),
-          value_addition: form.value_addition.trim(),
-          projects: form.projects.trim(),
-          task_domain: form.task_domain,
-          task_links: validLinks,
-          task_details: form.task_details || {},
-        },
-      ]);
-
-      if (error) {
-        if (error.message?.includes("unique") || error.message?.includes("duplicate")) {
-          toast.error("You have already submitted an application");
-          setAlreadySubmitted(true);
-        } else {
-          toast.error(error.message || "Submission failed");
+      // Gate: applicant row must exist
+      let currentApplicantId = applicantId;
+      if (!currentApplicantId) {
+        const { data: applicant } = await supabase
+          .from("recruitment_applicants")
+          .select("id")
+          .eq("user_id", uid)
+          .maybeSingle();
+        if (!applicant) {
+          toast.error("Submit your personal details before submitting a task");
+          setStep("form");
+          setPersonalCollapsed(false);
+          setTaskCollapsed(true);
+          return;
         }
+        currentApplicantId = applicant.id;
+        setApplicantId(applicant.id);
+        setHasPersonal(true);
+      }
+
+      const validLinks = task.task_links.filter((l) => l.trim());
+      if (validLinks.length === 0) {
+        toast.error("At least one task link is required");
+        setStep("form");
         return;
       }
 
-      localStorage.removeItem(LOCALSTORAGE_KEY);
-      toast.success("Application submitted successfully!");
+      const { error } = await supabase.from("recruitment_task_submissions").upsert(
+        [
+          {
+            user_id: uid,
+            applicant_id: currentApplicantId,
+            task_domain: task.task_domain,
+            task_links: validLinks,
+            task_details: task.task_details || {},
+          },
+        ],
+        { onConflict: "user_id,task_domain" },
+      );
+
+      if (error) {
+        toast.error(error.message || "Task submission failed");
+        return;
+      }
+
+      localStorage.removeItem(TASK_DRAFT_KEY);
+      setSubmittedDomains((prev) =>
+        prev.includes(task.task_domain) ? prev : [...prev, task.task_domain],
+      );
+      toast.success("Task submitted successfully!");
       setStep("success");
     } catch (err: any) {
       toast.error(err.message || "Something went wrong");
@@ -232,39 +398,9 @@ export default function TaskPage() {
     }
   };
 
-  // ---- Already submitted view ----
-  if (alreadySubmitted && step !== "success") {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div
-          className="fixed inset-0 -z-10 pointer-events-none"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)",
-            backgroundSize: "80px 80px",
-          }}
-        />
-        <NeoBrutalism border={4} shadow="xl" className="bg-white p-8 md:p-12 text-center max-w-md">
-          <Check size={48} className="mx-auto mb-4 text-[#34A853]" />
-          <h2 className="text-2xl font-black uppercase mb-2">Already Submitted</h2>
-          <p className="font-mono text-sm text-gray-600 mb-6">
-            You have already submitted your recruitment application. We&apos;ll get back to you soon!
-          </p>
-          <button
-            onClick={() => router.push("/")}
-            className={nb({
-              border: 3,
-              shadow: "md",
-              hover: "lift",
-              className: "bg-black text-white px-6 py-3 font-bold text-sm",
-            })}
-          >
-            Go Home
-          </button>
-        </NeoBrutalism>
-      </div>
-    );
-  }
+  const alreadySubmittedActiveDomain = submittedDomains.includes(
+    DOMAINS.find((d) => d.id === activeDomain)?.name || task.task_domain,
+  );
 
   // ---- Success view ----
   if (step === "success") {
@@ -287,7 +423,8 @@ export default function TaskPage() {
             <Sparkles size={48} className="mx-auto mb-4" />
             <h2 className="text-3xl font-black uppercase mb-2 font-retron">You&apos;re In!</h2>
             <p className="font-mono text-sm text-white/90 mb-8">
-              Your application has been submitted. Shortlisted candidates will be contacted for interviews. Best of luck!
+              Your task for {task.task_domain} has been submitted. Shortlisted candidates will be
+              contacted for interviews. Best of luck!
             </p>
 
             {/* Mandatory community links */}
@@ -364,7 +501,8 @@ export default function TaskPage() {
         />
         <div className="max-w-3xl mx-auto px-4 py-12">
           <SubmissionPreview
-            form={form}
+            personal={personal}
+            task={task}
             onBack={() => setStep("form")}
             onConfirm={handleFinalSubmit}
             submitting={submitting}
@@ -406,37 +544,46 @@ export default function TaskPage() {
             Choose Your Domain & Submit
           </h1>
           <p className="font-mono text-sm text-gray-600 mt-2">
-            Select a domain, view the task, fill your details, and submit your work.
+            Step 1: save your personal details. Step 2: submit your domain task.
           </p>
+          {hasPersonal && (
+            <p className="font-mono text-xs text-green-700 mt-1 flex items-center gap-1">
+              <Check size={14} /> Personal details saved — task submission unlocked
+            </p>
+          )}
         </motion.div>
 
         {/* Domain Tabs */}
         <div className="mb-8 overflow-x-auto pb-2">
           <div className="flex gap-2 min-w-max">
-            {DOMAINS.map((domain) => (
-              <button
-                key={domain.id}
-                onClick={() => handleDomainChange(domain.id)}
-                className={nb({
-                  border: 3,
-                  shadow: activeDomain === domain.id ? "md" : "sm",
-                  active: "push",
-                  className: `flex items-center gap-2 px-4 py-2.5 font-black text-xs uppercase tracking-wider whitespace-nowrap transition-colors ${
+            {DOMAINS.map((domain) => {
+              const submitted = submittedDomains.includes(domain.name);
+              return (
+                <button
+                  key={domain.id}
+                  onClick={() => handleDomainChange(domain.id)}
+                  className={nb({
+                    border: 3,
+                    shadow: activeDomain === domain.id ? "md" : "sm",
+                    active: "push",
+                    className: `flex items-center gap-2 px-4 py-2.5 font-black text-xs uppercase tracking-wider whitespace-nowrap transition-colors ${
+                      activeDomain === domain.id
+                        ? "text-white"
+                        : "bg-white text-black hover:bg-gray-50"
+                    }`,
+                  })}
+                  style={
                     activeDomain === domain.id
-                      ? "text-white"
-                      : "bg-white text-black hover:bg-gray-50"
-                  }`,
-                })}
-                style={
-                  activeDomain === domain.id
-                    ? { backgroundColor: domain.color }
-                    : undefined
-                }
-              >
-                {DOMAIN_ICONS[domain.id]}
-                {domain.shortName}
-              </button>
-            ))}
+                      ? { backgroundColor: domain.color }
+                      : undefined
+                  }
+                >
+                  {DOMAIN_ICONS[domain.id]}
+                  {domain.shortName}
+                  {submitted && <Check size={14} strokeWidth={3} />}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -467,12 +614,17 @@ export default function TaskPage() {
                   </h2>
                   <p className="font-mono text-xs text-gray-500">Task Details</p>
                 </div>
+                {alreadySubmittedActiveDomain && (
+                  <span className="ml-auto flex items-center gap-1 bg-green-100 border-2 border-green-500 text-green-800 px-2 py-1 font-mono text-[10px] font-bold uppercase">
+                    <Check size={12} /> Submitted
+                  </span>
+                )}
               </div>
 
-              {activeDomainData?.tasks.map((task, i) => (
+              {activeDomainData?.tasks.map((taskItem, i) => (
                 <div key={i} className="mb-4 last:mb-0">
-                  <h3 className="font-bold text-sm mb-1">{task.title}</h3>
-                  <p className="font-mono text-xs text-gray-600">{task.description}</p>
+                  <h3 className="font-bold text-sm mb-1">{taskItem.title}</h3>
+                  <p className="font-mono text-xs text-gray-600">{taskItem.description}</p>
                 </div>
               ))}
             </NeoBrutalism>
@@ -481,30 +633,27 @@ export default function TaskPage() {
 
         {/* Forms */}
         <div className="space-y-6" ref={formsRef}>
-          {/* Personal Details */}
+          {/* Personal Details — Step 1, saved to recruitment_applicants */}
           <PersonalDetailsForm
-            form={form}
-            setForm={persistForm}
+            form={personal}
+            setForm={persistPersonal}
             collapsed={personalCollapsed}
             onToggle={() => setPersonalCollapsed(!personalCollapsed)}
             onComplete={onPersonalComplete}
+            saving={savingPersonal}
+            alreadySaved={hasPersonal}
           />
 
-          {/* Task Submission — scroll target */}
+          {/* Task Submission — Step 2, gated on personal details */}
           <div ref={taskFormRef}>
             <TaskSubmissionForm
-              form={form}
-              setForm={persistForm}
+              form={task}
+              setForm={persistTask}
               collapsed={taskCollapsed}
-              onToggle={() => {
-                if (taskCollapsed && !form.name) {
-                  toast.error("Fill personal details first");
-                  return;
-                }
-                setTaskCollapsed(!taskCollapsed);
-              }}
+              onToggle={() => setTaskCollapsed(!taskCollapsed)}
               onSubmit={handleReviewSubmit}
               submitting={submitting}
+              personalSubmitted={hasPersonal}
             />
           </div>
         </div>

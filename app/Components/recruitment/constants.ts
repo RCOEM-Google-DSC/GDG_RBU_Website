@@ -58,26 +58,12 @@ export const DOMAINS = [
     ],
   },
   {
-    id: "management",
-    name: "Management",
-    shortName: "MANAGEMENT",
+    id: "m_m",
+    name: "Marketing & Management",
+    shortName: "M&M",
     color: "#8338EC",
     description:
       "Lead and organize events, manage teams, handle logistics, and ensure every GDG RBU initiative runs smoothly from start to finish.",
-    tasks: [
-      {
-        title: "Task details coming soon",
-        description: "Check back shortly for the full task brief.",
-      },
-    ],
-  },
-  {
-    id: "marketing",
-    name: "Marketing",
-    shortName: "MARKETING",
-    color: "#FF6B35",
-    description:
-      "Drive outreach, build partnerships, and amplify GDG RBU's presence. Create strategies that bring our community together.",
     tasks: [
       {
         title: "Task details coming soon",
@@ -105,11 +91,11 @@ export type DomainId = (typeof DOMAINS)[number]["id"];
 
 // Domain preference options for the radio grid
 export const DOMAIN_PREFERENCE_OPTIONS = [
-  "Tech Team",
-  "Management Team",
-  "Competitive Programming Team",
-  "Design Team",
-  "Socials Team",
+  "Tech",
+  "Management",
+  "CP",
+  "Design",
+  "Socials",
   "Marketing",
 ] as const;
 
@@ -135,9 +121,12 @@ export const SOCIALS_DOMAIN_OPTIONS = [
   "None",
 ] as const;
 
-// Form data shape
-export type RecruitmentFormData = {
-  // Personal details
+// Form data shapes — split into personal details + task submission.
+// Personal details are stored in `recruitment_applicants` (one row per user).
+// Task submissions are stored in `recruitment_task_submissions`
+// (one row per user per task_domain) and require an applicant row first.
+
+export type PersonalDetailsData = {
   name: string;
   email: string;
   phone: string;
@@ -167,14 +156,18 @@ export type RecruitmentFormData = {
   motive: string;
   value_addition: string;
   projects: string;
+};
 
-  // Task submission
+export type TaskSubmissionData = {
   task_domain: string;
   task_links: string[];
   task_details: Record<string, unknown>;
 };
 
-export const EMPTY_FORM: RecruitmentFormData = {
+// Combined shape (backwards compatible for preview/admin joins)
+export type RecruitmentFormData = PersonalDetailsData & TaskSubmissionData;
+
+export const EMPTY_PERSONAL_DETAILS: PersonalDetailsData = {
   name: "",
   email: "",
   phone: "",
@@ -196,9 +189,19 @@ export const EMPTY_FORM: RecruitmentFormData = {
   motive: "",
   value_addition: "",
   projects: "",
+};
+
+export const EMPTY_TASK_SUBMISSION: TaskSubmissionData = {
   task_domain: "",
   task_links: [""],
   task_details: {},
 };
 
+export const EMPTY_FORM: RecruitmentFormData = {
+  ...EMPTY_PERSONAL_DETAILS,
+  ...EMPTY_TASK_SUBMISSION,
+};
+
+export const PERSONAL_DETAILS_KEY = "gdg_recruitment_personal_draft";
+export const TASK_DRAFT_KEY = "gdg_recruitment_task_draft";
 export const LOCALSTORAGE_KEY = "gdg_recruitment_draft";

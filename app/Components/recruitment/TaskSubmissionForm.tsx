@@ -4,15 +4,16 @@ import React from "react";
 import { ChevronDown, ChevronUp, Plus, Trash2, Link as LinkIcon } from "lucide-react";
 import { nb } from "@/components/ui/neo-brutalism";
 import { toast } from "sonner";
-import { RecruitmentFormData } from "./constants";
+import { TaskSubmissionData } from "./constants";
 
 interface TaskSubmissionFormProps {
-  form: RecruitmentFormData;
-  setForm: (f: RecruitmentFormData) => void;
+  form: TaskSubmissionData;
+  setForm: (f: TaskSubmissionData) => void;
   collapsed: boolean;
   onToggle: () => void;
   onSubmit: () => void;
   submitting: boolean;
+  personalSubmitted: boolean;
 }
 
 export default function TaskSubmissionForm({
@@ -22,6 +23,7 @@ export default function TaskSubmissionForm({
   onToggle,
   onSubmit,
   submitting,
+  personalSubmitted,
 }: TaskSubmissionFormProps) {
   const updateLink = (index: number, value: string) => {
     const links = [...form.task_links];
@@ -47,6 +49,10 @@ export default function TaskSubmissionForm({
   };
 
   const validate = () => {
+    if (!personalSubmitted) {
+      toast.error("Submit your personal details first");
+      return;
+    }
     const validLinks = form.task_links.filter((l) => l.trim());
     if (validLinks.length === 0) {
       toast.error("At least one task link is required");
@@ -55,11 +61,19 @@ export default function TaskSubmissionForm({
     onSubmit();
   };
 
+  const handleToggle = () => {
+    if (!personalSubmitted) {
+      toast.error("Submit your personal details first");
+      return;
+    }
+    onToggle();
+  };
+
   return (
     <div className={nb({ border: 3, shadow: "lg", className: "bg-white overflow-hidden" })}>
       {/* Header */}
       <button
-        onClick={onToggle}
+        onClick={handleToggle}
         className="w-full flex items-center justify-between px-6 py-4 bg-[#34A853] text-white font-black uppercase tracking-wider text-sm hover:bg-[#2d9148] transition-colors"
       >
         <span className="flex items-center gap-2">
@@ -72,6 +86,11 @@ export default function TaskSubmissionForm({
       {/* Form Body */}
       {!collapsed && (
         <div className="p-6 md:p-8 space-y-5">
+          {!personalSubmitted && (
+            <div className="bg-yellow-50 border-2 border-yellow-400 p-3 font-mono text-xs text-yellow-800">
+              Submit your personal details above to unlock task submission.
+            </div>
+          )}
           <p className="font-mono text-xs text-gray-500 mb-4">
             Upload your completed task work. Add Google Drive links, GitHub repos, or any relevant URLs.
           </p>
