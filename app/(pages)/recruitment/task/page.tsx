@@ -40,7 +40,7 @@ export default function TaskPage() {
   const formsRef = useRef<HTMLDivElement>(null);
 
   const [form, setForm] = useState<RecruitmentFormData>(EMPTY_FORM);
-  const [activeDomain, setActiveDomain] = useState(DOMAINS[0].id);
+  const [activeDomain, setActiveDomain] = useState<string>(DOMAINS[0].id);
   const [personalCollapsed, setPersonalCollapsed] = useState(false);
   const [taskCollapsed, setTaskCollapsed] = useState(true);
   const [step, setStep] = useState<Step>("form");
