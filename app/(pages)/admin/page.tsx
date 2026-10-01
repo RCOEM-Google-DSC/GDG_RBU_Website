@@ -2,7 +2,7 @@
 import { MdEventAvailable } from "react-icons/md";
 
 import { useEffect, useState } from "react";
-import { UserCog, Users } from "lucide-react";
+import { UserCog, Users, ClipboardList } from "lucide-react";
 import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
 import InfoCard from "@/app/Components/Admin/InfoCard";
@@ -18,6 +18,7 @@ export default function AdminPage() {
     { title: "Total Users", data: 0, icon: Users },
     { title: "Event Registrations", data: 0, icon: MdEventAvailable },
     { title: "Team Members", data: 0, icon: UserCog },
+    { title: "Recruitment", data: 0, icon: ClipboardList },
   ]);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
@@ -53,6 +54,14 @@ export default function AdminPage() {
 
       if (teamMembersError) throw teamMembersError;
 
+      // Fetch recruitment submissions count
+      const { count: recruitmentCount, error: recruitmentError } =
+        await supabase
+          .from("recruitment_submissions")
+          .select("*", { count: "exact", head: true });
+
+      if (recruitmentError) throw recruitmentError;
+
       setStats([
         { title: "Total Users", data: usersCount || 0, icon: Users },
         {
@@ -64,6 +73,11 @@ export default function AdminPage() {
           title: "Team Members",
           data: teamMembersCount || 0,
           icon: UserCog,
+        },
+        {
+          title: "Recruitment",
+          data: recruitmentCount || 0,
+          icon: ClipboardList,
         },
       ]);
     } catch (error) {
@@ -77,7 +91,7 @@ export default function AdminPage() {
   return (
     <div className="relative">
       {/* info card grid */}
-      <div className="grid grid-cols-3 gap-4 p-4">
+      <div className="grid grid-cols-4 gap-4 p-4">
         {stats.map((item) => (
           <InfoCard
             key={item.title}

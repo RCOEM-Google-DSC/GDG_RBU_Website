@@ -5,6 +5,7 @@ import {
   FileText,
   PenSquare,
   CalendarPlus,
+  ClipboardList,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -51,11 +52,11 @@ const Buttons = [
     url: "/admin/team-members",
     icon: UserCog,
   },
-  // {
-  //   title: "Partners",
-  //   url: "/admin/partners",
-  //   icon: Handshake,
-  // },
+  {
+    title: "Recruitment",
+    url: "/admin/recruitment",
+    icon: ClipboardList,
+  },
 ];
 
 export default function SideBar() {
