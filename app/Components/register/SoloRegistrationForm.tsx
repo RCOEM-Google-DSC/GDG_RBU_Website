@@ -12,10 +12,7 @@ interface SoloRegistrationFormProps {
 }
 
 const YEAR_OPTIONS = [
-  { label: "1st Year", value: 1 },
   { label: "2nd Year", value: 2 },
-  { label: "3rd Year", value: 3 },
-  { label: "4th Year", value: 4 },
 ];
 
 export default function SoloRegistrationForm({
@@ -91,16 +88,7 @@ export default function SoloRegistrationForm({
         </div>
       </div>
 
-      {event.whatsapp_url && (
-        <a
-          href={event.whatsapp_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block mt-4 text-center underline font-mono text-sm"
-        >
-          Join WhatsApp Group
-        </a>
-      )}
+
     </>
   );
 }
