@@ -421,7 +421,7 @@ function ExpandedDetail({
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 text-sm mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-6">
           <Detail label="Email" value={s.email} />
           <Detail label="Phone" value={s.phone} />
           <Detail label="Year" value={`${s.year}`} />
@@ -498,7 +498,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
       <h4 className="font-bold text-sm uppercase tracking-wider text-gray-500 mb-2 border-b pb-1">
         {title}
       </h4>
-      <div className="grid grid-cols-2 gap-3 text-sm">{children}</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">{children}</div>
     </div>
   );
 }

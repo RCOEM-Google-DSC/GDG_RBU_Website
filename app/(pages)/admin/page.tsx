@@ -92,7 +92,7 @@ export default function AdminPage() {
   return (
     <div className="relative">
       {/* info card grid */}
-      <div className="grid grid-cols-4 gap-4 p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
         {stats.map((item) => (
           <InfoCard
             key={item.title}
@@ -103,11 +103,6 @@ export default function AdminPage() {
         ))}
       </div>
 
-      {/* logs */}
-      {/* <div> */}
-      {/*   <h2 className="text-2xl">Logs</h2> */}
-      {/*   <p>in work</p> */}
-      {/* </div> */}
     </div>
   );
 }
