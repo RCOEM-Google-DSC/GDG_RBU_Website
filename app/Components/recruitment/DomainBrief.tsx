@@ -17,7 +17,18 @@ import { downloadTaskPdf } from "./taskPdf";
 
 export default function DomainBrief({ domain }: { domain: Domain }) {
   const [active, setActive] = useState(0);
+  const [generating, setGenerating] = useState(false);
   const brief = domain.briefs[Math.min(active, domain.briefs.length - 1)];
+
+  const handleDownload = async () => {
+    if (generating) return;
+    setGenerating(true);
+    try {
+      await downloadTaskPdf(domain, brief);
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   return (
     <NeoBrutalism border={3} shadow="lg" className="bg-white overflow-hidden">
@@ -43,18 +54,21 @@ export default function DomainBrief({ domain }: { domain: Domain }) {
             </span>
           )}
           <button
-            onClick={() => downloadTaskPdf(domain, brief)}
+            onClick={handleDownload}
+            disabled={generating}
             className={nb({
               border: 3,
               shadow: "md",
               hover: "lift",
               active: "push",
               className:
-                "ml-auto inline-flex items-center gap-2 bg-black text-white px-4 py-2 font-black text-[11px] uppercase tracking-wider",
+                "ml-auto inline-flex items-center gap-2 bg-black text-white px-4 py-2 font-black text-[11px] uppercase tracking-wider disabled:opacity-60",
             })}
           >
             <Download size={14} strokeWidth={3} />
-            PDF{domain.briefs.length > 1 ? ` · ${brief.label}` : ""}
+            {generating
+              ? "Making PDF..."
+              : `PDF${domain.briefs.length > 1 ? ` - ${brief.label}` : ""}`}
           </button>
         </div>
         <h2 className="mt-3 text-xl md:text-2xl font-black uppercase tracking-tight">

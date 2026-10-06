@@ -31,7 +31,39 @@ function slug(s: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-export function buildTaskDoc(domain: Domain, brief: TaskBrief) {
+let headerCache: { url: string; w: number; h: number } | null | undefined;
+
+async function loadHeaderImage(): Promise<{
+  url: string;
+  w: number;
+  h: number;
+} | null> {
+  if (headerCache !== undefined) return headerCache;
+  try {
+    const res = await fetch("/assets/header.png");
+    if (!res.ok) throw new Error("header not found");
+    const blob = await res.blob();
+    const url = await new Promise<string>((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result as string);
+      r.onerror = reject;
+      r.readAsDataURL(blob);
+    });
+    const dims = await new Promise<{ w: number; h: number }>((resolve) => {
+      const im = new Image();
+      im.onload = () =>
+        resolve({ w: im.naturalWidth || 873, h: im.naturalHeight || 214 });
+      im.onerror = () => resolve({ w: 873, h: 214 });
+      im.src = url;
+    });
+    headerCache = { url, ...dims };
+  } catch {
+    headerCache = null;
+  }
+  return headerCache;
+}
+
+export async function buildTaskDoc(domain: Domain, brief: TaskBrief) {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const [dr, dg, db] = hexToRgb(domain.color);
   let y = 0;
@@ -75,23 +107,35 @@ export function buildTaskDoc(domain: Domain, brief: TaskBrief) {
     }
   };
 
-  /* ---- Header band ---- */
+  /* ---- Header: GDG banner + domain strip ---- */
+  const header = await loadHeaderImage();
+  if (header) {
+    const imgH = Math.min(55, (PAGE_W * header.h) / header.w);
+    doc.addImage(header.url, "PNG", 0, 0, PAGE_W, imgH, undefined, "FAST");
+    y = imgH;
+  } else {
+    doc.setFillColor(dr, dg, db);
+    doc.rect(0, 0, PAGE_W, 26, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("GOOGLE DEVELOPER GROUPS - RBU", MARGIN, 10);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.text("RECRUITMENT DRIVE 2026-27", MARGIN, 16.5);
+    y = 26;
+  }
   doc.setFillColor(dr, dg, db);
-  doc.rect(0, 0, PAGE_W, 26, "F");
+  doc.rect(0, y, PAGE_W, 8, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.text("GOOGLE DEVELOPER GROUPS · RBU", MARGIN, 10);
   doc.setFontSize(9);
-  doc.setFont("helvetica", "normal");
-  doc.text("RECRUITMENT DRIVE 2026-27", MARGIN, 16.5);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.text(domain.shortName, PAGE_W - MARGIN, 10, { align: "right" });
-  doc.setFont("helvetica", "normal");
-  doc.text(brief.label, PAGE_W - MARGIN, 16.5, { align: "right" });
+  doc.text("RECRUITMENT DRIVE 2026-27", MARGIN, y + 5.5);
+  doc.text(`${domain.shortName} - ${brief.label}`, PAGE_W - MARGIN, y + 5.5, {
+    align: "right",
+  });
 
-  y = 34;
+  y += 14;
   doc.setTextColor(0, 0, 0);
 
   /* ---- Title ---- */
@@ -167,13 +211,13 @@ export function buildTaskDoc(domain: Domain, brief: TaskBrief) {
       writeLines([first, ...rest], MARGIN + 2, 5);
     }
     for (const l of s.links ?? []) {
-      const ll = wrapped(`${l.label}: ${l.url}`, 9.5);
+      const ll = wrapped(`- ${l.label}`, 9.5);
       need(ll.length * 4.5 + 2);
       doc.setTextColor(20, 80, 200);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9.5);
       for (const line of ll) {
-        doc.text(line, MARGIN + 2, y);
+        doc.textWithLink(line, MARGIN + 2, y, { url: l.url });
         y += 4.5;
       }
       doc.setTextColor(0, 0, 0);
@@ -234,7 +278,7 @@ export function buildTaskDoc(domain: Domain, brief: TaskBrief) {
   return doc;
 }
 
-export function downloadTaskPdf(domain: Domain, brief: TaskBrief) {
-  const doc = buildTaskDoc(domain, brief);
+export async function downloadTaskPdf(domain: Domain, brief: TaskBrief) {
+  const doc = await buildTaskDoc(domain, brief);
   doc.save(`GDG-RBU_${slug(domain.name)}_${slug(brief.id)}_Task-2026-27.pdf`);
 }
