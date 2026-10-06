@@ -23,6 +23,7 @@ import {
 } from "@/app/Components/recruitment/constants";
 import PersonalDetailsForm from "@/app/Components/recruitment/PersonalDetailsForm";
 import TaskSubmissionForm from "@/app/Components/recruitment/TaskSubmissionForm";
+import DomainBrief from "@/app/Components/recruitment/DomainBrief";
 import SubmissionPreview from "@/app/Components/recruitment/SubmissionPreview";
 import Footer from "@/app/Components/Landing/Footer";
 
@@ -72,6 +73,19 @@ export default function TaskPage() {
     },
     [activeDomain],
   );
+
+  // ---- Deep-link support: /recruitment/task?domain=web-dev ----
+  useEffect(() => {
+    try {
+      const q = new URLSearchParams(window.location.search).get("domain");
+      if (q && DOMAINS.some((d) => d.id === q)) {
+        setActiveDomain(q);
+        const domain = DOMAINS.find((d) => d.id === q);
+        if (domain) persistTask({ ...task, task_domain: domain.name });
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ---- Load drafts (new keys + legacy combined key migration) ----
   useEffect(() => {
@@ -597,37 +611,12 @@ export default function TaskPage() {
             transition={{ duration: 0.25 }}
             className="mb-8"
           >
-            <NeoBrutalism border={3} shadow="lg" className="bg-white p-6 md:p-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center text-white"
-                  style={{
-                    backgroundColor: activeDomainData?.color,
-                    border: "2px solid black",
-                  }}
-                >
-                  {DOMAIN_ICONS[activeDomain]}
-                </div>
-                <div>
-                  <h2 className="text-xl font-black uppercase tracking-tight">
-                    {activeDomainData?.name}
-                  </h2>
-                  <p className="font-mono text-xs text-gray-500">Task Details</p>
-                </div>
-                {alreadySubmittedActiveDomain && (
-                  <span className="ml-auto flex items-center gap-1 bg-green-100 border-2 border-green-500 text-green-800 px-2 py-1 font-mono text-[10px] font-bold uppercase">
-                    <Check size={12} /> Submitted
-                  </span>
-                )}
+            {alreadySubmittedActiveDomain && (
+              <div className="mb-3 inline-flex items-center gap-1.5 bg-green-100 border-[3px] border-green-600 text-green-800 px-3 py-1.5 font-mono text-[11px] font-bold uppercase">
+                <Check size={12} /> Submitted for {activeDomainData?.name} — resubmitting will update it
               </div>
-
-              {activeDomainData?.tasks.map((taskItem, i) => (
-                <div key={i} className="mb-4 last:mb-0">
-                  <h3 className="font-bold text-sm mb-1">{taskItem.title}</h3>
-                  <p className="font-mono text-xs text-gray-600">{taskItem.description}</p>
-                </div>
-              ))}
-            </NeoBrutalism>
+            )}
+            {activeDomainData && <DomainBrief domain={activeDomainData} />}
           </motion.div>
         </AnimatePresence>
 

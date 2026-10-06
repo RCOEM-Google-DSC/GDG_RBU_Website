@@ -214,14 +214,21 @@ export default function RecruitmentPage() {
                   {domain.description}
                 </p>
 
-                {/* Tag */}
-                <div className="mt-4">
+                {/* Tag + task link */}
+                <div className="mt-4 flex items-center justify-between gap-2">
                   <span
                     className="inline-block px-3 py-1 text-xs font-bold uppercase tracking-wider border-2 border-black"
                     style={{ backgroundColor: domain.color, color: "white" }}
                   >
                     {domain.shortName}
                   </span>
+                  <Link
+                    href={`/recruitment/task?domain=${domain.id}`}
+                    className="inline-flex items-center gap-1 font-mono text-xs font-bold uppercase tracking-wider underline underline-offset-4 hover:opacity-70"
+                  >
+                    View Task
+                    <ArrowRight size={14} strokeWidth={3} />
+                  </Link>
                 </div>
               </NeoBrutalism>
             </motion.div>
