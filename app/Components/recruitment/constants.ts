@@ -33,16 +33,20 @@ export type Domain = {
   briefs: TaskBrief[];
 };
 
+const CO_LEADS: TaskContact[] = [
+  { name: "Saptanshu Wanjari", role: "GDG RBU Co-Lead", phone: "+91 7350557473" },
+  { name: "Zoya Ghachi", role: "GDG RBU Co-Lead", phone: "+91 7058046302" },
+];
+
 const WEB_CONTACTS: TaskContact[] = [
-  { name: "Saptanshu Wanjari", role: "GDG RBU Lead", phone: "+91 7350557473" },
+  ...CO_LEADS,
   { name: "Rohit Agrawal", role: "Web Lead", phone: "+91 9981978217" },
 ];
 
 const MM_CONTACTS: TaskContact[] = [
+  ...CO_LEADS,
   { name: "Jagravi Bisen", role: "Marketing Lead", phone: "+91 9103548451" },
   { name: "Saarth Meshram", role: "Management Lead", phone: "+91 9552603646" },
-  { name: "Saptanshu Wanjari", role: "GDG RBU Lead", phone: "+91 7350557473" },
-  { name: "Zoya Ghachi", role: "GDG RBU Co-Lead", phone: "+91 7058046302" },
 ];
 
 const MM_BRIEF: TaskBrief = {
@@ -259,6 +263,7 @@ export const DOMAINS: Domain[] = [
           "Paste your CodeChef profile link and contest rank / screenshot link in the task submission form below.",
         ],
         contacts: [
+          ...CO_LEADS,
           { name: "Adarsh Jha", role: "CP Co-Lead", phone: "+91 93401 94244" },
           { name: "Dev Jain", role: "CP Co-Lead", phone: "+91 90335 96889" },
         ],
@@ -299,9 +304,9 @@ export const DOMAINS: Domain[] = [
           "Paste the link(s) in the task submission form below.",
         ],
         contacts: [
+          ...CO_LEADS,
           { name: "Gayatri Donode", role: "Design Co-Lead", phone: "+91 8407906655" },
           { name: "Moksh Barapatre", role: "Design Co-Lead", phone: "+91 9049527009" },
-          { name: "Saptanshu Wanjari", role: "GDG RBU Lead", phone: "+91 7350557473" },
         ],
       },
       {
@@ -343,9 +348,9 @@ export const DOMAINS: Domain[] = [
           "Paste the link(s) in the task submission form below.",
         ],
         contacts: [
+          ...CO_LEADS,
           { name: "Gayatri Donode", role: "Design Co-Lead", phone: "+91 8407906655" },
           { name: "Moksh Barapatre", role: "Design Co-Lead", phone: "+91 9049527009" },
-          { name: "Saptanshu Wanjari", role: "GDG RBU Lead", phone: "+91 7350557473" },
         ],
       },
       {
@@ -369,6 +374,7 @@ export const DOMAINS: Domain[] = [
           "Submit the artwork (PNG / PDF) via Drive and paste the link in the task submission form below.",
         ],
         contacts: [
+          ...CO_LEADS,
           { name: "Gayatri Donode", role: "Design Co-Lead", phone: "+91 8407906655" },
           { name: "Moksh Barapatre", role: "Design Co-Lead", phone: "+91 9049527009" },
         ],
@@ -453,7 +459,7 @@ export const DOMAINS: Domain[] = [
           "Upload everything to a Google Drive folder and paste the link in the task submission form below.",
         ],
         contacts: [
-          { name: "Saptanshu Wanjari", role: "GDG RBU Lead", phone: "+91 7350557473" },
+          ...CO_LEADS,
           { name: "Samarth Zalkikar", role: "MAC Lead", phone: "+91 9075085950" },
           { name: "Vivian Demello", role: "MAC Co-Lead", phone: "+91 7588270066" },
         ],
@@ -528,6 +534,7 @@ export const DOMAINS: Domain[] = [
           "Paste the link in the task submission form below.",
         ],
         contacts: [
+          ...CO_LEADS,
           { name: "Arshpreet Puri", role: "Socials Lead", phone: "+91 9699073889" },
         ],
       },
@@ -578,6 +585,7 @@ export const DOMAINS: Domain[] = [
           "Paste the link in the task submission form below.",
         ],
         contacts: [
+          ...CO_LEADS,
           { name: "Arshpreet Puri", role: "Socials Lead", phone: "+91 9699073889" },
         ],
       },

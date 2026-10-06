@@ -135,7 +135,7 @@ export async function buildTaskDoc(domain: Domain, brief: TaskBrief) {
     align: "right",
   });
 
-  y += 14;
+  y += 20;
   doc.setTextColor(0, 0, 0);
 
   /* ---- Title ---- */
