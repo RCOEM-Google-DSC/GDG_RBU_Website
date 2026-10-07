@@ -52,26 +52,34 @@ export async function GET(request: Request) {
 
       const { data: existingUser, error: fetchError } = await supabase
         .from("users")
-        .select("id, role")
+        .select("id, role, image_url")
         .eq("id", userId)
         .single();
 
       if (existingUser) {
         role = existingUser.role;
         
-        // Update existing user's image if OAuth provider has one
-        const oAuthAvatar =
-          sessionData.user.user_metadata?.avatar_url ||
-          sessionData.user.user_metadata?.picture;
-        
-        if (oAuthAvatar) {
-          await supabase
-            .from("users")
-            .update({ 
-              image_url: oAuthAvatar,
-              updated_at: new Date().toISOString()
-            })
-            .eq("id", userId);
+        // Only update the avatar if the user hasn't uploaded a custom image.
+        // Custom images are on Cloudinary; OAuth images are from Google/GitHub CDNs.
+        const currentImage = existingUser.image_url || "";
+        const hasCustomImage =
+          currentImage.includes("cloudinary.com") ||
+          currentImage.includes("blob.core.windows.net");
+
+        if (!hasCustomImage) {
+          const oAuthAvatar =
+            sessionData.user.user_metadata?.avatar_url ||
+            sessionData.user.user_metadata?.picture;
+
+          if (oAuthAvatar) {
+            await supabase
+              .from("users")
+              .update({ 
+                image_url: oAuthAvatar,
+                updated_at: new Date().toISOString()
+              })
+              .eq("id", userId);
+          }
         }
       } else if (fetchError?.code === "PGRST116") {
         // If user doesn't exist in users table, create them
