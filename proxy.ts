@@ -2,6 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
+  // If an OAuth code lands on the root URL (PKCE flow), forward it to the
+  // auth callback handler so the session exchange happens server-side.
+  if (request.nextUrl.pathname === "/" && request.nextUrl.searchParams.has("code")) {
+    const callbackUrl = request.nextUrl.clone();
+    callbackUrl.pathname = "/api/auth/callback";
+    return NextResponse.redirect(callbackUrl);
+  }
+
   // API routes should manage their own auth and should not depend on
   // middleware claims refresh. This avoids unnecessary latency/failures
   // before handlers like /api/upload execute.
