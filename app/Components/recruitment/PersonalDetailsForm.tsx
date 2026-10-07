@@ -90,6 +90,15 @@ export default function PersonalDetailsForm({
     if (!form.year) { toast.error("Year is required"); return; }
     if (!form.branch?.trim()) { toast.error("Branch is required"); return; }
     if (!form.domain_pref_1) { toast.error("Domain Preference 1 is required"); return; }
+
+    // Validate no duplicate domain preferences
+    const prefs = [form.domain_pref_1, form.domain_pref_2, form.domain_pref_3].filter(Boolean);
+    const uniquePrefs = new Set(prefs);
+    if (prefs.length !== uniquePrefs.size) {
+      toast.error("Each domain preference must be different. Please fix duplicate preferences.");
+      return;
+    }
+
     if (!form.linkedin_url?.trim()) { toast.error("LinkedIn URL is required"); return; }
     if (!form.tech_domain) { toast.error("Tech domain preference is required"); return; }
     if (!form.socials_domain) { toast.error("Socials domain preference is required"); return; }
@@ -506,47 +515,80 @@ function DomainPreferenceGrid({
 }) {
   const prefs = [pref1, pref2, pref3];
 
+  // Detect duplicate preferences
+  const duplicates = new Set<number>();
+  for (let i = 0; i < prefs.length; i++) {
+    if (!prefs[i]) continue;
+    for (let j = i + 1; j < prefs.length; j++) {
+      if (prefs[j] && prefs[i] === prefs[j]) {
+        duplicates.add(i);
+        duplicates.add(j);
+      }
+    }
+  }
+  const hasDuplicates = duplicates.size > 0;
+
   const handleChange = (prefIndex: number, value: string) => {
     const next = [...prefs];
     next[prefIndex] = value;
+    // Auto-clear other preferences that have the same value
+    for (let i = 0; i < next.length; i++) {
+      if (i !== prefIndex && next[i] === value) {
+        next[i] = "";
+      }
+    }
     onChange(next[0], next[1], next[2]);
   };
 
   return (
-    <div className={nb({ border: 2, shadow: "md", className: "bg-white overflow-x-auto" })}>
-      <table className="w-full text-xs font-mono">
-        <thead>
-          <tr className="border-b-2 border-black">
-            <th className="py-3 px-3 text-left font-black uppercase tracking-wider" />
-            {DOMAIN_PREFERENCE_OPTIONS.map((domain) => (
-              <th
-                key={domain}
-                className="py-3 px-2 text-center font-bold uppercase tracking-wider text-[10px] sm:text-xs"
-              >
-                {domain}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {["Preference 1", "Preference 2", "Preference 3"].map((label, i) => (
-            <tr key={label} className={i < 2 ? "border-b border-gray-200" : ""}>
-              <td className="py-3 px-3 font-bold whitespace-nowrap">{label}</td>
+    <div>
+      {hasDuplicates && (
+        <div className="mb-2 flex items-center gap-2 bg-red-50 border-2 border-red-400 text-red-700 px-3 py-2 text-xs font-mono font-bold uppercase tracking-wide">
+          <span className="text-red-500 text-base">⚠</span>
+          Each preference must be a different domain. Please fix duplicates before submitting.
+        </div>
+      )}
+      <div className={nb({ border: 2, shadow: "md", className: `bg-white overflow-x-auto ${hasDuplicates ? "border-red-400" : ""}` })}>
+        <table className="w-full text-xs font-mono">
+          <thead>
+            <tr className="border-b-2 border-black">
+              <th className="py-3 px-3 text-left font-black uppercase tracking-wider" />
               {DOMAIN_PREFERENCE_OPTIONS.map((domain) => (
-                <td key={domain} className="py-3 px-2 text-center">
-                  <input
-                    type="radio"
-                    name={`pref-${i}`}
-                    checked={prefs[i] === domain}
-                    onChange={() => handleChange(i, domain)}
-                    className="w-4 h-4 cursor-pointer accent-[#4285F4]"
-                  />
-                </td>
+                <th
+                  key={domain}
+                  className="py-3 px-2 text-center font-bold uppercase tracking-wider text-[10px] sm:text-xs"
+                >
+                  {domain}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {["Preference 1", "Preference 2", "Preference 3"].map((label, i) => (
+              <tr
+                key={label}
+                className={`${i < 2 ? "border-b border-gray-200" : ""} ${duplicates.has(i) ? "bg-red-50" : ""}`}
+              >
+                <td className={`py-3 px-3 font-bold whitespace-nowrap ${duplicates.has(i) ? "text-red-600" : ""}`}>
+                  {label}
+                  {duplicates.has(i) && <span className="text-red-500 ml-1">✗</span>}
+                </td>
+                {DOMAIN_PREFERENCE_OPTIONS.map((domain) => (
+                  <td key={domain} className="py-3 px-2 text-center">
+                    <input
+                      type="radio"
+                      name={`pref-${i}`}
+                      checked={prefs[i] === domain}
+                      onChange={() => handleChange(i, domain)}
+                      className={`w-4 h-4 cursor-pointer ${duplicates.has(i) ? "accent-red-500" : "accent-[#4285F4]"}`}
+                    />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

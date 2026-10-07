@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.34.0",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -41,7 +42,7 @@
     "fumadocs-ui": "^16.3.2",
     "geist": "^1.5.1",
     "highlight.js": "^11.11.1",
-    "jspdf": "^4.2.1",
+    "jspdf": "^2.5.2",
     "lucide-react": "^0.556.0",
     "mermaid": "^11.15.0",
     "motion": "^12.23.26",

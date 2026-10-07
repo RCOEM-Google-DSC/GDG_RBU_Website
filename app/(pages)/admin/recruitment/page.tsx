@@ -82,6 +82,16 @@ const STATUS_COLORS: Record<string, string> = {
   shortlisted: "bg-green-100 text-green-800 border-green-300",
   rejected: "bg-red-100 text-red-800 border-red-300",
 };
+/** Build a browser-viewable URL for resume PDFs.
+ *  Azure Blob URLs work directly (correct Content-Type headers).
+ *  Old Cloudinary URLs go through a proxy. */
+function getResumeViewUrl(url: string): string {
+  if (!url) return "";
+  // Azure Blob Storage serves PDFs correctly — use direct URL
+  if (url.includes("blob.core.windows.net")) return url;
+  // Cloudinary raw URLs need the proxy
+  return `/api/view-resume?url=${encodeURIComponent(url)}`;
+}
 
 export default function AdminRecruitmentPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -230,18 +240,16 @@ export default function AdminRecruitmentPage() {
     {
       header: "Name",
       accessorKey: "name",
-      cell: ({ row }: any) => (
-        <button
-          onClick={() => {
-            const key = row.original.task_id || `applicant-${row.original.id}`;
-            setExpandedId(expandedId === key ? null : key);
-          }}
-          className="font-semibold text-left hover:text-blue-600 flex items-center gap-1"
-        >
-          {row.original.name}
-          {expandedId === (row.original.task_id || `applicant-${row.original.id}`) ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        </button>
-      ),
+      cell: ({ row }: any) => {
+        const key = row.original.task_id || `applicant-${row.original.id}`;
+        const isOpen = expandedId === key;
+        return (
+          <span className="font-semibold flex items-center gap-1">
+            {row.original.name}
+            {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </span>
+        );
+      },
     },
     { header: "Email", accessorKey: "email" },
     { header: "Branch", accessorKey: "branch" },
@@ -251,17 +259,20 @@ export default function AdminRecruitmentPage() {
     {
       header: "Resume",
       accessorKey: "resume_url",
-      cell: ({ row }: any) => (
-        <a
-          href={row.original.resume_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
-        >
-          <FileText size={14} />
-          View
-        </a>
-      ),
+      cell: ({ row }: any) => {
+        const url = row.original.resume_url;
+        return (
+          <a
+            href={getResumeViewUrl(url)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+          >
+            <FileText size={14} />
+            View
+          </a>
+        );
+      },
     },
     {
       header: "Status",
@@ -380,6 +391,10 @@ export default function AdminRecruitmentPage() {
           <DataTable
             data={filtered.map((d) => ({ ...d, domainFilter, statusFilter }))}
             columns={columns}
+            onRowClick={(row: any) => {
+              const key = row.task_id || `applicant-${row.id}`;
+              setExpandedId(expandedId === key ? null : key);
+            }}
           />
 
           {/* Expanded Detail Panel */}
@@ -445,14 +460,33 @@ function ExpandedDetail({
           <LinkRow label="Codechef" url={s.codechef_url} />
           <LinkRow label="Other CP" url={s.other_cp_url} />
           <div className="col-span-2">
-            <a
-              href={s.resume_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
-            >
-              <FileText size={14} /> View Resume
-            </a>
+            <span className="text-gray-500 text-xs">Resume</span>
+            <div className="mt-2 border-2 border-gray-200 rounded overflow-hidden" style={{ height: "400px" }}>
+              <iframe
+                src={getResumeViewUrl(s.resume_url)}
+                className="w-full h-full"
+                title="Resume Preview"
+              />
+            </div>
+            <div className="flex items-center gap-4 mt-2">
+              <a
+                href={getResumeViewUrl(s.resume_url)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium text-sm"
+              >
+                <ExternalLink size={14} /> Open in New Tab
+              </a>
+              <a
+                href={s.resume_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium text-sm"
+              >
+                <FileText size={14} /> Download
+              </a>
+            </div>
           </div>
         </Section>
 

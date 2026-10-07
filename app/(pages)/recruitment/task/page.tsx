@@ -181,8 +181,15 @@ export default function TaskPage() {
         .select("task_domain")
         .eq("user_id", uid);
 
-      if (tasks) {
+      if (tasks && tasks.length > 0) {
         setSubmittedDomains(tasks.map((t) => t.task_domain));
+        // User already submitted — set the task domain for the success message
+        // and show the "You're In!" screen immediately
+        setTask((prev) => ({
+          ...prev,
+          task_domain: tasks[0].task_domain,
+        }));
+        setStep("success");
       }
     };
     loadExisting();

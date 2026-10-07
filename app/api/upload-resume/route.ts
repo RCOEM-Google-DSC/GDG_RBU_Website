@@ -1,35 +1,27 @@
 // app/api/upload-resume/route.ts
+// Uploads resume PDFs to Azure Blob Storage.
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import { v2 as cloudinary } from "cloudinary";
-
-cloudinary.config({
-  cloud_name: process.env["CLOUDINARY_CLOUD_NAME"],
-  api_key: process.env["CLOUDINARY_API_KEY"],
-  api_secret: process.env["CLOUDINARY_API_SECRET"],
-});
-
-type UploadResult = {
-  secure_url?: string;
-  public_id?: string;
-  bytes?: number;
-  format?: string;
-  original_filename?: string;
-};
+import { BlobServiceClient } from "@azure/storage-blob";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
 const ALLOWED_TYPES = ["application/pdf"];
-const FOLDER = "GDG_RECRUITMENT_RESUMES";
+
+function getContainerClient() {
+  const connStr = process.env["AZURE_STORAGE_CONNECTION_STRING"];
+  const containerName = process.env["AZURE_STORAGE_CONTAINER"] || "resumes";
+
+  if (!connStr) throw new Error("Missing AZURE_STORAGE_CONNECTION_STRING");
+
+  const blobService = BlobServiceClient.fromConnectionString(connStr);
+  return blobService.getContainerClient(containerName);
+}
 
 export async function POST(req: Request) {
   try {
-    if (
-      !process.env["CLOUDINARY_CLOUD_NAME"] ||
-      !process.env["CLOUDINARY_API_KEY"] ||
-      !process.env["CLOUDINARY_API_SECRET"]
-    ) {
+    if (!process.env["AZURE_STORAGE_CONNECTION_STRING"]) {
       return NextResponse.json(
         { error: "Server configuration error" },
         { status: 500 },
@@ -59,45 +51,27 @@ export async function POST(req: Request) {
       );
     }
 
-    // Convert file to buffer for Cloudinary stream upload
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // Build a unique public_id that keeps the .pdf extension
+    // Build unique blob name
     const baseName = (file.name || "resume").replace(/\.pdf$/i, "");
     const uniqueSuffix = Date.now() + "_" + Math.random().toString(36).slice(2, 8);
-    const publicId = `${baseName}_${uniqueSuffix}.pdf`;
+    const blobName = `Resume_${uniqueSuffix}_${baseName}.pdf`;
 
-    const uploadResult = await new Promise<UploadResult>((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream(
-          {
-            folder: FOLDER,
-            resource_type: "raw",
-            public_id: publicId,
-            timeout: 60000,
-          },
-          (err, result) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-            resolve(result ?? {});
-          },
-        )
-        .end(buffer);
+    const containerClient = getContainerClient();
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+    await blockBlobClient.uploadData(buffer, {
+      blobHTTPHeaders: {
+        blobContentType: "application/pdf",
+        blobContentDisposition: "inline",
+      },
     });
 
-    if (!uploadResult.secure_url) {
-      return NextResponse.json(
-        { error: "Upload failed", details: "No URL returned" },
-        { status: 502 },
-      );
-    }
-
     return NextResponse.json({
-      url: uploadResult.secure_url,
-      public_id: uploadResult.public_id ?? null,
-      original_filename: uploadResult.original_filename ?? null,
+      url: blockBlobClient.url,
+      blob_name: blobName,
+      original_filename: file.name,
     });
   } catch (err: unknown) {
     const message =

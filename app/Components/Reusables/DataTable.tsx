@@ -271,6 +271,7 @@ interface DataTableProps<TData, TValue> {
     data: TData[];
     filters?: FilterOption[]; // Optional filter configurations
     showFilters?: boolean; // Show/hide filter section (default: true if filters provided)
+    onRowClick?: (row: TData) => void; // Optional row click handler
 }
 
 export function DataTable<TData, TValue>({
@@ -278,6 +279,7 @@ export function DataTable<TData, TValue>({
                                              data,
                                              filters = [],
                                              showFilters = true,
+                                             onRowClick,
                                          }: DataTableProps<TData, TValue>) {
     const [globalFilter, setGlobalFilter] = useState("");
     const [pagination, setPagination] = useState({pageIndex: 0, pageSize: 10});
@@ -525,6 +527,15 @@ export function DataTable<TData, TValue>({
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
+                                    className={onRowClick ? "cursor-pointer hover:bg-muted/50" : ""}
+                                    onClick={(e) => {
+                                        if (!onRowClick) return;
+                                        // Don't trigger row click if user clicked an interactive element
+                                        const target = e.target as HTMLElement;
+                                        const interactive = target.closest("a, button, select, input, [role='combobox'], [data-no-row-click]");
+                                        if (interactive) return;
+                                        onRowClick(row.original);
+                                    }}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
