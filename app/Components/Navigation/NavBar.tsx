@@ -44,6 +44,7 @@ const LINK_STYLES = [
 ];
 
 const MORE_LINKS = [
+  { href: "/recruitment", label: "Recruitment" },
   { href: "/docs", label: "Docs" },
   { href: "/blogs", label: "Blogs" },
   { href: "/links", label: "Links" },
