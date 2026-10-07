@@ -101,9 +101,12 @@ export function TemplateSelector({
                         )}
 
                         {/* Template Preview Image */}
-                        <div className="relative h-40 bg-muted border-b-4 border-black">
+                        <div className="relative h-40 bg-muted border-b-4 border-black overflow-hidden">
                             <Image
-                                src={`/templates/${template.id}/thumbnail.png`}
+                                src={
+                                    template.preview_image_url ||
+                                    `/templates/${template.id}/thumbnail.png`
+                                }
                                 alt={template.name}
                                 fill
                                 className="object-cover"
@@ -113,8 +116,8 @@ export function TemplateSelector({
                                     target.style.display = "none";
                                 }}
                             />
-                            {/* Fallback gradient background */}
-                            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground bg-linear-to-br from-purple-200 to-pink-200 -z-10">
+                            {/* Fallback gradient background (behind image) */}
+                            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground bg-linear-to-br from-purple-200 to-pink-200">
                                 <span className="text-6xl font-black opacity-30">
                                     {template.name.charAt(0).toUpperCase()}
                                 </span>
