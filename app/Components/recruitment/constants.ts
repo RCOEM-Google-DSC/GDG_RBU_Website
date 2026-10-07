@@ -840,7 +840,6 @@ export const DOMAIN_PREFERENCE_OPTIONS = [
 
 export const YEAR_OPTIONS = [
   { label: "2nd Year", value: 2 },
-  { label: "3rd Year", value: 3 },
 ] as const;
 
 export const TECH_DOMAIN_OPTIONS = [
