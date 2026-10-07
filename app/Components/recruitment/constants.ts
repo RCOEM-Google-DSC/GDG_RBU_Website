@@ -237,12 +237,12 @@ export const DOMAINS: Domain[] = [
           {
             heading: "Contest details",
             bullets: [
-              "CodeChef contest on 7th October, 20:00 – 22:00 IST.",
+              "CodeChef contest on 11th October, 20:00 – 22:00 IST.",
               "Register on the platform first, then join via the contest link.",
             ],
             links: [
               { label: "Register on CodeChef", url: "https://www.codechef.com/signup" },
-              { label: "Contest link - START259D", url: "https://www.codechef.com/START259D" },
+              { label: "Contest link - START259D", url: "https://codeforces.com/contests/722310" },
             ],
           },
         ],
