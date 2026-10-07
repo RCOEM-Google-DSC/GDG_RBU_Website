@@ -121,7 +121,7 @@ export async function GET(request: Request) {
         if (role === "admin" || role === "member") {
           redirectUrl = `/team/profile/${userId}`;
         } else {
-          redirectUrl = "/profile";
+          redirectUrl = "/";
         }
       }
     }
