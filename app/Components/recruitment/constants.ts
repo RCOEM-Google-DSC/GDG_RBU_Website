@@ -232,23 +232,23 @@ export const DOMAINS: Domain[] = [
         position: "Competitive Programming",
         badge: "Live contest",
         overview:
-          "Compete in the CodeChef contest below. Contest results will be evaluated and observed for shortlisting candidates for interviews. Do not use AI.",
+          "Compete in the Codeforces contest below. Contest results will be evaluated and observed for shortlisting candidates for interviews. Do not use AI.",
         sections: [
           {
             heading: "Contest details",
             bullets: [
-              "CodeChef contest on 11th October, 20:00 – 22:00 IST.",
+              "Codeforces contest on 11th October, 20:00 – 22:00 IST.",
               "Register on the platform first, then join via the contest link.",
             ],
             links: [
-              { label: "Register on CodeChef", url: "https://www.codechef.com/signup" },
+              { label: "Register on Codeforces", url: "https://codeforces.com/profile/login" },
               { label: "Contest link - START259D", url: "https://codeforces.com/contests/722310" },
             ],
           },
         ],
         submission: [
           "Take part in the contest at the scheduled time.",
-          "Paste your CodeChef profile link and contest rank / screenshot link in the task submission form below.",
+          "Paste your Codeforces profile link and contest rank / screenshot link in the task submission form below.",
         ],
         contacts: [
           ...CO_LEADS,
