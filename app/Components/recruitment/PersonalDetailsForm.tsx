@@ -250,6 +250,9 @@ export default function PersonalDetailsForm({
               onChange={(v) => update("codeforces_url", v)}
               placeholder="https://codeforces.com/profile/username or Nil"
             />
+            <p className="text-xs text-amber-600 font-medium mt-1">
+              ⚠ For the CP domain, providing your Codeforces link is mandatory. Applications without it will not be considered.
+            </p>
           </FieldWrapper>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -259,9 +262,6 @@ export default function PersonalDetailsForm({
                 onChange={(v) => update("codechef_url", v)}
                 placeholder="https://codechef.com/users/username or Nil"
               />
-              <p className="text-xs text-amber-600 font-medium mt-1">
-                ⚠ For the CP domain, providing your CodeChef link is mandatory. Applications without it will not be considered.
-              </p>
             </FieldWrapper>
 
             <FieldWrapper label="Other CP Profile" hint="Optional">
