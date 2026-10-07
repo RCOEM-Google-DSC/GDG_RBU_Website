@@ -237,7 +237,7 @@ export const DOMAINS: Domain[] = [
           {
             heading: "Contest details",
             bullets: [
-              "Codeforces contest on 11th October, 20:00 – 22:00 IST.",
+              "Codeforces contest on 10th October, 20:00 – 22:00 IST.",
               "Register on the platform first, then join via the contest link.",
             ],
             links: [
