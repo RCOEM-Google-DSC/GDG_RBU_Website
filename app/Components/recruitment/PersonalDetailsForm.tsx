@@ -103,6 +103,7 @@ export default function PersonalDetailsForm({
     if (!form.tech_domain) { toast.error("Tech domain preference is required"); return; }
     if (!form.socials_domain) { toast.error("Socials domain preference is required"); return; }
     if (!form.codeforces_url?.trim()) { toast.error("Codeforces profile is required (type 'Nil' if none)"); return; }
+    if (!form.codechef_url?.trim()) { toast.error("Codechef profile is required (type 'Nil' if none)"); return; }
     if (!form.resume_url) { toast.error("Resume upload is required"); return; }
     if (!form.motive?.trim()) { toast.error("Motive to join is required"); return; }
     if (!form.value_addition?.trim()) { toast.error("Value addition answer is required"); return; }
@@ -256,12 +257,15 @@ export default function PersonalDetailsForm({
           </FieldWrapper>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <FieldWrapper label="Codechef Profile Link" hint="Optional">
+            <FieldWrapper label="Codechef Profile Link" required hint="Type 'Nil' if none">
               <InputWithIcon
                 value={form.codechef_url}
                 onChange={(v) => update("codechef_url", v)}
                 placeholder="https://codechef.com/users/username or Nil"
               />
+              <p className="text-xs text-amber-600 font-medium mt-1">
+                ⚠ For the CP domain, providing your Codechef link is mandatory. Applications without it will not be considered.
+              </p>
             </FieldWrapper>
 
             <FieldWrapper label="Other CP Profile" hint="Optional">
