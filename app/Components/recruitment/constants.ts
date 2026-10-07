@@ -184,7 +184,7 @@ export const DOMAINS: Domain[] = [
           "Build RESTful APIs with proper authentication, protected routes and real business rules - plus a small React interface on top. Pick any backend framework (Node.js, Django, Flask, etc.) and follow good repo + documentation practices.",
         sections: [
           {
-            heading: "Task 1 - Event Management & Registration API",
+            heading: "Task - Event Management & Registration API",
             paragraphs: [
               "System where users discover events, view details, register, and manage registrations, while admins manage events. Must prevent duplicate registrations, enforce capacity, and keep registration data consistent.",
             ],
@@ -195,18 +195,6 @@ export const DOMAINS: Domain[] = [
               "Users can view their registered events; admins can create, update and delete events.",
               "React interface: browse, search & filter events, view details, register / unregister, view registrations, admin event management.",
               "Bonus: event reminders, rate limiting, Redis caching, Docker, analytics, QR codes, background jobs.",
-            ],
-          },
-          {
-            heading: "Task 2 - Project Issue Tracking API",
-            bullets: [
-              "Register / login; create projects; add members; create / assign / update / delete issues; comments.",
-              "Each issue: Title, Description, Status, Priority, Assignee, Reporter, Project, Created At, Updated At.",
-              "Status flow: TODO → IN_PROGRESS → IN_REVIEW → DONE.",
-              "Querying: search, filter by status / priority / assignee / project, sorting, pagination - e.g. GET /api/issues?status=IN_PROGRESS&priority=HIGH&page=1&limit=10.",
-              "RBAC - Admin manages projects / members / issues; Member creates issues, updates assigned issues, comments.",
-              "Basic interface: project list, issue list, creation form, filters, issue details, comments, user assignment.",
-              "Bonus: activity / audit logs, GitHub integration, WebSocket notifications, Redis caching, Docker, rate limiting, email notifications.",
             ],
           },
           {
