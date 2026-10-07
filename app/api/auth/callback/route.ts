@@ -118,11 +118,7 @@ export async function GET(request: Request) {
 
       // Only apply role-based redirects if no custom redirect was requested
       if (!customRedirect) {
-        if (role === "admin" || role === "member") {
-          redirectUrl = `/team/profile/${userId}`;
-        } else {
-          redirectUrl = "/";
-        }
+        redirectUrl = "/";
       }
     }
   }
