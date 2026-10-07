@@ -383,7 +383,7 @@ export const DOMAINS: Domain[] = [
   },
   {
     id: "mac",
-    name: "ML / AI / Cloud",
+    name: "ML / Android / Cloud",
     shortName: "MAC",
     color: "#34A853",
     description:
@@ -458,6 +458,244 @@ export const DOMAINS: Domain[] = [
           "Link to the GitHub repo (Dockerfile + pipeline config).",
           "Upload everything to a Google Drive folder and paste the link in the task submission form below.",
         ],
+        contacts: [
+          ...CO_LEADS,
+          { name: "Samarth Zalkikar", role: "MAC Lead", phone: "+91 9075085950" },
+          { name: "Vivian Demello", role: "MAC Co-Lead", phone: "+91 7588270066" },
+        ],
+      },
+      {
+        id: "android",
+        label: "Android",
+        position: "Android",
+        overview:
+          "Build an offline-first Android habit tracker: users create habits, log progress daily, get reminders, and see streaks and statistics over time. Everything must work offline. For product reference look at Habitized on the Play Store - build your own app, do not copy its code, assets, or branding. Frameworks allowed: Native (Kotlin/Java), Flutter, React Native, etc.",
+        sections: [
+          {
+            heading: "Example behavior",
+            paragraphs: [
+              "User creates 'Read', a countable habit with a target of 20 pages per day, and 'Gym', a yes/no habit on Monday, Wednesday, Friday. Monday: 12 pages read, Gym done. Tuesday: 20 pages read. Wednesday: 25 pages read, Gym done. On Wednesday evening the app should show: Read streak 2 (Monday missed the target); Gym streak 2 (Tuesday was unscheduled, so it does not break the streak). If the user corrects Monday to 20 pages, the Read streak becomes 3.",
+            ],
+          },
+          {
+            heading: "1. Create habits",
+            bullets: [
+              "Create, edit, and delete habits with a name, type, schedule, target, and optional reminder.",
+              "Types: yes/no, countable with a custom unit (e.g. pages, glasses), and timed (e.g. Pomodoro).",
+              "Schedules: daily, specific weekdays, and N times per week.",
+            ],
+          },
+          {
+            heading: "2. Log progress",
+            bullets: [
+              "A Today screen showing today's habits and progress with quick logging.",
+              "Allow correcting previous days.",
+            ],
+          },
+          {
+            heading: "3. Streaks and statistics",
+            bullets: [
+              "Current and longest streaks that respect the schedule.",
+              "Completion rates and a calendar or chart view.",
+            ],
+          },
+          {
+            heading: "4. Reminders",
+            bullets: [
+              "Per-habit notifications that fire on time and still work after the phone restarts.",
+            ],
+          },
+          {
+            heading: "5. Store data on the device",
+            paragraphs: [
+              "Data must survive app and phone restarts. Design your own data model - something like: Habit -> id, name, type, schedule, target, unit, reminderTime; HabitLog -> habitId, date, value, completed.",
+            ],
+          },
+          {
+            heading: "6. Test the logic",
+            bullets: [
+              "Write at least 15 automated tests for the streak and statistics logic.",
+              "Cover: a missed day breaking a daily streak, unscheduled days not breaking a streak, partial progress on countable habits, editing a past day, and logs close to midnight.",
+            ],
+          },
+          {
+            heading: "Rules",
+            bullets: [
+              "Core features must work offline, with no account or paid service required.",
+              "Keep the UI separate from the habit, schedule, and streak logic, so the logic can be tested on its own.",
+              "The project must build from a fresh clone by following your README.",
+              "Feature count is not the goal. A small app that works offline, gets streaks right, and delivers reminders reliably scores higher than a large app with fragile logic.",
+            ],
+          },
+          {
+            heading: "Bonus (optional)",
+            bullets: [
+              "Home screen widget; mark a habit done from the notification; a simple to-do list for one-off tasks; light and dark themes; data export and import; optional cloud sync that keeps the app offline-first.",
+              "Mention anything you add in your README.",
+            ],
+          },
+          {
+            heading: "Evaluation rubric (total 20 pts, +3 bonus)",
+            bullets: [
+              "Core functionality (5): habits, logging, reminders, and storage work end to end.",
+              "Correctness (4): streaks and statistics are right across schedules and edits to past days.",
+              "Architecture (4): well-structured code that is easy to extend.",
+              "UI / UX (3): a clean app that is pleasant to use.",
+              "Testing (2): meaningful automated tests.",
+              "README and video (2): clear setup steps and explanation.",
+              "Bonus (+3): additional features mentioned in the README.",
+            ],
+          },
+          {
+            heading: "Documentation - README",
+            bullets: [
+              "Setup and build steps, screenshots of the main screens, and any assumptions or limitations.",
+              "Briefly answer: why did you choose your tech stack and architecture? How do you compute streaks, especially for 'N times per week' habits? How do reminders work, and what happens after a phone restart? How do you handle dates and time zones? What would you improve with more time?",
+            ],
+          },
+          {
+            heading: "Documentation - video walkthrough (5-10 min)",
+            bullets: [
+              "Your tech stack and architecture, and why you chose them.",
+              "A live demo: creating habits, logging, a reminder firing, and streaks updating after editing a past day.",
+              "Your tests running; challenges you faced and how you solved them.",
+            ],
+          },
+          {
+            heading: "Resources",
+            links: [
+              { label: "Habitized (reference app)", url: "https://play.google.com/store/apps/details?id=com.codewithdipesh.habitized" },
+              { label: "Jetpack Compose", url: "https://developer.android.com/develop/ui/compose" },
+              { label: "Room (local database)", url: "https://developer.android.com/training/data-storage/room" },
+              { label: "Scheduling alarms", url: "https://developer.android.com/develop/background-work/services/alarms/schedule" },
+              { label: "Testing on Android", url: "https://developer.android.com/training/testing/fundamentals" },
+              { label: "Flutter local notifications", url: "https://pub.dev/packages/flutter_local_notifications" },
+            ],
+          },
+        ],
+        submission: [
+          "Commit as you work on GitHub with clear commit messages - do not upload the final project in a single commit; history should show your process.",
+          "Link to the GitHub repository, an installable APK, and the video.",
+          "Upload everything to a Google Drive folder and paste the GitHub and Drive links in the task submission form below.",
+        ],
+        note: "You may use chatbots and coding assistants as long as you understand and review every line they produce. State in your README which parts were written with an LLM.",
+        contacts: [
+          ...CO_LEADS,
+          { name: "Samarth Zalkikar", role: "MAC Lead", phone: "+91 9075085950" },
+          { name: "Vivian Demello", role: "MAC Co-Lead", phone: "+91 7588270066" },
+        ],
+      },
+      {
+        id: "ml",
+        label: "ML",
+        position: "Machine Learning",
+        overview:
+          "Build a local memory engine for AI chatbots that runs on your own laptop. It reads conversation messages, saves the useful facts about the user, updates them when they change, and returns the relevant ones when a chatbot asks a question. Languages allowed - any: Python, TypeScript, Go, Java, C++, etc.",
+        sections: [
+          {
+            heading: "Example",
+            paragraphs: [
+              "Over a few conversations the user says: 'I use Arch Linux.' / 'I'm building a Next.js app.' / 'My project deadline is October 15.' / 'Actually, the deadline moved to November 2.' Later queries should return: 'What OS does the user use?' -> 'User uses Arch Linux.'; 'When is the project deadline?' -> 'Deadline is November 2.' (knowing it replaced October 15); 'What is the user's favourite food?' -> nothing, it should say it has no relevant memory instead of returning unrelated ones.",
+            ],
+          },
+          {
+            heading: "1. Save memories",
+            bullets: [
+              "Accept a message and decide what is worth remembering: facts, preferences, projects, events, goals. Small talk like 'ok thanks' should not become a memory.",
+              "Store each memory with its type, timestamp, and source message.",
+            ],
+          },
+          {
+            heading: "2. Handle updates and contradictions",
+            bullets: [
+              "When new information changes an old memory, treat the new one as current.",
+              "Keep the old one marked as replaced instead of silently deleting it.",
+            ],
+          },
+          {
+            heading: "3. Retrieve memories",
+            bullets: [
+              "Given a query, return the top matching memories with a relevance score, using embeddings (semantic search).",
+              "Return nothing when no memory is relevant enough.",
+            ],
+          },
+          {
+            heading: "4. Persist and expose an API",
+            paragraphs: [
+              "Memories must survive a restart. SQLite, PostgreSQL, FAISS, Chroma, or similar are all fine. Expose a simple API: POST /memory (add a message or memory), POST /recall (relevant memories for a query), GET /memories (list all), DELETE /memory/:id (remove). Example: POST /recall { 'query': 'What database does the user prefer?', 'top_k': 5 } -> { 'memories': [ { 'text': 'User prefers PostgreSQL.', 'type': 'preference', 'score': 0.91 } ] }.",
+            ],
+          },
+          {
+            heading: "5. Evaluate it",
+            bullets: [
+              "Write at least 30 test cases (messages, a query, and the expected memory).",
+              "Cover: direct facts, preferences, project details, updated information, contradictions, queries where several memories are relevant, and queries whose answer is not stored.",
+              "Report how many your engine gets right (e.g. accuracy or recall@5).",
+            ],
+          },
+          {
+            heading: "Rules",
+            bullets: [
+              "It must run locally on a normal student laptop. No paid APIs for the core features.",
+              "Use local models for embeddings and any LLM calls, e.g. Ollama or sentence-transformers.",
+              "Keep ingestion, storage, and retrieval in separate modules.",
+              "The core memory logic must be your own. Do not just wrap an existing memory library.",
+              "Feature count is not the goal. A small engine that retrieves the right memories and is tested scores higher than a large one stitched together from libraries.",
+            ],
+          },
+          {
+            heading: "Bonus (optional)",
+            bullets: [
+              "Hybrid search: semantic + keyword (BM25); merging duplicate memories; importance scores so minor details rank lower; latency benchmarks (p50 / p95); Docker setup; a simple web UI to browse and search memories.",
+              "Mention anything you add in your README.",
+            ],
+          },
+          {
+            heading: "Evaluation rubric (total 20 pts, +3 bonus)",
+            bullets: [
+              "Core functionality (6): saves, updates, retrieves, and persists memories end to end.",
+              "Retrieval quality (4): right memories for realistic queries, nothing for unknown ones.",
+              "Updates and contradictions (3): newer information wins; history is kept.",
+              "Evaluation (3): a real test set with measured results, not just demos.",
+              "Code quality and structure (2): clean, modular, readable code.",
+              "README and video (2): clear setup steps and explanation.",
+              "Bonus (+3): additional features mentioned in the README.",
+            ],
+          },
+          {
+            heading: "Documentation - README",
+            bullets: [
+              "Setup and run steps, an architecture diagram, example API requests, and your evaluation results.",
+              "Briefly answer: why did you choose your storage and retrieval setup? How do you decide what becomes a memory? How do you handle updated or contradictory information? What happens when the answer is not in memory? What would break first with 10 million memories, and how would you fix it?",
+            ],
+          },
+          {
+            heading: "Documentation - video walkthrough (5-10 min)",
+            bullets: [
+              "Your architecture and why you chose each part.",
+              "A live demo: adding messages, an update replacing an old memory, and recall queries.",
+              "Your evaluation results and where the engine fails; challenges you faced and how you solved them.",
+            ],
+          },
+          {
+            heading: "Resources",
+            links: [
+              { label: "Ollama", url: "https://ollama.com" },
+              { label: "nomic-embed-text model", url: "https://ollama.com/library/nomic-embed-text" },
+              { label: "Sentence Transformers", url: "https://www.sbert.net" },
+              { label: "FAISS", url: "https://github.com/facebookresearch/faiss" },
+              { label: "sqlite-vec", url: "https://github.com/asg017/sqlite-vec" },
+              { label: "Supermemory (ideas)", url: "https://supermemory.ai/" },
+              { label: "Mem0 (ideas)", url: "https://github.com/mem0ai/mem0" },
+            ],
+          },
+        ],
+        submission: [
+          "Commit as you work on GitHub with clear commit messages - do not upload the final project in a single commit; history should show your process.",
+          "Link to the GitHub repository and the video.",
+          "Upload everything to a Google Drive folder and paste the GitHub and Drive links in the task submission form below.",
+        ],
+        note: "You may use chatbots and coding assistants as long as you understand and review every line they produce. State in your README which parts were written with an LLM.",
         contacts: [
           ...CO_LEADS,
           { name: "Samarth Zalkikar", role: "MAC Lead", phone: "+91 9075085950" },

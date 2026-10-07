@@ -2,7 +2,17 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Users, Code, Palette, Brain, Megaphone, Camera, BarChart3, Rocket } from "lucide-react";
+import {
+  ArrowRight,
+  Users,
+  Code,
+  Palette,
+  Brain,
+  Megaphone,
+  Camera,
+  BarChart3,
+  Rocket,
+} from "lucide-react";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 import { DOMAINS } from "@/app/Components/recruitment/constants";
 import Footer from "@/app/Components/Landing/Footer";
@@ -51,18 +61,14 @@ export default function RecruitmentPage() {
           </NeoBrutalism>
 
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tighter uppercase font-retron mb-6">
-            Join{" "}
-            <span className="relative inline-block">
-              <span className="relative z-10">GDG</span>
-              <span className="absolute -bottom-1 left-0 right-0 h-4 bg-[#4285F4] -z-0" />
-            </span>{" "}
+            Join <span className="relative inline-block"></span>
             <br className="hidden sm:block" />
-            RBU
+            <span className= " underline relative z-10">GDG RBU</span>
           </h1>
 
           <p className="text-lg md:text-xl font-mono max-w-2xl mx-auto mb-10 leading-relaxed">
-            Google Developer Groups on Campus — Ramdeobaba University.
-            Be part of a community that builds, learns, and grows together.
+            Google Developer Groups on Campus — Ramdeobaba University. Be part
+            of a community that builds, learns, and grows together.
           </p>
 
           <Link
@@ -102,9 +108,9 @@ export default function RecruitmentPage() {
               <div className="h-1 w-16 bg-[#4285F4] mb-6" />
               <p className="font-mono text-sm leading-relaxed mb-4">
                 Google Developer Groups on Campus (GDG) is a community of
-                developers, designers, and tech enthusiasts backed by Google.
-                We organize workshops, hackathons, study jams, and speaker
-                sessions to help students learn and grow.
+                developers, designers, and tech enthusiasts backed by Google. We
+                organize workshops, hackathons, study jams, and speaker sessions
+                to help students learn and grow.
               </p>
               <p className="font-mono text-sm leading-relaxed">
                 At RBU, our chapter brings together passionate students from all
@@ -199,9 +205,7 @@ export default function RecruitmentPage() {
                     border: "3px solid black",
                   }}
                 >
-                  <span className="text-white">
-                    {DOMAIN_ICONS[domain.id]}
-                  </span>
+                  <span className="text-white">{DOMAIN_ICONS[domain.id]}</span>
                 </div>
 
                 {/* Name */}
@@ -247,8 +251,8 @@ export default function RecruitmentPage() {
             Ready to Build?
           </h2>
           <p className="font-mono text-sm md:text-base max-w-xl mx-auto mb-8 text-white/80">
-            Complete your task submission and become a part of GDG RBU.
-            Show us what you&apos;ve got.
+            Complete your task submission and become a part of GDG RBU. Show us
+            what you&apos;ve got.
           </p>
           <Link
             href="/recruitment/task"

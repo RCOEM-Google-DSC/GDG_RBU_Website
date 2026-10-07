@@ -74,21 +74,15 @@ export default function TaskPage() {
     [activeDomain],
   );
 
-  // ---- Deep-link support: /recruitment/task?domain=web-dev ----
+  // ---- Load drafts (new keys + legacy combined key migration) ----
+  // A ?domain= query param (from "View Task" cards) always wins over a saved draft.
   useEffect(() => {
+    let queryDomain: string | null = null;
     try {
       const q = new URLSearchParams(window.location.search).get("domain");
-      if (q && DOMAINS.some((d) => d.id === q)) {
-        setActiveDomain(q);
-        const domain = DOMAINS.find((d) => d.id === q);
-        if (domain) persistTask({ ...task, task_domain: domain.name });
-      }
+      if (q && DOMAINS.some((d) => d.id === q)) queryDomain = q;
     } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-  // ---- Load drafts (new keys + legacy combined key migration) ----
-  useEffect(() => {
     try {
       const legacy = localStorage.getItem(LOCALSTORAGE_KEY);
       if (legacy) {
@@ -116,7 +110,34 @@ export default function TaskPage() {
         }
       }
       const savedTask = localStorage.getItem(TASK_DRAFT_KEY);
-      if (savedTask) {
+      if (queryDomain) {
+        const qd = DOMAINS.find((d) => d.id === queryDomain)!;
+        setActiveDomain(queryDomain);
+        if (savedTask) {
+          const parsed = JSON.parse(savedTask);
+          const next = {
+            task_domain: qd.name,
+            task_links: parsed.task_links || [""],
+            task_details: parsed.task_details || {},
+          };
+          setTask(next);
+          try {
+            localStorage.setItem(
+              TASK_DRAFT_KEY,
+              JSON.stringify({ ...parsed, ...next, domainId: queryDomain }),
+            );
+          } catch {}
+        } else {
+          const next = { ...EMPTY_TASK_SUBMISSION, task_domain: qd.name };
+          setTask(next);
+          try {
+            localStorage.setItem(
+              TASK_DRAFT_KEY,
+              JSON.stringify({ ...next, domainId: queryDomain }),
+            );
+          } catch {}
+        }
+      } else if (savedTask) {
         const parsed = JSON.parse(savedTask);
         if (parsed.task_domain) {
           const dom = DOMAINS.find((d) => d.name === parsed.task_domain);
