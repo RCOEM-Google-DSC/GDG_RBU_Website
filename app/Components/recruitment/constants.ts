@@ -109,6 +109,7 @@ const MM_BRIEF: TaskBrief = {
   submission: [
     "Compile all six sections into a single document / deck and upload it to Google Drive.",
     "Paste the Drive link (plus pitch-deck link, if separate) in the task submission form below.",
+    "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
   ],
   contacts: MM_CONTACTS,
 };
@@ -173,6 +174,7 @@ export const DOMAINS: Domain[] = [
           "Upload your code to GitHub with proper documentation and setup instructions.",
           "Upload the GitHub link and the deployed frontend URL in the task submission form below.",
           "Points are allocated on technical quality and inclusion of bonus / optional features.",
+          "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: WEB_CONTACTS,
       },
@@ -213,6 +215,7 @@ export const DOMAINS: Domain[] = [
           "Upload your code to GitHub with proper documentation and setup instructions.",
           "Upload the GitHub link and the deployed frontend URL (if hosted) in the task submission form below.",
           "Points are allocated on technical quality and inclusion of bonus / optional features.",
+          "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: WEB_CONTACTS,
       },
@@ -249,6 +252,7 @@ export const DOMAINS: Domain[] = [
         submission: [
           "Take part in the contest at the scheduled time.",
           "Paste your Codeforces profile link and contest rank / screenshot link in the task submission form below.",
+          "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
           ...CO_LEADS,
@@ -290,6 +294,7 @@ export const DOMAINS: Domain[] = [
         submission: [
           "Submit a Figma link with editable access, a PDF, or a deployed website link - whichever best represents your portfolio.",
           "Paste the link(s) in the task submission form below.",
+          "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
           ...CO_LEADS,
@@ -334,6 +339,7 @@ export const DOMAINS: Domain[] = [
         submission: [
           "Submit final post(s) as PNG / JPG (both slides if two) plus the one-page design-thinking document via Drive.",
           "Paste the link(s) in the task submission form below.",
+          "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
           ...CO_LEADS,
@@ -360,6 +366,7 @@ export const DOMAINS: Domain[] = [
         ],
         submission: [
           "Submit the artwork (PNG / PDF) via Drive and paste the link in the task submission form below.",
+          "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
           ...CO_LEADS,
@@ -445,6 +452,7 @@ export const DOMAINS: Domain[] = [
           "Link to the walkthrough video.",
           "Link to the GitHub repo (Dockerfile + pipeline config).",
           "Upload everything to a Google Drive folder and paste the link in the task submission form below.",
+          "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
           ...CO_LEADS,
@@ -565,6 +573,7 @@ export const DOMAINS: Domain[] = [
           "Commit as you work on GitHub with clear commit messages - do not upload the final project in a single commit; history should show your process.",
           "Link to the GitHub repository, an installable APK, and the video.",
           "Upload everything to a Google Drive folder and paste the GitHub and Drive links in the task submission form below.",
+          "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         note: "You may use chatbots and coding assistants as long as you understand and review every line they produce. State in your README which parts were written with an LLM.",
         contacts: [
@@ -682,6 +691,7 @@ export const DOMAINS: Domain[] = [
           "Commit as you work on GitHub with clear commit messages - do not upload the final project in a single commit; history should show your process.",
           "Link to the GitHub repository and the video.",
           "Upload everything to a Google Drive folder and paste the GitHub and Drive links in the task submission form below.",
+          "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         note: "You may use chatbots and coding assistants as long as you understand and review every line they produce. State in your README which parts were written with an LLM.",
         contacts: [
@@ -758,6 +768,7 @@ export const DOMAINS: Domain[] = [
         submission: [
           "Export as YourName_CinematographyTask2026.mp4 and upload to Drive.",
           "Paste the link in the task submission form below.",
+          "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
           ...CO_LEADS,
@@ -809,6 +820,7 @@ export const DOMAINS: Domain[] = [
         submission: [
           "Compile everything into a document named YourName_SocialsCnOTask2026 and upload to Drive.",
           "Paste the link in the task submission form below.",
+          "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
           ...CO_LEADS,
