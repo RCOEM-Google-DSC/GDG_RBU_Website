@@ -23,6 +23,7 @@ type Event = {
 	time?: string | null;
 	status: string;
 	register_url?: string | null;
+	website_url?: string | null;
 };
 
 const FALLBACK_IMAGE =
@@ -91,7 +92,7 @@ export default function Home() {
 
 					{ events.length > 0 ? (
 						events.map((event) => {
-							const registerUrl = event.register_url || `/events/${event.id}/register`;
+							const registerUrl = event.register_url || event.website_url || `/events/${event.id}/register`;
 							const imageSrc = cloudinarySafe(
 								event.image_url ?? FALLBACK_IMAGE,
 							);
