@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Download,
   ExternalLink,
-  FileCheck2,
   ListChecks,
   Phone,
   Send,
@@ -14,6 +13,41 @@ import {
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 import type { Domain } from "./constants";
 import { downloadTaskPdf } from "./taskPdf";
+import BriefCodeBlock from "./BriefCodeBlock";
+import { briefFontClasses } from "./fonts";
+
+/** Contact roles colour-coded by tier: GDG RBU-wide, domain lead, domain co-lead. */
+function roleColor(role: string) {
+  if (role.startsWith("GDG RBU")) return "#4285F4";
+  if (/co-lead/i.test(role)) return "#34A853";
+  return "#EA4335";
+}
+
+/** Black or white, whichever contrasts more with the hex background. */
+function textOn(hex: string) {
+  const [r, g, b] = [1, 3, 5].map((i) => {
+    const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  const l = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return (l + 0.05) / 0.05 >= 1.05 / (l + 0.05) ? "#000" : "#fff";
+}
+
+/** Render `backtick` spans as inline code. */
+function Inline({ text }: { text: string }) {
+  return text.split(/(`[^`]+`)/).map((part, i) =>
+    part.startsWith("`") && part.endsWith("`") && part.length > 2 ? (
+      <code
+        key={i}
+        className="rounded-sm border border-gray-300 bg-gray-100 px-1.5 py-0.5 font-mono text-[0.85em] text-[#C5221F]"
+      >
+        {part.slice(1, -1)}
+      </code>
+    ) : (
+      <Fragment key={i}>{part}</Fragment>
+    ),
+  );
+}
 
 export default function DomainBrief({ domain }: { domain: Domain }) {
   const [active, setActive] = useState(0);
@@ -31,7 +65,7 @@ export default function DomainBrief({ domain }: { domain: Domain }) {
   };
 
   return (
-    <NeoBrutalism border={3} shadow="lg" className="bg-white overflow-hidden">
+    <NeoBrutalism border={3} shadow="lg" className={`bg-white overflow-hidden ${briefFontClasses}`}>
       {/* Header */}
       <div
         className="px-6 md:px-8 pt-6 pb-5 border-b-4 border-black"
@@ -74,11 +108,16 @@ export default function DomainBrief({ domain }: { domain: Domain }) {
         <h2 className="mt-3 text-xl md:text-2xl font-black uppercase tracking-tight">
           {domain.name}
         </h2>
-        <p className="mt-2 font-mono text-xs md:text-sm leading-relaxed text-gray-700">
-          {brief.overview}
-        </p>
+        {brief.overview.split("\n").map((line, i) => (
+          <p
+            key={i}
+            className="mt-2 max-w-[72ch] text-base md:text-lg leading-relaxed text-gray-800"
+          >
+            <Inline text={line} />
+          </p>
+        ))}
         {brief.note && (
-          <p className="mt-3 inline-block bg-[#FBBC04]/20 border-2 border-[#FBBC04] px-3 py-1.5 font-mono text-[11px] md:text-xs font-bold">
+          <p className="mt-3 inline-block bg-[#FBBC04]/20 border-2 border-[#FBBC04] px-3 py-1.5 max-w-[80ch] text-sm md:text-[15px] font-semibold leading-relaxed">
             {brief.note}
           </p>
         )}
@@ -119,7 +158,7 @@ export default function DomainBrief({ domain }: { domain: Domain }) {
         >
           {brief.sections.map((s, i) => (
             <section key={i}>
-              <h3 className="flex items-center gap-2 font-black text-sm uppercase tracking-tight mb-2">
+              <h3 className="flex items-center gap-2 font-extrabold text-[15px] md:text-base uppercase tracking-wide mb-2">
                 <span
                   className="w-3 h-3 border-2 border-black shrink-0"
                   style={{ backgroundColor: domain.color }}
@@ -129,28 +168,77 @@ export default function DomainBrief({ domain }: { domain: Domain }) {
               {s.paragraphs?.map((p, j) => (
                 <p
                   key={j}
-                  className="font-mono text-xs md:text-[13px] leading-relaxed text-gray-700 mb-2 pl-5"
+                  className="max-w-[72ch] text-base md:text-[17px] leading-relaxed text-gray-800 mb-2 pl-5"
                 >
-                  {p}
+                  <Inline text={p} />
                 </p>
               ))}
+              {s.table && (
+                <div className="mt-3 ml-5 overflow-x-auto border-[3px] border-black shadow-[4px_4px_0_0_#000]">
+                  <table className="w-full min-w-[520px] border-collapse text-left">
+                    <thead>
+                      <tr style={{ backgroundColor: domain.color, color: textOn(domain.color) }}>
+                        {s.table.columns.map((c, j) => (
+                          <th
+                            key={j}
+                            className={`border-b-[3px] border-black px-3 md:px-4 py-2 text-xs md:text-sm font-extrabold uppercase tracking-wider ${
+                              j === 1 ? "text-center w-20" : ""
+                            }`}
+                          >
+                            {c}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {s.table.rows.map((row, r) => (
+                        <tr
+                          key={r}
+                          style={r % 2 ? { backgroundColor: `${domain.color}12` } : undefined}
+                          className={r % 2 ? undefined : "bg-white"}
+                        >
+                          {row.map((cell, j) => (
+                            <td
+                              key={j}
+                              className={`shadow-[inset_0_2px_0_0_rgba(0,0,0,0.12)] px-3 md:px-4 py-2.5 align-top text-[15px] md:text-base leading-snug text-gray-900 ${
+                                j === 0 ? "font-bold whitespace-nowrap" : ""
+                              } ${j === 1 ? "text-center font-mono font-black" : ""}`}
+                            >
+                              <Inline text={cell} />
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
               {s.bullets && (
-                <ul className="pl-5 space-y-1.5">
+                <ul className="pl-5 space-y-2">
                   {s.bullets.map((b, j) => (
                     <li
                       key={j}
-                      className="flex items-start gap-2 font-mono text-xs md:text-[13px] leading-relaxed text-gray-700"
+                      className="flex items-start gap-2.5 max-w-[72ch] text-base md:text-[17px] leading-relaxed text-gray-800"
                     >
                       <ListChecks
-                        size={14}
-                        className="mt-0.5 shrink-0"
+                        size={16}
+                        className="mt-[5px] md:mt-1.5 shrink-0"
                         style={{ color: domain.color }}
                         strokeWidth={2.5}
                       />
-                      <span>{b}</span>
+                      <span>
+                        <Inline text={b} />
+                      </span>
                     </li>
                   ))}
                 </ul>
+              )}
+              {s.code && (
+                <div className="mt-3 pl-5 space-y-3">
+                  {s.code.map((c, j) => (
+                    <BriefCodeBlock key={j} code={c} accent={domain.color} />
+                  ))}
+                </div>
               )}
               {s.links && (
                 <div className="flex flex-wrap gap-2 mt-3 pl-5">
@@ -179,54 +267,74 @@ export default function DomainBrief({ domain }: { domain: Domain }) {
           ))}
 
           {/* Submission */}
-          <div className="border-[3px] border-black bg-gray-50 p-4 md:p-5">
-            <h3 className="flex items-center gap-2 font-black text-sm uppercase tracking-tight mb-3">
-              <Send size={15} strokeWidth={2.5} />
+          <div className="border-[3px] border-black shadow-[5px_5px_0_0_#000]">
+            <h3
+              className="flex items-center gap-2 border-b-[3px] border-black px-4 md:px-5 py-2.5 font-extrabold text-[15px] md:text-base uppercase tracking-wider"
+              style={{ backgroundColor: domain.color, color: textOn(domain.color) }}
+            >
+              <Send size={15} strokeWidth={2.75} />
               Submission
             </h3>
-            <ul className="space-y-1.5">
+            <ol
+              className="space-y-3 p-4 md:p-5"
+              style={{ backgroundColor: `${domain.color}12` }}
+            >
               {brief.submission.map((s, i) => (
                 <li
                   key={i}
-                  className="flex items-start gap-2 font-mono text-xs md:text-[13px] leading-relaxed"
+                  className="flex items-start gap-3 max-w-[72ch] text-base md:text-[17px] leading-relaxed text-gray-900"
                 >
-                  <FileCheck2 size={14} className="mt-0.5 shrink-0" strokeWidth={2.5} />
-                  <span>{s}</span>
+                  <span
+                    className="flex h-6 w-6 shrink-0 items-center justify-center border-2 border-black font-mono text-xs font-black shadow-[2px_2px_0_0_#000]"
+                    style={{ backgroundColor: domain.color, color: textOn(domain.color) }}
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="pt-px md:pt-0.5">
+                    <Inline text={s} />
+                  </span>
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
 
           {/* Contacts */}
           <div>
-            <h3 className="flex items-center gap-2 font-black text-sm uppercase tracking-tight mb-3">
+            <h3 className="flex items-center gap-2 font-extrabold text-[15px] md:text-base uppercase tracking-wide mb-3">
               <Phone size={15} strokeWidth={2.5} />
               Queries? Contact
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {brief.contacts.map((c) => (
-                <a
-                  key={c.name + c.phone}
-                  href={`tel:${c.phone.replace(/\s/g, "")}`}
-                  className={nb({
-                    border: 2,
-                    shadow: "sm",
-                    hover: "lift",
-                    className:
-                      "flex items-center justify-between gap-2 bg-white px-3 py-2",
-                  })}
-                >
-                  <span>
-                    <span className="block font-bold text-xs">{c.name}</span>
-                    <span className="block font-mono text-[10px] uppercase tracking-wider text-gray-500">
-                      {c.role}
+              {brief.contacts.map((c) => {
+                const color = roleColor(c.role);
+                return (
+                  <a
+                    key={c.name + c.phone}
+                    href={`tel:${c.phone.replace(/\s/g, "")}`}
+                    className={nb({
+                      border: 2,
+                      shadow: "sm",
+                      hover: "lift",
+                      className:
+                        "flex items-center justify-between gap-3 bg-white border-l-[8px] px-3 py-2.5",
+                    })}
+                    style={{ borderLeftColor: color }}
+                  >
+                    <span className="min-w-0">
+                      <span className="block font-bold text-sm md:text-[15px]">{c.name}</span>
+                      <span
+                        className="mt-1 inline-block border-2 border-black px-1.5 py-px font-mono text-[10px] md:text-[11px] font-black uppercase tracking-wider"
+                        style={{ backgroundColor: color, color: textOn(color) }}
+                      >
+                        {c.role}
+                      </span>
                     </span>
-                  </span>
-                  <span className="font-mono text-[11px] font-bold whitespace-nowrap">
-                    {c.phone}
-                  </span>
-                </a>
-              ))}
+                    <span className="font-mono text-xs md:text-[13px] font-bold whitespace-nowrap">
+                      {c.phone}
+                    </span>
+                  </a>
+                );
+              })}
             </div>
           </div>
         </motion.div>
