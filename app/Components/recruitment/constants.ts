@@ -244,7 +244,7 @@ export const DOMAINS: Domain[] = [
               "Register on the platform first, then join via the contest link.",
             ],
             links: [
-              { label: "Register on Codeforces", url: "https://codeforces.com/profile/login" },
+              { label: "Register on Codeforces", url: "https://codeforces.com/register" },
               { label: "Contest link - Codeforces", url: "https://codeforces.com/contestInvitation/ec44d2d0f4f477a8905721e16128a0380dd47a03" },
             ],
           },
