@@ -245,7 +245,7 @@ export const DOMAINS: Domain[] = [
             ],
             links: [
               { label: "Register on Codeforces", url: "https://codeforces.com/register" },
-              { label: "Contest link - Codeforces", url: "https://codeforces.com/contestInvitation/ec44d2d0f4f477a8905721e16128a0380dd47a03" },
+              { label: "Contest link - Codeforces", url: "https://codeforces.com/contestInvitation/c50c2ab74d9b4a86cba09f7a05819833a4184fc3" },
             ],
           },
         ],
