@@ -24,6 +24,11 @@ function hexToRgb(hex: string): [number, number, number] {
   ];
 }
 
+/** Drop the `backtick` inline-code markers used in brief text. */
+function plain(s: string) {
+  return s.replace(/`([^`]+)`/g, "$1");
+}
+
 function slug(s: string) {
   return s
     .toLowerCase()
@@ -168,7 +173,7 @@ export async function buildTaskDoc(domain: Domain, brief: TaskBrief) {
   y += 6;
 
   /* ---- Overview ---- */
-  writeLines(wrapped(brief.overview, 10.5), MARGIN, 5);
+  writeLines(wrapped(plain(brief.overview), 10.5), MARGIN, 5);
   y += 2;
 
   if (brief.note) {
@@ -200,15 +205,96 @@ export async function buildTaskDoc(domain: Domain, brief: TaskBrief) {
     }
     y += 1;
     for (const p of s.paragraphs ?? []) {
-      writeLines(wrapped(p, 10), MARGIN + 2, 5);
+      writeLines(wrapped(plain(p), 10), MARGIN + 2, 5);
       y += 1;
     }
+    if (s.table) {
+      // Rubric | Points | Notes
+      const widths = [52, 18, CONTENT_W - 2 - 52 - 18];
+      const x0 = MARGIN + 2;
+      const pad = 2.5;
+      const lineH = 4.6;
+      const drawRow = (cells: string[], header: boolean, shade: boolean) => {
+        doc.setFont("helvetica", header ? "bold" : "normal");
+        doc.setFontSize(header ? 9 : 9.5);
+        const wrappedCells = cells.map((c, j) =>
+          doc.splitTextToSize(plain(c), widths[j] - pad * 2) as string[],
+        );
+        const h = Math.max(...wrappedCells.map((w) => w.length)) * lineH + pad * 1.6;
+        if (y + h > PAGE_H - 20) {
+          doc.addPage();
+          y = MARGIN;
+        }
+        if (header) doc.setFillColor(dr, dg, db);
+        else doc.setFillColor(shade ? 243 : 255, shade ? 245 : 255, shade ? 244 : 255);
+        doc.rect(x0, y, CONTENT_W - 2, h, "F");
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(header ? 0.5 : 0.15);
+        doc.line(x0, y + h, x0 + CONTENT_W - 2, y + h);
+        let x = x0;
+        wrappedCells.forEach((lines, j) => {
+          doc.setFont("helvetica", header || j === 0 || j === 1 ? "bold" : "normal");
+          doc.setTextColor(header ? 255 : 0);
+          lines.forEach((line, k) => {
+            const ty = y + pad + 3 + k * lineH;
+            if (j === 1) doc.text(line, x + widths[j] / 2, ty, { align: "center" });
+            else doc.text(line, x + pad, ty);
+          });
+          x += widths[j];
+        });
+        y += h;
+      };
+      need(14);
+      const top = y;
+      const startPage = doc.getNumberOfPages();
+      drawRow(s.table.columns.map((c) => c.toUpperCase()), true, false);
+      s.table.rows.forEach((row, r) => drawRow(row, false, r % 2 === 1));
+      // Outer border only when the table stayed on one page
+      if (doc.getNumberOfPages() === startPage) {
+        doc.setLineWidth(0.5);
+        doc.rect(x0, top, CONTENT_W - 2, y - top, "D");
+      }
+      doc.setTextColor(0, 0, 0);
+      y += 5;
+    }
     for (const b of s.bullets ?? []) {
-      const bl = wrapped(`\u2022  ${b}`, 10);
+      const bl = wrapped(`\u2022  ${plain(b)}`, 10);
       // indent wrapped continuation lines
       const first = bl[0];
       const rest = bl.slice(1).map((l) => `    ${l}`);
       writeLines([first, ...rest], MARGIN + 2, 5);
+    }
+    for (const c of s.code ?? []) {
+      y += 1;
+      need(12);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.setTextColor(110);
+      doc.text((c.caption ?? c.lang).toUpperCase(), MARGIN + 2, y);
+      y += 3;
+      doc.setFont("courier", "normal");
+      doc.setFontSize(8.5);
+      doc.setTextColor(0, 0, 0);
+      const lineH = 3.8;
+      const codeW = CONTENT_W - 2;
+      const lines = c.content
+        .split("\n")
+        .flatMap((l) => (l ? (doc.splitTextToSize(l, codeW - 6) as string[]) : [""]));
+      lines.forEach((line, i) => {
+        if (y + lineH > PAGE_H - 20) {
+          doc.addPage();
+          y = MARGIN;
+        }
+        // Shade line by line so the block survives page breaks. jsPDF's
+        // text colour shares the fill operator, so reset the fill each time.
+        doc.setFillColor(242, 242, 242);
+        const top = i === 0 ? y - 1 : y;
+        const h = i === 0 || i === lines.length - 1 ? lineH + 1 : lineH;
+        doc.rect(MARGIN + 2, top, codeW, h, "F");
+        doc.text(line, MARGIN + 5, y + 2.8);
+        y += lineH;
+      });
+      y += 5;
     }
     for (const l of s.links ?? []) {
       const ll = wrapped(`- ${l.label}`, 9.5);
@@ -229,7 +315,7 @@ export async function buildTaskDoc(domain: Domain, brief: TaskBrief) {
   const subLines: string[] = [];
   brief.submission.forEach((s, i) => {
     const parts = doc.splitTextToSize(
-      `${i + 1}. ${s}`,
+      `${i + 1}. ${plain(s)}`,
       CONTENT_W - 6,
     ) as string[];
     subLines.push(...parts);

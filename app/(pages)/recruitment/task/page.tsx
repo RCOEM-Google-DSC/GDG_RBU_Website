@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 import {
   Check, Sparkles, ClipboardList, Code, BarChart3, Palette, Brain,
-  Users, Megaphone, Camera, MessageCircle, Hash,
+  Users, Megaphone, Camera, MessageCircle, Hash, Target,
 } from "lucide-react";
 
 import {
@@ -593,6 +593,20 @@ export default function TaskPage() {
               <Check size={14} /> Personal details saved — task submission unlocked
             </p>
           )}
+
+          <NeoBrutalism
+            border={3}
+            shadow="md"
+            className="mt-5 flex items-start gap-3 bg-[#FFF4D6] px-4 py-3 max-w-3xl"
+          >
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center border-2 border-black bg-[#FBBC04]">
+              <Target size={18} strokeWidth={2.75} />
+            </span>
+            <p className="text-sm md:text-base leading-relaxed text-gray-900">
+              <strong className="font-black">Focus on the task for your first-preference domain.</strong>{" "}
+              Only attempt tasks from other domains if you have sufficient time left.
+            </p>
+          </NeoBrutalism>
         </motion.div>
 
         {/* Domain Tabs */}

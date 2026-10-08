@@ -1,0 +1,50 @@
+/* Dark highlight.js theme in bright Google colours. Scoped selectors +
+   !important beat the global `pre code` / `.hljs` overrides in
+   app/globals.css. */
+
+.root pre,
+.root pre code {
+  background: #121212 !important;
+  color: #e8eaed !important;
+}
+
+.root :global(.hljs-keyword),
+.root :global(.hljs-built_in),
+.root :global(.hljs-type),
+.root :global(.hljs-selector-tag) {
+  color: #8ab4f8 !important;
+  font-weight: 700;
+}
+
+.root :global(.hljs-string),
+.root :global(.hljs-regexp) {
+  color: #81c995 !important;
+}
+
+.root :global(.hljs-number),
+.root :global(.hljs-literal) {
+  color: #f28b82 !important;
+}
+
+.root :global(.hljs-attr),
+.root :global(.hljs-attribute),
+.root :global(.hljs-property) {
+  color: #fdd663 !important;
+}
+
+.root :global(.hljs-title),
+.root :global(.hljs-function),
+.root :global(.hljs-params) {
+  color: #c58af9 !important;
+}
+
+.root :global(.hljs-comment),
+.root :global(.hljs-meta) {
+  color: #9aa0a6 !important;
+  font-style: italic;
+}
+
+.root :global(.hljs-punctuation),
+.root :global(.hljs-operator) {
+  color: #bdc1c6 !important;
+}

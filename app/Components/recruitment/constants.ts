@@ -2,9 +2,18 @@
 
 export type BriefLink = { label: string; url: string };
 
+/** A formatted code / pseudocode example. `lang` is a highlight.js language id. */
+export type BriefCode = { lang: string; content: string; caption?: string };
+
+/** A simple table, e.g. an evaluation rubric. Cells may use `backticks`. */
+export type BriefTable = { columns: string[]; rows: string[][] };
+
 export type BriefSection = {
   heading: string;
+  /** Text wrapped in `backticks` renders as inline code. */
   paragraphs?: string[];
+  table?: BriefTable;
+  code?: BriefCode[];
   bullets?: string[];
   links?: BriefLink[];
 };
@@ -191,10 +200,10 @@ export const DOMAINS: Domain[] = [
               "System where users discover events, view details, register, and manage registrations, while admins manage events. Must prevent duplicate registrations, enforce capacity, and keep registration data consistent.",
             ],
             bullets: [
-              "User registration and login; JWT / session-based authentication.",
+              "User registration and login, JWT / session-based authentication.",
               "CRUD operations for events - Title, Description, Date/Time, Venue, Capacity, Category.",
-              "Authenticated users can register; prevent duplicates and full-event registration.",
-              "Users can view their registered events; admins can create, update and delete events.",
+              "Authenticated users can register, prevent duplicates and full-event registration.",
+              "Users can view their registered events, admins can create, update and delete events.",
               "React interface: browse, search & filter events, view details, register / unregister, view registrations, admin event management.",
               "Bonus: event reminders, rate limiting, Redis caching, Docker, analytics, QR codes, background jobs.",
             ],
@@ -307,7 +316,7 @@ export const DOMAINS: Domain[] = [
         label: "Task 2 · Hackathon Post",
         position: "UI/UX Designer",
         overview:
-          "Design a social media post promoting a college-level hackathon - visually engaging, clear hierarchy, aligned with the GDG RBU brand, and strong enough to make students register. Show your own design thinking; don't depend on AI for the core design.",
+          "Design a social media post promoting a college-level hackathon - visually engaging, clear hierarchy, aligned with the GDG RBU brand, and strong enough to make students register. Show your own design thinking, don't depend on AI for the core design.",
         sections: [
           {
             heading: "Format",
@@ -389,7 +398,7 @@ export const DOMAINS: Domain[] = [
         label: "Cloud Task",
         position: "Cloud",
         overview:
-          "Containerize a web application, deploy it on a cloud platform behind a load balancer, and set up CI/CD so every push to main is automatically built and deployed.",
+          "Containerize a web application, deploy it on a cloud platform behind a load balancer, and set up CI/CD so every push to `main` is automatically built and deployed.",
         sections: [
           {
             heading: "1. Select a cloud platform",
@@ -401,16 +410,16 @@ export const DOMAINS: Domain[] = [
           {
             heading: "2. Containerize the application",
             bullets: [
-              "Build a simple app in any framework (Node.js, Flask, Django, etc.) with at least two endpoints such as / and /health.",
+              "Build a simple app in any framework (Node.js, Flask, Django, etc.) with at least two endpoints such as `/` and `/health`.",
               "Display the hostname / instance ID so load balancing is visible on refresh.",
-              "Write a Dockerfile, run the container locally to confirm, then push the image to a registry (Docker Hub, Artifact Registry, ECR, ACR).",
+              "Write a `Dockerfile`, run the container locally to confirm, then push the image to a registry (Docker Hub, Artifact Registry, ECR, ACR).",
             ],
           },
           {
             heading: "3. Deploy with load balancing",
             bullets: [
               "Run at least two instances on a managed service (ECS/Fargate, GKE, Container Apps, EC2/VMs with Docker, etc.).",
-              "Put a load balancer in front (ALB, Cloud Load Balancing, Azure LB, or equivalent) with a health check on /health.",
+              "Put a load balancer in front (ALB, Cloud Load Balancing, Azure LB, or equivalent) with a health check on `/health`.",
               "Service must be reachable over the internet via the load balancer's public URL.",
               "Use environment variables or a secrets manager - never hardcode credentials.",
             ],
@@ -419,7 +428,7 @@ export const DOMAINS: Domain[] = [
             heading: "4. Set up CI/CD",
             bullets: [
               "Use GitHub Actions, GitLab CI, Cloud Build, or similar.",
-              "A push to main must automatically build the image, push it to the registry, and redeploy the service.",
+              "A push to `main` must automatically build the image, push it to the registry, and redeploy the service.",
             ],
           },
           {
@@ -437,7 +446,8 @@ export const DOMAINS: Domain[] = [
               "Dockerfile walkthrough and how the container runs.",
               "Load balancing in action: refreshing the URL across instances, and what happens when one instance stops.",
               "CI/CD running live: a code change triggering an automatic redeploy.",
-              "Custom domain with HTTPS (if done); challenges faced and how you solved them.",
+              "Custom domain with HTTPS (if done).",
+              "Challenges faced and how you solved them.",
             ],
           },
           {
@@ -465,12 +475,34 @@ export const DOMAINS: Domain[] = [
         label: "Android",
         position: "Android",
         overview:
-          "Build an offline-first Android habit tracker: users create habits, log progress daily, get reminders, and see streaks and statistics over time. Everything must work offline. For product reference look at Habitized on the Play Store - build your own app, do not copy its code, assets, or branding. Frameworks allowed: Native (Kotlin/Java), Flutter, React Native, etc.",
+          "Build an offline-first Android habit tracker: users create habits, log progress daily, get reminders, and see streaks and statistics over time. Everything must work offline. For product reference look at Habitized on the Play Store - build your own app, do not copy its code, assets, or branding.\nFrameworks allowed: Native (Kotlin/Java), Flutter, React Native, etc.",
         sections: [
           {
             heading: "Example behavior",
             paragraphs: [
-              "User creates 'Read', a countable habit with a target of 20 pages per day, and 'Gym', a yes/no habit on Monday, Wednesday, Friday. Monday: 12 pages read, Gym done. Tuesday: 20 pages read. Wednesday: 25 pages read, Gym done. On Wednesday evening the app should show: Read streak 2 (Monday missed the target); Gym streak 2 (Tuesday was unscheduled, so it does not break the streak). If the user corrects Monday to 20 pages, the Read streak becomes 3.",
+              "The user creates two habits and logs three days. Your streak logic should produce these results:",
+            ],
+            code: [
+              {
+                lang: "python",
+                caption: "Code",
+                content: `read = Habit("Read", type="countable", target=20, unit="pages")  # daily
+gym  = Habit("Gym",  type="yes/no", schedule=["Mon", "Wed", "Fri"])
+
+log("Mon", read, 12)
+log("Mon", gym, done=True)
+log("Tue", read, 20)          # Gym is not scheduled on Tuesday
+log("Wed", read, 25)
+log("Wed", gym, done=True)
+
+# Wednesday evening
+streak(read)  # -> 2  Monday missed the 20-page target
+streak(gym)   # -> 2  Tuesday was unscheduled, so the streak is not broken
+
+# The user corrects Monday
+log("Mon", read, 20)
+streak(read)  # -> 3`,
+              },
             ],
           },
           {
@@ -504,7 +536,29 @@ export const DOMAINS: Domain[] = [
           {
             heading: "5. Store data on the device",
             paragraphs: [
-              "Data must survive app and phone restarts. Design your own data model - something like: Habit -> id, name, type, schedule, target, unit, reminderTime; HabitLog -> habitId, date, value, completed.",
+              "Data must survive app and phone restarts. Design your own data model - something like:",
+            ],
+            code: [
+              {
+                lang: "typescript",
+                caption: "Code",
+                content: `Habit {
+  id
+  name
+  type          // yes/no | countable | timed
+  schedule      // daily | specific weekdays | N times per week
+  target
+  unit
+  reminderTime
+}
+
+HabitLog {
+  habitId
+  date
+  value
+  completed
+}`,
+              },
             ],
           },
           {
@@ -524,23 +578,31 @@ export const DOMAINS: Domain[] = [
             ],
           },
           {
-            heading: "Bonus (optional)",
+            heading: "Bonus",
+            paragraphs: ["Optional. Mention anything you add in your README."],
             bullets: [
-              "Home screen widget; mark a habit done from the notification; a simple to-do list for one-off tasks; light and dark themes; data export and import; optional cloud sync that keeps the app offline-first.",
-              "Mention anything you add in your README.",
+              "Home screen widget",
+              "Mark a habit done from the notification",
+              "A simple to-do list for one-off tasks",
+              "Light and dark themes",
+              "Data export and import",
+              "Optional cloud sync that keeps the app offline-first",
             ],
           },
           {
             heading: "Evaluation rubric (total 20 pts, +3 bonus)",
-            bullets: [
-              "Core functionality (5): habits, logging, reminders, and storage work end to end.",
-              "Correctness (4): streaks and statistics are right across schedules and edits to past days.",
-              "Architecture (4): well-structured code that is easy to extend.",
-              "UI / UX (3): a clean app that is pleasant to use.",
-              "Testing (2): meaningful automated tests.",
-              "README and video (2): clear setup steps and explanation.",
-              "Bonus (+3): additional features mentioned in the README.",
-            ],
+            table: {
+              columns: ["Rubric", "Points", "Notes"],
+              rows: [
+                ["Core functionality", "5", "Habits, logging, reminders, and storage work end to end."],
+                ["Correctness", "4", "Streaks and statistics are right across schedules and edits to past days."],
+                ["Architecture", "4", "Well-structured code that is easy to extend."],
+                ["UI / UX", "3", "A clean app that is pleasant to use."],
+                ["Testing", "2", "Meaningful automated tests."],
+                ["README and video", "2", "Clear setup steps and explanation."],
+                ["Bonus", "+3", "Additional features (please mention them in the README)."],
+              ],
+            },
           },
           {
             heading: "Documentation - README",
@@ -554,7 +616,8 @@ export const DOMAINS: Domain[] = [
             bullets: [
               "Your tech stack and architecture, and why you chose them.",
               "A live demo: creating habits, logging, a reminder firing, and streaks updating after editing a past day.",
-              "Your tests running; challenges you faced and how you solved them.",
+              "Your tests running.",
+              "Challenges you faced and how you solved them.",
             ],
           },
           {
@@ -570,7 +633,8 @@ export const DOMAINS: Domain[] = [
           },
         ],
         submission: [
-          "Commit as you work on GitHub with clear commit messages - do not upload the final project in a single commit; history should show your process.",
+          "Commit as you work on GitHub, with clear commit messages.",
+          "Do not upload the final project in a single commit. The history should show your process and debugging steps.",
           "Link to the GitHub repository, an installable APK, and the video.",
           "Upload everything to a Google Drive folder and paste the GitHub and Drive links in the task submission form below.",
           "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
@@ -587,12 +651,26 @@ export const DOMAINS: Domain[] = [
         label: "ML",
         position: "Machine Learning",
         overview:
-          "Build a local memory engine for AI chatbots that runs on your own laptop. It reads conversation messages, saves the useful facts about the user, updates them when they change, and returns the relevant ones when a chatbot asks a question. Languages allowed - any: Python, TypeScript, Go, Java, C++, etc.",
+          "Build a local memory engine for AI chatbots that runs on your own laptop. It reads conversation messages, saves the useful facts about the user, updates them when they change, and returns the relevant ones when a chatbot asks a question.\nLanguages allowed - any: Python, TypeScript, Go, Java, C++, etc.",
         sections: [
           {
             heading: "Example",
             paragraphs: [
-              "Over a few conversations the user says: 'I use Arch Linux.' / 'I'm building a Next.js app.' / 'My project deadline is October 15.' / 'Actually, the deadline moved to November 2.' Later queries should return: 'What OS does the user use?' -> 'User uses Arch Linux.'; 'When is the project deadline?' -> 'Deadline is November 2.' (knowing it replaced October 15); 'What is the user's favourite food?' -> nothing, it should say it has no relevant memory instead of returning unrelated ones.",
+              "Over a few conversations the user says four things. Later queries should return:",
+            ],
+            code: [
+              {
+                lang: "python",
+                caption: "Code",
+                content: `remember("I use Arch Linux.")
+remember("I'm building a Next.js app.")
+remember("My project deadline is October 15.")
+remember("Actually, the deadline moved to November 2.")  # replaces October 15
+
+recall("What OS does the user use?")          # -> "User uses Arch Linux."
+recall("When is the project deadline?")       # -> "Deadline is November 2."
+recall("What is the user's favourite food?")  # -> no relevant memory, not unrelated ones`,
+              },
             ],
           },
           {
@@ -619,7 +697,39 @@ export const DOMAINS: Domain[] = [
           {
             heading: "4. Persist and expose an API",
             paragraphs: [
-              "Memories must survive a restart. SQLite, PostgreSQL, FAISS, Chroma, or similar are all fine. Expose a simple API: POST /memory (add a message or memory), POST /recall (relevant memories for a query), GET /memories (list all), DELETE /memory/:id (remove). Example: POST /recall { 'query': 'What database does the user prefer?', 'top_k': 5 } -> { 'memories': [ { 'text': 'User prefers PostgreSQL.', 'type': 'preference', 'score': 0.91 } ] }.",
+              "Memories must survive a restart. SQLite, PostgreSQL, FAISS, Chroma, or similar are all fine. Expose a simple API:",
+            ],
+            bullets: [
+              "`POST /memory` - add a message or memory.",
+              "`POST /recall` - relevant memories for a query.",
+              "`GET /memories` - list all.",
+              "`DELETE /memory/:id` - remove one.",
+            ],
+            code: [
+              {
+                lang: "http",
+                caption: "Request",
+                content: `POST /recall HTTP/1.1
+Content-Type: application/json
+
+{
+  "query": "What database does the user prefer?",
+  "top_k": 5
+}`,
+              },
+              {
+                lang: "json",
+                caption: "Response",
+                content: `{
+  "memories": [
+    {
+      "text": "User prefers PostgreSQL.",
+      "type": "preference",
+      "score": 0.91
+    }
+  ]
+}`,
+              },
             ],
           },
           {
@@ -641,23 +751,31 @@ export const DOMAINS: Domain[] = [
             ],
           },
           {
-            heading: "Bonus (optional)",
+            heading: "Bonus",
+            paragraphs: ["Optional. Mention anything you add in your README."],
             bullets: [
-              "Hybrid search: semantic + keyword (BM25); merging duplicate memories; importance scores so minor details rank lower; latency benchmarks (p50 / p95); Docker setup; a simple web UI to browse and search memories.",
-              "Mention anything you add in your README.",
+              "Hybrid search: semantic + keyword (BM25)",
+              "Merging duplicate memories",
+              "Importance scores, so minor details rank lower",
+              "Latency benchmarks (p50 / p95)",
+              "Docker setup",
+              "A simple web UI to browse and search memories",
             ],
           },
           {
             heading: "Evaluation rubric (total 20 pts, +3 bonus)",
-            bullets: [
-              "Core functionality (6): saves, updates, retrieves, and persists memories end to end.",
-              "Retrieval quality (4): right memories for realistic queries, nothing for unknown ones.",
-              "Updates and contradictions (3): newer information wins; history is kept.",
-              "Evaluation (3): a real test set with measured results, not just demos.",
-              "Code quality and structure (2): clean, modular, readable code.",
-              "README and video (2): clear setup steps and explanation.",
-              "Bonus (+3): additional features mentioned in the README.",
-            ],
+            table: {
+              columns: ["Rubric", "Points", "Notes"],
+              rows: [
+                ["Core functionality", "6", "Saves, updates, retrieves, and persists memories end to end."],
+                ["Retrieval quality", "4", "Returns the right memories for realistic queries, and nothing for unknown ones."],
+                ["Updates and contradictions", "3", "Newer information wins, history is kept."],
+                ["Evaluation", "3", "A real test set with measured results, not just a few demos."],
+                ["Code quality & structure", "2", "Clean, modular, readable code."],
+                ["README and video", "2", "Clear setup steps and explanation."],
+                ["Bonus", "+3", "Additional features (please mention them in the README)."],
+              ],
+            },
           },
           {
             heading: "Documentation - README",
@@ -671,7 +789,8 @@ export const DOMAINS: Domain[] = [
             bullets: [
               "Your architecture and why you chose each part.",
               "A live demo: adding messages, an update replacing an old memory, and recall queries.",
-              "Your evaluation results and where the engine fails; challenges you faced and how you solved them.",
+              "Your evaluation results and where the engine fails.",
+              "Challenges you faced and how you solved them.",
             ],
           },
           {
@@ -688,7 +807,8 @@ export const DOMAINS: Domain[] = [
           },
         ],
         submission: [
-          "Commit as you work on GitHub with clear commit messages - do not upload the final project in a single commit; history should show your process.",
+          "Commit as you work on GitHub, with clear commit messages.",
+          "Do not upload the final project in a single commit. The history should show your process and debugging steps.",
           "Link to the GitHub repository and the video.",
           "Upload everything to a Google Drive folder and paste the GitHub and Drive links in the task submission form below.",
           "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
@@ -733,7 +853,7 @@ export const DOMAINS: Domain[] = [
         label: "Cinematography",
         position: "Cinematography",
         overview:
-          "Choose ONE of the two reel options below - a 20–30 second cinematic reel (9:16 vertical) with a clear beginning, middle and ending. Tell a story; don't just montage.",
+          "Choose ONE of the two reel options below - a 20–30 second cinematic reel (9:16 vertical) with a clear beginning, middle and ending. Tell a story, don't just montage.",
         sections: [
           {
             heading: "Option 1 - A Day, But Make It Cinematic",
@@ -741,20 +861,20 @@ export const DOMAINS: Domain[] = [
               "Take an ordinary part of your day (getting ready, studying, going to college, making coffee, anything routine) and make it cinematic. Plan your opening, close-ups, movement, lighting, and ending.",
             ],
             bullets: [
-              "At least 5 different shots; at least one close-up; at least one wide / establishing shot.",
-              "At least one creative camera angle; music and/or sound design.",
+              "At least 5 different shots, at least one close-up, at least one wide / establishing shot.",
+              "At least one creative camera angle, music and/or sound design.",
               "Duration 20–30 seconds · Format 9:16 vertical.",
             ],
           },
           {
             heading: "Option 2 - The Notification",
             paragraphs: [
-              "A notification appears on someone's phone - what happens next is your story. The notification (text, email, missed call, reminder, or something fictional) is only the starting point; use visuals, expressions, objects, sound and editing to show the effect.",
+              "A notification appears on someone's phone - what happens next is your story. The notification (text, email, missed call, reminder, or something fictional) is only the starting point, use visuals, expressions, objects, sound and editing to show the effect.",
             ],
             bullets: [
               "Tone can be funny, mysterious, emotional, suspenseful or unexpected.",
               "Clear opening hook + notification as the turning point + clear ending / reveal.",
-              "At least 5 different shots; at least one close-up; at least one creative angle; intentional sound design.",
+              "At least 5 different shots, at least one close-up, at least one creative angle, intentional sound design.",
               "Duration 20–30 seconds · Format 9:16 vertical.",
             ],
           },
@@ -766,7 +886,7 @@ export const DOMAINS: Domain[] = [
           },
         ],
         submission: [
-          "Export as YourName_CinematographyTask2026.mp4 and upload to Drive.",
+          "Export as `YourName_CinematographyTask2026.mp4` and upload to Drive.",
           "Paste the link in the task submission form below.",
           "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
@@ -818,7 +938,7 @@ export const DOMAINS: Domain[] = [
           },
         ],
         submission: [
-          "Compile everything into a document named YourName_SocialsCnOTask2026 and upload to Drive.",
+          "Compile everything into a document named `YourName_SocialsCnOTask2026` and upload to Drive.",
           "Paste the link in the task submission form below.",
           "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
