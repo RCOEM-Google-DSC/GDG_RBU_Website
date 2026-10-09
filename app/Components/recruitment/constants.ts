@@ -42,18 +42,11 @@ export type Domain = {
   briefs: TaskBrief[];
 };
 
-const CO_LEADS: TaskContact[] = [
-  { name: "Saptanshu Wanjari", role: "GDG RBU Co-Lead", phone: "+91 7350557473" },
-  { name: "Zoya Ghachi", role: "GDG RBU Co-Lead", phone: "+91 7058046302" },
-];
-
 const WEB_CONTACTS: TaskContact[] = [
-  ...CO_LEADS,
   { name: "Rohit Agrawal", role: "Web Lead", phone: "+91 9981978217" },
 ];
 
 const MM_CONTACTS: TaskContact[] = [
-  ...CO_LEADS,
   { name: "Jagravi Bisen", role: "Marketing Lead", phone: "+91 9103548451" },
   { name: "Saarth Meshram", role: "Management Lead", phone: "+91 9552603646" },
 ];
@@ -264,7 +257,6 @@ export const DOMAINS: Domain[] = [
           "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
-          ...CO_LEADS,
           { name: "Adarsh Jha", role: "CP Co-Lead", phone: "+91 93401 94244" },
           { name: "Dev Jain", role: "CP Co-Lead", phone: "+91 90335 96889" },
         ],
@@ -306,7 +298,6 @@ export const DOMAINS: Domain[] = [
           "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
-          ...CO_LEADS,
           { name: "Gayatri Donode", role: "Design Co-Lead", phone: "+91 8407906655" },
           { name: "Moksh Barapatre", role: "Design Co-Lead", phone: "+91 9049527009" },
         ],
@@ -351,7 +342,6 @@ export const DOMAINS: Domain[] = [
           "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
-          ...CO_LEADS,
           { name: "Gayatri Donode", role: "Design Co-Lead", phone: "+91 8407906655" },
           { name: "Moksh Barapatre", role: "Design Co-Lead", phone: "+91 9049527009" },
         ],
@@ -378,7 +368,6 @@ export const DOMAINS: Domain[] = [
           "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
-          ...CO_LEADS,
           { name: "Gayatri Donode", role: "Design Co-Lead", phone: "+91 8407906655" },
           { name: "Moksh Barapatre", role: "Design Co-Lead", phone: "+91 9049527009" },
         ],
@@ -465,7 +454,6 @@ export const DOMAINS: Domain[] = [
           "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
-          ...CO_LEADS,
           { name: "Samarth Zalkikar", role: "MAC Lead", phone: "+91 9075085950" },
           { name: "Vivian Demello", role: "MAC Co-Lead", phone: "+91 7588270066" },
         ],
@@ -641,7 +629,6 @@ HabitLog {
         ],
         note: "You may use chatbots and coding assistants as long as you understand and review every line they produce. State in your README which parts were written with an LLM.",
         contacts: [
-          ...CO_LEADS,
           { name: "Samarth Zalkikar", role: "MAC Lead", phone: "+91 9075085950" },
           { name: "Vivian Demello", role: "MAC Co-Lead", phone: "+91 7588270066" },
         ],
@@ -815,7 +802,6 @@ Content-Type: application/json
         ],
         note: "You may use chatbots and coding assistants as long as you understand and review every line they produce. State in your README which parts were written with an LLM.",
         contacts: [
-          ...CO_LEADS,
           { name: "Samarth Zalkikar", role: "MAC Lead", phone: "+91 9075085950" },
           { name: "Vivian Demello", role: "MAC Co-Lead", phone: "+91 7588270066" },
         ],
@@ -891,7 +877,6 @@ Content-Type: application/json
           "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
-          ...CO_LEADS,
           { name: "Arshpreet Puri", role: "Socials Lead", phone: "+91 9699073889" },
         ],
       },
@@ -943,7 +928,6 @@ Content-Type: application/json
           "Create a Google Drive folder or Google Doc and make sure it is shared with 'Anyone with the link' access.",
         ],
         contacts: [
-          ...CO_LEADS,
           { name: "Arshpreet Puri", role: "Socials Lead", phone: "+91 9699073889" },
         ],
       },
