@@ -402,7 +402,12 @@ export default function UpcomingEventPage({
         <div className="fixed bottom-6 md:bottom-8 right-4 md:right-6 z-50">
           <button
             onClick={() => {
-              router.push(`/events/${event.id}/register`);
+              const dest = event.website_url || `/events/${event.id}/register`;
+              if (dest.startsWith("http")) {
+                window.open(dest, "_blank");
+              } else {
+                router.push(dest);
+              }
             }}
             className={nb({
               border: 4,
