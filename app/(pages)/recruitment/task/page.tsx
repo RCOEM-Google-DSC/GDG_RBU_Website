@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase, getCurrentUserId } from "@/supabase/supabase";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,6 +26,7 @@ import PersonalDetailsForm from "@/app/Components/recruitment/PersonalDetailsFor
 import TaskSubmissionForm from "@/app/Components/recruitment/TaskSubmissionForm";
 import DomainBrief from "@/app/Components/recruitment/DomainBrief";
 import SubmissionPreview from "@/app/Components/recruitment/SubmissionPreview";
+import CountdownTimer, { getDeadlinePhase } from "@/app/Components/recruitment/CountdownTimer";
 import Footer from "@/app/Components/Landing/Footer";
 
 type Step = "form" | "preview" | "success";
@@ -372,6 +374,12 @@ export default function TaskPage() {
 
   // ---- Final task submit to recruitment_task_submissions ----
   const handleFinalSubmit = async () => {
+    // Block submission if deadline has passed
+    if (getDeadlinePhase() === "closed") {
+      toast.error("Submissions are closed. The deadline has passed.");
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -556,6 +564,40 @@ export default function TaskPage() {
 
   // ---- Main form step ----
   const activeDomainData = DOMAINS.find((d) => d.id === activeDomain);
+  const isClosed = getDeadlinePhase() === "closed";
+
+  // ---- Closed gate ----
+  if (isClosed && step === "form") {
+    return (
+      <div className="min-h-screen text-black selection:bg-[#4285F4] selection:text-white">
+        <div
+          className="fixed inset-0 -z-10 pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)",
+            backgroundSize: "80px 80px",
+          }}
+        />
+        <div className="max-w-2xl mx-auto px-4 py-20 md:py-32 text-center">
+          <CountdownTimer />
+          <div className="mt-8">
+            <Link
+              href="/recruitment"
+              className={nb({
+                border: 4,
+                shadow: "lg",
+                hover: "lift",
+                className: "inline-flex items-center gap-2 bg-black text-white px-6 py-3 font-bold text-sm",
+              })}
+            >
+              ← Back to Recruitment
+            </Link>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen text-black selection:bg-[#4285F4] selection:text-white">
@@ -593,6 +635,11 @@ export default function TaskPage() {
               <Check size={14} /> Personal details saved — task submission unlocked
             </p>
           )}
+
+          {/* Compact Countdown Timer */}
+          <div className="mt-4">
+            <CountdownTimer compact />
+          </div>
 
           <NeoBrutalism
             border={3}

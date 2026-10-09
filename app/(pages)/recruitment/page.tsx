@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 import { DOMAINS } from "@/app/Components/recruitment/constants";
+import CountdownTimer, { getDeadlinePhase } from "@/app/Components/recruitment/CountdownTimer";
 import Footer from "@/app/Components/Landing/Footer";
 
 const DOMAIN_ICONS: Record<string, React.ReactNode> = {
@@ -28,6 +29,9 @@ const DOMAIN_ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function RecruitmentPage() {
+  const phase = getDeadlinePhase();
+  const isClosed = phase === "closed";
+
   return (
     <div className="min-h-screen text-black selection:bg-[#4285F4] selection:text-white">
       {/* Background grid */}
@@ -71,20 +75,27 @@ export default function RecruitmentPage() {
             of a community that builds, learns, and grows together.
           </p>
 
-          <Link
-            href="/recruitment/task"
-            className={nb({
-              border: 4,
-              shadow: "lg",
-              hover: "lift",
-              active: "push",
-              className:
-                "inline-flex items-center gap-3 bg-black text-white px-8 py-4 font-black text-lg uppercase tracking-wide",
-            })}
-          >
-            Apply Now
-            <ArrowRight size={22} strokeWidth={3} />
-          </Link>
+          {!isClosed && (
+            <Link
+              href="/recruitment/task"
+              className={nb({
+                border: 4,
+                shadow: "lg",
+                hover: "lift",
+                active: "push",
+                className:
+                  "inline-flex items-center gap-3 bg-black text-white px-8 py-4 font-black text-lg uppercase tracking-wide",
+              })}
+            >
+              Apply Now
+              <ArrowRight size={22} strokeWidth={3} />
+            </Link>
+          )}
+
+          {/* Countdown Timer */}
+          <div className="mt-10 max-w-lg mx-auto">
+            <CountdownTimer />
+          </div>
         </motion.div>
       </section>
 
@@ -254,20 +265,26 @@ export default function RecruitmentPage() {
             Complete your task submission and become a part of GDG RBU. Show us
             what you&apos;ve got.
           </p>
-          <Link
-            href="/recruitment/task"
-            className={nb({
-              border: 4,
-              shadow: "lg",
-              hover: "lift",
-              active: "push",
-              className:
-                "inline-flex items-center gap-3 bg-[#FBBC04] text-black px-8 py-4 font-black text-lg uppercase tracking-wide",
-            })}
-          >
-            Submit Your Task
-            <ArrowRight size={22} strokeWidth={3} />
-          </Link>
+          {!isClosed ? (
+            <Link
+              href="/recruitment/task"
+              className={nb({
+                border: 4,
+                shadow: "lg",
+                hover: "lift",
+                active: "push",
+                className:
+                  "inline-flex items-center gap-3 bg-[#FBBC04] text-black px-8 py-4 font-black text-lg uppercase tracking-wide",
+              })}
+            >
+              Submit Your Task
+              <ArrowRight size={22} strokeWidth={3} />
+            </Link>
+          ) : (
+            <p className="font-mono text-sm text-white/60">
+              Submissions are now closed. Thank you for your interest!
+            </p>
+          )}
         </NeoBrutalism>
       </section>
 
