@@ -29,7 +29,7 @@ import SubmissionPreview from "@/app/Components/recruitment/SubmissionPreview";
 import CountdownTimer, { getDeadlinePhase } from "@/app/Components/recruitment/CountdownTimer";
 import Footer from "@/app/Components/Landing/Footer";
 
-type Step = "form" | "preview" | "success";
+type Step = "form" | "preview";
 
 const DOMAIN_ICONS: Record<string, React.ReactNode> = {
   "web-dev": <Code size={20} strokeWidth={2.5} />,
@@ -206,13 +206,6 @@ export default function TaskPage() {
 
       if (tasks && tasks.length > 0) {
         setSubmittedDomains(tasks.map((t) => t.task_domain));
-        // User already submitted — set the task domain for the success message
-        // and show the "You're In!" screen immediately
-        setTask((prev) => ({
-          ...prev,
-          task_domain: tasks[0].task_domain,
-        }));
-        setStep("success");
       }
     };
     loadExisting();
@@ -425,6 +418,7 @@ export default function TaskPage() {
             task_domain: task.task_domain,
             task_links: validLinks,
             task_details: task.task_details || {},
+            updated_at: new Date().toISOString(),
           },
         ],
         { onConflict: "user_id,task_domain" },
@@ -440,7 +434,7 @@ export default function TaskPage() {
         prev.includes(task.task_domain) ? prev : [...prev, task.task_domain],
       );
       toast.success("Task submitted successfully!");
-      setStep("success");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err: any) {
       toast.error(err.message || "Something went wrong");
     } finally {
@@ -452,90 +446,8 @@ export default function TaskPage() {
     DOMAINS.find((d) => d.id === activeDomain)?.name || task.task_domain,
   );
 
-  // ---- Success view ----
-  if (step === "success") {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div
-          className="fixed inset-0 -z-10 pointer-events-none"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)",
-            backgroundSize: "80px 80px",
-          }}
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <NeoBrutalism border={4} shadow="xl" className="bg-[#34A853] text-white p-8 md:p-12 text-center max-w-lg">
-            <Sparkles size={48} className="mx-auto mb-4" />
-            <h2 className="text-3xl font-black uppercase mb-2 font-retron">You&apos;re In!</h2>
-            <p className="font-mono text-sm text-white/90 mb-8">
-              Your task for {task.task_domain} has been submitted. Shortlisted candidates will be
-              contacted for interviews. Best of luck!
-            </p>
-
-            {/* Mandatory community links */}
-            <div className="space-y-3 mb-8">
-              <p className="font-bold text-xs uppercase tracking-wider text-white/70 mb-3">
-                Join our community — it&apos;s mandatory
-              </p>
-              {config?.whatsapp_url && (
-                <a
-                  href={config.whatsapp_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={nb({
-                    border: 3,
-                    shadow: "md",
-                    hover: "lift",
-                    active: "push",
-                    className:
-                      "w-full flex items-center justify-center gap-3 bg-[#25D366] text-white px-6 py-3 font-bold text-sm",
-                  })}
-                >
-                  <MessageCircle size={18} />
-                  Join WhatsApp Group
-                </a>
-              )}
-              {config?.discord_url && (
-                <a
-                  href={config.discord_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={nb({
-                    border: 3,
-                    shadow: "md",
-                    hover: "lift",
-                    active: "push",
-                    className:
-                      "w-full flex items-center justify-center gap-3 bg-[#5865F2] text-white px-6 py-3 font-bold text-sm",
-                  })}
-                >
-                  <Hash size={18} />
-                  Join Discord Server
-                </a>
-              )}
-            </div>
-
-            <button
-              onClick={() => router.push("/")}
-              className={nb({
-                border: 3,
-                shadow: "md",
-                hover: "lift",
-                className: "bg-white text-black px-6 py-3 font-bold text-sm",
-              })}
-            >
-              Go Home
-            </button>
-          </NeoBrutalism>
-        </motion.div>
-      </div>
-    );
-  }
+  // ---- Submitted banner (inline — tasks stay visible regardless of submission) ----
+  // (rendered in the form view below)
 
   // ---- Preview step ----
   if (step === "preview") {
@@ -655,6 +567,74 @@ export default function TaskPage() {
             </p>
           </NeoBrutalism>
         </motion.div>
+
+        {/* Submitted banner — always visible alongside tasks once submitted */}
+        {submittedDomains.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <NeoBrutalism border={3} shadow="lg" className="bg-[#34A853] text-white p-6 md:p-8">
+              <div className="flex items-start gap-4">
+                <span className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center border-[3px] border-white bg-black/20">
+                  <Sparkles size={24} />
+                </span>
+                <div className="flex-1">
+                  <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight font-retron mb-1">
+                    Task Submitted!
+                  </h2>
+                  <p className="font-mono text-xs md:text-sm text-white/90 mb-4">
+                    Submitted for: <strong>{submittedDomains.join(", ")}</strong>.
+                    Shortlisted candidates will be contacted for interviews. You can still browse
+                    all tasks below and submit for other domains.
+                  </p>
+                  <p className="font-bold text-[11px] uppercase tracking-wider text-white/70 mb-2">
+                    Join our community — it&apos;s mandatory
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    {config?.whatsapp_url && (
+                      <a
+                        href={config.whatsapp_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={nb({
+                          border: 3,
+                          shadow: "md",
+                          hover: "lift",
+                          active: "push",
+                          className:
+                            "flex items-center justify-center gap-2 bg-[#25D366] text-white px-5 py-2.5 font-bold text-xs",
+                        })}
+                      >
+                        <MessageCircle size={16} />
+                        Join WhatsApp Group
+                      </a>
+                    )}
+                    {config?.discord_url && (
+                      <a
+                        href={config.discord_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={nb({
+                          border: 3,
+                          shadow: "md",
+                          hover: "lift",
+                          active: "push",
+                          className:
+                            "flex items-center justify-center gap-2 bg-[#5865F2] text-white px-5 py-2.5 font-bold text-xs",
+                        })}
+                      >
+                        <Hash size={16} />
+                        Join Discord Server
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </NeoBrutalism>
+          </motion.div>
+        )}
 
         {/* Domain Tabs */}
         <div className="mb-8 overflow-x-auto pb-2">
