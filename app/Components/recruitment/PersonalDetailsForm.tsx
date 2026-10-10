@@ -23,6 +23,7 @@ interface PersonalDetailsFormProps {
   onComplete: () => void;
   saving?: boolean;
   alreadySaved?: boolean;
+  statusMessage?: { type: "error" | "success"; message: string } | null;
 }
 
 export default function PersonalDetailsForm({
@@ -33,8 +34,10 @@ export default function PersonalDetailsForm({
   onComplete,
   saving = false,
   alreadySaved = false,
+  statusMessage = null,
 }: PersonalDetailsFormProps) {
   const [uploading, setUploading] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const update = (field: keyof PersonalDetailsData, value: any) => {
@@ -82,32 +85,37 @@ export default function PersonalDetailsForm({
     }
   };
 
+  const fail = (msg: string) => {
+    setValidationError(msg);
+    toast.error(msg);
+  };
+
   const validateAndContinue = () => {
-    if (!form.name?.trim()) { toast.error("Name is required"); return; }
-    if (!form.email?.trim()) { toast.error("Email is required"); return; }
-    if (!form.phone?.trim()) { toast.error("Phone number is required"); return; }
-    if (!/^[6-9]\d{9}$/.test(form.phone.trim())) { toast.error("Enter a valid 10-digit phone number"); return; }
-    if (!form.year) { toast.error("Year is required"); return; }
-    if (!form.branch?.trim()) { toast.error("Branch is required"); return; }
-    if (!form.domain_pref_1) { toast.error("Domain Preference 1 is required"); return; }
+    setValidationError(null);
+    if (!form.name?.trim()) return fail("Name is required");
+    if (!form.email?.trim()) return fail("Email is required");
+    if (!form.phone?.trim()) return fail("Phone number is required");
+    if (!/^[6-9]\d{9}$/.test(form.phone.trim())) return fail("Enter a valid 10-digit phone number");
+    if (!form.year) return fail("Year is required");
+    if (!form.branch?.trim()) return fail("Branch is required");
+    if (!form.domain_pref_1) return fail("Domain Preference 1 is required");
 
     // Validate no duplicate domain preferences
     const prefs = [form.domain_pref_1, form.domain_pref_2, form.domain_pref_3].filter(Boolean);
     const uniquePrefs = new Set(prefs);
     if (prefs.length !== uniquePrefs.size) {
-      toast.error("Each domain preference must be different. Please fix duplicate preferences.");
-      return;
+      return fail("Each domain preference must be different. Please fix duplicate preferences.");
     }
 
-    if (!form.linkedin_url?.trim()) { toast.error("LinkedIn URL is required"); return; }
-    if (!form.tech_domain) { toast.error("Tech domain preference is required"); return; }
-    if (!form.socials_domain) { toast.error("Socials domain preference is required"); return; }
-    if (!form.codeforces_url?.trim()) { toast.error("Codeforces profile is required (type 'Nil' if none)"); return; }
-    if (!form.codechef_url?.trim()) { toast.error("Codechef profile is required (type 'Nil' if none)"); return; }
-    if (!form.resume_url) { toast.error("Resume upload is required"); return; }
-    if (!form.motive?.trim()) { toast.error("Motive to join is required"); return; }
-    if (!form.value_addition?.trim()) { toast.error("Value addition answer is required"); return; }
-    if (!form.projects?.trim()) { toast.error("Projects/experience is required"); return; }
+    if (!form.linkedin_url?.trim()) return fail("LinkedIn URL is required");
+    if (!form.tech_domain) return fail("Tech domain preference is required");
+    if (!form.socials_domain) return fail("Socials domain preference is required");
+    if (!form.codeforces_url?.trim()) return fail("Codeforces profile is required (type 'Nil' if none)");
+    if (!form.codechef_url?.trim()) return fail("Codechef profile is required (type 'Nil' if none)");
+    if (!form.resume_url) return fail("Resume upload is required");
+    if (!form.motive?.trim()) return fail("Motive to join is required");
+    if (!form.value_addition?.trim()) return fail("Value addition answer is required");
+    if (!form.projects?.trim()) return fail("Projects/experience is required");
 
     onComplete();
   };
@@ -401,6 +409,20 @@ export default function PersonalDetailsForm({
               <ChevronDown size={16} />
             </button>
           </div>
+
+          {/* Inline save status — always visible, even if toasts are missed */}
+          {(validationError || statusMessage) && (
+            <div
+              className={`px-4 py-3 font-mono text-xs font-bold border-[3px] ${
+                (validationError || statusMessage?.type === "error")
+                  ? "bg-red-50 border-red-500 text-red-700"
+                  : "bg-green-50 border-green-600 text-green-800"
+              }`}
+            >
+              {(validationError || statusMessage?.type === "error") ? "✗ " : "✓ "}
+              {validationError || statusMessage?.message}
+            </div>
+          )}
         </div>
       )}
     </div>

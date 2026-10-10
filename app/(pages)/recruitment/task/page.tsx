@@ -57,6 +57,10 @@ export default function TaskPage() {
   const [applicantId, setApplicantId] = useState<string | null>(null);
   const [hasPersonal, setHasPersonal] = useState(false);
   const [submittedDomains, setSubmittedDomains] = useState<string[]>([]);
+  const [personalStatus, setPersonalStatus] = useState<{
+    type: "error" | "success";
+    message: string;
+  } | null>(null);
   const [submittedDetails, setSubmittedDetails] = useState<
     Record<string, { links: string[]; updated_at: string | null }>
   >({});
@@ -237,33 +241,44 @@ export default function TaskPage() {
   }, []);
 
   // ---- Save personal details to recruitment_applicants (upsert) ----
+  // The entire body is inside try/catch so no failure is ever silent:
+  // every path surfaces a toast AND an inline status message in the form.
   const onPersonalComplete = async () => {
-    const uid = await getCurrentUserId();
-    if (!uid) {
-      localStorage.setItem(PERSONAL_DETAILS_KEY, JSON.stringify(personal));
-      toast.info("Please log in to save your personal details");
-      router.push(`/register?redirect=/recruitment/task`);
-      return;
-    }
-
-    // Sync email/name with auth account
-    const { data: userData } = await supabase
-      .from("users")
-      .select("email, name")
-      .eq("id", uid)
-      .single();
-
-    const payload = { ...personal };
-    if (userData?.email && userData.email !== payload.email) {
-      payload.email = userData.email;
-      toast.info("Email updated to match your logged-in account");
-    }
-    if (!payload.name && userData?.name) {
-      payload.name = userData.name;
-    }
-
     setSavingPersonal(true);
+    setPersonalStatus(null);
     try {
+      const uid = await getCurrentUserId();
+      if (!uid) {
+        try {
+          localStorage.setItem(PERSONAL_DETAILS_KEY, JSON.stringify(personal));
+        } catch {}
+        toast.info("Please log in to save your personal details");
+        router.push(`/register?redirect=/recruitment/task`);
+        return;
+      }
+
+      // Sync email/name with auth account (non-fatal if the lookup fails)
+      let userData: { email?: string | null; name?: string | null } | null = null;
+      try {
+        const res = await supabase
+          .from("users")
+          .select("email, name")
+          .eq("id", uid)
+          .single();
+        if (!res.error) userData = res.data;
+      } catch (e) {
+        console.error("Profile sync lookup failed (non-fatal):", e);
+      }
+
+      const payload = { ...personal };
+      if (userData?.email && userData.email !== payload.email) {
+        payload.email = userData.email;
+        toast.info("Email updated to match your logged-in account");
+      }
+      if (!payload.name && userData?.name) {
+        payload.name = userData.name;
+      }
+
       const { data, error } = await supabase
         .from("recruitment_applicants")
         .upsert(
@@ -303,8 +318,16 @@ export default function TaskPage() {
       setApplicantId(data.id);
       setHasPersonal(true);
       toast.success("Personal details saved. Now submit your task.");
+      setPersonalStatus({
+        type: "success",
+        message: "Personal details saved. Task submission unlocked below.",
+      });
     } catch (err: any) {
-      toast.error(err.message || "Failed to save personal details");
+      console.error("Failed to save personal details:", err);
+      const message =
+        err?.message || "Failed to save personal details. Please try again.";
+      toast.error(message);
+      setPersonalStatus({ type: "error", message });
       return;
     } finally {
       setSavingPersonal(false);
@@ -822,6 +845,7 @@ export default function TaskPage() {
             onComplete={onPersonalComplete}
             saving={savingPersonal}
             alreadySaved={hasPersonal}
+            statusMessage={personalStatus}
           />
 
           {/* Task Submission — Step 2, gated on personal details */}
