@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { NeoBrutalism, nb } from "@/components/ui/neo-brutalism";
 import {
   Check, Sparkles, ClipboardList, Code, BarChart3, Palette, Brain,
-  Users, Megaphone, Camera, MessageCircle, Hash, Target,
+  Users, Megaphone, Camera, MessageCircle, Hash, Target, Pencil, ExternalLink,
 } from "lucide-react";
 
 import {
@@ -57,6 +57,10 @@ export default function TaskPage() {
   const [applicantId, setApplicantId] = useState<string | null>(null);
   const [hasPersonal, setHasPersonal] = useState(false);
   const [submittedDomains, setSubmittedDomains] = useState<string[]>([]);
+  const [submittedDetails, setSubmittedDetails] = useState<
+    Record<string, { links: string[]; updated_at: string | null }>
+  >({});
+  const [showSubmitted, setShowSubmitted] = useState(false);
   const [config, setConfig] = useState<{ whatsapp_url: string; discord_url: string } | null>(null);
 
   const persistPersonal = useCallback((p: PersonalDetailsData) => {
@@ -201,11 +205,19 @@ export default function TaskPage() {
 
       const { data: tasks } = await supabase
         .from("recruitment_task_submissions")
-        .select("task_domain")
+        .select("task_domain, task_links, updated_at")
         .eq("user_id", uid);
 
       if (tasks && tasks.length > 0) {
         setSubmittedDomains(tasks.map((t) => t.task_domain));
+        const details: Record<string, { links: string[]; updated_at: string | null }> = {};
+        for (const t of tasks) {
+          details[t.task_domain] = {
+            links: (t.task_links as string[]) || [],
+            updated_at: (t.updated_at as string) || null,
+          };
+        }
+        setSubmittedDetails(details);
       }
     };
     loadExisting();
@@ -313,10 +325,32 @@ export default function TaskPage() {
   // ---- When domain tab changes ----
   const handleDomainChange = (domainId: string) => {
     setActiveDomain(domainId);
+    setShowSubmitted(false);
     const domain = DOMAINS.find((d) => d.id === domainId);
     if (domain) {
       persistTask({ ...task, task_domain: domain.name });
     }
+  };
+
+  // ---- Load a submitted entry back into the form for editing ----
+  const handleEditSubmission = () => {
+    const domainName =
+      DOMAINS.find((d) => d.id === activeDomain)?.name || task.task_domain;
+    const saved = submittedDetails[domainName];
+    if (!saved) {
+      toast.error("No submission found for this domain");
+      return;
+    }
+    persistTask({
+      ...task,
+      task_domain: domainName,
+      task_links: saved.links.length > 0 ? [...saved.links] : [""],
+    });
+    setTaskCollapsed(false);
+    setShowSubmitted(false);
+    requestAnimationFrame(() => {
+      taskFormRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
   };
 
   // ---- Handle "Review & Submit" from task form (gate on personal details) ----
@@ -433,7 +467,17 @@ export default function TaskPage() {
       setSubmittedDomains((prev) =>
         prev.includes(task.task_domain) ? prev : [...prev, task.task_domain],
       );
+      setSubmittedDetails((prev) => ({
+        ...prev,
+        [task.task_domain]: {
+          links: validLinks,
+          updated_at: new Date().toISOString(),
+        },
+      }));
       toast.success("Task submitted successfully!");
+      // Redirect back to the task page view (details stay hidden until Edit is clicked)
+      setShowSubmitted(false);
+      setStep("form");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err: any) {
       toast.error(err.message || "Something went wrong");
@@ -680,9 +724,87 @@ export default function TaskPage() {
             transition={{ duration: 0.25 }}
             className="mb-8"
           >
-            {alreadySubmittedActiveDomain && (
-              <div className="mb-3 inline-flex items-center gap-1.5 bg-green-100 border-[3px] border-green-600 text-green-800 px-3 py-1.5 font-mono text-[11px] font-bold uppercase">
-                <Check size={12} /> Submitted for {activeDomainData?.name} — resubmitting will update it
+            {alreadySubmittedActiveDomain && activeDomainData && (
+              <div className="mb-3">
+                <div className="inline-flex flex-wrap items-center gap-2 bg-green-100 border-[3px] border-green-600 text-green-800 px-3 py-1.5 font-mono text-[11px] font-bold uppercase">
+                  <span className="inline-flex items-center gap-1.5">
+                    <Check size={12} /> Submitted for {activeDomainData.name}
+                  </span>
+                  <button
+                    onClick={() => setShowSubmitted((v) => !v)}
+                    className={nb({
+                      border: 2,
+                      shadow: "sm",
+                      active: "push",
+                      className:
+                        "inline-flex items-center gap-1 bg-white text-black px-2.5 py-1 font-mono text-[11px] font-bold uppercase hover:bg-gray-50",
+                    })}
+                  >
+                    <Pencil size={12} strokeWidth={3} />
+                    {showSubmitted ? "Hide" : "Edit"}
+                  </button>
+                </div>
+
+                <AnimatePresence>
+                  {showSubmitted && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="overflow-hidden"
+                    >
+                      <NeoBrutalism border={3} shadow="md" className="bg-white p-4 md:p-5 mt-3">
+                        <h4 className="font-black text-xs uppercase tracking-wider mb-3">
+                          Your submission for {activeDomainData.name}
+                        </h4>
+                        <ul className="space-y-2 mb-3">
+                          {(submittedDetails[activeDomainData.name]?.links || []).map((link, i) => (
+                            <li key={i}>
+                              <a
+                                href={link.startsWith("http") ? link : `https://${link}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 font-mono text-xs text-[#4285F4] underline break-all"
+                              >
+                                <ExternalLink size={12} />
+                                {link}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                        {submittedDetails[activeDomainData.name]?.updated_at && (
+                          <p className="font-mono text-[11px] text-gray-500 mb-4">
+                            Last submitted:{" "}
+                            {new Date(
+                              submittedDetails[activeDomainData.name].updated_at as string,
+                            ).toLocaleString("en-IN", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        )}
+                        <button
+                          onClick={handleEditSubmission}
+                          className={nb({
+                            border: 3,
+                            shadow: "md",
+                            hover: "lift",
+                            active: "push",
+                            className:
+                              "inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 font-bold text-xs uppercase tracking-wider",
+                          })}
+                        >
+                          <Pencil size={14} strokeWidth={3} />
+                          Load into form
+                        </button>
+                      </NeoBrutalism>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
             {activeDomainData && <DomainBrief domain={activeDomainData} />}
