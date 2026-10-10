@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CiLogout } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
+import { LayoutDashboard } from "lucide-react";
 import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
 import { nb } from "@/components/ui/neo-brutalism";
@@ -89,6 +90,8 @@ const MobileProfileDropdown = ({
       ? `/team/profile/${teamId ?? ""}`
       : "/profile";
 
+  const isAdminOrMember = role === "admin" || role === "member";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -138,6 +141,15 @@ const MobileProfileDropdown = ({
             Profile
           </Link>
         </DropdownMenuItem>
+
+        {isAdminOrMember && (
+          <DropdownMenuItem className="cursor-pointer px-4 py-3 rounded-lg">
+            <LayoutDashboard className="h-4 w-4 mr-3 text-black" />
+            <Link href="/admin" className="flex items-center w-full">
+              Admin
+            </Link>
+          </DropdownMenuItem>
+        )}
 
         <DropdownMenuSeparator />
 
