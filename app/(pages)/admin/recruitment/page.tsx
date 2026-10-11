@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
@@ -98,80 +98,104 @@ export default function AdminRecruitmentPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
+  const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set());
   const [search, setSearch] = useState("");
   const [domainFilter, setDomainFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const supabase = useMemo(() => createClient(), []);
 
-  const fetchSubmissions = useCallback(async (silent = false) => {
+  // Refs (never stale inside async callbacks / realtime handlers).
+  const updatingRef = useRef<Set<string>>(new Set());
+  const optimisticRef = useRef<Map<string, string>>(new Map());
+  const fetchingRef = useRef(false);
+  const realtimeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const submissionsRef = useRef<Submission[]>([]);
+  useEffect(() => {
+    submissionsRef.current = submissions;
+  }, [submissions]);
+
+  const fetchSubmissions = useCallback(async (silent = false, force = false) => {
+    if (fetchingRef.current && !force) return;
+    fetchingRef.current = true;
     if (silent) {
       setRefreshing(true);
     } else {
       setLoading(true);
     }
-    const { data: applicants, error: appError } = await supabase
-      .from("recruitment_applicants")
-      .select("*")
-      .order("created_at", { ascending: false });
+    try {
+      const { data: applicants, error: appError } = await supabase
+        .from("recruitment_applicants")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    if (appError) {
-      toast.error("Failed to fetch applicants");
-      console.error(appError);
-      setLoading(false);
-      setRefreshing(false);
-      return;
-    }
+      if (appError) {
+        toast.error("Failed to fetch applicants");
+        console.error(appError);
+        return;
+      }
 
-    const { data: tasks, error: taskError } = await supabase
-      .from("recruitment_task_submissions")
-      .select("*")
-      .order("created_at", { ascending: false });
+      const { data: tasks, error: taskError } = await supabase
+        .from("recruitment_task_submissions")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    if (taskError) {
-      toast.error("Failed to fetch task submissions");
-      console.error(taskError);
-    }
+      if (taskError) {
+        toast.error("Failed to fetch task submissions");
+        console.error(taskError);
+      }
 
-    const tasksByApplicant = new Map<string, TaskRow[]>();
-    for (const t of (tasks as TaskRow[]) || []) {
-      const list = tasksByApplicant.get(t.applicant_id) || [];
-      list.push(t);
-      tasksByApplicant.set(t.applicant_id, list);
-    }
+      const tasksByApplicant = new Map<string, TaskRow[]>();
+      for (const t of (tasks as TaskRow[]) || []) {
+        const list = tasksByApplicant.get(t.applicant_id) || [];
+        list.push(t);
+        tasksByApplicant.set(t.applicant_id, list);
+      }
 
-    const joined: Submission[] = [];
-    for (const a of (applicants as Applicant[]) || []) {
-      const applicantTasks = tasksByApplicant.get(a.id) || [];
-      if (applicantTasks.length === 0) {
-        joined.push({
-          ...a,
-          task_id: null,
-          task_domain: "— (details only)",
-          task_links: [],
-          task_details: {},
-          status: "details-only",
-          task_created_at: null,
-        });
-      } else {
-        for (const t of applicantTasks) {
+      const joined: Submission[] = [];
+      for (const a of (applicants as Applicant[]) || []) {
+        const applicantTasks = tasksByApplicant.get(a.id) || [];
+        if (applicantTasks.length === 0) {
           joined.push({
             ...a,
-            task_id: t.id,
-            task_domain: t.task_domain,
-            task_links: t.task_links,
-            task_details: t.task_details,
-            status: t.status,
-            task_created_at: t.created_at,
+            task_id: null,
+            task_domain: "— (details only)",
+            task_links: [],
+            task_details: {},
+            status: "details-only",
+            task_created_at: null,
           });
+        } else {
+          for (const t of applicantTasks) {
+            joined.push({
+              ...a,
+              task_id: t.id,
+              task_domain: t.task_domain,
+              task_links: t.task_links,
+              task_details: t.task_details,
+              status: t.status,
+              task_created_at: t.created_at,
+            });
+          }
         }
       }
-    }
 
-    setSubmissions(joined);
-    setLoading(false);
-    setRefreshing(false);
+      // Never clobber a row that has an in-flight optimistic status update.
+      const pending = optimisticRef.current;
+      setSubmissions(
+        pending.size === 0
+          ? joined
+          : joined.map((j) =>
+              j.task_id && pending.has(j.task_id)
+                ? { ...j, status: pending.get(j.task_id)! }
+                : j,
+            ),
+      );
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+      fetchingRef.current = false;
+    }
   }, [supabase]);
 
   useEffect(() => {
@@ -182,63 +206,105 @@ export default function AdminRecruitmentPage() {
   // joined view silently, so the table stays current without a page reload.
   // Handles status edits from other admins/tabs + new applicant submissions.
   useEffect(() => {
+    const scheduleRefetch = () => {
+      if (realtimeTimer.current) clearTimeout(realtimeTimer.current);
+      realtimeTimer.current = setTimeout(() => {
+        fetchSubmissions(true);
+      }, 400);
+    };
     const channel = supabase
       .channel("admin-recruitment")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "recruitment_task_submissions" },
-        () => fetchSubmissions(true),
+        (payload) => {
+          // Skip the echo of our own in-flight update — it is already applied
+          // optimistically. Any other change triggers a silent refetch.
+          const row = (payload.new ?? payload.old) as { id?: string } | null;
+          if (payload.eventType === "UPDATE" && row?.id && updatingRef.current.has(row.id)) {
+            return;
+          }
+          scheduleRefetch();
+        },
       )
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "recruitment_applicants" },
-        () => fetchSubmissions(true),
+        () => scheduleRefetch(),
       )
       .subscribe();
 
     return () => {
+      if (realtimeTimer.current) clearTimeout(realtimeTimer.current);
       supabase.removeChannel(channel);
     };
   }, [supabase, fetchSubmissions]);
 
   const updateStatus = useCallback(
     async (taskId: string | null, status: string) => {
-    if (!taskId) {
-      toast.error("No task submitted yet for this applicant");
-      return;
-    }
-    const prev = submissions.find((s) => s.task_id === taskId)?.status;
-    // Optimistic update so the table reflects the new status instantly.
-    setUpdatingTaskId(taskId);
-    setSubmissions((prevList) =>
-      prevList.map((s) => (s.task_id === taskId ? { ...s, status } : s)),
-    );
-
-    const { error } = await supabase
-      .from("recruitment_task_submissions")
-      .update({ status })
-      .eq("id", taskId);
-
-    setUpdatingTaskId(null);
-    if (error) {
-      // Roll back on failure so UI never shows a status that isn't saved.
-      if (prev) {
-        setSubmissions((prevList) =>
-          prevList.map((s) =>
-            s.task_id === taskId ? { ...s, status: prev } : s,
-          ),
-        );
+      if (!taskId) {
+        toast.error("No task submitted yet for this applicant");
+        return;
       }
-      toast.error("Failed to update status");
-      console.error(error);
-    } else {
-      toast.success(`Status updated to ${status}`);
-      // Silent re-fetch keeps this client + all other open clients in sync
-      // (covers RLS defaults/triggers that may transform the row).
-      fetchSubmissions(true);
-    }
+      // Ignore repeat clicks while this row is already saving.
+      if (updatingRef.current.has(taskId)) return;
+      const prev = submissionsRef.current.find((s) => s.task_id === taskId)?.status;
+      if (prev === status) return;
+
+      // Optimistic update so the table reflects the new status instantly.
+      updatingRef.current.add(taskId);
+      optimisticRef.current.set(taskId, status);
+      setUpdatingIds(new Set(updatingRef.current));
+      setSubmissions((prevList) =>
+        prevList.map((s) => (s.task_id === taskId ? { ...s, status } : s)),
+      );
+
+      try {
+        const request = Promise.resolve(
+          supabase
+            .from("recruitment_task_submissions")
+            .update({ status })
+            .eq("id", taskId)
+            .select(),
+        );
+        const timeout = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("Request timed out. Please try again.")), 15000),
+        );
+        const { data, error } = (await Promise.race([request, timeout])) as {
+          data: TaskRow[] | null;
+          error: Error | null;
+        };
+        if (error) throw error;
+        // Confirm with the row the server actually stored (covers
+        // RLS defaults / triggers that may transform the value).
+        const saved = data?.[0];
+        if (saved) {
+          setSubmissions((prevList) =>
+            prevList.map((s) =>
+              s.task_id === taskId ? { ...s, status: saved.status } : s,
+            ),
+          );
+        }
+        toast.success(`Status updated to ${status}`);
+      } catch (e) {
+        // Roll back on failure so UI never shows a status that isn't saved.
+        console.error(e);
+        if (prev) {
+          setSubmissions((prevList) =>
+            prevList.map((s) =>
+              s.task_id === taskId ? { ...s, status: prev } : s,
+            ),
+          );
+        }
+        toast.error(e instanceof Error ? e.message : "Failed to update status");
+      } finally {
+        // Always clear — this is what previously left rows stuck on "saving…".
+        updatingRef.current.delete(taskId);
+        optimisticRef.current.delete(taskId);
+        setUpdatingIds(new Set(updatingRef.current));
+      }
     },
-    [supabase, submissions, fetchSubmissions],
+    [supabase],
   );
 
   const filtered = submissions.filter((s) => {
@@ -347,12 +413,12 @@ export default function AdminRecruitmentPage() {
           <Select
             value={s.status}
             onValueChange={(v) => updateStatus(s.task_id, v)}
-            disabled={updatingTaskId === s.task_id}
+            disabled={updatingIds.has(s.task_id)}
           >
             <SelectTrigger className="w-[130px]">
               <SelectValue>
                 <span className={`px-2 py-0.5 text-xs font-bold uppercase rounded border ${STATUS_COLORS[s.status] || ""}`}>
-                  {updatingTaskId === s.task_id ? "saving…" : s.status}
+                  {updatingIds.has(s.task_id) ? "saving…" : s.status}
                 </span>
               </SelectValue>
             </SelectTrigger>
@@ -376,7 +442,7 @@ export default function AdminRecruitmentPage() {
           }),
       },
     ],
-    [expandedId, updatingTaskId, updateStatus],
+    [expandedId, updatingIds, updateStatus],
   );
 
   return (
@@ -392,7 +458,7 @@ export default function AdminRecruitmentPage() {
         </div>
         <div className="flex items-center gap-2">
           <Button
-            onClick={() => fetchSubmissions(true)}
+            onClick={() => fetchSubmissions(true, true)}
             variant="outline"
             className="flex items-center gap-2"
             disabled={refreshing}
