@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { createClient } from "@/supabase/client";
 import { toast } from "sonner";
@@ -20,6 +20,7 @@ import {
   Search,
   ChevronDown,
   ChevronUp,
+  RefreshCw,
   X,
 } from "lucide-react";
 
@@ -96,18 +97,20 @@ function getResumeViewUrl(url: string): string {
 export default function AdminRecruitmentPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [domainFilter, setDomainFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
-  useEffect(() => {
-    fetchSubmissions();
-  }, []);
-
-  const fetchSubmissions = async () => {
-    setLoading(true);
+  const fetchSubmissions = useCallback(async (silent = false) => {
+    if (silent) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     const { data: applicants, error: appError } = await supabase
       .from("recruitment_applicants")
       .select("*")
@@ -117,6 +120,7 @@ export default function AdminRecruitmentPage() {
       toast.error("Failed to fetch applicants");
       console.error(appError);
       setLoading(false);
+      setRefreshing(false);
       return;
     }
 
@@ -167,27 +171,75 @@ export default function AdminRecruitmentPage() {
 
     setSubmissions(joined);
     setLoading(false);
-  };
+    setRefreshing(false);
+  }, [supabase]);
 
-  const updateStatus = async (taskId: string | null, status: string) => {
+  useEffect(() => {
+    fetchSubmissions();
+  }, [fetchSubmissions]);
+
+  // Realtime sync: any insert/update/delete on either table refreshes the
+  // joined view silently, so the table stays current without a page reload.
+  // Handles status edits from other admins/tabs + new applicant submissions.
+  useEffect(() => {
+    const channel = supabase
+      .channel("admin-recruitment")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "recruitment_task_submissions" },
+        () => fetchSubmissions(true),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "recruitment_applicants" },
+        () => fetchSubmissions(true),
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [supabase, fetchSubmissions]);
+
+  const updateStatus = useCallback(
+    async (taskId: string | null, status: string) => {
     if (!taskId) {
       toast.error("No task submitted yet for this applicant");
       return;
     }
+    const prev = submissions.find((s) => s.task_id === taskId)?.status;
+    // Optimistic update so the table reflects the new status instantly.
+    setUpdatingTaskId(taskId);
+    setSubmissions((prevList) =>
+      prevList.map((s) => (s.task_id === taskId ? { ...s, status } : s)),
+    );
+
     const { error } = await supabase
       .from("recruitment_task_submissions")
       .update({ status })
       .eq("id", taskId);
 
+    setUpdatingTaskId(null);
     if (error) {
+      // Roll back on failure so UI never shows a status that isn't saved.
+      if (prev) {
+        setSubmissions((prevList) =>
+          prevList.map((s) =>
+            s.task_id === taskId ? { ...s, status: prev } : s,
+          ),
+        );
+      }
       toast.error("Failed to update status");
+      console.error(error);
     } else {
-      setSubmissions((prev) =>
-        prev.map((s) => (s.task_id === taskId ? { ...s, status } : s)),
-      );
       toast.success(`Status updated to ${status}`);
+      // Silent re-fetch keeps this client + all other open clients in sync
+      // (covers RLS defaults/triggers that may transform the row).
+      fetchSubmissions(true);
     }
-  };
+    },
+    [supabase, submissions, fetchSubmissions],
+  );
 
   const filtered = submissions.filter((s) => {
     const matchesSearch = `${s.name} ${s.email} ${s.branch}`
@@ -236,44 +288,49 @@ export default function AdminRecruitmentPage() {
 
   const rowKey = (s: Submission) => s.task_id || `applicant-${s.id}`;
 
-  const columns = [
-    {
-      header: "Name",
-      accessorKey: "name",
-      cell: ({ row }: any) => {
-        const key = row.original.task_id || `applicant-${row.original.id}`;
-        const isOpen = expandedId === key;
-        return (
-          <span className="font-semibold flex items-center gap-1">
-            {row.original.name}
-            {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          </span>
-        );
+  const expandedSubmission = expandedId
+    ? submissions.find((s) => rowKey(s) === expandedId) ?? null
+    : null;
+
+  const columns = useMemo(
+    () => [
+      {
+        header: "Name",
+        accessorKey: "name",
+        cell: ({ row }: any) => {
+          const key = row.original.task_id || `applicant-${row.original.id}`;
+          const isOpen = expandedId === key;
+          return (
+            <span className="font-semibold flex items-center gap-1">
+              {row.original.name}
+              {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            </span>
+          );
+        },
       },
-    },
-    { header: "Email", accessorKey: "email" },
-    { header: "Branch", accessorKey: "branch" },
-    { header: "Year", accessorKey: "year" },
-    { header: "Task Domain", accessorKey: "task_domain" },
-    { header: "Pref 1", accessorKey: "domain_pref_1" },
-    {
-      header: "Resume",
-      accessorKey: "resume_url",
-      cell: ({ row }: any) => {
-        const url = row.original.resume_url;
-        return (
-          <a
-            href={getResumeViewUrl(url)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
-          >
-            <FileText size={14} />
-            View
-          </a>
-        );
+      { header: "Email", accessorKey: "email" },
+      { header: "Branch", accessorKey: "branch" },
+      { header: "Year", accessorKey: "year" },
+      { header: "Task Domain", accessorKey: "task_domain" },
+      { header: "Pref 1", accessorKey: "domain_pref_1" },
+      {
+        header: "Resume",
+        accessorKey: "resume_url",
+        cell: ({ row }: any) => {
+          const url = row.original.resume_url;
+          return (
+            <a
+              href={getResumeViewUrl(url)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+            >
+              <FileText size={14} />
+              View
+            </a>
+          );
+        },
       },
-    },
     {
       header: "Status",
       accessorKey: "status",
@@ -290,11 +347,12 @@ export default function AdminRecruitmentPage() {
           <Select
             value={s.status}
             onValueChange={(v) => updateStatus(s.task_id, v)}
+            disabled={updatingTaskId === s.task_id}
           >
             <SelectTrigger className="w-[130px]">
               <SelectValue>
                 <span className={`px-2 py-0.5 text-xs font-bold uppercase rounded border ${STATUS_COLORS[s.status] || ""}`}>
-                  {s.status}
+                  {updatingTaskId === s.task_id ? "saving…" : s.status}
                 </span>
               </SelectValue>
             </SelectTrigger>
@@ -308,16 +366,18 @@ export default function AdminRecruitmentPage() {
         );
       },
     },
-    {
-      header: "Date",
-      accessorKey: "created_at",
-      cell: ({ row }: any) =>
-        new Date(row.original.task_created_at || row.original.created_at).toLocaleDateString("en-IN", {
-          day: "2-digit",
-          month: "short",
-        }),
-    },
-  ];
+      {
+        header: "Date",
+        accessorKey: "created_at",
+        cell: ({ row }: any) =>
+          new Date(row.original.task_created_at || row.original.created_at).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+          }),
+      },
+    ],
+    [expandedId, updatingTaskId, updateStatus],
+  );
 
   return (
     <div>
@@ -330,10 +390,21 @@ export default function AdminRecruitmentPage() {
             (applicants + per-domain tasks)
           </p>
         </div>
-        <Button onClick={exportCsv} variant="outline" className="flex items-center gap-2">
-          <Download size={16} />
-          Export CSV
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => fetchSubmissions(true)}
+            variant="outline"
+            className="flex items-center gap-2"
+            disabled={refreshing}
+          >
+            <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} />
+            {refreshing ? "Refreshing..." : "Refresh"}
+          </Button>
+          <Button onClick={exportCsv} variant="outline" className="flex items-center gap-2">
+            <Download size={16} />
+            Export CSV
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -389,7 +460,7 @@ export default function AdminRecruitmentPage() {
       ) : (
         <>
           <DataTable
-            data={filtered.map((d) => ({ ...d, domainFilter, statusFilter }))}
+            data={filtered}
             columns={columns}
             onRowClick={(row: any) => {
               const key = row.task_id || `applicant-${row.id}`;
@@ -398,9 +469,9 @@ export default function AdminRecruitmentPage() {
           />
 
           {/* Expanded Detail Panel */}
-          {expandedId && (
+          {expandedId && expandedSubmission && (
             <ExpandedDetail
-              submission={submissions.find((s) => rowKey(s) === expandedId)!}
+              submission={expandedSubmission}
               onClose={() => setExpandedId(null)}
             />
           )}
